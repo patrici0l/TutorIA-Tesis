@@ -1,0 +1,103 @@
+<section class="intro fade-in">
+  <p class="eyebrow">TU ESPACIO DE ENSEÑANZA</p>
+  <h1>El conocimiento es el punto de partida.</h1>
+  <p class="lead">
+    Un espacio para transformar materiales del curso en recursos de aprendizaje personalizados y
+    respaldados por sus fuentes.
+  </p>
+</section>
+<section
+  class="connection-panel fade-in"
+  aria-labelledby="connection-title"
+  [attr.aria-busy]="loading()"
+>
+  <div class="panel-heading">
+    <div>
+      <p class="eyebrow">PRIMER PASO</p>
+      <h2 id="connection-title">Estado del entorno</h2>
+    </div>
+    <span class="phase">Hito 01 · Base técnica</span>
+  </div>
+  <div class="status-message" aria-live="polite" role="status">
+    @if (loading()) {
+      <span class="status-dot pending"></span>
+      <p>Comprobando la conexión del sistema…</p>
+    } @else if (error()) {
+      <span class="status-dot error"></span>
+      <p>No se pudo conectar con la API. Comprueba el entorno e inténtalo nuevamente.</p>
+    } @else if (health()?.status === 'ok') {
+      <span class="status-dot"></span>
+      <p>Conexión verificada. La base técnica está disponible.</p>
+    } @else {
+      <span class="status-dot error"></span>
+      <p>La API responde, pero hay servicios pendientes de conexión.</p>
+    }
+  </div>
+  <div class="services">
+    <article>
+      <span class="service-number">01</span>
+      <h3>API</h3>
+      <p>Servicios de la plataforma</p>
+      <strong [class.available]="health()?.api === 'ok'">{{
+        loading() ? 'Comprobando…' : health()?.api === 'ok' ? 'Disponible' : 'Sin conexión'
+      }}</strong>
+    </article>
+    <article>
+      <span class="service-number">02</span>
+      <h3>Base de datos</h3>
+      <p>Persistencia de información</p>
+      <strong [class.available]="health()?.database === 'ok'">{{
+        loading() ? 'Comprobando…' : health()?.database === 'ok' ? 'Disponible' : 'No disponible'
+      }}</strong>
+    </article>
+    <article>
+      <span class="service-number">03</span>
+      <h3>Motor vectorial</h3>
+      <p>Base para la búsqueda semántica</p>
+      <strong [class.available]="health()?.pgvector === 'ok'">{{
+        loading() ? 'Comprobando…' : health()?.pgvector === 'ok' ? 'Disponible' : 'No disponible'
+      }}</strong>
+    </article>
+  </div>
+  <div class="panel-footer">
+    <span>{{
+      checkedAt() ? 'Última comprobación · ' + checkedAt() : 'Verificando servicios locales'
+    }}</span
+    ><button type="button" (click)="refresh()" [disabled]="loading()">
+      {{ loading() ? 'Comprobando…' : 'Comprobar conexión' }} <span aria-hidden="true">↗</span>
+    </button>
+  </div>
+</section>
+<section class="next-section" aria-labelledby="next-title">
+  <div>
+    <p class="eyebrow">DESARROLLO PASO A PASO</p>
+    <h2 id="next-title">Una base sólida para lo que viene.</h2>
+  </div>
+  <p>
+    La siguiente etapa incorpora el acceso seguro. Después se habilitarán los documentos, la
+    recuperación de fuentes y la generación personalizada.
+  </p>
+</section>
+<ol class="roadmap">
+  <li>
+    <span>01</span>
+    <div>
+      <h3>Base técnica</h3>
+      <p>Etapa actual</p>
+    </div>
+  </li>
+  <li>
+    <span>02</span>
+    <div>
+      <h3>Acceso seguro</h3>
+      <p>Próxima etapa</p>
+    </div>
+  </li>
+  <li>
+    <span>03</span>
+    <div>
+      <h3>Documentos del curso</h3>
+      <p>Planificado</p>
+    </div>
+  </li>
+</ol>

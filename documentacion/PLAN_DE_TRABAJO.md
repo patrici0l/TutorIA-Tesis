@@ -1,0 +1,93 @@
+# Seguimiento del plan de implementación
+
+Fuente rectora: Plan_Implementacion_TutorIA-Lucero.docx, entregado por el autor el 4 de octubre de 2026. Su extracción en orden, incluidas tablas, está en `investigacion/plan_implementacion_fuente.txt`. Los documentos previos se usan como contexto; no se modifican. No se interpretan ejemplos de código como funciones ya implementadas.
+
+## Bloque actual
+
+Hito 1, base técnica: implementar los 15 pasos de la sección 21 y validar el arranque conjunto. El estado de las verificaciones se registra en `pruebas/hito_01.md`. No dar por completados los siguientes hitos por haber creado sus carpetas.
+
+| Paso | Entregable | Evidencia prevista |
+|---|---|---|
+| 1 | Repositorio TutorIA-Lucero | Git local, sin remoto aún |
+| 2 | .gitignore y .env.example | Exclusión de secretos comprobada |
+| 3 | Carpetas y README | Estructura raíz y guía de ejecución |
+| 4 | FastAPI inicializado | app/main.py y dependencias fijadas |
+| 5 | GET /api/v1/health | Contratos 200 y 503, OpenAPI |
+| 6 | PostgreSQL y pgvector | Servicio Docker y consulta vectorial |
+| 7 | Alembic | Migración 0001_enable_vector |
+| 8 | Angular | Compilación de producción |
+| 9 | Layout y rutas | /inicio y navegación accesible |
+| 10 | SCSS y animaciones | Animación compartida y reduced-motion |
+| 11 | Dockerfile backend | Imagen ejecutada sin root |
+| 12 | Dockerfile frontend | Compilación multietapa y nginx |
+| 13 | Compose | Volumen, healthchecks y orden de arranque |
+| 14 | Angular consulta health | Pantalla con respuesta real y reintento |
+| 15 | FastAPI consulta PostgreSQL | SELECT 1, extensión y prueba de integración |
+
+## Secuencia obligatoria de hitos
+
+| Hito | Alcance | Criterio de cierre | Estado |
+|---|---|---|---|
+| 1 Base | Preparación, backend, BD, frontend, Docker | Un comando levanta todo; interfaz confirma API y BD real | En verificación |
+| 2 Seguridad | Login, usuarios, JWT, renovación, logout, roles, guards e interceptores | Acceso autorizado y rechazo de sesiones inválidas con pruebas | Pendiente |
+| 3 Corpus | PDF/DOCX/TXT, MIME/extensión/tamaño, permisos y gestión | Cargar, listar, consultar y eliminar documentos propios | Pendiente |
+| 4 Ingesta | Extracción, normalización, segmentación, embeddings e índices | Corpus trazable y reproducible en pgvector | Pendiente |
+| 5 RAG | Búsqueda semántica y top-k | Recuperación validada con corpus y consultas de referencia, sin LLM | Pendiente |
+| 6 IA | Interfaz generate, fábrica y primer proveedor | Proveedor intercambiable, errores y límites controlados | Pendiente |
+| 7 Recursos | Explicación, ejercicio, quiz y feedback | Flujo completo por recurso, fuentes y validación | Pendiente |
+| 8 Perfiles | Recepción por API de rendimiento externo | Validación y persistencia de perfiles sintéticos | Pendiente |
+| 9 Personalización | Alto, medio, dificultades y dificultad localizada | Diferencias justificadas para mismo tema y distintos perfiles | Pendiente |
+| 10 Trazabilidad | Fuentes, historial y métricas | Reconstrucción de cada generación y sus fallos | Pendiente |
+| 11 Benchmark | Directo/RAG, perfiles, OpenAI/Gemini/Claude | Experimentos controlados y resultados reales registrados | Pendiente |
+| 12 Cierre | Endurecimiento, documentación, pruebas y MVP | Evidencia final, manuales e informe | Pendiente |
+
+La tabla de etapas 0–15 de la sección 19 se conserva íntegra en la fuente. Los hitos anteriores agrupan esas etapas sin cambiar el orden. Ejemplos, pistas y retos se amplían después de los recursos iniciales. La segunda asignatura es condicional al tiempo disponible.
+
+## Matriz de cobertura del documento
+
+| Secciones del plan | Requisito | Implementación o destino |
+|---|---|---|
+| 1–2 | Stack, modularidad, API-first, seguridad y trazabilidad | Arquitectura inicial; continuidad en todos los hitos |
+| 3 | Convenciones de idioma | Estructura y AGENTS.md |
+| 4–6 | Raíz, backend, módulos, frontend y animaciones | Estructura inicial; cada módulo se implementa en su hito |
+| 7 | Variables, secretos y exclusiones | Plantillas, script local y .gitignore |
+| 8 | Interfaz LLM, OpenAI, Gemini y Claude | Hito 6 y comparación en 11 |
+| 9 | REST/OpenAPI versionada | Health actual; catálogo restante pendiente |
+| 10 | Diez entidades iniciales y Alembic | Modelo conceptual; columnas tras validar casos de uso |
+| 11–12 | Flujo completo y RAG antes del LLM | Hitos 3–7, validación independiente de recuperación |
+| 13 | Perfil externo y variables académicas | Hito 8; campos completos en la fuente |
+| 14–15 | Recursos ampliables y personalización | Hitos 7 y 9 |
+| 16 | Evidencia de cada generación | Hito 10; diseñar campos antes de generar contenido |
+| 17–18 | Docker, Git y GitHub | Docker y Git local; remoto pendiente de cuenta/visibilidad |
+| 19–22 | Orden y criterio del primer bloque | Este seguimiento y evidencia de pruebas |
+| 23–25 | Pruebas, seguridad y definición de terminado | Aplicar por hito; lista de cierre abajo |
+| 26 | Experimentos A/B/C/D | Hito 11; D condicional |
+| 27 | Documentación continua | README, arquitectura, BD, API, decisiones, pruebas; ampliar por hito |
+| 28–30 | Evitar desorden y avanzar verticalmente | AGENTS.md y revisiones de cada entrega |
+
+## Contratos aún pendientes
+
+Autenticación: POST `/auth/login`, `/auth/refresh`, `/auth/logout`, GET `/auth/me`. Usuarios y registro deberán concretarse al validar los roles y la política de alta.
+
+Documentos: POST `/documents/upload`, GET `/documents`, GET y DELETE `/documents/{id}`. Perfiles: POST `/profiles`, GET `/profiles/{id}`. Recuperación: POST `/rag/search`.
+
+Generación: POST `/content/generate`, `/content/quiz`, `/content/feedback`, `/content/explanation`, `/content/challenge`. Ejercicios se identificarán por `resource_type=EXERCISE` en el contrato genérico. Historial: GET `/generations` y `/generations/{id}`. Métricas: GET `/metrics`. Todas estas rutas llevarán el prefijo `/api/v1`.
+
+## Campos de trazabilidad exigidos
+
+`student_profile`, `topic`, `learning_objective`, `resource_type`, `difficulty`, `provider`, `model`, `prompt_version`, `retrieved_chunks`, `source_documents`, `latency`, `input_tokens`, `output_tokens`, `estimated_cost`, `created_at`, `status`, `error_detail` cuando corresponda. No registrar secretos. Conservar configuración de benchmark, versiones de prompts y procedimiento de perfiles sintéticos.
+
+## Cierre de cada funcionalidad
+
+- Caso de uso/endpoints implementados con entradas y salidas validadas.
+- Lógica fuera del controlador, errores y persistencia cuando corresponda.
+- Pruebas adecuadas y contrato OpenAPI actualizado.
+- Interfaz con carga, éxito, error y archivos separados.
+- Credenciales excluidas, revisión de cambios y commit descriptivo.
+- Docker, API y pruebas sin regresiones.
+
+Seguridad posterior obligatoria: hashes robustos, expiración/renovación de JWT, autorización por rol, validación de documentos, no ejecutar cargas, saneamiento según contexto, límites de tamaño/frecuencia de solicitudes LLM y logs sin contenido sensible.
+
+## Decisiones académicas y externas por concretar
+
+Seleccionar corpus docente autorizado y rúbrica antes de RAG y evaluación. Confirmar política de alta y roles antes del hito 2. Elegir licencia y cuenta/visibilidad de GitHub antes de publicación. Elegir modelos, presupuesto y credenciales de proveedores antes del hito 6. Estas decisiones no impiden construir y probar la base técnica. No se inventan aprobaciones del tutor, resultados experimentales ni fechas del cronograma.

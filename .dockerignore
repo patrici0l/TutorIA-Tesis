@@ -1,0 +1,12 @@
+**/node_modules
+**/dist
+**/.angular
+.git
+.venv
+**/.env
+**/.env.*
+!**/.env.example
+secretos_locales
+documentacion
+datos
+**/__pycache__

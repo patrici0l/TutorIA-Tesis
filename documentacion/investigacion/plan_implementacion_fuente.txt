@@ -1,0 +1,602 @@
+TutorIA-Lucero
+Plan completo de estructura, implementación y desarrollo
+Plataforma inteligente para la generación automática de contenidos educativos personalizados mediante inteligencia artificial
+
+Proyecto de titulación - Carrera de Computación
+Autor: Angel Patricio Lucero Loja
+Tutor: Omar Gustavo Bravo Quezada, PhD
+
+Cuenca - Ecuador | 2026
+
+1. Propósito de este documento
+Este documento define una ruta de desarrollo ordenada y reproducible para TutorIA-Lucero. Su objetivo es evitar que el proyecto crezca de forma desorganizada y asegurar que cada módulo se implemente sobre una base estable, segura, versionable y fácil de explicar durante la defensa.
+El plan considera el stack ya definido para el proyecto: frontend con Angular, backend con Python y FastAPI, PostgreSQL con pgvector, arquitectura RAG, integración desacoplada con proveedores LLM, REST/OpenAPI, Docker para contenerización y Git/GitHub para control de versiones.
+2. Principios de organización
+Modularidad: Cada responsabilidad debe vivir en un módulo claro. No se mezclará autenticación, documentos, RAG, perfiles y generación en un mismo archivo.
+API-first: TutorIA debe poder ser consumido por Angular y, posteriormente, por otros módulos de AdaptIA. Por eso la lógica principal estará disponible a través de una API REST versionada.
+Separación de responsabilidades: Angular presenta la experiencia de usuario; FastAPI concentra la lógica; PostgreSQL persiste datos; pgvector soporta recuperación semántica; los proveedores LLM se conectan mediante una capa desacoplada.
+Seguridad desde el inicio: Credenciales, claves, tokens y secretos nunca se escribirán dentro del código ni se subirán al repositorio.
+Trazabilidad: Cada contenido generado debe poder relacionarse con el perfil utilizado, las fuentes recuperadas, el proveedor LLM, el modelo, la latencia, tokens y otros datos relevantes.
+Desarrollo incremental: Primero se crea una base técnica estable. Después se implementan documentos, RAG, generación, personalización, métricas y evaluación.
+3. Convenciones de nombres e idioma
+Elemento | Convención | Ejemplo
+Carpetas de dominio | Español, minúsculas, sin tildes ni espacios | autenticacion, documentos, perfiles
+Carpetas generales | Español | configuracion, compartido, base_datos
+Endpoints REST | Inglés | /api/v1/auth/login, /api/v1/content/generate
+Servicios | Nombre técnico en inglés | login_service.py, generate_content_service.py
+Funciones y métodos | Inglés | generate_content(), retrieve_context()
+Clases | Inglés, PascalCase | LoginService, RAGService, LLMProvider
+Angular: carpetas | Español | autenticacion/paginas/login
+Angular: archivos | Convención Angular | login.component.ts, login.component.html, login.component.scss
+Texto mostrado al usuario | Español | Generar cuestionario, Historial, Fuentes utilizadas
+Regla principal: la organización visual del repositorio se mantendrá en español, mientras que los nombres técnicos de servicios, acciones, métodos y rutas públicas de la API se mantendrán en inglés para favorecer consistencia con los frameworks y futuras integraciones.
+4. Estructura raíz del proyecto
+La carpeta principal del repositorio se llamará exactamente TutorIA-Lucero
+TutorIA-Lucero/
+|-- backend/
+|-- frontend/
+|-- infraestructura/
+|   |-- docker/
+|   |-- nginx/
+|   `-- scripts/
+|-- documentacion/
+|   |-- arquitectura/
+|   |-- api/
+|   |-- base_datos/
+|   |-- investigacion/
+|   |-- pruebas/
+|   `-- decisiones_tecnicas/
+|-- datos/
+|   |-- ejemplos/
+|   |-- perfiles_sinteticos/
+|   `-- README.md
+|-- licencias/
+|   |-- THIRD_PARTY_LICENSES.md
+|   `-- NOTICE.md
+|-- secretos_locales/          # Solo local; nunca se sube
+|-- docker-compose.yml
+|-- .env.example
+|-- .gitignore
+|-- README.md
+`-- LICENSE
+La carpeta secretos_locales/ será exclusiva del entorno local. Debe permanecer siempre ignorada por Git. Las licencias y avisos legales, en cambio, sí pueden y normalmente deben versionarse.
+5. Estructura del backend FastAPI
+backend/
+|-- app/
+|   |-- main.py
+|   |-- configuracion/
+|   |   |-- settings.py
+|   |   |-- logging_config.py
+|   |   `-- constants.py
+|   |-- nucleo/
+|   |   |-- seguridad/
+|   |   |-- excepciones/
+|   |   |-- dependencias/
+|   |   `-- utilidades/
+|   |-- api/
+|   |   `-- v1/
+|   |-- base_datos/
+|   |   |-- session.py
+|   |   |-- models/
+|   |   |-- repositories/
+|   |   `-- migrations/
+|   `-- modulos/
+|       |-- autenticacion/
+|       |-- usuarios/
+|       |-- documentos/
+|       |-- perfiles/
+|       |-- contenidos/
+|       |-- rag/
+|       |-- proveedores_ia/
+|       |-- metricas/
+|       `-- evaluacion/
+|-- tests/
+|   |-- unitarios/
+|   |-- integracion/
+|   `-- fixtures/
+|-- alembic/
+|-- requirements/
+|-- Dockerfile
+|-- .env.example
+`-- pyproject.toml
+5.1. Patrón interno de cada módulo
+modulos/
+`-- autenticacion/
+    |-- router.py
+    |-- schemas.py
+    |-- models.py
+    |-- repositorios/
+    |   `-- usuario_repository.py
+    `-- servicios/
+        |-- login_service.py
+        |-- register_service.py
+        |-- refresh_token_service.py
+        `-- logout_service.py
+Responsabilidad de cada capa:
+router.py: define endpoints y recibe solicitudes HTTP.
+schemas.py: valida entradas y salidas con modelos de datos.
+models.py: representa entidades persistentes cuando corresponda.
+repositorios/: encapsula acceso a base de datos.
+servicios/: contiene la lógica de negocio y coordina repositorios, RAG y proveedores externos.
+5.2. Módulo de contenidos
+modulos/
+`-- contenidos/
+    |-- router.py
+    |-- schemas.py
+    |-- models.py
+    |-- repositorios/
+    `-- servicios/
+        |-- generate_content_service.py
+        |-- generate_quiz_service.py
+        |-- generate_feedback_service.py
+        |-- generate_explanation_service.py
+        `-- generate_challenge_service.py
+5.3. Módulo RAG
+modulos/
+`-- rag/
+    |-- loaders/
+    |-- retrievers/
+    |-- prompts/
+    `-- servicios/
+        |-- ingest_document_service.py
+        |-- chunk_document_service.py
+        |-- embedding_service.py
+        |-- index_document_service.py
+        `-- retrieve_context_service.py
+6. Estructura del frontend Angular
+Cada componente visual tendrá sus archivos separados para mejorar comprensión, mantenimiento y orden: .ts para lógica, .html para plantilla, .scss para estilos y .spec.ts para pruebas.
+frontend/
+|-- src/
+|   |-- app/
+|   |   |-- nucleo/
+|   |   |   |-- guardias/
+|   |   |   |-- interceptores/
+|   |   |   |-- servicios/
+|   |   |   `-- modelos/
+|   |   |-- compartido/
+|   |   |   |-- componentes/
+|   |   |   |-- animaciones/
+|   |   |   |-- directivas/
+|   |   |   |-- pipes/
+|   |   |   `-- utilidades/
+|   |   `-- modulos/
+|   |       |-- autenticacion/
+|   |       |-- inicio/
+|   |       |-- documentos/
+|   |       |-- generacion/
+|   |       |-- perfiles/
+|   |       |-- historial/
+|   |       |-- metricas/
+|   |       `-- configuracion/
+|   |-- assets/
+|   `-- environments/
+|-- Dockerfile
+|-- angular.json
+`-- package.json
+6.1. Ejemplo de página de Login
+modulos/
+`-- autenticacion/
+    |-- paginas/
+    |   `-- login/
+    |       |-- login.component.ts
+    |       |-- login.component.html
+    |       |-- login.component.scss
+    |       `-- login.component.spec.ts
+    |-- servicios/
+    |   `-- login.service.ts
+    |-- modelos/
+    `-- componentes/
+6.2. Ejemplo de generación de contenido
+modulos/
+`-- generacion/
+    |-- paginas/
+    |   |-- generar-contenido/
+    |   |   |-- generar-contenido.component.ts
+    |   |   |-- generar-contenido.component.html
+    |   |   |-- generar-contenido.component.scss
+    |   |   `-- generar-contenido.component.spec.ts
+    |   `-- resultado-generacion/
+    |-- componentes/
+    |   |-- selector-nivel/
+    |   |-- selector-recurso/
+    |   `-- fuentes-utilizadas/
+    `-- servicios/
+        |-- generate-content.service.ts
+        `-- generation-history.service.ts
+6.3. Animaciones y experiencia visual
+Las animaciones reutilizables se centralizarán en compartido/animaciones/.
+Se utilizarán transiciones suaves para carga de páginas, tarjetas, modales, estados de generación y resultados.
+Las animaciones no deben bloquear acciones ni retrasar artificialmente el uso del sistema.
+Se respetará prefers-reduced-motion para usuarios que reduzcan movimiento por accesibilidad.
+La prioridad visual será claridad, jerarquía, legibilidad y retroalimentación inmediata; la animación será un complemento.
+compartido/
+`-- animaciones/
+    |-- fade.animation.ts
+    |-- slide.animation.ts
+    |-- scale.animation.ts
+    `-- route.animation.ts
+7. Gestión de secretos, credenciales y configuración
+La seguridad de las credenciales debe definirse antes de conectar cualquier API de IA. No se guardarán claves reales dentro del código, en Angular, en archivos versionados ni en capturas de documentación.
+Tipo | Se versiona | Ejemplos
+Configuración pública/no secreta | Sí | API_PORT, DB_HOST, nombre del proveedor por defecto
+Plantilla de variables | Sí | .env.example sin valores reales
+Secretos | No | API keys, JWT_SECRET, contraseñas
+Certificados o claves privadas | No | *.pem, *.key, *.p12
+Licencias y avisos legales | Sí | LICENSE, THIRD_PARTY_LICENSES.md
+7.1. .env.example
+APP_ENV=development
+API_PORT=8000
+DATABASE_URL=
+DB_HOST=postgres
+DB_PORT=5432
+DB_NAME=tutoria
+DB_USER=tutoria
+DB_PASSWORD=
+JWT_SECRET=
+OPENAI_API_KEY=
+GEMINI_API_KEY=
+ANTHROPIC_API_KEY=
+LLM_DEFAULT_PROVIDER=openai
+Regla crítica: las API keys de OpenAI, Gemini o Claude nunca deben llegar al navegador. Angular debe comunicarse con FastAPI, y FastAPI será el único componente que acceda a los proveedores LLM.
+7.2. .gitignore mínimo recomendado
+# Variables y secretos
+.env
+.env.*
+!.env.example
+secretos_locales/
+
+# Claves y certificados
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Credenciales de servicios
+service-account*.json
+credentials*.json
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Angular / Node
+node_modules/
+dist/
+.angular/
+coverage/
+
+# IDE
+.idea/
+.vscode/
+
+# Logs
+logs/
+*.log
+
+# Temporales
+tmp/
+temp/
+uploads/
+postgres_data/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+Además del .gitignore, es recomendable revisar los commits antes de subirlos y utilizar un detector de secretos como medida adicional. Si una clave llega a publicarse, debe considerarse comprometida y rotarse.
+
+8. Capa desacoplada de proveedores LLM
+La lógica de OpenAI, Gemini y Claude no se escribirá directamente dentro de los módulos educativos. Se implementará una interfaz común para poder cambiar de proveedor sin modificar el resto de TutorIA.
+modulos/
+`-- proveedores_ia/
+    |-- interfaces/
+    |   `-- llm_provider.py
+    |-- openai/
+    |   `-- openai_provider.py
+    |-- gemini/
+    |   `-- gemini_provider.py
+    |-- claude/
+    |   `-- claude_provider.py
+    `-- servicios/
+        `-- llm_factory.py
+El resto del sistema trabajará contra una operación común, por ejemplo generate(), sin depender de la sintaxis particular de cada proveedor. Esto es esencial para la comparación experimental prevista en la tesis.
+9. API REST versionada
+Todos los endpoints públicos deben vivir bajo /api/v1/. Esto permite evolucionar la API sin romper futuras integraciones.
+GET    /api/v1/health
+
+POST   /api/v1/auth/login
+POST   /api/v1/auth/refresh
+POST   /api/v1/auth/logout
+GET    /api/v1/auth/me
+
+POST   /api/v1/documents/upload
+GET    /api/v1/documents
+GET    /api/v1/documents/{id}
+DELETE /api/v1/documents/{id}
+
+POST   /api/v1/profiles
+GET    /api/v1/profiles/{id}
+
+POST   /api/v1/rag/search
+
+POST   /api/v1/content/generate
+POST   /api/v1/content/quiz
+POST   /api/v1/content/feedback
+POST   /api/v1/content/explanation
+POST   /api/v1/content/challenge
+
+GET    /api/v1/generations
+GET    /api/v1/generations/{id}
+
+GET    /api/v1/metrics
+FastAPI expondrá documentación OpenAPI/Swagger. Cada endpoint debe tener esquema de entrada, esquema de salida, manejo de errores y validación. La lógica de negocio no debe quedar incrustada directamente en el router.
+10. Modelo de datos inicial
+Entidad | Responsabilidad
+usuarios | Identidad de usuarios y estado de cuenta.
+roles | Permisos y tipo de usuario.
+documentos | Material académico cargado por docentes.
+fragmentos_documento | Chunks indexados y referencias para RAG.
+perfiles_rendimiento | Rendimiento por tema, intentos, errores, dominio y progreso.
+generaciones | Registro de cada recurso producido por TutorIA.
+fuentes_generacion | Fragmentos y documentos utilizados para sustentar cada generación.
+proveedores_llm | Proveedor y modelo utilizado.
+metricas_generacion | Latencia, tokens, costo aproximado, errores y estabilidad.
+evaluaciones_contenido | Resultados de evaluación de calidad, fidelidad y pertinencia.
+Las columnas definitivas se diseñarán después de validar casos de uso y relaciones. Las migraciones de base de datos deben gestionarse con Alembic; no se realizarán cambios manuales sin migración.
+11. Flujo técnico de TutorIA
+Sistema externo / perfil de rendimiento
+        |
+        v
+FastAPI recibe perfil + tema + objetivo + tipo de recurso
+        |
+        v
+RAG recupera fragmentos relevantes
+        |
+        v
+PostgreSQL + pgvector
+        |
+        v
+Se construye el contexto controlado
+        |
+        v
+Proveedor LLM (OpenAI / Gemini / Claude)
+        |
+        v
+Contenido educativo personalizado
+        |
+        +--> fuentes utilizadas
+        +--> modelo y proveedor
+        +--> latencia
+        +--> tokens
+        +--> costo aproximado
+        `--> historial
+12. Pipeline RAG
+Carga del documento docente.
+Validación del tipo de archivo.
+Extracción y normalización del texto.
+Segmentación del contenido en fragmentos.
+Generación de embeddings.
+Almacenamiento de embeddings y metadatos en PostgreSQL + pgvector.
+Conversión de la consulta o necesidad del estudiante en una representación de búsqueda.
+Recuperación de los fragmentos más pertinentes.
+Construcción del contexto para el LLM.
+Generación del recurso educativo y registro de las fuentes.
+Antes de conectar el LLM se debe verificar que la búsqueda semántica recupera fragmentos correctos. Esto evita ocultar problemas de recuperación detrás de respuestas aparentemente buenas del modelo.
+13. Perfil de rendimiento e integración externa
+TutorIA no necesita calcular todas las notas o resultados académicos. Debe estar preparado para recibirlos desde otro módulo o aplicación mediante una API. Para las pruebas se podrán utilizar perfiles sintéticos controlados.
+{
+  "student_id": "EST-001",
+  "topic": "limites",
+  "performance": 42,
+  "attempts": 4,
+  "frequent_errors": ["limites_laterales"],
+  "mastery_level": "low",
+  "recommended_support": "reinforcement"
+}
+Variables útiles: desempeño por tema, número de intentos, errores frecuentes, tiempo de resolución, nivel de dominio estimado y tendencia de progreso.
+14. Tipos de recursos educativos
+La arquitectura debe permitir ampliar los tipos de recursos sin cambiar el núcleo. Se puede comenzar con un conjunto reducido y agregar otros de forma incremental.
+Clave técnica | Recurso | Prioridad
+EXPLANATION | Explicación adaptada | Inicial
+EXERCISE | Ejercicio | Inicial
+QUIZ | Cuestionario | Inicial
+FEEDBACK | Retroalimentación | Inicial
+EXAMPLE | Ejemplo contextualizado | Segunda etapa
+HINT | Pista | Segunda etapa
+CHALLENGE | Reto | Segunda etapa
+15. Personalización
+Desempeño alto: Retos, problemas de mayor complejidad y menor cantidad de explicaciones básicas.
+Desempeño medio: Explicación breve, práctica guiada y quiz intermedio.
+Con dificultades: Refuerzo de prerrequisitos, explicación paso a paso, pistas y quiz básico.
+Dificultad localizada: Refuerzo únicamente en el concepto con mayor debilidad.
+16. Trazabilidad de cada generación
+Cada generación debe dejar evidencia suficiente para reproducir, auditar y comparar el comportamiento del sistema.
+student_profile
+topic
+learning_objective
+resource_type
+difficulty
+provider
+model
+prompt_version
+retrieved_chunks
+source_documents
+latency
+input_tokens
+output_tokens
+estimated_cost
+created_at
+status
+error_detail (si aplica)
+17. Docker e infraestructura
+Docker se utilizará para ejecutar el entorno de forma reproducible. Git/GitHub seguirá siendo el sistema de versionamiento.
+Angular container
+       |
+       | HTTP
+       v
+FastAPI container
+       |
+       +--> PostgreSQL + pgvector container
+       |
+       `--> External LLM APIs
+Dockerfile separado para backend y frontend.
+docker-compose.yml en la raíz.
+Variables sensibles cargadas desde .env local.
+Volumen persistente para PostgreSQL.
+Health checks para API y base de datos.
+No almacenar API keys dentro de imágenes Docker.
+18. Git y GitHub
+main
+develop
+feature/*
+fix/*
+refactor/*
+docs/*
+Ejemplos de ramas:
+feature/auth-login
+feature/document-upload
+feature/rag-ingestion
+feature/content-generation
+feature/openai-provider
+Ejemplos de commits:
+feat: implement login service
+feat: add document ingestion endpoint
+fix: validate unsupported PDF files
+refactor: decouple LLM providers
+docs: add RAG architecture
+test: add login integration tests
+19. Itinerario completo de desarrollo
+Orden | Etapa | Trabajo principal | Resultado
+0 | Preparación | Repositorio, estructura, .gitignore, .env.example, Docker. | Base segura y ordenada.
+1 | Backend base | FastAPI, configuración, logs, errores, /health. | API operativa.
+2 | Base de datos | PostgreSQL + pgvector, conexión y migraciones. | Persistencia lista.
+3 | Frontend base | Angular, layout, rutas, SCSS, animaciones y shell. | Interfaz base.
+4 | Autenticación | Login, JWT, roles, guards e interceptores. | Acceso seguro.
+5 | Documentos | PDF/DOCX/TXT, validación, carga y gestión. | Corpus docente.
+6 | Ingesta RAG | Extracción, chunks, embeddings e indexación. | Corpus vectorizado.
+7 | Recuperación | Búsqueda semántica y top-k de fragmentos. | RAG verificable.
+8 | Proveedores LLM | OpenAI/Gemini/Claude mediante interfaz común. | Generación desacoplada.
+9 | Generación educativa | Explicación, ejercicio, quiz y feedback. | TutorIA funcional.
+10 | Perfil académico | Recepción de rendimiento y validación. | Contexto del estudiante.
+11 | Personalización | Adaptar tipo, dificultad y contenido al perfil. | Núcleo de tesis.
+12 | Trazabilidad | Fuentes, modelo, tokens, costo, latencia. | Auditoría y reproducibilidad.
+13 | Historial y métricas | Dashboard, registros y consultas. | Datos experimentales.
+14 | Evaluación | LLM directo vs RAG; perfiles; proveedores. | Resultados de investigación.
+15 | Endurecimiento | Pruebas, seguridad, documentación y despliegue. | MVP final.
+20. Hitos técnicos
+Hito 1 - Base: Angular -> FastAPI -> PostgreSQL/pgvector funcionando con Docker y endpoint /health.
+Hito 2 - Seguridad: Login y protección de rutas.
+Hito 3 - Corpus: Carga y gestión de documentos.
+Hito 4 - Ingesta: Documentos segmentados e indexados.
+Hito 5 - RAG: Recuperación semántica validada sin LLM.
+Hito 6 - IA: Primer proveedor LLM integrado.
+Hito 7 - Recursos: Generación de explicación, ejercicio, quiz y feedback.
+Hito 8 - Perfiles: Recepción de rendimiento.
+Hito 9 - Personalización: Contenido distinto para perfiles distintos.
+Hito 10 - Trazabilidad: Fuentes y métricas visibles.
+Hito 11 - Benchmark: Comparación de modelos y RAG.
+Hito 12 - Cierre: MVP, documentación, pruebas y evidencia final.
+21. Primer bloque de trabajo: por dónde comenzar
+1. Crear el repositorio TutorIA-Lucero.
+2. Crear .gitignore y .env.example antes de cualquier API key.
+3. Crear carpetas raíz y README.
+4. Inicializar backend FastAPI.
+5. Crear GET /api/v1/health.
+6. Inicializar PostgreSQL + pgvector.
+7. Agregar migraciones con Alembic.
+8. Inicializar Angular.
+9. Crear layout inicial y rutas.
+10. Crear estilos SCSS base y estructura de animaciones.
+11. Crear Dockerfile de backend.
+12. Crear Dockerfile de frontend.
+13. Crear docker-compose.yml.
+14. Conseguir que Angular consulte /api/v1/health.
+15. Comprobar que FastAPI consulte correctamente PostgreSQL.
+Criterio de cierre del primer bloque: al ejecutar un único comando de Docker debe levantarse Angular, FastAPI y PostgreSQL/pgvector; Angular debe mostrar que la API está disponible y FastAPI debe confirmar que la base de datos responde.
+22. Orden después del primer hito
+Base tecnica
+  -> Login
+  -> Usuarios
+  -> Documentos
+  -> Ingesta
+  -> Embeddings
+  -> Recuperacion RAG
+  -> Proveedor LLM
+  -> Generacion
+  -> Perfil de rendimiento
+  -> Personalizacion
+  -> Trazabilidad
+  -> Historial
+  -> Metricas
+  -> Comparacion experimental
+  -> Pruebas finales
+  -> Documentacion
+23. Estrategia de pruebas
+Nivel | Qué se prueba | Ejemplos
+Unitarias | Funciones aisladas y reglas. | chunking, validación de perfiles, selección de proveedor.
+Integración | Comunicación entre módulos. | FastAPI + PostgreSQL, RAG + pgvector, proveedor LLM.
+API | Contratos HTTP. | login, upload, generate, errores esperados.
+Frontend | Componentes y servicios. | formularios, guards, visualización de fuentes.
+End-to-end | Flujo completo. | documento -> RAG -> perfil -> generación -> historial.
+Evaluación tesis | Calidad experimental. | RAG vs directo, proveedor A/B/C, perfil alto/medio/bajo.
+24. Seguridad mínima obligatoria
+No exponer API keys en Angular.
+No subir .env ni secretos_locales/.
+Contraseñas almacenadas únicamente como hashes robustos.
+JWT con expiración y mecanismo de renovación definido.
+Validar MIME, extensión y tamaño de documentos.
+Evitar ejecución de contenido subido por usuarios.
+Validar y sanear entradas antes de persistir o enviar a proveedores externos.
+Aplicar autorización por rol en endpoints sensibles.
+Registrar errores sin guardar secretos ni contenido sensible en logs.
+Limitar tamaño y frecuencia de solicitudes costosas a LLM.
+Rotar inmediatamente cualquier secreto expuesto.
+25. Definición de terminado para una funcionalidad
+Una funcionalidad no se considerará terminada únicamente porque funcione en una prueba manual. Debe cumplir:
+Endpoint o caso de uso implementado.
+Validación de entrada y salida.
+Lógica fuera del router/controlador.
+Manejo de errores.
+Persistencia cuando corresponda.
+Prueba unitaria o de integración adecuada.
+Documentación OpenAPI actualizada.
+Frontend con estados de carga, éxito y error.
+HTML, SCSS y TS separados en Angular.
+Sin secretos ni datos sensibles en el commit.
+Código revisado y commit descriptivo.
+26. Experimentos previstos para la tesis
+Experimento A: Generación directa del LLM frente a generación con RAG.
+Experimento B: Mismo tema y recurso para perfiles de rendimiento alto, medio y bajo.
+Experimento C: Comparación de OpenAI, Gemini y Claude bajo el mismo corpus, prompt y perfil.
+Experimento D: Portabilidad entre Cálculo Diferencial y una segunda asignatura si el tiempo lo permite.
+Las dimensiones de evaluación podrán incluir fidelidad a fuentes, pertinencia, adecuación de dificultad, calidad pedagógica, personalización, latencia, estabilidad, tokens y costo aproximado por generación.
+27. Documentación que debe mantenerse durante el desarrollo
+README principal con instalación y ejecución.
+Arquitectura actualizada.
+Diagrama de base de datos.
+Descripción de endpoints.
+Decisiones técnicas importantes y su justificación.
+Versiones de prompts utilizados en experimentos.
+Procedimiento para recrear perfiles sintéticos.
+Métricas y configuración de cada benchmark.
+Manual técnico.
+Manual de usuario.
+28. Reglas para evitar desorden durante el proyecto
+No crear carpetas nuevas sin una responsabilidad clara.
+No duplicar lógica entre módulos.
+No llamar directamente a proveedores LLM desde componentes Angular.
+No mezclar consultas SQL dentro de routers.
+No introducir una nueva tecnología si la actual resuelve el problema.
+No implementar gamificación compleja antes de terminar RAG, personalización y trazabilidad.
+No modificar el esquema de BD sin migración.
+No fusionar una rama si rompe Docker, pruebas o la API.
+No usar secretos reales en ejemplos, commits o documentación.
+29. Resultado esperado de la arquitectura
+Al finalizar, TutorIA-Lucero deberá ser un sistema modular en el que Angular gestione la experiencia de usuario; FastAPI exponga la lógica como servicios; PostgreSQL almacene información relacional; pgvector permita recuperar semánticamente los materiales docentes; RAG construya el contexto; los proveedores LLM generen recursos educativos; y el perfil de rendimiento determine cómo adaptar dichos recursos.
+La arquitectura debe permitir que otro componente de AdaptIA envíe una necesidad de aprendizaje y reciba un recurso generado sin tener que conocer la implementación interna de TutorIA.
+30. Regla final de prioridad
+Primero estabilidad y trazabilidad; después complejidad visual y funcional. El proyecto debe avanzar de forma vertical: cada nueva capacidad debe funcionar desde la interfaz hasta la base de datos o proveedor correspondiente antes de iniciar la siguiente. Las animaciones, gamificación y mejoras visuales se incorporarán sin comprometer el núcleo técnico.

@@ -1,0 +1,22 @@
+@use './app/compartido/animaciones/motion';
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: #f7f8f2;
+  color: #20352c;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+button,
+input {
+  font: inherit;
+}
+:focus-visible {
+  outline: 3px solid #458c69;
+  outline-offset: 4px;
+}
+::selection {
+  background: #d6e9bc;
+}
