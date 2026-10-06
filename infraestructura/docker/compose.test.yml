@@ -10,6 +10,7 @@ services:
       DB_USER: ${DB_USER:-tutoria}
       DB_PASSWORD: ${DB_PASSWORD:?Configura .env}
       RUN_DB_TESTS: "1"
+      AUTH_MODE: mock
     depends_on:
       backend:
         condition: service_healthy

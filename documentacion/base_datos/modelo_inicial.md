@@ -1,6 +1,12 @@
-# Modelo de datos por desarrollar
+# Modelo de datos y evolución
 
-La migración actual habilita únicamente pgvector y la tabla de versión de Alembic. No existen todavía tablas funcionales ni se presume validado su diseño.
+La migración 0001 habilita pgvector. La migración 0002 crea usuarios institucionales, sesiones y solicitudes de acceso. Ambas están aplicadas en PostgreSQL local.
+
+`usuarios`: id, institutional_email único, institutional_id opcional único, nombre, apellido, rol (student/teacher/admin), activo, created_at y last_login. No existe password ni password_hash.
+
+`sesiones_autenticacion`: hash del token como identificador, usuario con FK, modo y expiración. `intentos_sso`: hash del estado, modo, URL service y expiración. El estado de acceso se consume una sola vez; la sesión se revoca al cerrar sesión. Los hashes no permiten reconstruir el token del navegador.
+
+La gestión administrativa de roles y las entidades posteriores todavía no están implementadas. El rol local actual está en usuarios; una entidad de roles independiente se evaluará al implementar la gestión de permisos.
 
 Entidades exigidas por la sección 10: usuarios, roles, documentos, fragmentos_documento, perfiles_rendimiento, generaciones, fuentes_generacion, proveedores_llm, metricas_generacion y evaluaciones_contenido.
 

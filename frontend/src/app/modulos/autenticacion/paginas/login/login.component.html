@@ -1,0 +1,23 @@
+<section class="auth-card fade-in">
+  <p class="eyebrow">UNIVERSIDAD POLITÉCNICA SALESIANA</p>
+  <h1>Bienvenido a TutorIA</h1>
+  <p>Accede con tu cuenta institucional para continuar en tu espacio de aprendizaje.</p>
+  @if (denied) {
+    <p class="error" role="alert">
+      No se pudo completar el acceso. El intento pudo vencer o tu cuenta no tiene acceso habilitado.
+      Inténtalo nuevamente.
+    </p>
+  }
+  @if (auth.unavailable()) {
+    <p class="error" role="alert">
+      No se pudo comprobar la sesión. Revisa la conexión e intenta acceder nuevamente.
+    </p>
+  }
+  <a class="login-button" href="/api/v1/auth/login"
+    >Iniciar sesión con cuenta UPS <span aria-hidden="true">↗</span></a
+  >
+  <p class="privacy">
+    Tu contraseña institucional se ingresa únicamente en el portal de la UPS. TutorIA no la solicita
+    ni la almacena.
+  </p>
+</section>

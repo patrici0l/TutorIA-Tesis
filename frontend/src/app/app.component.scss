@@ -158,3 +158,26 @@ footer {
     gap: 20px;
   }
 }
+.account {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.account button {
+  border: 1px solid #bbc9bc;
+  background: white;
+  padding: 7px 10px;
+  color: #264f39;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.mock-notice {
+  border-left: 3px solid #a67f38;
+  padding: 12px;
+  background: #f5efdf;
+  color: #665123;
+  font-size: 12px;
+  margin: 0 0 28px;
+}
+.account span { max-width: 220px; overflow-wrap: anywhere; }
+@media (max-width: 600px) { .topbar { height: auto; min-height: 64px; flex-wrap: wrap; padding-top: 16px; padding-bottom: 16px; } }

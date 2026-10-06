@@ -1,0 +1,53 @@
+.auth-card {
+  max-width: 560px;
+  margin: 24px auto;
+  padding: 40px;
+  background: white;
+  border: 1px solid #dfe5dd;
+  border-radius: 12px;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: #657a6c;
+  font-weight: 700;
+}
+h1 {
+  font-size: 32px;
+  letter-spacing: -1px;
+  margin: 20px 0;
+}
+p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #53675b;
+}
+.login-button {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 15px 20px;
+  background: #193d32;
+  color: white;
+  text-decoration: none;
+  border-radius: 7px;
+  margin: 32px 0 20px;
+  font-size: 14px;
+}
+.login-button:hover {
+  background: #255240;
+}
+.privacy {
+  font-size: 12px;
+}
+.error {
+  color: #a23922;
+}
+@media (max-width: 420px) {
+  .auth-card {
+    padding: 24px;
+  }
+  h1 {
+    font-size: 27px;
+  }
+}

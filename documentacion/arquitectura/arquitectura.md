@@ -8,4 +8,10 @@ La API devuelve 503 si la BD o pgvector fallan. Angular diferencia este caso de 
 
 Las futuras capas seguirán router → servicio → repositorio. RAG tendrá loaders, retrievers, prompts y servicios separados. Los servicios educativos dependerán de una interfaz de proveedor común. La evolución prevista está detallada en el plan, aún sin implementación de esos módulos.
 
-El entorno actual es de desarrollo local, sin autenticación todavía y con puertos publicados exclusivamente en loopback. No es un despliegue institucional de producción.
+El entorno actual es de desarrollo local, con autenticación mock y adaptador CAS preparado y con puertos publicados exclusivamente en loopback. No es un despliegue institucional de producción.
+
+## Acceso institucional
+
+Angular inicia GET /api/v1/auth/login. FastAPI crea un intento de acceso de cinco minutos ligado al navegador; CAS devuelve el ticket al callback y FastAPI lo valida con el servicio configurado usando el mismo service. Se crea o actualiza el usuario local y se emite una cookie opaca HttpOnly. Angular consulta /auth/me antes de acceder a /inicio. En desarrollo mock sustituye únicamente la identidad institucional por una ficticia del servidor. La sesión y el intento están ligados al modo de autenticación.
+
+Los registros de acceso de autenticación se desactivan para evitar capturar tickets o cookies. PostgreSQL conserva hashes de tokens y caducidad; el usuario no tiene contraseña. Logout revoca la sesión de TutorIA, sin cerrar globalmente CAS. La decisión 0002 documenta HTTPS, dominios, atributos y requisitos pendientes de TI.

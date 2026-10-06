@@ -4,7 +4,7 @@ Fuente rectora: Plan_Implementacion_TutorIA-Lucero.docx, entregado por el autor 
 
 ## Bloque actual
 
-Hito 1, base técnica: implementar los 15 pasos de la sección 21 y validar el arranque conjunto. El estado de las verificaciones se registra en `pruebas/hito_01.md`. No dar por completados los siguientes hitos por haber creado sus carpetas.
+Hito 1 cerrado. Hito 2 implementado en modo mock y con adaptador CAS preparado; integración institucional pendiente de TI. Las verificaciones están en `pruebas/hito_01.md` y `pruebas/hito_02.md`. La instrucción directa del autor del 5 de octubre de 2026 reemplaza el login tradicional/JWT del documento por SSO/CAS y sesiones opacas HttpOnly; la fuente original se conserva íntegra. No dar por completados los siguientes hitos por haber creado sus carpetas.
 
 | Paso | Entregable | Evidencia prevista |
 |---|---|---|
@@ -28,8 +28,8 @@ Hito 1, base técnica: implementar los 15 pasos de la sección 21 y validar el a
 
 | Hito | Alcance | Criterio de cierre | Estado |
 |---|---|---|---|
-| 1 Base | Preparación, backend, BD, frontend, Docker | Un comando levanta todo; interfaz confirma API y BD real | En verificación |
-| 2 Seguridad | Login, usuarios, JWT, renovación, logout, roles, guards e interceptores | Acceso autorizado y rechazo de sesiones inválidas con pruebas | Pendiente |
+| 1 Base | Preparación, backend, BD, frontend, Docker | Un comando levanta todo; interfaz confirma API y BD real | Completado |
+| 2 Seguridad | SSO/CAS, usuarios institucionales, sesión HttpOnly, logout, roles, guards e interceptores | Acceso mock y rechazo de sesiones inválidas probados; integración UPS autorizada por TI | Mock completado; CAS pendiente de TI |
 | 3 Corpus | PDF/DOCX/TXT, MIME/extensión/tamaño, permisos y gestión | Cargar, listar, consultar y eliminar documentos propios | Pendiente |
 | 4 Ingesta | Extracción, normalización, segmentación, embeddings e índices | Corpus trazable y reproducible en pgvector | Pendiente |
 | 5 RAG | Búsqueda semántica y top-k | Recuperación validada con corpus y consultas de referencia, sin LLM | Pendiente |
@@ -67,7 +67,7 @@ La tabla de etapas 0–15 de la sección 19 se conserva íntegra en la fuente. L
 
 ## Contratos aún pendientes
 
-Autenticación: POST `/auth/login`, `/auth/refresh`, `/auth/logout`, GET `/auth/me`. Usuarios y registro deberán concretarse al validar los roles y la política de alta.
+Autenticación implementada: GET `/auth/login`, GET `/auth/callback`, GET `/auth/me`, POST `/auth/logout`. Alta automática después de validar la identidad; sin registro por contraseña ni refresh JWT. El rol local se conserva al iniciar sesión. La gestión administrativa de permisos y las políticas institucionales quedan por concretar.
 
 Documentos: POST `/documents/upload`, GET `/documents`, GET y DELETE `/documents/{id}`. Perfiles: POST `/profiles`, GET `/profiles/{id}`. Recuperación: POST `/rag/search`.
 
@@ -86,8 +86,8 @@ Generación: POST `/content/generate`, `/content/quiz`, `/content/feedback`, `/c
 - Credenciales excluidas, revisión de cambios y commit descriptivo.
 - Docker, API y pruebas sin regresiones.
 
-Seguridad posterior obligatoria: hashes robustos, expiración/renovación de JWT, autorización por rol, validación de documentos, no ejecutar cargas, saneamiento según contexto, límites de tamaño/frecuencia de solicitudes LLM y logs sin contenido sensible.
+Seguridad vigente: validación CAS en backend, hashes de tokens opacos, expiración y revocación de sesiones, autorización por rol, validación de documentos, no ejecutar cargas, saneamiento según contexto, límites de tamaño/frecuencia de solicitudes LLM y logs sin contenido sensible.
 
 ## Decisiones académicas y externas por concretar
 
-Seleccionar corpus docente autorizado y rúbrica antes de RAG y evaluación. Confirmar política de alta y roles antes del hito 2. Elegir licencia y cuenta/visibilidad de GitHub antes de publicación. Elegir modelos, presupuesto y credenciales de proveedores antes del hito 6. Estas decisiones no impiden construir y probar la base técnica. No se inventan aprobaciones del tutor, resultados experimentales ni fechas del cronograma.
+Seleccionar corpus docente autorizado y rúbrica antes de RAG y evaluación. TI debe confirmar endpoints, atributos, callback, dominios y entorno CAS; el alta institucional automática ya está definida. Concretar administración de roles y corpus docente autorizado al continuar el hito 3. Elegir licencia y cuenta/visibilidad de GitHub antes de publicación. Elegir modelos, presupuesto y credenciales de proveedores antes del hito 6. Estas decisiones no impiden construir y probar la base técnica. No se inventan aprobaciones del tutor, resultados experimentales ni fechas del cronograma.
