@@ -1,6 +1,6 @@
 # Modelo de datos y evolución
 
-La migración 0001 habilita pgvector. La migración 0002 crea usuarios institucionales, sesiones y solicitudes de acceso. Las migraciones 0001, 0002 y 0003 están aplicadas en PostgreSQL local. La 0003 crea documentos.
+La migración 0001 habilita pgvector. La migración 0002 crea usuarios institucionales, sesiones y solicitudes de acceso. La 0003 crea documentos y la 0004 incorpora extracción trazable y fragmentos. Las cuatro están aplicadas en PostgreSQL local; se conservan inmutables las migraciones anteriores.
 
 `usuarios`: id, institutional_email único, institutional_id opcional único, nombre, apellido, rol (student/teacher/admin), activo, created_at y last_login. No existe password ni password_hash.
 
@@ -14,4 +14,8 @@ Relaciones conceptuales propuestas para validar: usuarios asociados a roles; doc
 
 Antes de crear una tabla se documentarán los campos, restricciones, índices, permisos y pruebas. Las migraciones se guardan en `backend/alembic/versions` y se ejecutan con Alembic. No se permite crear tablas desde el arranque de FastAPI con `create_all`.
 
-`documentos`: UUID, owner_id con FK a usuarios, filename, title, mime_type, size_bytes (1..10 MiB), sha256, status (uploaded/deleted), created_at y deleted_at. Índice por propietario; listas y detalles excluyen eliminados. Los bytes se guardan en almacenamiento privado identificado por el UUID, separado de PostgreSQL. La eliminación conserva metadatos mínimos y retira el archivo. Fragmentos y estados de ingesta se añadirán en migraciones futuras.
+`documentos`: UUID, owner_id con FK a usuarios, filename, title, mime_type, size_bytes (1..10 MiB), sha256, status (uploaded/deleted), created_at y deleted_at. Índice por propietario; listas y detalles excluyen eliminados. Los bytes se guardan en almacenamiento privado identificado por el UUID, separado de PostgreSQL. La eliminación conserva metadatos mínimos y retira el archivo y los fragmentos.
+
+Desde 0004: processing_status (pending/processing/processed/failed), processing_error (código seguro), processing_token (UUID interno de intento), processing_started_at, processed_at, processing_version, chunk_chars, chunk_overlap, chunk_count y text_chars. Restricciones de estados y contadores no negativos. No se guarda texto extraído completo adicional en documentos.
+
+`fragmentos_documento`: UUID, document_id con FK y ON DELETE CASCADE, position, source_kind (page/paragraph), source_index, char_start, char_end, text y source_sha256. Único (document_id, position), índice por documento, fuentes/posiciones válidas y longitud igual a char_end-char_start. Los offsets se refieren a una unidad normalizada; su SHA-256 se calcula sobre UTF-8. La política de eliminación lógica retira explícitamente los fragmentos en la misma transacción. Todavía no hay columnas embedding ni índices vectoriales de corpus.

@@ -4,42 +4,43 @@ Actualizado: 6 de octubre de 2026. Este apartado conserva el estado al cerrar ca
 
 ## Instrucciones vigentes
 
-El plan original continúa como base. La actualización directa del autor del 5 de octubre reemplaza la autenticación local y el registro abierto: acceso institucional SSO/CAS UPS con modo mock de usuarios ficticios para desarrollo. Angular no solicita contraseñas ni almacena tokens. CAS real no se conecta hasta recibir parámetros autorizados por TI. Se mantienen Angular, FastAPI, PostgreSQL/pgvector, Alembic y Docker. La instrucción del 6 de octubre incorpora colores relacionados con la UPS; consultar la decisión 0003 para la fuente y paleta aplicada.
+El plan original continúa como base. La actualización directa del autor reemplaza autenticación local/Google y registro abierto por SSO/CAS UPS, modos mock/cas y cookie HttpOnly/SameSite. Angular no solicita contraseñas ni almacena tokens. CAS real no se conecta hasta recibir parámetros autorizados por TI. Se mantienen Angular, FastAPI, PostgreSQL/pgvector, Alembic y Docker. Colores relacionados con UPS y navegación superior interactiva/responsiva, con movimiento reducido. Consultar decisiones 0002, 0003 y arquitectura/navegacion.md.
 
 ## Qué tenemos terminado
 
-- Hito 1: estructura modular, FastAPI, health real, Angular, Docker, Alembic/pgvector y documentación. Arranque conjunto comprobado.
-- Hito 2, parte local: cuatro rutas auth, intento ligado al navegador de un solo uso, cookie HttpOnly/SameSite, sesión persistida por hash, expiración y revocación; usuario institucional sin contraseña; alta/actualización automática y conservación del rol local.
-- Adaptador CAS: endpoints, parámetros y atributos configurables; validación de ticket en backend, XML seguro, dominios institucionales y HTTPS obligatorio. URLs institucionales vacías hasta confirmación de TI.
-- Angular: botón UPS, guard, consulta /auth/me, logout y aviso visible de usuario ficticio. Flujo mock validado en navegador con recarga y rechazo de acceso tras logout.
-- Migración 0002 aplicada en PostgreSQL local. Se retiró la implementación provisional de contraseñas antes de ejecutar su migración.
-- Hito 3: carga PDF/DOCX/TXT hasta 10 MiB, validación estructural, biblioteca paginada, detalle y eliminación de documentos propios; rol teacher/admin obligatorio y controles de propietario en backend. Migración 0003 aplicada; bytes privados en volumen document_data.
-- Navegación mejorada: cabecera superior, pestañas desplazables, desplegable Explorar animado, foco/Escape, rol y movimiento reducido. Componente compartido modular; arquitectura/navegacion.md documenta estructura y prueba.
-- Estilo: azules digitales UPS, acento amarillo, blanco y fondo claro; navegación, login, dashboard y biblioteca consistentes.
-- Entorno Docker funcionando, tres servicios saludables y volúmenes de PostgreSQL/documentos conservados.
+- Hito 1: estructura modular, FastAPI, health real, Angular, Docker, Alembic y pgvector; arranque conjunto comprobado.
+- Hito 2 local: cuatro rutas auth, estado ligado al navegador de un solo uso, sesión opaca persistida por hash, expiración/revocación, alta/actualización automática y conservación del rol. Usuario institucional sin contraseña. Adaptador CAS preparado, URLs vacías hasta TI.
+- Hito 3: carga PDF/DOCX/TXT hasta 10 MiB, validación estructural, biblioteca paginada, detalle y eliminación de documentos propios; teacher/admin y propietario comprobados. Bytes privados en volumen document_data.
+- Navegación: cabecera superior, pestañas con scroll, desplegable Explorar animado, foco/Escape, roles, responsive y movimiento reducido; paleta azul/amarillo/blanco UPS.
+- Hito 4, primera parte: extracción/normalización/segmentación real en worker separado, referencias de página/párrafo, offsets Unicode y SHA-256 de unidad. Estados, versión y configuración persistidos. Fragmentos paginados en Angular; fallos persistentes, reintentos y recuperación tras interrupción. Operación idempotente; intentos tardíos no pisan resultados ni restauran documentos eliminados.
+- Migraciones 0001–0004 aplicadas en PostgreSQL local. No se modificaron las anteriores. No hay columnas de contraseña ni llamadas institucionales reales.
 
 ## Pruebas y evidencia
 
-Verificación actual: backend local 54 aprobadas y 3 integraciones omitidas; Docker/PostgreSQL 57 aprobadas sin omisiones. Angular: última verificación de navegación 24 aprobadas en 8 archivos; compilación Docker aproximadamente 300 kB, sin advertencias de presupuesto. Capturas navegacion_desktop.png y navegacion_mobile.png; responsive verificado a 390×844 y tamaño normal restaurado. Ruff sin errores. La muestra sintética se cargó desde el navegador y persiste tras recarga y recreación de backend. Consultar pruebas/hito_03.md y capturas hito_03_inicio_ups.png / hito_03_documentos_ups.png. TestClient/HTTPX y add_js de pypdf tienen advertencias de deprecación documentadas.
+Verificación final de este bloque: Docker/PostgreSQL 105 aprobadas sin omisiones; Angular 32 aprobadas en 9 archivos; compilación de producción 299,59 kB iniciales, sin advertencias de presupuesto. Ruff check/format check limpios. Las advertencias de Starlette TestClient/HTTPX y pypdf add_js de prueba siguen documentadas.
+
+Pruebas cubren extracción, límites, offsets/solapamiento, integridad de archivo, errores seguros, propiedad, CSRF, idempotencia, rollback y recuperación. PostgreSQL incluye sesiones independientes para reclamación concurrente y carrera publicación/eliminación. La muestra sintética se procesó desde el navegador y conservó su fragmento después de recrear servicios/recargar. Capturas hito_04_fragmentos_desktop.png y hito_04_fragmentos_mobile.png; tamaño normal restaurado después de 390×844. Detalles en pruebas/hito_04_extraccion.md y decisión 0004.
 
 ## Punto exacto de continuación
 
-Hitos 1, 2 mock y 3 cerrados. CAS real sigue pendiente de TI; gestión administrativa global de roles y corpus no implementada. La próxima etapa es hito 4: extracción, normalización y segmentación con referencias; luego embeddings e índices. No se han implementado ingesta, recuperación RAG, proveedores LLM ni generación.
+Hitos 1, 2 mock y 3 cerrados. Hito 4 en curso: extracción/segmentación terminadas; embeddings e índices pendientes. Todavía no hay búsqueda semántica, proveedores LLM ni generación. El indicador de motor vectorial del inicio comprueba pgvector, no un corpus indexado.
+
+PDF escaneados necesitan OCR, aún no implementado. PDF con fórmulas dibujadas/columnas requiere cotejo; DOCX OfficeMath y ciertos estilos verticales heredados se rechazan para evitar alterar fórmulas. No se afirma validación académica ni autorización de corpus real.
 
 ## Próximos pasos
 
-1. Diseñar las referencias de página/párrafo, versión de extractor y estados de procesamiento antes de crear fragmentos_documento. Mantener inmutables las migraciones ya aplicadas.
-2. Implementar extracción PDF/DOCX/TXT con límites de recursos y errores por documento, sin ejecutar contenido. Usar primero materiales sintéticos; corpus docente real requiere autorización.
-3. Normalizar y segmentar conservando trazabilidad con documento/SHA-256 y referencias; verificar casos vacíos, documentos escaneados y fallos de extracción.
-4. Concretar estrategia de embeddings, dimensiones, proveedor/modelo y presupuesto antes de indexar; después validar recuperación sin LLM (hito 5).
-5. Pendiente de TI: URLs CAS, callback con state, atributos, dominios y ambiente de pruebas. Pendiente de producción: análisis/aislamiento de documentos, limpieza de archivos huérfanos, retención y autorización de roles. Decisiones 0002 y 0003.
+1. Concretar embeddings multilingües y dimensionamiento. Se planteó al autor modelo local recomendado frente a API externa; todavía no hay una respuesta registrada ni un modelo instalado/seleccionado definitivamente. Investigar modelo local CPU con licencia/revisión/pesos trazables y sin enviar corpus fuera del equipo.
+2. Controlar tokenizer y longitud antes de vectorizar: los fragmentos actuales usan caracteres, no tokens. Diseñar nueva migración para vectores, versión/modelo/dimensión e índices; conservar migración 0004 inmutable.
+3. Implementar indexación idempotente/reconstrucción explícita, errores y retirada de vectores al eliminar material. Validar con corpus sintético y persistencia pgvector para cerrar hito 4.
+4. Hito 5: recuperación top-k y consultas de referencia, fuentes y permisos; probar sin LLM antes de hito 6.
+5. Pendientes externos: TI (URLs CAS, callback, atributos, dominios y pruebas), corpus autorizado/rúbrica, administración global de roles, licencia y cuenta/visibilidad GitHub. Producción requiere cola/coordinación de workers, aislamiento completo de documentos, retención y limpieza de archivos huérfanos.
 
 ## Git y cómo retomar
 
-Repositorio C:/C_PROJECTS/TESIS COMPUTACION/TutorIA-Lucero. Rama feature/navigation, basada en 31270c6 (corpus y estilo), precedido por 82fabe6 (autenticación); c7db36d sigue en main/develop. El ajuste de navegación se guarda en commit descriptivo; consultar git log -1 para su identificador. Sin remoto GitHub.
+Repositorio C:/C_PROJECTS/TESIS COMPUTACION/TutorIA-Lucero. Rama feature/document-ingestion, basada en 019c56b (navegación), precedido por 31270c6 (corpus/UPS), 82fabe6 (autenticación) y c7db36d (base en main/develop). El bloque se guarda en commit descriptivo; consultar git log -1 para su identificador. Sin remoto GitHub.
 
-Leer AGENTS.md, este archivo, PLAN_DE_TRABAJO.md y la decisión 0002. Revisar git status antes de editar y preservar cambios existentes. Ejecutar docker compose up -d --build --wait desde la raíz con el .env local, sin imprimir secretos ni eliminar volúmenes. Interfaz http://localhost:4200/login; las pruebas de PostgreSQL se ejecutan con el compose de pruebas documentado. No repetir verificaciones terminadas si no hay cambios que lo requieran.
+Leer AGENTS.md, este archivo, PLAN_DE_TRABAJO.md y decisiones 0002/0004. Revisar git status antes de editar y preservar cambios existentes. Ejecutar docker compose up -d --build --wait desde raíz sin imprimir secretos ni eliminar volúmenes. No repetir verificaciones ya cerradas sin cambios que lo justifiquen.
 
 ## Estado local al cerrar
 
-Se deja una muestra derivadas_sinteticas.txt en la biblioteca del docente ficticio y el navegador abierto en /inicio después de verificar el desplegable; la biblioteca sigue accesible por la pestaña Documentos. Para verificar la carga se seleccionó temporalmente AUTH_MOCK_USER=teacher mediante variable de proceso; después se restauró backend a la configuración .env original (student). La sesión docente ya iniciada continúa válida hasta logout/expiración. Un nuevo acceso usa la identidad configurada en .env; para demostrar documentos después de salir, configurar teacher y recrear backend. No se usaron credenciales UPS.
+Docker deja backend, frontend y postgres saludables. Navegador abierto en /documentos con detalle del docente ficticio y un fragmento del ejemplo derivadas_sinteticas.txt. Para demostrar se usó AUTH_MOCK_USER=teacher temporalmente; se restauró backend a la configuración original del .env (student), sin modificar el archivo ni exponer secretos. La sesión docente ya iniciada permanece válida hasta logout/expiración; un acceso nuevo usa el selector del .env. No se borró la muestra ni se usaron credenciales UPS.

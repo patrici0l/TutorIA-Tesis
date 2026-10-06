@@ -61,6 +61,8 @@ def create_app() -> FastAPI:
         if request.url.path.startswith(f"{API_PREFIX}/auth"):
             response.headers["Cache-Control"] = "no-store"
             response.headers["Referrer-Policy"] = "no-referrer"
+        if request.url.path.startswith(f"{API_PREFIX}/documents"):
+            response.headers["Cache-Control"] = "no-store"
         return response
 
     @app.exception_handler(RequestValidationError)

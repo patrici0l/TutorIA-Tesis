@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { DocumentList, CourseDocument } from '../modelos/document.model';
+import { DocumentList, CourseDocument, DocumentChunkList } from '../modelos/document.model';
 
 @Injectable({ providedIn: 'root' })
 export class DocumentService {
@@ -19,5 +19,13 @@ export class DocumentService {
   }
   delete(id: string) {
     return this.http.delete<void>(`/api/v1/documents/${id}`);
+  }
+  process(id: string) {
+    return this.http.post<CourseDocument>(`/api/v1/documents/${id}/process`, null);
+  }
+  chunks(id: string, offset = 0) {
+    return this.http.get<DocumentChunkList>(
+      `/api/v1/documents/${id}/chunks?limit=10&offset=${offset}`,
+    );
   }
 }

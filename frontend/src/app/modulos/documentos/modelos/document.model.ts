@@ -5,8 +5,32 @@ export interface CourseDocument {
   mime_type: string;
   size_bytes: number;
   sha256: string;
-  status: 'uploaded';
+  status: 'uploaded' | 'deleted';
   created_at: string;
+  processing_status: 'pending' | 'processing' | 'processed' | 'failed';
+  processing_error: string | null;
+  processed_at: string | null;
+  processing_started_at: string | null;
+  processing_version: string | null;
+  chunk_chars: number | null;
+  chunk_overlap: number | null;
+  chunk_count: number;
+  text_chars: number;
+}
+export interface DocumentChunk {
+  id: string;
+  position: number;
+  source_kind: 'page' | 'paragraph';
+  source_index: number;
+  char_start: number;
+  char_end: number;
+  text: string;
+}
+export interface DocumentChunkList {
+  items: DocumentChunk[];
+  total: number;
+  limit: number;
+  offset: number;
 }
 export interface DocumentList {
   items: CourseDocument[];

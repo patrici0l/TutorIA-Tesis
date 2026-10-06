@@ -4,11 +4,12 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { signal } from '@angular/core';
 import { AuthService } from '../../../../nucleo/servicios/auth.service';
 import { DocumentsComponent } from './documentos.component';
+import { CourseDocument } from '../../modelos/document.model';
 
 describe('Documentos propios', () => {
   let http: HttpTestingController;
   const user = signal({ rol: 'teacher' });
-  const sampleDocument = {
+  const sampleDocument: CourseDocument = {
     id: 'doc-1',
     title: 'Derivadas',
     filename: 'curso.txt',
@@ -17,6 +18,15 @@ describe('Documentos propios', () => {
     status: 'uploaded',
     created_at: '2026-10-06T10:00:00Z',
     sha256: 'abc',
+    processing_status: 'pending',
+    processing_error: null,
+    processed_at: null,
+    processing_started_at: null,
+    processing_version: null,
+    chunk_chars: null,
+    chunk_overlap: null,
+    chunk_count: 0,
+    text_chars: 0,
   };
   beforeEach(async () => {
     user.set({ rol: 'teacher' });
@@ -84,7 +94,7 @@ describe('Documentos propios', () => {
     const component = setup().componentInstance;
     component.remove();
     http.expectNone('/api/v1/documents/doc-1');
-    component.pendingDelete.set(sampleDocument as never);
+    component.pendingDelete.set(sampleDocument);
     component.remove();
     const request = http.expectOne('/api/v1/documents/doc-1');
     expect(request.request.method).toBe('DELETE');
@@ -94,5 +104,124 @@ describe('Documentos propios', () => {
       .flush({ items: [], total: 0, limit: 20, offset: 0 });
     expect(component.pendingDelete()).toBeNull();
     expect(component.success()).toBe('Documento eliminado.');
+  });
+  it('procesa el material y muestra sus fragmentos con referencias', () => {
+    const fixture = setup();
+    const component = fixture.componentInstance;
+    component.documents.set([sampleDocument]);
+    component.selected.set(sampleDocument);
+    fixture.detectChanges();
+    component.process();
+    expect(component.locked()).toBe(true);
+    const request = http.expectOne('/api/v1/documents/doc-1/process');
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toBeNull();
+    component.process();
+    http.expectNone('/api/v1/documents/doc-1/process');
+    request.flush({
+      ...sampleDocument,
+      processing_status: 'processed',
+      chunk_count: 1,
+      text_chars: 24,
+    });
+    fixture.detectChanges();
+    http.expectOne('/api/v1/documents/doc-1/chunks?limit=10&offset=0').flush({
+      items: [
+        {
+          id: 'chunk-1',
+          position: 0,
+          source_kind: 'paragraph',
+          source_index: 2,
+          char_start: 0,
+          char_end: 24,
+          text: 'La derivada es una razón.',
+        },
+      ],
+      total: 1,
+      limit: 10,
+      offset: 0,
+    });
+    fixture.detectChanges();
+    expect(component.locked()).toBe(false);
+    expect(component.documents()[0].chunk_count).toBe(1);
+    expect(fixture.nativeElement.textContent).toContain('Párrafo 2');
+    expect(fixture.nativeElement.textContent).toContain('La derivada es una razón.');
+    expect(fixture.nativeElement.textContent).toContain('texto extraído y dividido en 1 fragmento');
+  });
+  it('recupera el estado fallido del servidor y permite reintentar', () => {
+    const fixture = setup();
+    const component = fixture.componentInstance;
+    component.selected.set(sampleDocument);
+    component.process();
+    http
+      .expectOne('/api/v1/documents/doc-1/process')
+      .flush(
+        { detail: 'El documento no contiene texto extraíble.' },
+        { status: 422, statusText: 'Unprocessable Entity' },
+      );
+    http.expectOne('/api/v1/documents/doc-1').flush({
+      ...sampleDocument,
+      processing_status: 'failed',
+      processing_error: 'empty_text',
+    });
+    fixture.detectChanges();
+    expect(component.processingId()).toBeNull();
+    expect(component.error()).toBe('El documento no contiene texto extraíble.');
+    expect(fixture.nativeElement.textContent).toContain('Reintentar procesamiento');
+    component.process();
+    http.expectOne('/api/v1/documents/doc-1/process').flush({
+      ...sampleDocument,
+      processing_status: 'processed',
+      chunk_count: 1,
+    });
+    expect(component.selected()?.processing_status).toBe('processed');
+  });
+  it('conserva el nuevo detalle cuando termina el procesamiento de otro documento', () => {
+    const component = setup().componentInstance;
+    component.documents.set([sampleDocument]);
+    component.selected.set(sampleDocument);
+    component.process();
+    const processing = http.expectOne('/api/v1/documents/doc-1/process');
+    const second = { ...sampleDocument, id: 'doc-2', title: 'Límites' };
+    component.view(second);
+    http.expectOne('/api/v1/documents/doc-2').flush(second);
+    processing.flush({ ...sampleDocument, processing_status: 'processed', chunk_count: 2 });
+    expect(component.selected()?.id).toBe('doc-2');
+    expect(component.documents()[0].processing_status).toBe('processed');
+  });
+  it('cancela el detalle anterior al elegir otro material', () => {
+    const component = setup().componentInstance;
+    component.view(sampleDocument);
+    const previous = http.expectOne('/api/v1/documents/doc-1');
+    const second = { ...sampleDocument, id: 'doc-2' };
+    component.view(second);
+    expect(previous.cancelled).toBe(true);
+    http.expectOne('/api/v1/documents/doc-2').flush(second);
+    expect(component.selected()?.id).toBe('doc-2');
+  });
+  it('permite recuperar un procesamiento interrumpido sin duplicar el que sigue activo', () => {
+    const fixture = setup();
+    const component = fixture.componentInstance;
+    component.selected.set({
+      ...sampleDocument,
+      processing_status: 'processing',
+      processing_started_at: new Date().toISOString(),
+    });
+    component.process();
+    http.expectNone('/api/v1/documents/doc-1/process');
+    component.selected.set({
+      ...sampleDocument,
+      processing_status: 'processing',
+      processing_started_at: new Date(Date.now() - 180_000).toISOString(),
+    });
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Reintentar procesamiento');
+    component.process();
+    http.expectOne('/api/v1/documents/doc-1/process').flush({
+      ...sampleDocument,
+      processing_status: 'processed',
+      chunk_count: 1,
+    });
+    expect(component.selected()?.processing_status).toBe('processed');
   });
 });

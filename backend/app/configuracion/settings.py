@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Literal
 from urllib.parse import urlsplit
 
-from pydantic import Field, SecretStr
+from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy import URL
 
@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     db_password: SecretStr = SecretStr("")
     document_storage_path: Path = Path("uploads/documents")
     document_max_bytes: int = Field(default=10_485_760, ge=1024, le=10_485_760)
+    extraction_timeout_seconds: int = Field(default=15, ge=5, le=20)
+    document_chunk_chars: int = Field(default=1000, ge=300, le=2000)
+    document_chunk_overlap: int = Field(default=150, ge=0, le=500)
     auth_mode: Literal["mock", "cas"] = "mock"
     auth_mock_user: Literal["student", "teacher"] = "student"
     auth_cookie_secure: bool = False
@@ -35,6 +38,12 @@ class Settings(BaseSettings):
     cas_id_attribute: str = "uid"
     cas_first_name_attribute: str = "givenName"
     cas_last_name_attribute: str = "sn"
+
+    @model_validator(mode="after")
+    def validate_chunking(self):
+        if self.document_chunk_overlap >= self.document_chunk_chars:
+            raise ValueError("DOCUMENT_CHUNK_OVERLAP debe ser menor que DOCUMENT_CHUNK_CHARS")
+        return self
 
     def validate_auth(self) -> None:
         origins = {

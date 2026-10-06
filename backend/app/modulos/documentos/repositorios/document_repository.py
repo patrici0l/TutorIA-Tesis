@@ -1,9 +1,11 @@
+from datetime import UTC, datetime
 from uuid import UUID
 
-from sqlalchemy import func, select
+from sqlalchemy import delete, func, select, update
 from sqlalchemy.orm import Session
 
 from app.modulos.documentos.models import Document
+from app.modulos.rag.models import DocumentChunk
 
 
 class DocumentRepository:
@@ -31,3 +33,22 @@ class DocumentRepository:
 
     def rollback(self):
         self.db.rollback()
+
+    def delete_owned(self, identifier: UUID, owner: UUID) -> bool:
+        result = self.db.execute(
+            update(Document)
+            .where(
+                Document.id == identifier, Document.owner_id == owner, Document.deleted_at.is_(None)
+            )
+            .values(
+                deleted_at=datetime.now(UTC), status="deleted", processing_token=None, chunk_count=0
+            )
+            .execution_options(synchronize_session=False)
+        )
+        if result.rowcount != 1:
+            self.db.rollback()
+            return False
+        self.db.execute(delete(DocumentChunk).where(DocumentChunk.document_id == identifier))
+        self.db.commit()
+        self.db.expire_all()
+        return True

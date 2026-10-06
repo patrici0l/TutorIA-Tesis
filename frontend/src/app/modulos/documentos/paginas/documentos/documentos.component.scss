@@ -170,6 +170,18 @@ dd {
 .deletion {
   border-color: #eccaca;
 }
+.processing {
+  border-top: 1px solid var(--border);
+  margin-top: 24px;
+  padding-top: 12px;
+}
+.processing button + button {
+  margin-left: 10px;
+}
+button:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
 @media (max-width: 700px) {
   li,
   .heading {

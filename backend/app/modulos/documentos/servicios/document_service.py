@@ -1,7 +1,6 @@
 import hashlib
 import logging
 import unicodedata
-from datetime import UTC, datetime
 from uuid import UUID, uuid4
 
 from fastapi import HTTPException, UploadFile
@@ -61,11 +60,10 @@ class DocumentService:
         return document
 
     def delete(self, identifier: UUID, owner: UUID):
-        document = self.get(identifier, owner)
-        document.deleted_at, document.status = datetime.now(UTC), "deleted"
-        self.repository.save(document)
+        if not self.repository.delete_owned(identifier, owner):
+            raise HTTPException(404, "Documento no encontrado.")
         try:
-            (self.settings.document_storage_path.resolve() / str(document.id)).unlink(
+            (self.settings.document_storage_path.resolve() / str(identifier)).unlink(
                 missing_ok=True
             )
         except OSError:

@@ -18,4 +18,10 @@ Los registros de acceso de autenticación se desactivan para evitar capturar tic
 
 ## Corpus docente privado
 
-El módulo documentos sigue router → DocumentService → DocumentRepository. FastAPI valida permisos por sesión y propietario, MIME, extensión, tamaño y estructura antes de guardar. PostgreSQL almacena metadatos y SHA-256; el volumen document_data conserva bytes identificados por UUID fuera del directorio de nginx. El frontend usa la misma cookie y cabecera de protección que autenticación. Las listas son paginadas y los registros eliminados quedan excluidos. Los documentos se mantienen uploaded hasta implementar la ingesta; no se invoca un proveedor IA. La política detallada está en decisión 0003.
+El módulo documentos sigue router → DocumentService → DocumentRepository. FastAPI valida permisos por sesión y propietario, MIME, extensión, tamaño y estructura antes de guardar. PostgreSQL almacena metadatos y SHA-256; el volumen document_data conserva bytes identificados por UUID fuera del directorio de nginx. El frontend usa la misma cookie y cabecera de protección que autenticación. Las listas son paginadas y los registros eliminados quedan excluidos. El estado uploaded corresponde a almacenamiento; processing_status describe la extracción. No se invoca un proveedor IA. La política detallada está en decisión 0003.
+
+## Extracción y segmentación
+
+El router de documentos delega el procesamiento en IngestDocumentService → ChunkRepository, bajo el módulo rag. La lectura/parsing/normalización/segmentación ocurre en un proceso Python separado con timeout y límites de memoria/CPU en Docker. DocumentTextService extrae páginas PDF o párrafos DOCX/TXT y genera fragmentos con offsets exactos en texto normalizado. La publicación SQL condicional impide que un intento tardío sobreescriba un reintento o restaure un documento eliminado.
+
+Angular incorpora DocumentChunksComponent para revisar texto paginado y fuentes; usa interpolación segura. Los fallos se conservan por documento y admiten reintento; procesos interrumpidos pueden recuperarse tras dos minutos. La decisión 0004 documenta límites y reproducción. Embeddings y búsqueda semántica siguen pendientes antes de la integración LLM.
