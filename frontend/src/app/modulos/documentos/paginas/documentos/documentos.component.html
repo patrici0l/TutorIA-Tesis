@@ -175,6 +175,48 @@
           }
         </div>
       } @else {
+        <div class="processing" [attr.aria-busy]="indexingId() === document.id">
+          <h3>{{ indexLabel(document) }}</h3>
+          <p>
+            El modelo multilingüe local transforma los fragmentos en vectores sin enviar el material
+            fuera de tu equipo. La búsqueda semántica se incorporará en la siguiente etapa.
+          </p>
+          @if (document.index_status === 'failed') {
+            <p>{{ indexError(document) }}</p>
+          }
+          @if (document.index_status !== 'indexed') {
+            <button
+              (click)="index()"
+              [disabled]="
+                locked() || (document.index_status === 'indexing' && !canRetryIndex(document))
+              "
+            >
+              {{
+                indexingId() === document.id
+                  ? 'Indexando…'
+                  : document.index_status === 'indexing' && !canRetryIndex(document)
+                    ? 'Indexación en curso'
+                    : document.index_status === 'failed' || canRetryIndex(document)
+                      ? 'Reintentar indexación'
+                      : 'Preparar índice vectorial'
+              }}
+            </button>
+            @if (document.index_status === 'indexing' && indexingId() !== document.id) {
+              <p>
+                Si el proceso se interrumpió, actualiza su estado tras cinco minutos para
+                reintentarlo.
+              </p>
+              <button class="secondary" (click)="view(document)">Actualizar estado</button>
+            }
+          } @else {
+            <p>
+              {{ document.embedding_model }} · {{ document.indexed_at | date: 'dd/MM/yyyy HH:mm' }}
+            </p>
+            <button class="secondary" (click)="index(true)" [disabled]="locked()">
+              Reconstruir índice
+            </button>
+          }
+        </div>
         <app-document-chunks [documentId]="document.id" />
       }
     </section>

@@ -41,7 +41,11 @@ class DocumentRepository:
                 Document.id == identifier, Document.owner_id == owner, Document.deleted_at.is_(None)
             )
             .values(
-                deleted_at=datetime.now(UTC), status="deleted", processing_token=None, chunk_count=0
+                deleted_at=datetime.now(UTC),
+                status="deleted",
+                processing_token=None,
+                index_token=None,
+                chunk_count=0,
             )
             .execution_options(synchronize_session=False)
         )

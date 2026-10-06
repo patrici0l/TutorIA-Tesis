@@ -2,7 +2,7 @@
 
 Plataforma para generar contenidos educativos personalizados a partir de materiales docentes, RAG y perfiles de rendimiento. Proyecto de titulación de Angel Patricio Lucero Loja, vinculado a AdaptIA UPS. Caso principal: Cálculo Diferencial.
 
-Están implementados la base Angular → FastAPI → PostgreSQL/pgvector y el acceso institucional preparado mediante SSO/CAS. El entorno local utiliza usuarios ficticios en modo mock; la conexión real a UPS queda pendiente de los parámetros autorizados por TI. La biblioteca docente permite gestionar documentos PDF/DOCX/TXT propios, extraer su texto y revisar fragmentos con referencias a páginas o párrafos. Siguen embeddings e índices antes de RAG y generación. Consulta el [seguimiento del plan](documentacion/PLAN_DE_TRABAJO.md) antes de iniciar otra etapa.
+Están implementados la base Angular → FastAPI → PostgreSQL/pgvector y el acceso institucional preparado mediante SSO/CAS. El entorno local utiliza usuarios ficticios en modo mock; la conexión real a UPS queda pendiente de los parámetros autorizados por TI. La biblioteca docente permite gestionar documentos PDF/DOCX/TXT propios, extraer su texto, revisar fragmentos con referencias y crear su índice vectorial local. La recuperación RAG es el siguiente hito, antes de generación. Consulta el [seguimiento del plan](documentacion/PLAN_DE_TRABAJO.md) antes de iniciar otra etapa.
 
 ## Ejecutar en Windows con Docker
 
@@ -73,6 +73,14 @@ La ruta `/documentos` permite cargar, listar, consultar detalles y eliminar mate
 
 Los archivos permanecen privados en el volumen `document_data`; PostgreSQL conserva metadatos y SHA-256. Después de cargar, abrir Detalles → Procesar documento para extraer y segmentar. La muestra `datos/ejemplos/derivadas_sinteticas.txt` puede usarse para probar el flujo. Los fragmentos se muestran paginados con referencias; procesado todavía no significa indexado. No se envían documentos a proveedores externos ni se invoca un LLM.
 
+Para preparar el modelo local una sola vez, con internet para descargar sus pesos públicos fijados por revisión/SHA-256:
+
+```powershell
+docker compose --profile embeddings run --no-deps --rm prepare-embeddings
+```
+
+Después, Detalles → Preparar índice vectorial genera embeddings E5 multilingües de 384 dimensiones en CPU y los guarda en pgvector. Los pesos quedan en el volumen embedding_data, fuera de Git. La inferencia funciona sin internet; la preparación repetida verifica/reutiliza los archivos. Reconstruir índice es una acción explícita que conserva fragmentos/texto y reemplaza vectores de forma atómica. El detalle conserva modelo, revisión y fecha. La búsqueda semántica se implementa en el siguiente hito.
+
 La extracción admite PDF con capa de texto, párrafos DOCX y TXT UTF-8. PDF escaneados requieren OCR, aún pendiente. OfficeMath y ciertos estilos matemáticos heredados se rechazan para evitar alterar fórmulas. El docente debe cotejar la extracción con el original. Límites: 200 páginas PDF, 500 000 caracteres y 1000 fragmentos, además del máximo de carga. Variables: `DOCUMENT_CHUNK_CHARS=1000`, `DOCUMENT_CHUNK_OVERLAP=150`, `EXTRACTION_TIMEOUT_SECONDS=15`; el detalle conserva la configuración usada. Consultar el [contrato de documentos](documentacion/api/documentos.md), la [decisión de extracción](documentacion/decisiones_tecnicas/0004-extraccion-trazable.md) y la [decisión de corpus y estilo UPS](documentacion/decisiones_tecnicas/0003-corpus-y-estilo-ups.md).
 
 ## Organización
@@ -99,6 +107,7 @@ El repositorio se inicia localmente; la publicación en GitHub requiere elegir l
 - [Autenticación SSO](documentacion/api/autenticacion.md)
 - [Evidencia de corpus y estilo](documentacion/pruebas/hito_03.md)
 - [Evidencia de extracción y segmentación](documentacion/pruebas/hito_04_extraccion.md)
+- [Evidencia de embeddings e indexación](documentacion/pruebas/hito_04_indice.md)
 - [Evidencia de autenticación](documentacion/pruebas/hito_02.md)
 - [Contrato de salud](documentacion/api/health.md)
 - [Base de datos](documentacion/base_datos/modelo_inicial.md)

@@ -24,6 +24,13 @@ class DocumentResponse(BaseModel):
     chunk_overlap: int | None
     chunk_count: int
     text_chars: int
+    index_status: Literal["pending", "indexing", "indexed", "failed"]
+    index_error: str | None
+    index_started_at: datetime | None
+    indexed_at: datetime | None
+    embedding_model: str | None
+    embedding_revision: str | None
+    embedding_version: str | None
 
 
 class DocumentList(BaseModel):

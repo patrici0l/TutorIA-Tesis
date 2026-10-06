@@ -10,7 +10,9 @@ from app.modulos.documentos.repositorios.document_repository import DocumentRepo
 from app.modulos.documentos.schemas import DocumentList, DocumentResponse
 from app.modulos.documentos.servicios.document_service import DocumentService
 from app.modulos.rag.repositorios.chunk_repository import ChunkRepository
+from app.modulos.rag.repositorios.index_repository import IndexRepository
 from app.modulos.rag.schemas import DocumentChunkList
+from app.modulos.rag.servicios.index_document_service import IndexDocumentService
 from app.modulos.rag.servicios.ingest_document_service import IngestDocumentService
 from app.modulos.usuarios.models import User
 from app.nucleo.dependencias.auth import get_current_user, require_client_header
@@ -38,6 +40,27 @@ def get_ingest_service(db: Annotated[Session, Depends(get_session)]):
 Owner = Annotated[User, Depends(get_document_owner)]
 Service = Annotated[DocumentService, Depends(get_document_service)]
 IngestService = Annotated[IngestDocumentService, Depends(get_ingest_service)]
+
+
+def get_index_service(db: Annotated[Session, Depends(get_session)]):
+    settings = get_settings()
+    return IndexDocumentService(
+        DocumentService(DocumentRepository(db), settings), IndexRepository(db), settings
+    )
+
+
+@router.post(
+    "/{identifier}/index",
+    response_model=DocumentResponse,
+    dependencies=[Depends(require_client_header)],
+)
+def index_document(
+    identifier: UUID,
+    user: Owner,
+    service: Annotated[IndexDocumentService, Depends(get_index_service)],
+    rebuild: bool = False,
+):
+    return service.index(identifier, user.id, rebuild)
 
 
 @router.post(

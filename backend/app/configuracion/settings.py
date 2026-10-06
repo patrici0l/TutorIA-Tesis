@@ -22,6 +22,8 @@ class Settings(BaseSettings):
     extraction_timeout_seconds: int = Field(default=15, ge=5, le=20)
     document_chunk_chars: int = Field(default=1000, ge=300, le=2000)
     document_chunk_overlap: int = Field(default=150, ge=0, le=500)
+    embedding_model_path: Path = Path("models/e5-small")
+    embedding_timeout_seconds: int = Field(default=180, ge=30, le=180)
     auth_mode: Literal["mock", "cas"] = "mock"
     auth_mock_user: Literal["student", "teacher"] = "student"
     auth_cookie_secure: bool = False

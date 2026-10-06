@@ -26,8 +26,11 @@ export class DocumentsComponent implements OnInit {
   readonly loading = signal(false);
   readonly busy = signal(false);
   readonly processingId = signal<string | null>(null);
+  readonly indexingId = signal<string | null>(null);
   readonly detailLoading = signal(false);
-  readonly locked = computed(() => this.busy() || this.processingId() !== null);
+  readonly locked = computed(
+    () => this.busy() || this.processingId() !== null || this.indexingId() !== null,
+  );
   readonly error = signal('');
   readonly success = signal('');
   readonly total = signal(0);
@@ -180,6 +183,69 @@ export class DocumentsComponent implements OnInit {
       Number.isFinite(started) &&
       Date.now() - started >= 120_000
     );
+  }
+  canRetryIndex(document: CourseDocument) {
+    const started = Date.parse(document.index_started_at ?? '');
+    return (
+      document.index_status === 'indexing' &&
+      Number.isFinite(started) &&
+      Date.now() - started >= 300_000
+    );
+  }
+  indexLabel(document: CourseDocument) {
+    if (this.indexingId() === document.id) return 'Generando el índice local…';
+    if (document.index_status === 'indexed') return 'Índice vectorial listo';
+    if (document.index_status === 'indexing') return 'Indexación en curso';
+    if (document.index_status === 'failed') return 'Indexación pendiente de reintento';
+    return 'Pendiente de indexar';
+  }
+  indexError(document: CourseDocument) {
+    const messages: Record<string, string> = {
+      model_unavailable:
+        'El modelo local no está preparado o no supera la verificación de integridad.',
+      token_limit:
+        'Un fragmento supera el límite del modelo. El material requiere una segmentación más pequeña.',
+      embedding_timeout: 'La indexación tardó demasiado. Prueba con menos material.',
+      invalid_embedding: 'El modelo produjo un resultado inválido; no se guardó un índice parcial.',
+    };
+    return (
+      messages[document.index_error ?? ''] ?? 'No se pudo indexar el material. Puedes reintentarlo.'
+    );
+  }
+  index(rebuild = false) {
+    const document = this.selected();
+    if (
+      !document ||
+      this.locked() ||
+      document.processing_status !== 'processed' ||
+      (document.index_status === 'indexed' && !rebuild) ||
+      (document.index_status === 'indexing' && !this.canRetryIndex(document))
+    )
+      return;
+    this.indexingId.set(document.id);
+    this.error.set('');
+    this.success.set('');
+    this.service
+      .index(document.id, rebuild)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (item) => {
+          this.indexingId.set(null);
+          this.updateDocument(item);
+          this.success.set(`«${item.title}»: índice vectorial preparado en tu equipo.`);
+        },
+        error: (error) => {
+          this.indexingId.set(null);
+          this.error.set(this.message(error));
+          this.service
+            .get(document.id)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+              next: (item) => this.updateDocument(item),
+              error: () => {},
+            });
+        },
+      });
   }
   processingError(document: CourseDocument) {
     const messages: Record<string, string> = {

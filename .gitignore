@@ -27,6 +27,7 @@ logs/
 tmp/
 temp/
 uploads/
+/models/
 postgres_data/
 .DS_Store
 Thumbs.db

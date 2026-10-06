@@ -24,4 +24,10 @@ El módulo documentos sigue router → DocumentService → DocumentRepository. F
 
 El router de documentos delega el procesamiento en IngestDocumentService → ChunkRepository, bajo el módulo rag. La lectura/parsing/normalización/segmentación ocurre en un proceso Python separado con timeout y límites de memoria/CPU en Docker. DocumentTextService extrae páginas PDF o párrafos DOCX/TXT y genera fragmentos con offsets exactos en texto normalizado. La publicación SQL condicional impide que un intento tardío sobreescriba un reintento o restaure un documento eliminado.
 
-Angular incorpora DocumentChunksComponent para revisar texto paginado y fuentes; usa interpolación segura. Los fallos se conservan por documento y admiten reintento; procesos interrumpidos pueden recuperarse tras dos minutos. La decisión 0004 documenta límites y reproducción. Embeddings y búsqueda semántica siguen pendientes antes de la integración LLM.
+Angular incorpora DocumentChunksComponent para revisar texto paginado y fuentes; usa interpolación segura. Los fallos se conservan por documento y admiten reintento; procesos interrumpidos pueden recuperarse tras dos minutos. La decisión 0004 documenta límites y reproducción.
+
+## Embeddings e indexación local
+
+POST /documents/{id}/index delega en IndexDocumentService → IndexRepository. Un worker separado verifica pesos/tokenizer locales fijados por SHA-256, genera embeddings E5 de 384 dimensiones en CPU y valida longitud de tokens sin truncamiento. La descarga de pesos públicos es una operación explícita del perfil Docker embeddings; ninguna petición API descarga modelos ni transmite corpus fuera del entorno. El volumen embedding_data se monta solo para lectura en backend.
+
+La inferencia termina antes de abrir la transacción de publicación. La reclamación condicional, token de intento y timeout permiten recuperar indexaciones interrumpidas y rechazar publicaciones tardías. Texto/referencias permanecen intactos. Angular muestra progreso, errores persistidos, reintento y reconstrucción explícita. La decisión 0005 documenta recursos y reproducibilidad. La búsqueda top-k y su validación corresponden al siguiente hito; no existe integración LLM todavía.

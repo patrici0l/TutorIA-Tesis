@@ -11,6 +11,8 @@ x-backend: &backend
     DOCUMENT_CHUNK_CHARS: ${DOCUMENT_CHUNK_CHARS:-1000}
     DOCUMENT_CHUNK_OVERLAP: ${DOCUMENT_CHUNK_OVERLAP:-150}
     EXTRACTION_TIMEOUT_SECONDS: ${EXTRACTION_TIMEOUT_SECONDS:-15}
+    EMBEDDING_MODEL_PATH: /app/models/e5-small
+    EMBEDDING_TIMEOUT_SECONDS: ${EMBEDDING_TIMEOUT_SECONDS:-180}
     AUTH_MOCK_USER: ${AUTH_MOCK_USER:-student}
     AUTH_COOKIE_SECURE: ${AUTH_COOKIE_SECURE:-false}
     AUTH_SESSION_HOURS: ${AUTH_SESSION_HOURS:-8}
@@ -59,6 +61,7 @@ services:
     <<: *backend
     volumes:
       - document_data:/app/uploads/documents
+      - embedding_data:/app/models/e5-small:ro
     ports:
       - "127.0.0.1:${API_PORT:-8000}:8000"
     depends_on:
@@ -86,6 +89,14 @@ services:
       timeout: 5s
       retries: 3
 
+  prepare-embeddings:
+    <<: *backend
+    profiles: ["embeddings"]
+    command: ["python", "-m", "app.modulos.rag.servicios.prepare_model"]
+    volumes:
+      - embedding_data:/app/models/e5-small
+
 volumes:
   postgres_data:
   document_data:
+  embedding_data:

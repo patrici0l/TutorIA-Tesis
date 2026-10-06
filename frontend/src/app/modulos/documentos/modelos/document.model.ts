@@ -16,6 +16,13 @@ export interface CourseDocument {
   chunk_overlap: number | null;
   chunk_count: number;
   text_chars: number;
+  index_status: 'pending' | 'indexing' | 'indexed' | 'failed';
+  index_error: string | null;
+  index_started_at: string | null;
+  indexed_at: string | null;
+  embedding_model: string | null;
+  embedding_revision: string | null;
+  embedding_version: string | null;
 }
 export interface DocumentChunk {
   id: string;

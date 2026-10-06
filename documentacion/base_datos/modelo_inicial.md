@@ -1,6 +1,6 @@
 # Modelo de datos y evolución
 
-La migración 0001 habilita pgvector. La migración 0002 crea usuarios institucionales, sesiones y solicitudes de acceso. La 0003 crea documentos y la 0004 incorpora extracción trazable y fragmentos. Las cuatro están aplicadas en PostgreSQL local; se conservan inmutables las migraciones anteriores.
+La migración 0001 habilita pgvector. La migración 0002 crea usuarios institucionales, sesiones y solicitudes de acceso. La 0003 crea documentos, la 0004 incorpora extracción trazable y fragmentos, y la 0005 añade embeddings e índice HNSW. Las cinco están aplicadas en PostgreSQL local; se conservan inmutables las migraciones anteriores.
 
 `usuarios`: id, institutional_email único, institutional_id opcional único, nombre, apellido, rol (student/teacher/admin), activo, created_at y last_login. No existe password ni password_hash.
 
@@ -18,4 +18,6 @@ Antes de crear una tabla se documentarán los campos, restricciones, índices, p
 
 Desde 0004: processing_status (pending/processing/processed/failed), processing_error (código seguro), processing_token (UUID interno de intento), processing_started_at, processed_at, processing_version, chunk_chars, chunk_overlap, chunk_count y text_chars. Restricciones de estados y contadores no negativos. No se guarda texto extraído completo adicional en documentos.
 
-`fragmentos_documento`: UUID, document_id con FK y ON DELETE CASCADE, position, source_kind (page/paragraph), source_index, char_start, char_end, text y source_sha256. Único (document_id, position), índice por documento, fuentes/posiciones válidas y longitud igual a char_end-char_start. Los offsets se refieren a una unidad normalizada; su SHA-256 se calcula sobre UTF-8. La política de eliminación lógica retira explícitamente los fragmentos en la misma transacción. Todavía no hay columnas embedding ni índices vectoriales de corpus.
+`fragmentos_documento`: UUID, document_id con FK y ON DELETE CASCADE, position, source_kind (page/paragraph), source_index, char_start, char_end, text y source_sha256. Único (document_id, position), índice por documento, fuentes/posiciones válidas y longitud igual a char_end-char_start. Los offsets se refieren a una unidad normalizada; su SHA-256 se calcula sobre UTF-8. La política de eliminación lógica retira explícitamente los fragmentos en la misma transacción.
+
+Desde 0005: embedding nullable Vector(384), embedding_tokens nullable (1..512) e índice HNSW ix_fragmentos_embedding_cosine con vector_cosine_ops. Documentos conservan index_status (pending/indexing/indexed/failed), index_error, index_token interno, index_started_at, indexed_at, embedding_model, embedding_revision y embedding_version. La publicación de todos los vectores y metadatos es atómica y condicionada por intento/documento vigente. Reconstruir reemplaza vectores sin cambiar los fragmentos. Borrar invalida ambos intentos y elimina fragmentos/vectores. Una futura recuperación deberá filtrar propiedad, estado indexed y modelo/revisión/versiones compatibles.

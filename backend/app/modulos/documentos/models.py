@@ -29,3 +29,11 @@ class Document(Base):
     chunk_overlap: Mapped[int | None]
     chunk_count: Mapped[int] = mapped_column(default=0)
     text_chars: Mapped[int] = mapped_column(default=0)
+    index_status: Mapped[str] = mapped_column(String(20), default="pending")
+    index_error: Mapped[str | None] = mapped_column(String(40))
+    index_token: Mapped[UUID | None]
+    index_started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    indexed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    embedding_model: Mapped[str | None] = mapped_column(String(100))
+    embedding_revision: Mapped[str | None] = mapped_column(String(40))
+    embedding_version: Mapped[str | None] = mapped_column(String(40))

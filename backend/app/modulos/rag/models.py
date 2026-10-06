@@ -1,5 +1,6 @@
 from uuid import UUID, uuid4
 
+from pgvector.sqlalchemy import Vector
 from sqlalchemy import CheckConstraint, ForeignKey, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -26,3 +27,5 @@ class DocumentChunk(Base):
     char_end: Mapped[int]
     text: Mapped[str] = mapped_column(Text)
     source_sha256: Mapped[str] = mapped_column(String(64))
+    embedding: Mapped[list[float] | None] = mapped_column(Vector(384))
+    embedding_tokens: Mapped[int | None]

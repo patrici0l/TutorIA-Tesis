@@ -27,6 +27,13 @@ describe('Documentos propios', () => {
     chunk_overlap: null,
     chunk_count: 0,
     text_chars: 0,
+    index_status: 'pending',
+    index_error: null,
+    index_started_at: null,
+    indexed_at: null,
+    embedding_model: null,
+    embedding_revision: null,
+    embedding_version: null,
   };
   beforeEach(async () => {
     user.set({ rol: 'teacher' });
@@ -198,6 +205,56 @@ describe('Documentos propios', () => {
     expect(previous.cancelled).toBe(true);
     http.expectOne('/api/v1/documents/doc-2').flush(second);
     expect(component.selected()?.id).toBe('doc-2');
+  });
+  it('indexa el texto procesado y conserva el nuevo detalle al terminar otro material', () => {
+    const component = setup().componentInstance;
+    const processed = { ...sampleDocument, processing_status: 'processed' as const };
+    component.documents.set([processed]);
+    component.selected.set(processed);
+    component.index();
+    const request = http.expectOne('/api/v1/documents/doc-1/index');
+    expect(request.request.method).toBe('POST');
+    expect(component.locked()).toBe(true);
+    const second = { ...processed, id: 'doc-2' };
+    component.view(second);
+    http.expectOne('/api/v1/documents/doc-2').flush(second);
+    request.flush({ ...processed, index_status: 'indexed' });
+    expect(component.selected()?.id).toBe('doc-2');
+    expect(component.documents()[0].index_status).toBe('indexed');
+    expect(component.locked()).toBe(false);
+  });
+  it('conserva el error de índice del servidor y permite reintentar', () => {
+    const component = setup().componentInstance;
+    const processed = { ...sampleDocument, processing_status: 'processed' as const };
+    component.selected.set(processed);
+    component.index();
+    http
+      .expectOne('/api/v1/documents/doc-1/index')
+      .flush({ detail: 'Modelo no preparado' }, { status: 503, statusText: 'Unavailable' });
+    http
+      .expectOne('/api/v1/documents/doc-1')
+      .flush({ ...processed, index_status: 'failed', index_error: 'model_unavailable' });
+    expect(component.error()).toBe('Modelo no preparado');
+    expect(component.locked()).toBe(false);
+    component.index();
+    http
+      .expectOne('/api/v1/documents/doc-1/index')
+      .flush({ ...processed, index_status: 'indexed' });
+    expect(component.selected()?.index_status).toBe('indexed');
+  });
+  it('reconstruye un índice únicamente con la acción explícita', () => {
+    const component = setup().componentInstance;
+    const indexed = {
+      ...sampleDocument,
+      processing_status: 'processed' as const,
+      index_status: 'indexed' as const,
+    };
+    component.selected.set(indexed);
+    component.index();
+    http.expectNone('/api/v1/documents/doc-1/index');
+    component.index(true);
+    http.expectOne('/api/v1/documents/doc-1/index?rebuild=true').flush(indexed);
+    expect(component.locked()).toBe(false);
   });
   it('permite recuperar un procesamiento interrumpido sin duplicar el que sigue activo', () => {
     const fixture = setup();

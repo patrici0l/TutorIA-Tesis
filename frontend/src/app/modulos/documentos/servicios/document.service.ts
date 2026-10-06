@@ -23,6 +23,12 @@ export class DocumentService {
   process(id: string) {
     return this.http.post<CourseDocument>(`/api/v1/documents/${id}/process`, null);
   }
+  index(id: string, rebuild = false) {
+    return this.http.post<CourseDocument>(
+      `/api/v1/documents/${id}/index${rebuild ? '?rebuild=true' : ''}`,
+      null,
+    );
+  }
   chunks(id: string, offset = 0) {
     return this.http.get<DocumentChunkList>(
       `/api/v1/documents/${id}/chunks?limit=10&offset=${offset}`,
