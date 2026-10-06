@@ -4,7 +4,7 @@ Fuente rectora: Plan_Implementacion_TutorIA-Lucero.docx, entregado por el autor 
 
 ## Bloque actual
 
-Hito 1 cerrado. Hito 2 implementado en modo mock y con adaptador CAS preparado; integración institucional pendiente de TI. Las verificaciones están en `pruebas/hito_01.md` y `pruebas/hito_02.md`. La instrucción directa del autor del 5 de octubre de 2026 reemplaza el login tradicional/JWT del documento por SSO/CAS y sesiones opacas HttpOnly; la fuente original se conserva íntegra. No dar por completados los siguientes hitos por haber creado sus carpetas.
+Hitos 1 y 3 cerrados; corpus propio verificado y estilo ajustado a colores UPS. La evidencia actual está en `pruebas/hito_03.md`. Siguiente: hito 4, extracción y segmentación. Hito 2 implementado en modo mock y con adaptador CAS preparado; integración institucional pendiente de TI. Las verificaciones están en `pruebas/hito_01.md` y `pruebas/hito_02.md`. La instrucción directa del autor del 5 de octubre de 2026 reemplaza el login tradicional/JWT del documento por SSO/CAS y sesiones opacas HttpOnly; la fuente original se conserva íntegra. No dar por completados los siguientes hitos por haber creado sus carpetas.
 
 | Paso | Entregable | Evidencia prevista |
 |---|---|---|
@@ -30,7 +30,7 @@ Hito 1 cerrado. Hito 2 implementado en modo mock y con adaptador CAS preparado; 
 |---|---|---|---|
 | 1 Base | Preparación, backend, BD, frontend, Docker | Un comando levanta todo; interfaz confirma API y BD real | Completado |
 | 2 Seguridad | SSO/CAS, usuarios institucionales, sesión HttpOnly, logout, roles, guards e interceptores | Acceso mock y rechazo de sesiones inválidas probados; integración UPS autorizada por TI | Mock completado; CAS pendiente de TI |
-| 3 Corpus | PDF/DOCX/TXT, MIME/extensión/tamaño, permisos y gestión | Cargar, listar, consultar y eliminar documentos propios | Pendiente |
+| 3 Corpus | PDF/DOCX/TXT, MIME/extensión/tamaño, permisos y gestión | Cargar, listar, consultar y eliminar documentos propios | Completado |
 | 4 Ingesta | Extracción, normalización, segmentación, embeddings e índices | Corpus trazable y reproducible en pgvector | Pendiente |
 | 5 RAG | Búsqueda semántica y top-k | Recuperación validada con corpus y consultas de referencia, sin LLM | Pendiente |
 | 6 IA | Interfaz generate, fábrica y primer proveedor | Proveedor intercambiable, errores y límites controlados | Pendiente |
@@ -69,7 +69,7 @@ La tabla de etapas 0–15 de la sección 19 se conserva íntegra en la fuente. L
 
 Autenticación implementada: GET `/auth/login`, GET `/auth/callback`, GET `/auth/me`, POST `/auth/logout`. Alta automática después de validar la identidad; sin registro por contraseña ni refresh JWT. El rol local se conserva al iniciar sesión. La gestión administrativa de permisos y las políticas institucionales quedan por concretar.
 
-Documentos: POST `/documents/upload`, GET `/documents`, GET y DELETE `/documents/{id}`. Perfiles: POST `/profiles`, GET `/profiles/{id}`. Recuperación: POST `/rag/search`.
+Documentos implementados: POST `/documents/upload`, GET `/documents`, GET y DELETE `/documents/{id}`. Perfiles: POST `/profiles`, GET `/profiles/{id}`. Recuperación: POST `/rag/search`.
 
 Generación: POST `/content/generate`, `/content/quiz`, `/content/feedback`, `/content/explanation`, `/content/challenge`. Ejercicios se identificarán por `resource_type=EXERCISE` en el contrato genérico. Historial: GET `/generations` y `/generations/{id}`. Métricas: GET `/metrics`. Todas estas rutas llevarán el prefijo `/api/v1`.
 
@@ -90,4 +90,4 @@ Seguridad vigente: validación CAS en backend, hashes de tokens opacos, expiraci
 
 ## Decisiones académicas y externas por concretar
 
-Seleccionar corpus docente autorizado y rúbrica antes de RAG y evaluación. TI debe confirmar endpoints, atributos, callback, dominios y entorno CAS; el alta institucional automática ya está definida. Concretar administración de roles y corpus docente autorizado al continuar el hito 3. Elegir licencia y cuenta/visibilidad de GitHub antes de publicación. Elegir modelos, presupuesto y credenciales de proveedores antes del hito 6. Estas decisiones no impiden construir y probar la base técnica. No se inventan aprobaciones del tutor, resultados experimentales ni fechas del cronograma.
+Seleccionar corpus docente autorizado y rúbrica antes de RAG y evaluación. TI debe confirmar endpoints, atributos, callback, dominios y entorno CAS; el alta institucional automática ya está definida. Concretar administración de roles y corpus docente autorizado antes de usar datos reales. El hito 3 verifica propiedad con los roles locales existentes. Elegir licencia y cuenta/visibilidad de GitHub antes de publicación. Elegir modelos, presupuesto y credenciales de proveedores antes del hito 6. Estas decisiones no impiden construir y probar la base técnica. No se inventan aprobaciones del tutor, resultados experimentales ni fechas del cronograma.

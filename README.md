@@ -2,7 +2,7 @@
 
 Plataforma para generar contenidos educativos personalizados a partir de materiales docentes, RAG y perfiles de rendimiento. Proyecto de titulación de Angel Patricio Lucero Loja, vinculado a AdaptIA UPS. Caso principal: Cálculo Diferencial.
 
-Están implementados la base Angular → FastAPI → PostgreSQL/pgvector y el acceso institucional preparado mediante SSO/CAS. El entorno local utiliza usuarios ficticios en modo mock; la conexión real a UPS queda pendiente de los parámetros autorizados por TI. Documentos, RAG y generación siguen en ese orden. Consulta el [seguimiento del plan](documentacion/PLAN_DE_TRABAJO.md) antes de iniciar otra etapa.
+Están implementados la base Angular → FastAPI → PostgreSQL/pgvector y el acceso institucional preparado mediante SSO/CAS. El entorno local utiliza usuarios ficticios en modo mock; la conexión real a UPS queda pendiente de los parámetros autorizados por TI. La biblioteca docente ya permite gestionar documentos PDF/DOCX/TXT propios. La siguiente etapa prepara su extracción y segmentación; después siguen RAG y generación. Consulta el [seguimiento del plan](documentacion/PLAN_DE_TRABAJO.md) antes de iniciar otra etapa.
 
 ## Ejecutar en Windows con Docker
 
@@ -67,6 +67,12 @@ La plantilla `.env.example` incluye `AUTH_MODE=mock`, usuario ficticio estudiant
 
 El modo mock solo funciona en desarrollo y loopback. El callback y la interfaz deben compartir origen. Consulta la [decisión SSO](documentacion/decisiones_tecnicas/0002-sso-ups.md) antes de configurar CAS.
 
+## Biblioteca docente
+
+La ruta `/documentos` permite cargar, listar, consultar detalles y eliminar materiales propios con rol teacher/admin. Para la demostración local, cambiar `AUTH_MOCK_USER=teacher` en `.env`, ejecutar `docker compose up -d --wait` y salir/volver a entrar. La identidad docente es ficticia; el cliente no selecciona permisos. Máximo 10 MiB por archivo, título hasta 160 caracteres. El servidor comprueba extensión, MIME y contenido antes de guardar. Los estudiantes no gestionan documentos.
+
+Los archivos permanecen privados en el volumen `document_data`; PostgreSQL conserva metadatos y SHA-256. Se guardan pendientes de procesamiento. La muestra `datos/ejemplos/derivadas_sinteticas.txt` puede usarse para probar el flujo. Consultar el [contrato de documentos](documentacion/api/documentos.md) y la [decisión de corpus y estilo UPS](documentacion/decisiones_tecnicas/0003-corpus-y-estilo-ups.md).
+
 ## Organización
 
 `backend/` contiene configuración, API versionada, núcleo, repositorios y módulos. `frontend/` contiene núcleo, componentes compartidos y módulos Angular. `infraestructura/` aloja Docker, nginx y scripts. `documentacion/` conserva arquitectura, decisiones, API, plan y evidencia. `datos/` contendrá ejemplos autorizados y perfiles sintéticos. `licencias/` registra dependencias y avisos. `secretos_locales/` está excluido de Git.
@@ -88,6 +94,7 @@ El repositorio se inicia localmente; la publicación en GitHub requiere elegir l
 - [Decisiones iniciales](documentacion/decisiones_tecnicas/0001-base-tecnica.md)
 - [Continuidad y próximo paso](documentacion/CONTINUIDAD.md)
 - [Autenticación SSO](documentacion/api/autenticacion.md)
+- [Evidencia de corpus y estilo](documentacion/pruebas/hito_03.md)
 - [Evidencia de autenticación](documentacion/pruebas/hito_02.md)
 - [Contrato de salud](documentacion/api/health.md)
 - [Base de datos](documentacion/base_datos/modelo_inicial.md)

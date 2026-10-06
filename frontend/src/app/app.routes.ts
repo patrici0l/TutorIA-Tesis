@@ -10,6 +10,15 @@ export const routes: Routes = [
       import('./modulos/autenticacion/paginas/login/login.component').then((m) => m.LoginComponent),
   },
   {
+    path: 'documentos',
+    title: 'Documentos del curso | TutorIA',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./modulos/documentos/paginas/documentos/documentos.component').then(
+        (m) => m.DocumentsComponent,
+      ),
+  },
+  {
     path: 'inicio',
     title: 'Inicio | TutorIA-Lucero',
     canActivate: [authGuard],

@@ -6,8 +6,9 @@
   width: 252px;
   flex-shrink: 0;
   padding: 36px 24px;
-  background: #122b29;
-  color: #e7efeb;
+  background: var(--navy);
+  color: #eef4fb;
+  border-top: 4px solid var(--gold);
   display: flex;
   flex-direction: column;
 }
@@ -26,21 +27,21 @@
   place-items: center;
   width: 36px;
   height: 36px;
-  background: #cbeaa6;
-  color: #122b29;
+  background: var(--gold);
+  color: var(--navy);
   border-radius: 10px;
   font-family: Georgia, serif;
   font-style: italic;
 }
 .brand-dot {
-  color: #cbeaa6;
+  color: var(--gold);
   margin-left: -8px;
 }
 .workspace-label {
   margin: 58px 10px 17px;
   font-size: 10px;
   letter-spacing: 1.5px;
-  color: #aac0b9;
+  color: #b5cee6;
 }
 nav a {
   display: flex;
@@ -52,23 +53,23 @@ nav a {
   font-size: 14px;
 }
 nav a.active {
-  background: #2b4540;
+  background: var(--blue-dark);
 }
 .sidebar-note {
   margin-top: auto;
   padding: 60px 10px 0;
   font-size: 13px;
   line-height: 1.7;
-  color: #c0d1cb;
+  color: #d4e4f3;
 }
 .sidebar-note small {
-  color: #a3bbb2;
+  color: #b5cee6;
   font-size: 10px;
 }
 .eyebrow {
   font-size: 9px;
   letter-spacing: 1.3px;
-  color: #cbeaa6;
+  color: var(--gold);
 }
 .workspace {
   flex: 1;
@@ -82,16 +83,16 @@ nav a.active {
   gap: 16px;
   padding: 0 48px;
   background: white;
-  border-bottom: 1px solid #e5e8e2;
+  border-bottom: 1px solid var(--border);
   font-size: 12px;
-  color: #53635d;
+  color: var(--muted);
 }
 .divider {
   margin: 0 12px;
   color: #aaa;
 }
 .tag {
-  border: 1px solid #dce3dc;
+  border: 1px solid var(--border);
   padding: 6px 10px;
   border-radius: 5px;
   white-space: nowrap;
@@ -105,7 +106,7 @@ footer {
   display: flex;
   justify-content: space-between;
   padding: 20px 48px;
-  color: #6b7972;
+  color: var(--muted);
   font-size: 11px;
 }
 .skip-link {
@@ -164,10 +165,10 @@ footer {
   gap: 12px;
 }
 .account button {
-  border: 1px solid #bbc9bc;
+  border: 1px solid var(--border);
   background: white;
   padding: 7px 10px;
-  color: #264f39;
+  color: var(--blue-dark);
   border-radius: 5px;
   cursor: pointer;
 }
@@ -179,5 +180,21 @@ footer {
   font-size: 12px;
   margin: 0 0 28px;
 }
-.account span { max-width: 220px; overflow-wrap: anywhere; }
-@media (max-width: 600px) { .topbar { height: auto; min-height: 64px; flex-wrap: wrap; padding-top: 16px; padding-bottom: 16px; } }
+.account span {
+  max-width: 220px;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .topbar {
+    height: auto;
+    min-height: 64px;
+    flex-wrap: wrap;
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .sidebar { flex-wrap: wrap; gap: 14px; }
+  nav { display: flex; flex-wrap: wrap; gap: 4px; }
+}

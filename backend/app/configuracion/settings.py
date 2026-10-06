@@ -1,4 +1,5 @@
 from functools import lru_cache
+from pathlib import Path
 from typing import Literal
 from urllib.parse import urlsplit
 
@@ -16,6 +17,8 @@ class Settings(BaseSettings):
     db_name: str = "tutoria"
     db_user: str = "tutoria"
     db_password: SecretStr = SecretStr("")
+    document_storage_path: Path = Path("uploads/documents")
+    document_max_bytes: int = Field(default=10_485_760, ge=1024, le=10_485_760)
     auth_mode: Literal["mock", "cas"] = "mock"
     auth_mock_user: Literal["student", "teacher"] = "student"
     auth_cookie_secure: bool = False

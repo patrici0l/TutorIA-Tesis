@@ -4,7 +4,7 @@ Actualizado: 6 de octubre de 2026. Este apartado conserva el estado al cerrar ca
 
 ## Instrucciones vigentes
 
-El plan original continúa como base. La actualización directa del autor del 5 de octubre reemplaza la autenticación local y el registro abierto: acceso institucional SSO/CAS UPS con modo mock de usuarios ficticios para desarrollo. Angular no solicita contraseñas ni almacena tokens. CAS real no se conecta hasta recibir parámetros autorizados por TI. Se mantienen Angular, FastAPI, PostgreSQL/pgvector, Alembic y Docker.
+El plan original continúa como base. La actualización directa del autor del 5 de octubre reemplaza la autenticación local y el registro abierto: acceso institucional SSO/CAS UPS con modo mock de usuarios ficticios para desarrollo. Angular no solicita contraseñas ni almacena tokens. CAS real no se conecta hasta recibir parámetros autorizados por TI. Se mantienen Angular, FastAPI, PostgreSQL/pgvector, Alembic y Docker. La instrucción del 6 de octubre incorpora colores relacionados con la UPS; consultar la decisión 0003 para la fuente y paleta aplicada.
 
 ## Qué tenemos terminado
 
@@ -13,26 +13,32 @@ El plan original continúa como base. La actualización directa del autor del 5 
 - Adaptador CAS: endpoints, parámetros y atributos configurables; validación de ticket en backend, XML seguro, dominios institucionales y HTTPS obligatorio. URLs institucionales vacías hasta confirmación de TI.
 - Angular: botón UPS, guard, consulta /auth/me, logout y aviso visible de usuario ficticio. Flujo mock validado en navegador con recarga y rechazo de acceso tras logout.
 - Migración 0002 aplicada en PostgreSQL local. Se retiró la implementación provisional de contraseñas antes de ejecutar su migración.
-- Entorno Docker funcionando, tres servicios saludables y volumen de PostgreSQL conservado.
+- Hito 3: carga PDF/DOCX/TXT hasta 10 MiB, validación estructural, biblioteca paginada, detalle y eliminación de documentos propios; rol teacher/admin obligatorio y controles de propietario en backend. Migración 0003 aplicada; bytes privados en volumen document_data.
+- Estilo: azules digitales UPS, acento amarillo, blanco y fondo claro; navegación, login, dashboard y biblioteca consistentes.
+- Entorno Docker funcionando, tres servicios saludables y volúmenes de PostgreSQL/documentos conservados.
 
 ## Pruebas y evidencia
 
-Backend local: 35 aprobadas y 2 integraciones omitidas; Docker/PostgreSQL: 37 aprobadas sin omisiones. Angular: 15 aprobadas; compilación de producción correcta (253.33 kB iniciales). Ruff y revisión de whitespace correctos. Consultar pruebas/hito_02.md y las capturas hito_02_login.png / hito_02_dashboard.png. Hay una advertencia de deprecación de TestClient documentada.
+Verificación actual: backend local 54 aprobadas y 3 integraciones omitidas; Docker/PostgreSQL 57 aprobadas sin omisiones. Angular 19 aprobadas, compilación correcta. Ruff sin errores. La muestra sintética se cargó desde el navegador y persiste tras recarga y recreación de backend. Consultar pruebas/hito_03.md y capturas hito_03_inicio_ups.png / hito_03_documentos_ups.png. TestClient/HTTPX y add_js de pypdf tienen advertencias de deprecación documentadas.
 
 ## Punto exacto de continuación
 
-Hito 2 mock cerrado; integración real UPS pendiente exclusivamente de parámetros y pruebas autorizadas por TI. La administración de permisos todavía debe implementarse según la política que se concrete. La siguiente implementación es hito 3: documentos docentes PDF/DOCX/TXT, validación de extensión/MIME/tamaño, propiedad y permisos, almacenamiento y gestión. No se han implementado ingesta, embeddings, recuperación RAG, proveedores LLM ni generación.
+Hitos 1, 2 mock y 3 cerrados. CAS real sigue pendiente de TI; gestión administrativa global de roles y corpus no implementada. La próxima etapa es hito 4: extracción, normalización y segmentación con referencias; luego embeddings e índices. No se han implementado ingesta, recuperación RAG, proveedores LLM ni generación.
 
 ## Próximos pasos
 
-1. Leer el alcance del corpus en la fuente; concretar permisos de carga docente y gestión administrativa con el rol local actual.
-2. Diseñar migración de documentos, almacenamiento fuera de archivos públicos y contratos upload/list/detail/delete; rechazar cargas inválidas y acceso ajeno.
-3. Implementar y verificar un flujo completo de gestión de documentos con muestras sintéticas autorizadas. No ejecutar contenido cargado.
-4. Mantener pendiente de TI: URLs CAS, callback con state autorizado, atributos, dominios y ambiente de pruebas; lista en decisiones_tecnicas/0002-sso-ups.md.
-5. Después: extracción/segmentación/embeddings (hito 4), recuperación validada sin LLM (5), proveedor IA (6) y recursos educativos (7).
+1. Diseñar las referencias de página/párrafo, versión de extractor y estados de procesamiento antes de crear fragmentos_documento. Mantener inmutables las migraciones ya aplicadas.
+2. Implementar extracción PDF/DOCX/TXT con límites de recursos y errores por documento, sin ejecutar contenido. Usar primero materiales sintéticos; corpus docente real requiere autorización.
+3. Normalizar y segmentar conservando trazabilidad con documento/SHA-256 y referencias; verificar casos vacíos, documentos escaneados y fallos de extracción.
+4. Concretar estrategia de embeddings, dimensiones, proveedor/modelo y presupuesto antes de indexar; después validar recuperación sin LLM (hito 5).
+5. Pendiente de TI: URLs CAS, callback con state, atributos, dominios y ambiente de pruebas. Pendiente de producción: análisis/aislamiento de documentos, limpieza de archivos huérfanos, retención y autorización de roles. Decisiones 0002 y 0003.
 
 ## Git y cómo retomar
 
-Repositorio C:/C_PROJECTS/TESIS COMPUTACION/TutorIA-Lucero. Rama feature/authentication; base c7db36d en main/develop. El cierre se guarda en commit descriptivo de autenticación UPS; consultar git log -1 para su identificador. Sin remoto GitHub.
+Repositorio C:/C_PROJECTS/TESIS COMPUTACION/TutorIA-Lucero. Rama feature/document-upload, basada en 82fabe6 (autenticación); c7db36d sigue en main/develop. El cierre del corpus y estilo se guarda en commit descriptivo; consultar git log -1 para su identificador. Sin remoto GitHub.
 
 Leer AGENTS.md, este archivo, PLAN_DE_TRABAJO.md y la decisión 0002. Revisar git status antes de editar y preservar cambios existentes. Ejecutar docker compose up -d --build --wait desde la raíz con el .env local, sin imprimir secretos ni eliminar volúmenes. Interfaz http://localhost:4200/login; las pruebas de PostgreSQL se ejecutan con el compose de pruebas documentado. No repetir verificaciones terminadas si no hay cambios que lo requieran.
+
+## Estado local al cerrar
+
+Se deja una muestra derivadas_sinteticas.txt en la biblioteca del docente ficticio y el navegador abierto en /documentos. Para verificar la carga se seleccionó temporalmente AUTH_MOCK_USER=teacher mediante variable de proceso; después se restauró backend a la configuración .env original (student). La sesión docente ya iniciada continúa válida hasta logout/expiración. Un nuevo acceso usa la identidad configurada en .env; para demostrar documentos después de salir, configurar teacher y recrear backend. No se usaron credenciales UPS.

@@ -10,6 +10,11 @@
         <a routerLink="/inicio" routerLinkActive="active"
           ><span aria-hidden="true">◈</span> Inicio</a
         >
+        @if (auth.user()?.rol === 'teacher' || auth.user()?.rol === 'admin') {
+          <a routerLink="/documentos" routerLinkActive="active"
+            ><span aria-hidden="true">▤</span> Documentos</a
+          >
+        }
       } @else {
         <a routerLink="/login" routerLinkActive="active">Acceso institucional</a>
       }
@@ -22,7 +27,7 @@
   </aside>
   <div class="workspace">
     <header class="topbar">
-      <span>TutorIA-Lucero <span class="divider">/</span> Vista general</span>
+      <span>TutorIA-Lucero <span class="divider">/</span> Universidad Politécnica Salesiana</span>
       <div class="account">
         @if (auth.user(); as user) {
           <span>{{ user.nombre }} {{ user.apellido }}</span

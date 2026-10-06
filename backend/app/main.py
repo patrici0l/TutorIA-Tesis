@@ -11,7 +11,9 @@ from app.configuracion.constants import API_PREFIX, APP_VERSION
 from app.configuracion.logging_config import configure_logging
 from app.configuracion.settings import get_settings
 from app.modulos.autenticacion.router import router as auth_router
+from app.modulos.documentos.router import router as documents_router
 from app.nucleo.seguridad.rate_limiter import AuthRateLimiter
+from app.nucleo.seguridad.upload_limit import UploadLimitMiddleware
 
 
 @asynccontextmanager
@@ -35,6 +37,8 @@ def create_app() -> FastAPI:
     )
     app.include_router(router, prefix=API_PREFIX)
     app.include_router(auth_router, prefix=API_PREFIX)
+    app.include_router(documents_router, prefix=API_PREFIX)
+    app.add_middleware(UploadLimitMiddleware)
     limiter = AuthRateLimiter()
 
     @app.middleware("http")

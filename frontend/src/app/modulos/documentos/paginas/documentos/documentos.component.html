@@ -1,0 +1,148 @@
+<p class="eyebrow">MATERIALES DEL CURSO</p>
+<h1>Documentos con fundamento.</h1>
+<p class="lead">Reúne los materiales docentes que servirán como fuentes de aprendizaje.</p>
+@if (!canManage()) {
+  <div class="panel">
+    <h2>Espacio docente</h2>
+    <p>
+      La carga y gestión de materiales requiere permisos de docente. Tu cuenta de estudiante
+      utilizará los recursos de aprendizaje en las próximas etapas.
+    </p>
+  </div>
+} @else {
+  @if (error()) {
+    <p class="notice error" role="alert">{{ error() }}</p>
+  }
+  @if (success()) {
+    <p class="notice success" role="status">{{ success() }}</p>
+  }
+  <section class="panel" aria-labelledby="upload-title">
+    <h2 id="upload-title">Añadir un documento</h2>
+    <p>PDF, DOCX o TXT · Hasta 10 MiB · Materiales propios o con autorización de uso.</p>
+    <form (ngSubmit)="upload(fileInput)">
+      <label for="document-title">Título</label>
+      <input
+        id="document-title"
+        name="title"
+        [(ngModel)]="title"
+        maxlength="160"
+        required
+        [disabled]="busy()"
+        placeholder="Ej. Introducción a las derivadas"
+      />
+      <label for="document-file">Archivo del curso</label>
+      <input
+        #fileInput
+        id="document-file"
+        type="file"
+        accept=".pdf,.docx,.txt"
+        (change)="choose($event)"
+        [disabled]="busy()"
+        aria-describedby="file-help"
+      />
+      <p id="file-help">
+        El servidor validará el contenido. El documento se guardará de forma privada; todavía no se
+        procesará con IA.
+      </p>
+      <button type="submit" [disabled]="busy() || !file() || !title.trim()">
+        {{ busy() ? 'Guardando…' : 'Guardar documento' }}
+      </button>
+    </form>
+  </section>
+  <section class="panel" aria-labelledby="library-title" [attr.aria-busy]="loading()">
+    <div class="heading">
+      <h2 id="library-title">
+        Mis documentos <span>{{ total() }}</span>
+      </h2>
+      <button class="secondary" (click)="load()" [disabled]="loading() || busy()">
+        Actualizar
+      </button>
+    </div>
+    @if (loading()) {
+      <p role="status">Cargando documentos…</p>
+    } @else if (documents().length === 0) {
+      <p>Aún no tienes documentos. Añade tu primer material del curso.</p>
+    } @else {
+      <ul class="document-list">
+        @for (document of documents(); track document.id) {
+          <li>
+            <div>
+              <h3>{{ document.title }}</h3>
+              <p class="filename">{{ document.filename }} · {{ size(document.size_bytes) }}</p>
+              <span class="badge">Guardado · Pendiente de procesamiento</span>
+            </div>
+            <div class="actions">
+              <button
+                class="secondary"
+                (click)="view(document)"
+                [disabled]="busy()"
+                [attr.aria-label]="'Ver detalles de ' + document.title"
+              >
+                Detalles</button
+              ><button
+                class="danger"
+                (click)="pendingDelete.set(document)"
+                [disabled]="busy()"
+                [attr.aria-label]="'Eliminar ' + document.title"
+              >
+                Eliminar
+              </button>
+            </div>
+          </li>
+        }
+      </ul>
+      <div class="pagination">
+        <button
+          class="secondary"
+          (click)="load(offset() - 20)"
+          [disabled]="offset() === 0 || busy()"
+        >
+          Anterior</button
+        ><span>{{ offset() + 1 }}–{{ offset() + documents().length }} de {{ total() }}</span
+        ><button
+          class="secondary"
+          (click)="load(offset() + 20)"
+          [disabled]="offset() + documents().length >= total() || busy()"
+        >
+          Siguiente
+        </button>
+      </div>
+    }
+  </section>
+  @if (selected(); as document) {
+    <section class="panel details" aria-labelledby="detail-title">
+      <div class="heading">
+        <h2 id="detail-title">{{ document.title }}</h2>
+        <button class="secondary" (click)="selected.set(null)">Cerrar detalles</button>
+      </div>
+      <dl>
+        <dt>Archivo</dt>
+        <dd>{{ document.filename }}</dd>
+        <dt>Formato</dt>
+        <dd>{{ document.mime_type }}</dd>
+        <dt>Tamaño</dt>
+        <dd>{{ size(document.size_bytes) }}</dd>
+        <dt>Fecha de carga</dt>
+        <dd>{{ document.created_at | date: 'dd/MM/yyyy HH:mm' }}</dd>
+        <dt>Estado</dt>
+        <dd>Guardado; pendiente de procesamiento</dd>
+      </dl>
+    </section>
+  }
+  @if (pendingDelete(); as document) {
+    <section class="panel deletion" role="alert" aria-labelledby="delete-title">
+      <h2 id="delete-title">Eliminar «{{ document.title }}»</h2>
+      <p>
+        El material se retirará de tu biblioteca y se eliminará su archivo. Esta acción no se puede
+        deshacer desde la interfaz.
+      </p>
+      <div class="actions">
+        <button class="danger" (click)="remove()" [disabled]="busy()">
+          {{ busy() ? 'Eliminando…' : 'Confirmar eliminación' }}</button
+        ><button class="secondary" (click)="pendingDelete.set(null)" [disabled]="busy()">
+          Cancelar
+        </button>
+      </div>
+    </section>
+  }
+}

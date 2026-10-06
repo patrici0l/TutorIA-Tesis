@@ -1,0 +1,6 @@
+TutorIA-Lucero: material sintético de prueba
+Tema: derivada de una función polinómica
+Objetivo: reconocer la tasa de cambio instantánea.
+Ejemplo: si f(x) = x^2, su derivada es f'(x) = 2x.
+Ejercicio: determina la derivada de g(x) = 3x^2 + 2x.
+Este texto se creó exclusivamente para comprobar carga y gestión del corpus.
