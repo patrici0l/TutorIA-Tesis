@@ -90,6 +90,7 @@ El repositorio se inicia localmente; la publicación en GitHub requiere elegir l
 ## Documentación
 
 - [Plan y requisitos](documentacion/PLAN_DE_TRABAJO.md)
+- [Navegación superior y experiencia de uso](documentacion/arquitectura/navegacion.md)
 - [Arquitectura](documentacion/arquitectura/arquitectura.md)
 - [Decisiones iniciales](documentacion/decisiones_tecnicas/0001-base-tecnica.md)
 - [Continuidad y próximo paso](documentacion/CONTINUIDAD.md)

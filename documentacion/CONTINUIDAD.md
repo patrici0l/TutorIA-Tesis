@@ -14,12 +14,13 @@ El plan original continúa como base. La actualización directa del autor del 5 
 - Angular: botón UPS, guard, consulta /auth/me, logout y aviso visible de usuario ficticio. Flujo mock validado en navegador con recarga y rechazo de acceso tras logout.
 - Migración 0002 aplicada en PostgreSQL local. Se retiró la implementación provisional de contraseñas antes de ejecutar su migración.
 - Hito 3: carga PDF/DOCX/TXT hasta 10 MiB, validación estructural, biblioteca paginada, detalle y eliminación de documentos propios; rol teacher/admin obligatorio y controles de propietario en backend. Migración 0003 aplicada; bytes privados en volumen document_data.
+- Navegación mejorada: cabecera superior, pestañas desplazables, desplegable Explorar animado, foco/Escape, rol y movimiento reducido. Componente compartido modular; arquitectura/navegacion.md documenta estructura y prueba.
 - Estilo: azules digitales UPS, acento amarillo, blanco y fondo claro; navegación, login, dashboard y biblioteca consistentes.
 - Entorno Docker funcionando, tres servicios saludables y volúmenes de PostgreSQL/documentos conservados.
 
 ## Pruebas y evidencia
 
-Verificación actual: backend local 54 aprobadas y 3 integraciones omitidas; Docker/PostgreSQL 57 aprobadas sin omisiones. Angular 19 aprobadas, compilación correcta. Ruff sin errores. La muestra sintética se cargó desde el navegador y persiste tras recarga y recreación de backend. Consultar pruebas/hito_03.md y capturas hito_03_inicio_ups.png / hito_03_documentos_ups.png. TestClient/HTTPX y add_js de pypdf tienen advertencias de deprecación documentadas.
+Verificación actual: backend local 54 aprobadas y 3 integraciones omitidas; Docker/PostgreSQL 57 aprobadas sin omisiones. Angular: última verificación de navegación 24 aprobadas en 8 archivos; compilación Docker aproximadamente 300 kB, sin advertencias de presupuesto. Capturas navegacion_desktop.png y navegacion_mobile.png; responsive verificado a 390×844 y tamaño normal restaurado. Ruff sin errores. La muestra sintética se cargó desde el navegador y persiste tras recarga y recreación de backend. Consultar pruebas/hito_03.md y capturas hito_03_inicio_ups.png / hito_03_documentos_ups.png. TestClient/HTTPX y add_js de pypdf tienen advertencias de deprecación documentadas.
 
 ## Punto exacto de continuación
 
@@ -35,10 +36,10 @@ Hitos 1, 2 mock y 3 cerrados. CAS real sigue pendiente de TI; gestión administr
 
 ## Git y cómo retomar
 
-Repositorio C:/C_PROJECTS/TESIS COMPUTACION/TutorIA-Lucero. Rama feature/document-upload, basada en 82fabe6 (autenticación); c7db36d sigue en main/develop. El cierre del corpus y estilo se guarda en commit descriptivo; consultar git log -1 para su identificador. Sin remoto GitHub.
+Repositorio C:/C_PROJECTS/TESIS COMPUTACION/TutorIA-Lucero. Rama feature/navigation, basada en 31270c6 (corpus y estilo), precedido por 82fabe6 (autenticación); c7db36d sigue en main/develop. El ajuste de navegación se guarda en commit descriptivo; consultar git log -1 para su identificador. Sin remoto GitHub.
 
 Leer AGENTS.md, este archivo, PLAN_DE_TRABAJO.md y la decisión 0002. Revisar git status antes de editar y preservar cambios existentes. Ejecutar docker compose up -d --build --wait desde la raíz con el .env local, sin imprimir secretos ni eliminar volúmenes. Interfaz http://localhost:4200/login; las pruebas de PostgreSQL se ejecutan con el compose de pruebas documentado. No repetir verificaciones terminadas si no hay cambios que lo requieran.
 
 ## Estado local al cerrar
 
-Se deja una muestra derivadas_sinteticas.txt en la biblioteca del docente ficticio y el navegador abierto en /documentos. Para verificar la carga se seleccionó temporalmente AUTH_MOCK_USER=teacher mediante variable de proceso; después se restauró backend a la configuración .env original (student). La sesión docente ya iniciada continúa válida hasta logout/expiración. Un nuevo acceso usa la identidad configurada en .env; para demostrar documentos después de salir, configurar teacher y recrear backend. No se usaron credenciales UPS.
+Se deja una muestra derivadas_sinteticas.txt en la biblioteca del docente ficticio y el navegador abierto en /inicio después de verificar el desplegable; la biblioteca sigue accesible por la pestaña Documentos. Para verificar la carga se seleccionó temporalmente AUTH_MOCK_USER=teacher mediante variable de proceso; después se restauró backend a la configuración .env original (student). La sesión docente ya iniciada continúa válida hasta logout/expiración. Un nuevo acceso usa la identidad configurada en .env; para demostrar documentos después de salir, configurar teacher y recrear backend. No se usaron credenciales UPS.

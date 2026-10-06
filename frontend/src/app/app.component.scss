@@ -1,26 +1,37 @@
 .shell {
-  display: flex;
   min-height: 100dvh;
-}
-.sidebar {
-  width: 252px;
-  flex-shrink: 0;
-  padding: 36px 24px;
-  background: var(--navy);
-  color: #eef4fb;
-  border-top: 4px solid var(--gold);
   display: flex;
   flex-direction: column;
 }
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: white;
+  border-top: 4px solid var(--gold);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 3px 16px #002d6205;
+}
+.masthead {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  min-height: 86px;
+  max-width: 1250px;
+  margin: auto;
+  padding: 16px 48px;
+}
 .brand {
+  min-height: 44px;
   display: flex;
   align-items: center;
   gap: 9px;
-  color: white;
+  color: var(--navy);
   text-decoration: none;
   font-size: 28px;
   font-weight: 750;
   letter-spacing: -1.3px;
+  flex-shrink: 0;
 }
 .brand-icon {
   display: grid;
@@ -32,169 +43,193 @@
   border-radius: 10px;
   font-family: Georgia, serif;
   font-style: italic;
+  transition: transform 180ms ease;
+}
+.brand:hover .brand-icon {
+  transform: rotate(-5deg);
 }
 .brand-dot {
   color: var(--gold);
   margin-left: -8px;
 }
-.workspace-label {
-  margin: 58px 10px 17px;
-  font-size: 10px;
-  letter-spacing: 1.5px;
-  color: #b5cee6;
+.institution {
+  padding-left: 28px;
+  border-left: 1px solid var(--border);
 }
-nav a {
-  display: flex;
-  gap: 12px;
-  padding: 13px 16px;
-  border-radius: 7px;
-  color: white;
-  text-decoration: none;
-  font-size: 14px;
-}
-nav a.active {
-  background: var(--blue-dark);
-}
-.sidebar-note {
-  margin-top: auto;
-  padding: 60px 10px 0;
-  font-size: 13px;
-  line-height: 1.7;
-  color: #d4e4f3;
-}
-.sidebar-note small {
-  color: #b5cee6;
-  font-size: 10px;
-}
-.eyebrow {
+.institution span {
   font-size: 9px;
-  letter-spacing: 1.3px;
-  color: var(--gold);
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--blue-dark);
 }
-.workspace {
-  flex: 1;
-  min-width: 0;
+.institution small {
+  display: block;
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 11px;
 }
-.topbar {
-  height: 82px;
+.account {
+  margin-left: auto;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 0 48px;
-  background: white;
-  border-bottom: 1px solid var(--border);
-  font-size: 12px;
-  color: var(--muted);
+  gap: 12px;
 }
-.divider {
-  margin: 0 12px;
-  color: #aaa;
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  background: var(--blue-soft);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  font-size: 12px;
+  color: var(--blue-dark);
+  flex-shrink: 0;
+}
+.account-name {
+  max-width: 220px;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+  font-weight: 600;
+}
+.account-name small {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 400;
+  margin-top: 4px;
+}
+.account button {
+  min-height: 44px;
+  border: 1px solid var(--border);
+  background: white;
+  padding: 10px 12px;
+  color: var(--blue-dark);
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 11px;
+  white-space: nowrap;
+  transition:
+    background 180ms,
+    border-color 180ms;
+}
+.account button:hover {
+  background: var(--blue-soft);
+  border-color: #b3cde5;
+}
+.account button:disabled {
+  opacity: 0.6;
+  cursor: wait;
 }
 .tag {
+  font-size: 11px;
   border: 1px solid var(--border);
-  padding: 6px 10px;
-  border-radius: 5px;
-  white-space: nowrap;
+  padding: 8px 12px;
+  border-radius: 20px;
+  color: var(--blue-dark);
 }
 main {
+  width: 100%;
   max-width: 1250px;
-  padding: 52px 48px;
-  margin: auto;
+  padding: 40px 48px 52px;
+  margin: 0 auto;
+  flex: 1;
+  scroll-margin-top: 170px;
+}
+main:focus {
+  outline: none;
 }
 footer {
   display: flex;
   justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  max-width: 1250px;
+  margin: auto;
   padding: 20px 48px;
   color: var(--muted);
   font-size: 11px;
 }
 .skip-link {
-  position: absolute;
+  position: fixed;
   top: -80px;
   left: 16px;
   background: white;
   padding: 12px;
-  z-index: 20;
+  z-index: 30;
+  border-radius: 5px;
+  color: var(--blue-dark);
 }
 .skip-link:focus {
   top: 12px;
 }
-@media (max-width: 800px) {
-  .sidebar {
-    width: 185px;
-    padding: 28px 16px;
+.mock-notice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #e5d7ae;
+  padding: 11px 14px;
+  background: #fff9e9;
+  color: #665123;
+  font-size: 11px;
+  line-height: 1.6;
+  margin: 0 0 32px;
+  border-radius: 7px;
+}
+.notice-dot {
+  width: 6px;
+  height: 6px;
+  background: #a67f38;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+@media (max-width: 1050px) {
+  .institution {
+    display: none;
   }
-  main {
-    padding: 32px 24px;
-  }
-  .topbar,
+}
+@media (max-width: 850px) {
+  .masthead,
+  main,
   footer {
     padding-left: 24px;
     padding-right: 24px;
   }
 }
 @media (max-width: 600px) {
-  .shell {
-    display: block;
-  }
-  .sidebar {
-    width: auto;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding: 18px 20px;
-  }
-  .sidebar-note,
-  .workspace-label {
-    display: none;
+  .masthead {
+    gap: 14px;
+    min-height: 74px;
+    flex-wrap: wrap;
+    padding: 14px 16px;
   }
   .brand {
-    font-size: 24px;
+    font-size: 25px;
   }
-  .topbar {
-    height: 64px;
+  .account {
+    gap: 8px;
+  }
+  .account-name {
+    display: none;
+  }
+  .avatar {
+    width: 30px;
+    height: 30px;
+  }
+  .account button {
+    padding: 9px;
+  }
+  main {
+    padding: 28px 20px;
+    scroll-margin-top: 160px;
   }
   footer {
-    gap: 20px;
-  }
-}
-.account {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.account button {
-  border: 1px solid var(--border);
-  background: white;
-  padding: 7px 10px;
-  color: var(--blue-dark);
-  border-radius: 5px;
-  cursor: pointer;
-}
-.mock-notice {
-  border-left: 3px solid #a67f38;
-  padding: 12px;
-  background: #f5efdf;
-  color: #665123;
-  font-size: 12px;
-  margin: 0 0 28px;
-}
-.account span {
-  max-width: 220px;
-  overflow-wrap: anywhere;
-}
-@media (max-width: 600px) {
-  .topbar {
-    height: auto;
-    min-height: 64px;
+    padding: 20px;
     flex-wrap: wrap;
-    padding-top: 16px;
-    padding-bottom: 16px;
+    font-size: 10px;
   }
-}
-
-@media (max-width: 600px) {
-  .sidebar { flex-wrap: wrap; gap: 14px; }
-  nav { display: flex; flex-wrap: wrap; gap: 4px; }
+  .tag {
+    font-size: 10px;
+    padding: 7px 9px;
+  }
 }
