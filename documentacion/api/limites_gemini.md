@@ -1,6 +1,6 @@
 # Límites de Gemini para TutorIA
 
-Actualizado el 7 de octubre de 2026. El autor autorizó pruebas reales. Se usa la clave del .env privado; nunca se muestra ni se envía por Angular. La autenticación UPS no cambia.
+Actualizado el 7 de octubre de 2026. Restricción vigente del autor: presupuesto USD 0; no ejecutar nuevas pruebas reales hasta confirmar proyecto Free Tier sin facturación vinculada. El autor autorizó pruebas reales. Se usa la clave del .env privado; nunca se muestra ni se envía por Angular. La autenticación UPS no cambia.
 
 ## Configuración local
 
@@ -30,7 +30,7 @@ No incluir este comando en pytest, healthchecks ni arranque automático. Cada ej
 
 1. Abrir Google AI Studio → Dashboard → Usage and Billing / Spend y seleccionar el proyecto de la clave.
 2. Si el proyecto está en Free Tier, conservar ese nivel para ensayos sintéticos y observar sus cuotas; los límites concretos aparecen en AI Studio y dependen del modelo/proyecto. No activar facturación como efecto secundario de una prueba.
-3. Si ya hay facturación, configurar Monthly spend cap → Edit spend cap. Propuesta inicial: USD 1 al mes para las pruebas; el autor elige el importe. Este límite todavía no se ha configurado en la cuenta desde TutorIA.
+3. Si ya hay facturación, configurar Monthly spend cap → Edit spend cap. El autor no autoriza gasto: no usar este proyecto para pruebas pagadas. La propuesta previa de USD 1 quedó descartada. El estado de facturación se debe comprobar antes de cualquier petición adicional.
 4. En Prepay, mantener auto-reload desactivado si se desea controlar las recargas manualmente. La compra mínima documentada es USD 5; no se realiza ninguna compra ni cambio de facturación desde esta tarea.
 5. Revisar Usage y Spend después de las pruebas. Los caps de proyecto son experimentales y pueden tener retrasos de aproximadamente diez minutos; no garantizan un corte al centavo. Un presupuesto con alertas de Cloud Billing tampoco sustituye el bloqueo de solicitudes en TutorIA.
 
