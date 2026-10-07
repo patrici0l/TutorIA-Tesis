@@ -9,11 +9,18 @@ class UploadLimitMiddleware:
         self.app, self.maximum = app, maximum
 
     async def __call__(self, scope, receive, send):
-        if scope["type"] != "http" or scope["path"] not in {
-            "/api/v1/documents/upload",
-            "/api/v1/rag/search",
-            "/api/v1/content/prepare",
-        }:
+        generation = scope.get("path", "").startswith("/api/v1/content/") and scope.get(
+            "path", ""
+        ).endswith("/generate")
+        if scope["type"] != "http" or (
+            not generation
+            and scope["path"]
+            not in {
+                "/api/v1/documents/upload",
+                "/api/v1/rag/search",
+                "/api/v1/content/prepare",
+            }
+        ):
             return await self.app(scope, receive, send)
         maximum = self.maximum if scope["path"] == "/api/v1/documents/upload" else 16_384
         headers = dict(scope.get("headers", []))

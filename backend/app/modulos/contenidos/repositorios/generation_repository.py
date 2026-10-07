@@ -54,7 +54,7 @@ class GenerationRepository:
             .where(
                 ContentGeneration.id == identifier,
                 ContentGeneration.owner_id == owner,
-                ContentGeneration.status == "prepared",
+                ContentGeneration.status.in_(["prepared", "generating"]),
             )
             .values(**values, completed_at=datetime.now(UTC))
             .execution_options(synchronize_session=False)

@@ -3,9 +3,11 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ResourceViewComponent } from '../../componentes/resource-view/resource-view.component';
 import { AuthService } from '../../../../nucleo/servicios/auth.service';
 import {
   Difficulty,
+  GenerationResponse,
   PreparationRequest,
   PreparationResponse,
   ResourceType,
@@ -14,7 +16,7 @@ import { PreparationService } from '../../servicios/preparation.service';
 
 @Component({
   selector: 'app-resource-preparation',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, ResourceViewComponent],
   templateUrl: './preparation.component.html',
   styleUrl: './preparation.component.scss',
 })
@@ -24,6 +26,9 @@ export class PreparationComponent {
   private readonly destroy = inject(DestroyRef);
   readonly canPrepare = computed(() => ['teacher', 'admin'].includes(this.auth.user()?.rol ?? ''));
   readonly loading = signal(false);
+  readonly generating = signal(false);
+  readonly generation = signal<GenerationResponse | null>(null);
+  readonly sent = signal(false);
   readonly error = signal('');
   readonly result = signal<PreparationResponse | null>(null);
   readonly resources: { value: ResourceType; label: string; description: string }[] = [
@@ -57,6 +62,8 @@ export class PreparationComponent {
 
   clearResult() {
     this.result.set(null);
+    this.generation.set(null);
+    this.sent.set(false);
     this.error.set('');
   }
   changeResource() {
@@ -69,8 +76,32 @@ export class PreparationComponent {
   description() {
     return this.resources.find((item) => item.value === this.resourceType)?.description;
   }
+  generate() {
+    const prepared = this.result();
+    if (!prepared || this.generating() || this.sent() || !this.canPrepare()) return;
+    this.sent.set(true);
+    this.generating.set(true);
+    this.error.set('');
+    this.service
+      .generate(prepared.id)
+      .pipe(takeUntilDestroyed(this.destroy))
+      .subscribe({
+        next: (response) => {
+          this.generation.set(response);
+          this.generating.set(false);
+        },
+        error: (error: HttpErrorResponse) => {
+          this.generating.set(false);
+          this.error.set(
+            typeof error.error?.detail === 'string'
+              ? error.error.detail
+              : 'No se pudo confirmar el resultado. Evita repetir el envío; podría haberse procesado.',
+          );
+        },
+      });
+  }
   prepare() {
-    if (!this.canPrepare() || this.loading()) return;
+    if (!this.canPrepare() || this.loading() || this.generating()) return;
     this.result.set(null);
     const topic = this.topic.trim(),
       objective = this.objective.trim();
@@ -104,6 +135,8 @@ export class PreparationComponent {
       .pipe(takeUntilDestroyed(this.destroy))
       .subscribe({
         next: (response) => {
+          this.generation.set(null);
+          this.sent.set(false);
           this.result.set(response);
           this.loading.set(false);
         },

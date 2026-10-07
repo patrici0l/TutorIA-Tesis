@@ -35,6 +35,29 @@ describe('Preparación docente', () => {
       },
     ],
   };
+  it('envía una preparación una sola vez y muestra un fallo sin reintentar', async () => {
+    const fixture = setup(),
+      component = fixture.componentInstance;
+    component.prepare();
+    http.expectOne('/api/v1/content/prepare').flush(response);
+    component.generate();
+    component.generate();
+    const call = http.expectOne('/api/v1/content/test-prepared/generate');
+    expect(call.request.body).toEqual({});
+    call.flush({
+      id: 'test-prepared',
+      status: 'failed',
+      resource: null,
+      message: 'Cuota agotada.',
+    });
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(fixture.nativeElement.textContent).toContain('Cuota agotada.');
+    component.generate();
+    http.expectNone('/api/v1/content/test-prepared/generate');
+    component.clearResult();
+    expect(component.generation()).toBeNull();
+  });
   beforeEach(async () => {
     user.set({ rol: 'teacher' });
     await TestBed.configureTestingModule({

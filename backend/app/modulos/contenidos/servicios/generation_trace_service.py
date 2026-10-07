@@ -27,7 +27,7 @@ class GenerationTraceService:
 
     def finish(self, identifier: UUID, owner: UUID, result: GenerationResult):
         snapshot = self.repository.owned_snapshot(identifier, owner)
-        if snapshot is None or snapshot[2] != "prepared":
+        if snapshot is None or snapshot[2] not in {"prepared", "generating"}:
             raise ContentError("content_trace_unavailable")
         if (snapshot[3] is not None and snapshot[3] != result.provider) or (
             snapshot[4] is not None and snapshot[4] != result.requested_model

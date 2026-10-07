@@ -6,6 +6,8 @@ x-backend: &backend
   environment:
     APP_ENV: ${APP_ENV:-development}
     AUTH_MODE: ${AUTH_MODE:-mock}
+    LLM_FREE_TIER_CONFIRMED: ${LLM_FREE_TIER_CONFIRMED:-false}
+    LLM_DAILY_REQUEST_LIMIT: ${LLM_DAILY_REQUEST_LIMIT:-5}
     LLM_ENABLED: ${LLM_ENABLED:-false}
     LLM_DEFAULT_PROVIDER: ${LLM_DEFAULT_PROVIDER:-gemini}
     LLM_MODEL: ${LLM_MODEL:-}

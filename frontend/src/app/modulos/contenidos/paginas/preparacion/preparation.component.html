@@ -17,7 +17,7 @@
         <h2 id="prepare-title">Prepara tu recurso</h2>
       </div>
       <form (ngSubmit)="prepare()" #form="ngForm">
-        <fieldset [disabled]="loading()">
+        <fieldset [disabled]="loading() || generating()">
           <label for="topic">Tema</label>
           <input
             id="topic"
@@ -128,10 +128,10 @@
         <li>Conserva la preparación para el siguiente paso.</li>
       </ol>
       <div class="status-note">
-        <strong>La generación con IA está pendiente.</strong>
+        <strong>Generación gratuita, bajo tu control.</strong>
         <p>
-          Esta acción prepara las fuentes y guarda tu solicitud. No genera contenido ni consume
-          Gemini.
+          Primero prepara y revisa las fuentes. Después podrás generar explícitamente con Gemini.
+          Máximo cinco intentos al día para toda la demostración; sin reintentos automáticos.
         </p>
       </div>
       <a routerLink="/documentos">Gestionar mis materiales ↗</a>
@@ -148,13 +148,44 @@
   @if (result(); as prepared) {
     <section class="results" aria-labelledby="sources-title" aria-live="polite">
       <div class="panel confirmation">
-        <p class="eyebrow">PREPARADO, SIN GENERAR</p>
+        <p class="eyebrow">
+          {{
+            generation()?.status === 'succeeded'
+              ? 'RECURSO GENERADO'
+              : sent()
+                ? 'PREPARACIÓN ENVIADA'
+                : 'PREPARADO, SIN GENERAR'
+          }}
+        </p>
         <h2 id="sources-title">{{ label(prepared.resource_type) }} · {{ prepared.topic }}</h2>
         <p>{{ prepared.learning_objective }}</p>
         <p>
-          Preparación guardada. Revisa las fuentes seleccionadas; la similitud no garantiza que
-          sean suficientes.
+          Preparación guardada. Revisa las fuentes seleccionadas; la similitud no garantiza que sean
+          suficientes.
         </p>
+        <p>
+          Revisa las fuentes antes de enviar. La IA puede cometer errores; coteja el resultado con
+          el material.
+        </p>
+        <button type="button" [disabled]="sent() || generating()" (click)="generate()">
+          {{
+            generating()
+              ? 'Generando…'
+              : sent()
+                ? 'Solicitud enviada'
+                : 'Generar con Gemini · nivel gratuito'
+          }}
+        </button>
+        @if (generating()) {
+          <p role="status">Generando con las fuentes revisadas…</p>
+        }
+        @if (generation(); as generated) {
+          @if (generated.resource; as resource) {
+            <app-resource-view [resource]="resource" />
+          } @else {
+            <p role="alert">{{ generated.message }}</p>
+          }
+        }
         <details>
           <summary>Identificador de la preparación</summary>
           <code>{{ prepared.id }}</code>

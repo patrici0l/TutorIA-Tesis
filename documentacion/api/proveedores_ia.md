@@ -48,3 +48,7 @@ Las claves existentes de OpenAI/Anthropic en la plantilla son reservas del plan;
 ## Prueba real manual
 
 El autor autorizó una prueba real el 7 de octubre de 2026. gemini-3.1-flash-lite respondió con 35 tokens de entrada y 20 de salida. app.modulos.proveedores_ia.smoke realiza una petición sintética por ejecución; importar el módulo o ejecutar --help no llama red. La aplicación sigue desactivada hasta disponer del coordinador. Ver [límites](limites_gemini.md) y [evidencia](../pruebas/hito_06_gemini_real.md).
+
+## Estado vigente: generación API/UI
+
+La ruta pública controlada es POST /api/v1/content/{id}/generate, con preparación propia revisada y sin prompts/modelos arbitrarios del navegador. Gemini habilitado localmente por el autor bajo Free Tier confirmado y presupuesto USD 0; plantilla desactivada. Errores posteriores al envío se convierten en respuesta failed segura y trazable, sin reintentos/fallback. Cap API persistente global en PostgreSQL: cinco intentos/día UTC, uno/minuto y uno simultáneo; scripts manuales fuera del cap. Variables nuevas efectivas: LLM_FREE_TIER_CONFIRMED y LLM_DAILY_REQUEST_LIMIT. Ver contenidos.md, limites_gemini.md y ../pruebas/hito_07_generacion_ui.md. Este estado reemplaza las menciones históricas de ruta pendiente.

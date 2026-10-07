@@ -13,14 +13,15 @@ class ContentGeneration(Base):
     __tablename__ = "generaciones_contenido"
     __table_args__ = (
         CheckConstraint(
-            "status IN ('prepared','succeeded','failed')", name="ck_generaciones_status"
+            "status IN ('prepared','generating','succeeded','failed')",
+            name="ck_generaciones_status",
         ),
         CheckConstraint("latency_ms IS NULL OR latency_ms >= 0", name="ck_generaciones_latency"),
         CheckConstraint(
             "estimated_cost IS NULL OR estimated_cost >= 0", name="ck_generaciones_cost"
         ),
         CheckConstraint(
-            "(status = 'prepared' AND completed_at IS NULL "
+            "(status IN ('prepared','generating') AND completed_at IS NULL "
             "AND resource IS NULL AND error_code IS NULL) OR "
             "(status = 'succeeded' AND completed_at IS NOT NULL "
             "AND resource IS NOT NULL AND error_code IS NULL) OR "
@@ -50,3 +51,7 @@ class ContentGeneration(Base):
     error_code: Mapped[str | None] = mapped_column(String(40))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    generation_started_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), index=True
+    )
