@@ -71,3 +71,15 @@ Siguiente paso: coordinador de generación con snapshots previos, target explíc
 ## Restriccion vigente de gasto — 7 de octubre de 2026
 
 El autor aclaró que no quiere gastar nada. Esta instrucción reemplaza la propuesta de USD 1 mensual: presupuesto permitido USD 0. No realizar nuevas llamadas reales hasta confirmar que el proyecto de la clave está en Free Tier y sin facturación vinculada. No activar facturación, comprar créditos ni configurar recargas. Gemini Pro de la aplicación no demuestra acceso gratuito a Gemini Developer API. La prueba anterior consumió 55 tokens; el cargo efectivo no se verificó y no se afirma cero. Continuar implementación y pruebas con transporte ficticio; aplicación LLM_ENABLED=false.
+
+## Continuación vigente: Free Tier confirmado y coordinador — 7 de octubre de 2026
+
+El autor mostró AI Studio con Nivel gratuito y pidió usar la clave. Esta confirmación satisface la condición anterior de no hacer nuevas llamadas hasta verificar Free Tier. Presupuesto USD 0 permanece; no modificar facturación ni comprar créditos/recargas. Se aceptó la evidencia del autor, no se asegura verificación programática de facturación. Aplicación general LLM_ENABLED=false; pruebas manuales explícitas habilitan solo su proceso.
+
+GenerateContentService implementado: preparar corpus propio → persistir solicitud/fuentes/target → una llamada → validar esquema/citas → cerrar condicionalmente con recurso o fallo. Sin transacción SQL abierta durante red, sin reintentos ni fallback. Diez pruebas nuevas PostgreSQL: suite completa **238 aprobadas en 17,99 s**, Ruff check/format 125 archivos. Angular no cambió: 42 pruebas anteriores conservadas.
+
+Prueba real RAG exclusivamente sobre documento sintético de derivadas: primer intento agotó 15 s y se guardó failed/llm_timeout (0331084d-5d0b-4a03-b6d4-a6b65767731f). Segundo intento manual con 30 s pasó: EXPLANATION, citas S1, fuente única y snapshot, 1076 input/327 output/1403 total, 1551 ms, ID 19f52cf3-eec8-440c-8681-b3b0d353f161. No se envió corpus real. Evidencia pruebas/hito_07_coordinador.md y pruebas/hito_07_generacion_real.json. Dos llamadas en este bloque; no repetirlas sin motivo. Consumo del timeout desconocido y costo null. No afirmar benchmark ni validación matemática integral.
+
+Script app.modulos.contenidos.smoke requiere --free-tier-confirmed y fuentes con UUID/hash de la muestra conocida. Salida máxima 512 tokens, 30 s, una petición por ejecución, una/minuto/proceso. No hay llamada al importar/--help. No ejecutar como healthcheck ni test automático. La ruta /recursos aún solo prepara: no presenta generación ficticia ni llama Gemini automáticamente.
+
+Punto exacto siguiente: exponer el coordinador por API con roles/propiedad/CSRF y control persistente de cupo/estado, integrar la generación explícita en Angular y sus errores. No cerrar hito 7 hasta flujo completo y validación de todos los recursos. Mantener proyecto gratuito, parar ante cuota agotada; no escalar a servicio de pago. Rama feature/resource-preparation; bloque en commit descriptivo (consultar git log -1), sin remoto. Docker actualizado conservando datos/modelos, migraciones sin cambios.

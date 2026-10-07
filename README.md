@@ -127,3 +127,6 @@ El repositorio se inicia localmente; la publicación en GitHub requiere elegir l
 - [Evidencia del primer bloque](documentacion/pruebas/hito_01.md)
 
 La licencia de distribución del código propio queda pendiente de decisión del autor y de las condiciones institucionales. No se ha concedido una licencia abierta automáticamente.
+
+
+Coordinador interno educativo preparado y probado; explicación RAG real con Gemini 3.1 Flash-Lite y muestra sintética validada/persistida. El autor confirmó Free Tier y presupuesto USD 0. La interfaz /recursos conserva preparación sin generación automática hasta integrar API/UI. Ver [evidencia del coordinador](documentacion/pruebas/hito_07_coordinador.md).

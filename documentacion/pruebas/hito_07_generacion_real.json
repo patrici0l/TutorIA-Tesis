@@ -1,0 +1,50 @@
+{
+  "id": "19f52cf3-eec8-440c-8681-b3b0d353f161",
+  "status": "succeeded",
+  "prompt_version": "educational-rag-v1",
+  "prompt_sha256": "75feec5e9762edb3db3527a6a8c88d1625a3bd65fc38ebc8ad29b3a6c06138b0",
+  "provider": "gemini",
+  "requested_model": "gemini-3.1-flash-lite",
+  "model_version": "gemini-3.1-flash-lite",
+  "latency_ms": 1551,
+  "usage": {
+    "input_tokens": 1076,
+    "total_tokens": 1403,
+    "output_tokens": 327,
+    "reasoning_tokens": null,
+    "cached_input_tokens": null
+  },
+  "estimated_cost": null,
+  "source_count": 1,
+  "source_document_id": "84ed0928-238d-46ec-9de2-8f704249ddc3",
+  "resource": {
+    "steps": [
+      {
+        "text": "Comprender que la derivada de una función, como f(x) = x², indica cómo cambia dicha función en un punto específico, lo cual se denomina tasa de cambio instantánea.",
+        "citations": [
+          "S1"
+        ]
+      },
+      {
+        "text": "Identificar la regla de derivación básica aplicada: para f(x) = x², la derivada resulta en f'(x) = 2x.",
+        "citations": [
+          "S1"
+        ]
+      }
+    ],
+    "title": "La derivada de la función x² y la tasa de cambio instantánea",
+    "summary": {
+      "text": "La derivada representa la tasa de cambio instantánea de una función. Para la función cuadrática f(x) = x², su derivada es f'(x) = 2x.",
+      "citations": [
+        "S1"
+      ]
+    },
+    "resource_type": "EXPLANATION",
+    "worked_example": {
+      "text": "Ejemplo resuelto: Dada la función f(x) = x², aplicamos la regla de derivación y obtenemos f'(x) = 2x. Ejercicio propuesto: Determina la derivada de la función g(x) = 3x² + 2x.",
+      "citations": [
+        "S1"
+      ]
+    }
+  }
+}

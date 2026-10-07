@@ -11,6 +11,7 @@ from app.modulos.proveedores_ia.servicios.llm_factory import create_provider
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Una petición Gemini sintética, sin reintentos.")
+    parser.add_argument("--free-tier-confirmed", action="store_true", required=True)
     parser.add_argument(
         "--model",
         choices=["gemini-2.5-flash-lite", "gemini-3.1-flash-lite"],

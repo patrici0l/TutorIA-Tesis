@@ -1,6 +1,6 @@
 # Límites de Gemini para TutorIA
 
-Actualizado el 7 de octubre de 2026. Restricción vigente del autor: presupuesto USD 0; no ejecutar nuevas pruebas reales hasta confirmar proyecto Free Tier sin facturación vinculada. El autor autorizó pruebas reales. Se usa la clave del .env privado; nunca se muestra ni se envía por Angular. La autenticación UPS no cambia.
+Actualizado el 7 de octubre de 2026. Restricción vigente del autor: presupuesto USD 0; usar únicamente el proyecto Free Tier confirmado por el autor mediante captura; no habilitar facturación ni hacer recargas. El autor autorizó pruebas reales. Se usa la clave del .env privado; nunca se muestra ni se envía por Angular. La autenticación UPS no cambia.
 
 ## Configuración local
 
@@ -21,7 +21,7 @@ La aplicación sigue desactivada mientras se implementa el coordinador educativo
 Ejecutar manualmente solo cuando se quiera consumir una petición:
 
 ```powershell
-docker compose exec -T backend python -m app.modulos.proveedores_ia.smoke
+docker compose exec -T backend python -m app.modulos.proveedores_ia.smoke --free-tier-confirmed
 ```
 
 No incluir este comando en pytest, healthchecks ni arranque automático. Cada ejecución es una nueva petición, aunque se reinicie el contenedor. El cupo por minuto es por proceso y no equivale a un límite diario/mensual persistente. Los 12 000 caracteres de entrada son caracteres, no tokens; el consumo real se obtiene de usageMetadata.
@@ -37,3 +37,7 @@ No incluir este comando en pytest, healthchecks ni arranque automático. Cada ej
 Para un tope diario o de dinero estricto dentro de TutorIA será necesario guardar reservas/consumo en PostgreSQL antes del envío, compartir cupos entre procesos y contemplar consumo desconocido en timeouts/fallos. Aún no existe esa función; no inventar LLM_MAX_DAILY_REQUESTS ni LLM_BUDGET_USD como variables efectivas.
 
 Fuentes oficiales verificadas: [facturación y caps](https://ai.google.dev/gemini-api/docs/billing/), [cuotas](https://ai.google.dev/gemini-api/docs/rate-limits), [precios](https://ai.google.dev/gemini-api/docs/pricing), [modelo 3.1 Flash-Lite](https://ai.google.dev/gemini-api/docs/models/gemini-3.1-flash-lite). El nivel gratuito puede utilizar entradas/salidas para mejorar productos Google; se prueban únicamente textos sintéticos, sin corpus institucional ni perfiles reales.
+
+## Prueba con RAG confirmada
+
+El autor confirmó Nivel gratuito mediante captura. El coordinador interno ya generó y guardó una explicación con citas sobre la muestra sintética. Prueba manual: docker compose exec -T backend python -m app.modulos.contenidos.smoke --free-tier-confirmed. Cada ejecución hace una nueva petición; no usar sin confirmar el proyecto gratuito vigente. Máximo 512 tokens y 30 s; no reintenta. Ver ../pruebas/hito_07_coordinador.md. La aplicación general sigue desactivada hasta disponer de API/UI y controles persistentes.
