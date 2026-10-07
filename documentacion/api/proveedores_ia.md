@@ -43,3 +43,8 @@ El servicio educativo deberá traducirlos a respuestas HTTP seguras cuando exist
 Consultar `.env.example`: LLM_ENABLED, LLM_DEFAULT_PROVIDER, LLM_MODEL, GEMINI_API_KEY, LLM_TIMEOUT_SECONDS, LLM_MAX_INPUT_CHARS, LLM_MAX_OUTPUT_TOKENS y LLM_REQUESTS_PER_MINUTE. El `.env` local existente no se sobrescribe. Si conserva LLM_DEFAULT_PROVIDER=openai de una plantilla anterior, cambiarlo explícitamente a gemini antes de activar; mientras LLM_ENABLED=false no se requiere modelo/clave. No usar `docker compose config` para diagnóstico porque mostraría secretos interpolados.
 
 Las claves existentes de OpenAI/Anthropic en la plantilla son reservas del plan; no hay adaptadores implementados para ellas. No añadir configuración de IA al frontend.
+
+
+## Prueba real manual
+
+El autor autorizó una prueba real el 7 de octubre de 2026. gemini-3.1-flash-lite respondió con 35 tokens de entrada y 20 de salida. app.modulos.proveedores_ia.smoke realiza una petición sintética por ejecución; importar el módulo o ejecutar --help no llama red. La aplicación sigue desactivada hasta disponer del coordinador. Ver [límites](limites_gemini.md) y [evidencia](../pruebas/hito_06_gemini_real.md).

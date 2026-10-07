@@ -33,7 +33,7 @@ Hitos 1, 3 y 4 cerrados técnicamente con material sintético; estilo ajustado a
 | 3 Corpus | PDF/DOCX/TXT, MIME/extensión/tamaño, permisos y gestión | Cargar, listar, consultar y eliminar documentos propios | Completado |
 | 4 Ingesta | Extracción, normalización, segmentación, embeddings e índices | Corpus trazable y reproducible en pgvector | Completado técnicamente con material sintético |
 | 5 RAG | Búsqueda semántica y top-k | Recuperación validada con corpus y consultas de referencia, sin LLM | Completado técnicamente con muestra sintética; validación independiente pendiente |
-| 6 IA | Interfaz generate, fábrica y primer proveedor | Proveedor intercambiable, errores y límites controlados | Interfaz/fábrica/Gemini preparados y probados sin red; conexión real desactivada por el autor |
+| 6 IA | Interfaz generate, fábrica y primer proveedor | Proveedor intercambiable, errores y límites controlados | Interfaz/fábrica/Gemini probados y primera conexión real 3.1 Flash-Lite verificada; generación general desactivada, coordinador/cap pendientes |
 | 7 Recursos | Explicación, ejercicio, quiz y feedback | Flujo completo por recurso, fuentes y validación | Contratos/prompts/validación y preparación API/UI listos; coordinador y generación real pendientes |
 | 8 Perfiles | Recepción por API de rendimiento externo | Validación y persistencia de perfiles sintéticos | Pendiente |
 | 9 Personalización | Alto, medio, dificultades y dificultad localizada | Diferencias justificadas para mismo tema y distintos perfiles | Pendiente |
@@ -95,3 +95,5 @@ Preparación del hito 7 implementada: ContentRequest, cuatro esquemas discrimina
 ## Decisiones académicas y externas por concretar
 
 Seleccionar corpus docente autorizado y rúbrica antes de RAG y evaluación. TI debe confirmar endpoints, atributos, callback, dominios y entorno CAS; el alta institucional automática ya está definida. Concretar administración de roles y corpus docente autorizado antes de usar datos reales. El hito 3 verifica propiedad con los roles locales existentes. Elegir licencia y cuenta/visibilidad de GitHub antes de publicación. Elegir modelos, presupuesto y credenciales de proveedores antes del hito 6. Estas decisiones no impiden construir y probar la base técnica. No se inventan aprobaciones del tutor, resultados experimentales ni fechas del cronograma.
+
+Actualización del 7 de octubre: el autor autorizó pruebas reales; 3.1 Flash-Lite respondió con 35 tokens de entrada/20 de salida. Script manual de una petición sin reintentos y límites locales configurados. El uso continuo y el cierre del flujo educativo requieren coordinador y cap de gasto. Ver pruebas/hito_06_gemini_real.md y api/limites_gemini.md.

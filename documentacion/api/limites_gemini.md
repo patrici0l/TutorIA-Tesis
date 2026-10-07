@@ -1,0 +1,39 @@
+# Límites de Gemini para TutorIA
+
+Actualizado el 7 de octubre de 2026. El autor autorizó pruebas reales. Se usa la clave del .env privado; nunca se muestra ni se envía por Angular. La autenticación UPS no cambia.
+
+## Configuración local
+
+Valores preparados en .env para la fase inicial:
+
+```dotenv
+LLM_DEFAULT_PROVIDER=gemini
+LLM_MODEL=gemini-3.1-flash-lite
+LLM_ENABLED=false
+LLM_REQUESTS_PER_MINUTE=1
+LLM_MAX_INPUT_CHARS=12000
+LLM_MAX_OUTPUT_TOKENS=512
+LLM_TIMEOUT_SECONDS=15
+```
+
+La aplicación sigue desactivada mientras se implementa el coordinador educativo. La prueba manual habilita únicamente su proceso, con una sola petición de texto sintético, 1000 caracteres de entrada como máximo, 128 tokens de salida y 15 segundos. No hay herramientas, grounding, caché explícita, fallback ni reintentos. El adaptador limita además la concurrencia a una petición por proceso. Una salida MAX_TOKENS se rechaza; no se publica texto incompleto.
+
+Ejecutar manualmente solo cuando se quiera consumir una petición:
+
+```powershell
+docker compose exec -T backend python -m app.modulos.proveedores_ia.smoke
+```
+
+No incluir este comando en pytest, healthchecks ni arranque automático. Cada ejecución es una nueva petición, aunque se reinicie el contenedor. El cupo por minuto es por proceso y no equivale a un límite diario/mensual persistente. Los 12 000 caracteres de entrada son caracteres, no tokens; el consumo real se obtiene de usageMetadata.
+
+## Límite económico en Google
+
+1. Abrir Google AI Studio → Dashboard → Usage and Billing / Spend y seleccionar el proyecto de la clave.
+2. Si el proyecto está en Free Tier, conservar ese nivel para ensayos sintéticos y observar sus cuotas; los límites concretos aparecen en AI Studio y dependen del modelo/proyecto. No activar facturación como efecto secundario de una prueba.
+3. Si ya hay facturación, configurar Monthly spend cap → Edit spend cap. Propuesta inicial: USD 1 al mes para las pruebas; el autor elige el importe. Este límite todavía no se ha configurado en la cuenta desde TutorIA.
+4. En Prepay, mantener auto-reload desactivado si se desea controlar las recargas manualmente. La compra mínima documentada es USD 5; no se realiza ninguna compra ni cambio de facturación desde esta tarea.
+5. Revisar Usage y Spend después de las pruebas. Los caps de proyecto son experimentales y pueden tener retrasos de aproximadamente diez minutos; no garantizan un corte al centavo. Un presupuesto con alertas de Cloud Billing tampoco sustituye el bloqueo de solicitudes en TutorIA.
+
+Para un tope diario o de dinero estricto dentro de TutorIA será necesario guardar reservas/consumo en PostgreSQL antes del envío, compartir cupos entre procesos y contemplar consumo desconocido en timeouts/fallos. Aún no existe esa función; no inventar LLM_MAX_DAILY_REQUESTS ni LLM_BUDGET_USD como variables efectivas.
+
+Fuentes oficiales verificadas: [facturación y caps](https://ai.google.dev/gemini-api/docs/billing/), [cuotas](https://ai.google.dev/gemini-api/docs/rate-limits), [precios](https://ai.google.dev/gemini-api/docs/pricing), [modelo 3.1 Flash-Lite](https://ai.google.dev/gemini-api/docs/models/gemini-3.1-flash-lite). El nivel gratuito puede utilizar entradas/salidas para mejorar productos Google; se prueban únicamente textos sintéticos, sin corpus institucional ni perfiles reales.
