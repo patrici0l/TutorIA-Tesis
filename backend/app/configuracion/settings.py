@@ -24,6 +24,14 @@ class Settings(BaseSettings):
     document_chunk_overlap: int = Field(default=150, ge=0, le=500)
     embedding_model_path: Path = Path("models/e5-small")
     embedding_timeout_seconds: int = Field(default=180, ge=30, le=180)
+    llm_enabled: bool = False
+    llm_default_provider: Literal["gemini", "openai", "claude"] = "gemini"
+    llm_model: str = ""
+    gemini_api_key: SecretStr = Field(default=SecretStr(""), repr=False)
+    llm_timeout_seconds: int = Field(default=30, ge=5, le=60)
+    llm_max_input_chars: int = Field(default=12000, ge=1000, le=24000)
+    llm_max_output_tokens: int = Field(default=1024, ge=128, le=4096)
+    llm_requests_per_minute: int = Field(default=5, ge=1, le=10)
     auth_mode: Literal["mock", "cas"] = "mock"
     auth_mock_user: Literal["student", "teacher"] = "student"
     auth_cookie_secure: bool = False
@@ -93,6 +101,18 @@ class Settings(BaseSettings):
         domains = set(self.allowed_domains())
         if not domains or not domains.issubset({"est.ups.edu.ec", "ups.edu.ec"}):
             raise ValueError("Configura dominios institucionales UPS explícitos")
+
+    def validate_llm(self) -> None:
+        from app.modulos.proveedores_ia.schemas import validate_model
+
+        if not self.llm_enabled:
+            return
+        if self.llm_default_provider != "gemini":
+            raise ValueError("El primer adaptador disponible es Gemini")
+        validate_model(self.llm_model)
+        key = self.gemini_api_key.get_secret_value()
+        if not key or key != key.strip() or any(ord(char) < 33 or ord(char) > 126 for char in key):
+            raise ValueError("Configura GEMINI_API_KEY exclusivamente en el backend")
 
     def allowed_domains(self) -> list[str]:
         return [

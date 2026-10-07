@@ -21,6 +21,7 @@ from app.nucleo.seguridad.upload_limit import UploadLimitMiddleware
 async def lifespan(app: FastAPI):
     configure_logging()
     get_settings().validate_auth()
+    get_settings().validate_llm()
     yield
     if get_engine.cache_info().currsize:
         get_engine().dispose()

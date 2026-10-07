@@ -30,10 +30,16 @@ Angular incorpora DocumentChunksComponent para revisar texto paginado y fuentes;
 
 POST /documents/{id}/index delega en IndexDocumentService → IndexRepository. Un worker separado verifica pesos/tokenizer locales fijados por SHA-256, genera embeddings E5 de 384 dimensiones en CPU y valida longitud de tokens sin truncamiento. La descarga de pesos públicos es una operación explícita del perfil Docker embeddings; ninguna petición API descarga modelos ni transmite corpus fuera del entorno. El volumen embedding_data se monta solo para lectura en backend.
 
-La inferencia termina antes de abrir la transacción de publicación. La reclamación condicional, token de intento y timeout permiten recuperar indexaciones interrumpidas y rechazar publicaciones tardías. Texto/referencias permanecen intactos. Angular muestra progreso, errores persistidos, reintento y reconstrucción explícita. La decisión 0005 documenta recursos y reproducibilidad. La búsqueda top-k ya se implementó; no existe integración LLM todavía.
+La inferencia termina antes de abrir la transacción de publicación. La reclamación condicional, token de intento y timeout permiten recuperar indexaciones interrumpidas y rechazar publicaciones tardías. Texto/referencias permanecen intactos. Angular muestra progreso, errores persistidos, reintento y reconstrucción explícita. La decisión 0005 documenta recursos y reproducibilidad. La búsqueda top-k ya se implementó; la conexión LLM real permanece desactivada.
 
 ## Recuperación de fuentes
 
 Angular /busqueda → POST /api/v1/rag/search → SearchService → EmbeddingWorkerClient y SearchRepository. El modelo genera un vector query local sin transacción de lectura abierta durante inferencia; el cupo es compartido con indexación. El vocabulario de consulta explícito y versionado normaliza equivalencias matemáticas y conserva la consulta original. SQL materializa corpus propio/elegible/compatible, ordena por distancia coseno exacta y devuelve texto y referencias sin vectores. La API exige teacher/admin y protección CSRF; no admite owner_id del cliente. Estudiantes pendientes de asignación de curso/corpus.
 
 HNSW se compara en pruebas con plan confirmado, nunca se activa por una opción del cliente. La muestra técnica es pequeña y el ajuste de vocabulario se hizo sobre ella; validación independiente y rendimiento a escala siguen pendientes. Contrato api/rag.md, decisión 0006 y evidencia pruebas/hito_05.md. No se genera una respuesta ni se ofrece similitud como certeza.
+
+## Capa de proveedores IA
+
+`modulos/proveedores_ia` expone interfaz `generate`, esquemas internos, fábrica, limitador compartido por proceso y adaptador Gemini. La capa educativa futura dependerá de la interfaz; solamente el adaptador conoce REST y headers del proveedor. Devuelve texto completo y metadata normalizada para trazabilidad, sin realizar SQL ni consultar perfiles/documentos. Configuración y secretos viven en backend; Docker los suministra desde el entorno privado, nunca desde Angular.
+
+Activación inicial deshabilitada por el autor. Pruebas con HTTPX MockTransport sin red; aún no hay rutas content, prompts educativos ni registro persistido de generaciones. No se envía corpus ni se presenta una respuesta simulada en el producto. La decisión 0007 y api/proveedores_ia.md detallan límites, errores, ausencias de metadata y requisitos antes de conectar Gemini real. OpenAI/Claude siguen previstos por la misma interfaz; no están implementados ni se usan como fallback.

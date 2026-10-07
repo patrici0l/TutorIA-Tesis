@@ -89,6 +89,12 @@ La extracción admite PDF con capa de texto, párrafos DOCX y TXT UTF-8. PDF esc
 
 Las carpetas de módulos futuros son reservas de estructura, no funcionalidades terminadas. No se publican endpoints vacíos ni respuestas simuladas de IA.
 
+## Proveedores de IA preparados
+
+El autor eligió Gemini como primer proveedor. La interfaz interna `LLMProvider.generate`, su fábrica y el adaptador REST están implementados con configuración explícita, límites y errores seguros. La conexión permanece **desactivada** por indicación del autor: `LLM_ENABLED=false`. Las pruebas utilizan transporte y datos ficticios, sin consumir la API. No hay todavía generación educativa ni un endpoint público nuevo; OpenAI/Claude están previstos y se rechazan hasta contar con sus adaptadores.
+
+Antes de activar Gemini quedan pendientes modelo, presupuesto/cupo, clave local privada, trazabilidad persistida y una prueba real autorizada. Nunca enviar la clave por el chat ni ponerla en Angular/Git. La plantilla `.env.example` documenta las variables; el `.env` existente no se sobrescribe. Consultar el [contrato interno](documentacion/api/proveedores_ia.md), la [decisión 0007](documentacion/decisiones_tecnicas/0007-proveedores-ia.md) y la [evidencia](documentacion/pruebas/hito_06_proveedores.md). Hito 6 sigue parcialmente completado.
+
 ## Reglas de trabajo
 
 Carpetas de dominio en español sin tildes; clases, métodos, servicios y endpoints en inglés. Interfaz en español. HTML, SCSS, TS y pruebas en archivos separados. Toda modificación del esquema usa Alembic. Ninguna clave de proveedor llega al navegador.

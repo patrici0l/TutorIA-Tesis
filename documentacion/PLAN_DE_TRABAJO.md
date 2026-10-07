@@ -4,7 +4,7 @@ Fuente rectora: Plan_Implementacion_TutorIA-Lucero.docx, entregado por el autor 
 
 ## Bloque actual
 
-Hitos 1, 3 y 4 cerrados técnicamente con material sintético; estilo ajustado a colores UPS. Extracción, normalización, segmentación, revisión de fuentes y embeddings locales reproducibles en pgvector implementados; evidencia en `pruebas/hito_04_extraccion.md` y `pruebas/hito_04_indice.md`. Hito 5 técnico completado con búsqueda exacta, permisos, fuentes y comparación HNSW en corpus sintético; evidencia en pruebas/hito_05.md. Sigue hito 6, sin claves/proveedor real configurados aún. Hito 2 implementado en modo mock y con adaptador CAS preparado; integración institucional pendiente de TI. Las verificaciones están en `pruebas/hito_01.md` y `pruebas/hito_02.md`. La instrucción directa del autor del 5 de octubre de 2026 reemplaza el login tradicional/JWT del documento por SSO/CAS y sesiones opacas HttpOnly; la fuente original se conserva íntegra. No dar por completados los siguientes hitos por haber creado sus carpetas.
+Hitos 1, 3 y 4 cerrados técnicamente con material sintético; estilo ajustado a colores UPS. Extracción, normalización, segmentación, revisión de fuentes y embeddings locales reproducibles en pgvector implementados; evidencia en `pruebas/hito_04_extraccion.md` y `pruebas/hito_04_indice.md`. Hito 5 técnico completado con búsqueda exacta, permisos, fuentes y comparación HNSW en corpus sintético; evidencia en pruebas/hito_05.md. Hito 6 parcialmente preparado: interfaz/fábrica/adaptador Gemini y pruebas sin red; conexión real desactivada por indicación del autor. Hito 2 implementado en modo mock y con adaptador CAS preparado; integración institucional pendiente de TI. Las verificaciones están en `pruebas/hito_01.md` y `pruebas/hito_02.md`. La instrucción directa del autor del 5 de octubre de 2026 reemplaza el login tradicional/JWT del documento por SSO/CAS y sesiones opacas HttpOnly; la fuente original se conserva íntegra. No dar por completados los siguientes hitos por haber creado sus carpetas.
 
 | Paso | Entregable | Evidencia prevista |
 |---|---|---|
@@ -33,7 +33,7 @@ Hitos 1, 3 y 4 cerrados técnicamente con material sintético; estilo ajustado a
 | 3 Corpus | PDF/DOCX/TXT, MIME/extensión/tamaño, permisos y gestión | Cargar, listar, consultar y eliminar documentos propios | Completado |
 | 4 Ingesta | Extracción, normalización, segmentación, embeddings e índices | Corpus trazable y reproducible en pgvector | Completado técnicamente con material sintético |
 | 5 RAG | Búsqueda semántica y top-k | Recuperación validada con corpus y consultas de referencia, sin LLM | Completado técnicamente con muestra sintética; validación independiente pendiente |
-| 6 IA | Interfaz generate, fábrica y primer proveedor | Proveedor intercambiable, errores y límites controlados | Pendiente |
+| 6 IA | Interfaz generate, fábrica y primer proveedor | Proveedor intercambiable, errores y límites controlados | Interfaz/fábrica/Gemini preparados y probados sin red; conexión real desactivada por el autor |
 | 7 Recursos | Explicación, ejercicio, quiz y feedback | Flujo completo por recurso, fuentes y validación | Pendiente |
 | 8 Perfiles | Recepción por API de rendimiento externo | Validación y persistencia de perfiles sintéticos | Pendiente |
 | 9 Personalización | Alto, medio, dificultades y dificultad localizada | Diferencias justificadas para mismo tema y distintos perfiles | Pendiente |
@@ -51,7 +51,7 @@ La tabla de etapas 0–15 de la sección 19 se conserva íntegra en la fuente. L
 | 3 | Convenciones de idioma | Estructura y AGENTS.md |
 | 4–6 | Raíz, backend, módulos, frontend y animaciones | Estructura inicial; cada módulo se implementa en su hito |
 | 7 | Variables, secretos y exclusiones | Plantillas, script local y .gitignore |
-| 8 | Interfaz LLM, OpenAI, Gemini y Claude | Hito 6 y comparación en 11 |
+| 8 | Interfaz LLM, OpenAI, Gemini y Claude | Hito 6: interfaz/fábrica y primer adaptador Gemini; OpenAI/Claude y comparación pendientes |
 | 9 | REST/OpenAPI versionada | Health actual; catálogo restante pendiente |
 | 10 | Diez entidades iniciales y Alembic | Modelo conceptual; columnas tras validar casos de uso |
 | 11–12 | Flujo completo y RAG antes del LLM | Hitos 3–7, validación independiente de recuperación |
@@ -87,6 +87,8 @@ Generación: POST `/content/generate`, `/content/quiz`, `/content/feedback`, `/c
 - Docker, API y pruebas sin regresiones.
 
 Seguridad vigente: validación CAS en backend, hashes de tokens opacos, expiración y revocación de sesiones, autorización por rol, validación de documentos, no ejecutar cargas, saneamiento según contexto, límites de tamaño/frecuencia de solicitudes LLM y logs sin contenido sensible.
+
+Actualización del hito 6: Gemini elegido directamente por el autor. Interfaz `generate`, fábrica, esquemas de texto/metadata, adaptador REST y límites implementados con pruebas de transporte ficticio. El autor pidió dejar la conexión real para después: LLM_ENABLED=false, sin llamadas/gasto y sin endpoint de generación todavía. El criterio de integración real del hito 6 permanece pendiente. No se salta a recursos generados de hito 7; puede prepararse su diseño y trazabilidad sin invocar el proveedor. Ver decisión 0007 y pruebas/hito_06_proveedores.md.
 
 ## Decisiones académicas y externas por concretar
 
