@@ -62,6 +62,12 @@ export class NavigationComponent {
         description: 'Encuentra conceptos en tus materiales',
         icon: 'search',
       });
+      links.push({
+        path: '/recursos',
+        label: 'Preparar recursos',
+        description: 'Define tu recurso y revisa sus fuentes',
+        icon: 'document',
+      });
     }
     return links;
   });

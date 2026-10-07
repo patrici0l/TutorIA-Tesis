@@ -3,6 +3,15 @@ import { authGuard } from './nucleo/guardias/auth.guard';
 
 export const routes: Routes = [
   {
+    path: 'recursos',
+    title: 'Preparar recursos | TutorIA',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./modulos/contenidos/paginas/preparacion/preparation.component').then(
+        (m) => m.PreparationComponent,
+      ),
+  },
+  {
     path: 'busqueda',
     title: 'Búsqueda de fuentes | TutorIA',
     canActivate: [authGuard],

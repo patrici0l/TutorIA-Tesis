@@ -6,7 +6,8 @@ from time import monotonic
 class AuthRateLimiter:
     """Límite por proceso para el despliegue local de un único worker."""
 
-    def __init__(self):
+    def __init__(self, limit: int = 30):
+        self.limit = limit
         self.attempts: dict[str, deque] = {}
         self.lock = Lock()
 
@@ -20,7 +21,7 @@ class AuthRateLimiter:
             recent = self.attempts.setdefault(client, deque())
             while recent and recent[0] <= now - 60:
                 recent.popleft()
-            if len(recent) >= 30:
+            if len(recent) >= self.limit:
                 return False
             recent.append(now)
             return True

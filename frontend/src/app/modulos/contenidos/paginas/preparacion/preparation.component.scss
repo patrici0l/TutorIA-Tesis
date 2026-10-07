@@ -1,0 +1,213 @@
+:host {
+  display: block;
+}
+.eyebrow {
+  color: var(--blue-dark);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+}
+h1 {
+  font-size: clamp(28px, 3vw, 42px);
+  letter-spacing: -1px;
+  margin: 12px 0;
+}
+h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+}
+h3 {
+  font-size: 18px;
+  margin: 8px 0;
+}
+p,
+li {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+a {
+  color: var(--blue-dark);
+  font-size: 13px;
+  text-underline-offset: 4px;
+}
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(230px, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.panel {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  margin-top: 24px;
+  min-width: 0;
+}
+.section-title {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.step {
+  background: var(--blue-soft);
+  color: var(--blue-dark);
+  font-size: 12px;
+  border-radius: 50%;
+  padding: 10px;
+}
+fieldset {
+  border: 0;
+  margin: 24px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+label {
+  font-size: 13px;
+  font-weight: 600;
+  display: block;
+}
+input,
+textarea,
+select {
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 14px;
+}
+textarea {
+  resize: vertical;
+}
+.options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.options label {
+  margin-bottom: 10px;
+}
+.help {
+  font-size: 12px;
+  margin: 0 0 6px;
+}
+button {
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--blue-dark);
+  color: white;
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+button:hover:not(:disabled) {
+  background: var(--navy);
+}
+button:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+.guide {
+  border-top: 3px solid var(--gold);
+}
+ol {
+  padding-left: 20px;
+  margin: 24px 0;
+}
+li {
+  margin: 12px 0;
+}
+.status-note {
+  background: var(--blue-soft);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 24px 0;
+  font-size: 13px;
+}
+.status-note p {
+  margin-bottom: 0;
+}
+.notice {
+  padding: 18px;
+  border-radius: 8px;
+  background: var(--blue-soft);
+}
+.error {
+  background: #fff2f2;
+  color: #a1292b;
+}
+.error a {
+  display: block;
+  margin-top: 8px;
+}
+.confirmation {
+  border-left: 4px solid var(--gold);
+}
+.source {
+  border-top: 3px solid var(--blue);
+}
+blockquote {
+  margin: 20px 0;
+  padding: 18px;
+  border-left: 3px solid var(--gold);
+  background: var(--surface);
+  font-size: 14px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+summary {
+  cursor: pointer;
+  color: var(--blue-dark);
+  font-size: 12px;
+}
+dl,
+code {
+  font-size: 12px;
+  line-height: 1.6;
+}
+dt {
+  font-weight: 600;
+  margin-top: 12px;
+}
+dd {
+  margin: 4px 0;
+  color: var(--muted);
+}
+dd,
+code,
+h2,
+h3,
+p {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 800px) {
+  .workspace {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+@media (max-width: 480px) {
+  .panel {
+    padding: 20px;
+  }
+  .options {
+    grid-template-columns: 1fr;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  button {
+    transition: none;
+  }
+}

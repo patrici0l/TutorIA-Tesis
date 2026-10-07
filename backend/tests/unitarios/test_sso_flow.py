@@ -23,7 +23,9 @@ def auth_app():
     engine = create_engine(
         "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
     )
-    Base.metadata.create_all(engine)
+    Base.metadata.create_all(
+        engine, tables=[User.__table__, AuthSession.__table__, LoginAttempt.__table__]
+    )
     app = create_app()
 
     def sessions():

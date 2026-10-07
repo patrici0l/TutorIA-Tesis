@@ -12,9 +12,10 @@ class UploadLimitMiddleware:
         if scope["type"] != "http" or scope["path"] not in {
             "/api/v1/documents/upload",
             "/api/v1/rag/search",
+            "/api/v1/content/prepare",
         }:
             return await self.app(scope, receive, send)
-        maximum = 16_384 if scope["path"] == "/api/v1/rag/search" else self.maximum
+        maximum = self.maximum if scope["path"] == "/api/v1/documents/upload" else 16_384
         headers = dict(scope.get("headers", []))
         try:
             size = int(headers.get(b"content-length", b"0"))

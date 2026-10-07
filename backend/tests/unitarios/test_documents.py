@@ -17,6 +17,7 @@ from app.configuracion.settings import get_settings
 from app.main import create_app
 from app.modulos.documentos.models import Document
 from app.modulos.documentos.servicios.document_validation_service import DocumentValidationService
+from app.modulos.rag.models import DocumentChunk
 from app.modulos.usuarios.models import User
 from app.nucleo.dependencias.auth import get_current_user
 
@@ -64,7 +65,9 @@ def document_app(tmp_path, monkeypatch):
     engine = create_engine(
         "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
     )
-    Base.metadata.create_all(engine)
+    Base.metadata.create_all(
+        engine, tables=[User.__table__, Document.__table__, DocumentChunk.__table__]
+    )
     owner = User(
         id=uuid4(),
         institutional_email="docente.demo@example.org",
