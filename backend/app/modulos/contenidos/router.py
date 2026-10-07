@@ -1,16 +1,18 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from app.base_datos.session import get_session
 from app.configuracion.settings import get_settings
+from app.modulos.contenidos.history_schemas import HistoryDetail, HistoryPage
 from app.modulos.contenidos.preparation_schemas import PreparationResponse
 from app.modulos.contenidos.repositorios.generation_claim_repository import (
     GenerationClaimRepository,
 )
 from app.modulos.contenidos.repositorios.generation_repository import GenerationRepository
+from app.modulos.contenidos.repositorios.history_repository import HistoryRepository
 from app.modulos.contenidos.schemas import ContentRequest
 from app.modulos.contenidos.servicios.generate_preparation_service import (
     GeneratePreparationService,
@@ -18,6 +20,7 @@ from app.modulos.contenidos.servicios.generate_preparation_service import (
     GenerationResponse,
 )
 from app.modulos.contenidos.servicios.generation_trace_service import GenerationTraceService
+from app.modulos.contenidos.servicios.history_service import HistoryService
 from app.modulos.contenidos.servicios.preparation_service import PreparationService
 from app.modulos.contenidos.servicios.prepare_content_service import PrepareContentService
 from app.modulos.contenidos.servicios.resource_validation_service import ResourceValidationService
@@ -28,6 +31,29 @@ from app.modulos.rag.servicios.search_service import SearchService
 from app.nucleo.dependencias.auth import require_client_header
 
 router = APIRouter(prefix="/content", tags=["content"])
+
+
+def get_history_service(db: Annotated[Session, Depends(get_session)]):
+    return HistoryService(HistoryRepository(db))
+
+
+@router.get("/history", response_model=HistoryPage)
+def history(
+    user: Owner,
+    service: Annotated[HistoryService, Depends(get_history_service)],
+    offset: Annotated[int, Query(ge=0, le=100000)] = 0,
+    limit: Annotated[int, Query(ge=1, le=20)] = 10,
+):
+    return service.page(user.id, offset, limit)
+
+
+@router.get("/history/{identifier}", response_model=HistoryDetail)
+def history_detail(
+    identifier: UUID,
+    user: Owner,
+    service: Annotated[HistoryService, Depends(get_history_service)],
+):
+    return service.detail(identifier, user.id)
 
 
 def get_preparation_service(

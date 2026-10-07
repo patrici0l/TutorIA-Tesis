@@ -4,6 +4,8 @@ import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ResourceViewComponent } from '../../componentes/resource-view/resource-view.component';
+import { ResourceHistoryComponent } from '../../componentes/resource-history/resource-history.component';
+import { HistoryDetail } from '../../modelos/history.model';
 import { AuthService } from '../../../../nucleo/servicios/auth.service';
 import {
   Difficulty,
@@ -16,7 +18,7 @@ import { PreparationService } from '../../servicios/preparation.service';
 
 @Component({
   selector: 'app-resource-preparation',
-  imports: [FormsModule, RouterLink, ResourceViewComponent],
+  imports: [FormsModule, RouterLink, ResourceViewComponent, ResourceHistoryComponent],
   templateUrl: './preparation.component.html',
   styleUrl: './preparation.component.scss',
 })
@@ -31,6 +33,7 @@ export class PreparationComponent {
   readonly sent = signal(false);
   readonly error = signal('');
   readonly result = signal<PreparationResponse | null>(null);
+  readonly restoredPending = signal(false);
   readonly resources: { value: ResourceType; label: string; description: string }[] = [
     {
       value: 'EXPLANATION',
@@ -61,10 +64,26 @@ export class PreparationComponent {
   studentAnswer = '';
 
   clearResult() {
+    this.restoredPending.set(false);
     this.result.set(null);
     this.generation.set(null);
     this.sent.set(false);
     this.error.set('');
+  }
+  restore(detail: HistoryDetail) {
+    if (this.loading() || this.generating()) return;
+    this.clearResult();
+    this.result.set(detail.preparation);
+    this.sent.set(detail.status !== 'prepared');
+    this.restoredPending.set(detail.status === 'generating');
+    if (detail.status === 'succeeded' || detail.status === 'failed') {
+      this.generation.set({
+        id: detail.preparation.id,
+        status: detail.status,
+        resource: detail.resource,
+        message: detail.message,
+      });
+    }
   }
   changeResource() {
     this.clearResult();

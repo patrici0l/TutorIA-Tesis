@@ -5,11 +5,12 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { provideRouter } from '@angular/router';
 import { AuthService } from '../../../../nucleo/servicios/auth.service';
 import { PreparationComponent } from './preparation.component';
+import { PreparationResponse } from '../../modelos/preparation.model';
 
 describe('Preparación docente', () => {
   const user = signal({ rol: 'teacher' });
   let http: HttpTestingController;
-  const response = {
+  const response: PreparationResponse = {
     id: 'test-prepared',
     status: 'prepared',
     topic: 'Derivadas',
@@ -32,6 +33,8 @@ describe('Preparación docente', () => {
         source_sha256: 'source-hash',
         document_sha256: 'file-hash',
         text: '<script>no ejecutar</script>',
+        processing_version: 'test-v1',
+        similarity: 0.9,
       },
     ],
   };
@@ -78,6 +81,43 @@ describe('Preparación docente', () => {
     fixture.componentInstance.objective = 'Practicar';
     return fixture;
   }
+  it('recupera un recurso guardado y bloquea su reenvío sin POST', () => {
+    const fixture = setup(),
+      component = fixture.componentInstance;
+    component.restore({
+      preparation: response,
+      status: 'succeeded',
+      created_at: '2026-10-07T22:00:00Z',
+      completed_at: '2026-10-07T22:00:01Z',
+      resource: null,
+      message: null,
+    });
+    expect(component.result()?.id).toBe('test-prepared');
+    expect(component.sent()).toBe(true);
+    expect(component.generation()?.status).toBe('succeeded');
+    component.generate();
+    http.expectNone((req) => req.method === 'POST');
+    component.restore({
+      preparation: response,
+      status: 'generating',
+      created_at: '2026-10-07T22:00:00Z',
+      completed_at: null,
+      resource: null,
+      message: null,
+    });
+    expect(component.restoredPending()).toBe(true);
+    component.generate();
+    http.expectNone((req) => req.method === 'POST');
+    component.restore({
+      preparation: response,
+      status: 'prepared',
+      created_at: '2026-10-07T22:00:00Z',
+      completed_at: null,
+      resource: null,
+      message: null,
+    });
+    expect(component.sent()).toBe(false);
+  });
   it('envía contrato mínimo, evita doble envío y muestra fuentes como texto', async () => {
     const fixture = setup(),
       component = fixture.componentInstance;

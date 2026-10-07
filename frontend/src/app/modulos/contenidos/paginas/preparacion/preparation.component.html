@@ -137,6 +137,7 @@
       <a routerLink="/documentos">Gestionar mis materiales ↗</a>
     </aside>
   </div>
+  <app-resource-history [locked]="loading() || generating()" (selected)="restore($event)" />
   @if (error()) {
     <p class="notice error" role="alert">
       {{ error() }} <a routerLink="/documentos">Revisar materiales</a>
@@ -178,6 +179,12 @@
         </button>
         @if (generating()) {
           <p role="status">Generando con las fuentes revisadas…</p>
+        }
+        @if (restoredPending()) {
+          <p role="status">
+            Esta solicitud está registrada como pendiente. Consulta de nuevo el historial para
+            comprobar su resultado; no vuelvas a enviarla.
+          </p>
         }
         @if (generation(); as generated) {
           @if (generated.resource; as resource) {

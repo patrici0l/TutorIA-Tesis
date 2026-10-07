@@ -1,0 +1,66 @@
+<section aria-labelledby="history-title">
+  <div class="header">
+    <div>
+      <p class="eyebrow">TU TRABAJO, GUARDADO</p>
+      <h2 id="history-title">Mis recursos</h2>
+    </div>
+    <button type="button" [disabled]="busy() || locked()" (click)="load()">
+      {{ page() ? 'Actualizar historial' : 'Ver historial guardado' }}
+    </button>
+  </div>
+  <p>
+    Recupera tus preparaciones, resultados y fuentes originales. Consultarlos no consume Gemini.
+  </p>
+  @if (busy()) {
+    <p role="status">Consultando recursos guardados…</p>
+  }
+  @if (error()) {
+    <p role="alert">{{ error() }}</p>
+  }
+  @if (page(); as history) {
+    @if (!history.total) {
+      <p>Aún no tienes preparaciones guardadas. Empieza con un objetivo concreto.</p>
+    }
+    <ul>
+      @for (item of history.items; track item.id) {
+        <li>
+          <div>
+            <strong>{{ item.topic }}</strong>
+            <p>{{ types[item.resource_type] }} · {{ difficulties[item.difficulty] }}</p>
+            <p>{{ item.created_at | date: 'dd/MM/yyyy HH:mm' }} · {{ labels[item.status] }}</p>
+          </div>
+          <button
+            type="button"
+            [disabled]="busy() || locked()"
+            (click)="open(item.id)"
+            [attr.aria-label]="'Abrir recurso: ' + item.topic"
+          >
+            Abrir recurso ↗
+          </button>
+        </li>
+      }
+    </ul>
+    @if (history.total) {
+      <nav aria-label="Páginas del historial">
+        <button
+          type="button"
+          [disabled]="busy() || locked() || history.offset === 0"
+          (click)="load(history.offset - history.limit)"
+        >
+          Anteriores
+        </button>
+        <span
+          >{{ history.offset + 1 }}–{{ history.offset + history.items.length }} de
+          {{ history.total }}</span
+        >
+        <button
+          type="button"
+          [disabled]="busy() || locked() || history.offset + history.limit >= history.total"
+          (click)="load(history.offset + history.limit)"
+        >
+          Siguientes
+        </button>
+      </nav>
+    }
+  }
+</section>
