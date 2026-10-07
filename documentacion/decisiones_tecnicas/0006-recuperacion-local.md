@@ -1,0 +1,13 @@
+# 0006 — Recuperación local con fuentes y permisos
+
+Fecha: 6 de octubre de 2026. Hito 5 técnico: búsqueda antes de LLM, inicialmente docente sobre documentos propios.
+
+SearchService usa EmbeddingWorkerClient compartido con indexación. Un cupo de inferencia por proceso evita cargar dos modelos simultáneos; el cupo se libera incluso ante fallo. Se conserva el worker con SHA-256, CPU, memoria y timeout del hito 4. El conteo inicial finaliza la transacción de lectura antes de inferencia. La recuperación final vuelve a filtrar documentos vigentes, propiedad, estados y compatibilidad. No existe caché de resultados que sobreviva una eliminación.
+
+SearchRepository calcula distancia coseno exacta sobre una CTE MATERIALIZED de corpus elegible, orden estable por distancia/UUID. Se eligió como referencia para el corpus local inicial: HNSW es aproximado y los filtros posteriores pueden reducir resultados, según la [documentación oficial de pgvector](https://github.com/pgvector/pgvector#filtering). HNSW ya existe, pero la API no permite elegirlo; una rama privada del repositorio solo sirve para la comparación controlada en pruebas. Una futura activación requiere evaluación con volumen/corpus reales y filtros, no asumir aceleración por la mera existencia del índice.
+
+Evaluación reproducible calculo-sintetico-v1: ocho documentos y ocho consultas, relevancia explícita de una fuente por consulta. La base E5 pura recuperó siete de ocho fuentes en top-3. La consulta «división entre funciones» falló. Se incorporó vocabulario matemático explícito y versionado (calculo-alias-v1), sin modificar las consultas ni etiquetas de la muestra. Luego se recuperaron ocho en top-3, siete en primer lugar; MRR@3=0,9375. La regla de cociente queda en segundo lugar. Es un ajuste sobre esta muestra, no validación independiente ni un resultado experimental de la tesis. Reporte antes/después en pruebas/hito_05_recuperacion.json.
+
+Comparación HNSW con ef_search=80, iterative_scan=strict_order, plan EXPLAIN confirmado y filtros iguales: coincidencia del conjunto top-3 con la referencia exacta en las ocho consultas. No mide velocidad, concurrencia ni grandes corpus. Requiere repetir con corpus autorizado, consultas independientes, ejemplos negativos y rúbrica; el benchmark con proveedores pertenece al hito 11.
+
+La interfaz conserva estilo UPS y top bar; añade Buscar fuentes, límites, progreso, errores, vacíos y referencias expandibles. Interpola texto de fuentes sin HTML activo. No hay respuestas generadas. min_similarity es un filtro orientativo explícito; no se ofrece un umbral de certeza sin calibración. Los estudiantes no reciben corpus docente hasta definir relaciones curso/corpus/permisos. Sin nueva migración: se utiliza el esquema 0005 sin alterarlo.

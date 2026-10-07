@@ -56,6 +56,12 @@ export class NavigationComponent {
         description: 'Organiza los materiales de tu curso',
         icon: 'document',
       });
+      links.push({
+        path: '/busqueda',
+        label: 'Buscar fuentes',
+        description: 'Encuentra conceptos en tus materiales',
+        icon: 'search',
+      });
     }
     return links;
   });

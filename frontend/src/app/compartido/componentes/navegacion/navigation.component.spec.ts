@@ -55,7 +55,7 @@ describe('Navegación superior', () => {
   });
   it('muestra destinos según el rol y acceso institucional cuando no hay sesión', async () => {
     const fixture = await setup();
-    expect(fixture.componentInstance.items().length).toBe(2);
+    expect(fixture.componentInstance.items().length).toBe(3);
     user.set({ rol: 'student' });
     await fixture.whenStable();
     expect(fixture.componentInstance.items().map((item) => item.path)).toEqual(['/inicio']);

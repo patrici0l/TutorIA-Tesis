@@ -2,7 +2,7 @@
 
 Plataforma para generar contenidos educativos personalizados a partir de materiales docentes, RAG y perfiles de rendimiento. Proyecto de titulación de Angel Patricio Lucero Loja, vinculado a AdaptIA UPS. Caso principal: Cálculo Diferencial.
 
-Están implementados la base Angular → FastAPI → PostgreSQL/pgvector y el acceso institucional preparado mediante SSO/CAS. El entorno local utiliza usuarios ficticios en modo mock; la conexión real a UPS queda pendiente de los parámetros autorizados por TI. La biblioteca docente permite gestionar documentos PDF/DOCX/TXT propios, extraer su texto, revisar fragmentos con referencias y crear su índice vectorial local. La recuperación RAG es el siguiente hito, antes de generación. Consulta el [seguimiento del plan](documentacion/PLAN_DE_TRABAJO.md) antes de iniciar otra etapa.
+Están implementados la base Angular → FastAPI → PostgreSQL/pgvector y el acceso institucional preparado mediante SSO/CAS. El entorno local utiliza usuarios ficticios en modo mock; la conexión real a UPS queda pendiente de los parámetros autorizados por TI. La biblioteca docente permite gestionar documentos PDF/DOCX/TXT propios, extraer su texto, revisar fragmentos con referencias y crear su índice vectorial local. La búsqueda de fuentes RAG está disponible para docentes sobre sus materiales propios; la generación es una etapa posterior. Consulta el [seguimiento del plan](documentacion/PLAN_DE_TRABAJO.md) antes de iniciar otra etapa.
 
 ## Ejecutar en Windows con Docker
 
@@ -79,7 +79,7 @@ Para preparar el modelo local una sola vez, con internet para descargar sus peso
 docker compose --profile embeddings run --no-deps --rm prepare-embeddings
 ```
 
-Después, Detalles → Preparar índice vectorial genera embeddings E5 multilingües de 384 dimensiones en CPU y los guarda en pgvector. Los pesos quedan en el volumen embedding_data, fuera de Git. La inferencia funciona sin internet; la preparación repetida verifica/reutiliza los archivos. Reconstruir índice es una acción explícita que conserva fragmentos/texto y reemplaza vectores de forma atómica. El detalle conserva modelo, revisión y fecha. La búsqueda semántica se implementa en el siguiente hito.
+Después, Detalles → Preparar índice vectorial genera embeddings E5 multilingües de 384 dimensiones en CPU y los guarda en pgvector. Los pesos quedan en el volumen embedding_data, fuera de Git. La inferencia funciona sin internet; la preparación repetida verifica/reutiliza los archivos. Reconstruir índice es una acción explícita que conserva fragmentos/texto y reemplaza vectores de forma atómica. El detalle conserva modelo, revisión y fecha. En Buscar fuentes (`/busqueda`) puedes consultar el corpus propio indexado, limitar top-k y revisar citas con sus referencias. La similitud mide cercanía, no certeza; aún no se genera contenido con un LLM. Consulta el [contrato RAG](documentacion/api/rag.md).
 
 La extracción admite PDF con capa de texto, párrafos DOCX y TXT UTF-8. PDF escaneados requieren OCR, aún pendiente. OfficeMath y ciertos estilos matemáticos heredados se rechazan para evitar alterar fórmulas. El docente debe cotejar la extracción con el original. Límites: 200 páginas PDF, 500 000 caracteres y 1000 fragmentos, además del máximo de carga. Variables: `DOCUMENT_CHUNK_CHARS=1000`, `DOCUMENT_CHUNK_OVERLAP=150`, `EXTRACTION_TIMEOUT_SECONDS=15`; el detalle conserva la configuración usada. Consultar el [contrato de documentos](documentacion/api/documentos.md), la [decisión de extracción](documentacion/decisiones_tecnicas/0004-extraccion-trazable.md) y la [decisión de corpus y estilo UPS](documentacion/decisiones_tecnicas/0003-corpus-y-estilo-ups.md).
 
@@ -107,6 +107,7 @@ El repositorio se inicia localmente; la publicación en GitHub requiere elegir l
 - [Autenticación SSO](documentacion/api/autenticacion.md)
 - [Evidencia de corpus y estilo](documentacion/pruebas/hito_03.md)
 - [Evidencia de extracción y segmentación](documentacion/pruebas/hito_04_extraccion.md)
+- [Evidencia de búsqueda RAG](documentacion/pruebas/hito_05.md)
 - [Evidencia de embeddings e indexación](documentacion/pruebas/hito_04_indice.md)
 - [Evidencia de autenticación](documentacion/pruebas/hito_02.md)
 - [Contrato de salud](documentacion/api/health.md)

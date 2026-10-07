@@ -1,0 +1,163 @@
+@if (!canSearch()) {
+  <section class="panel">
+    <h1>Espacio docente</h1>
+    <p>
+      La búsqueda está disponible para docentes sobre sus materiales propios. La asignación de
+      fuentes a estudiantes se incorporará más adelante.
+    </p>
+    <a routerLink="/inicio">Volver al inicio</a>
+  </section>
+} @else {
+  <header class="intro">
+    <p class="eyebrow">EXPLORA TUS FUENTES</p>
+    <h1>Encuentra el fundamento.</h1>
+    <p>
+      Busca por significado entre tus materiales indexados de Cálculo Diferencial. Revisa la fuente
+      antes de usarla.
+    </p>
+  </header>
+  <section class="panel" aria-labelledby="search-title">
+    <div class="heading">
+      <h2 id="search-title">Una pregunta, sus fuentes</h2>
+      <a routerLink="/documentos">Gestionar materiales ↗</a>
+    </div>
+    <form (ngSubmit)="search()" #searchForm="ngForm">
+      <label for="source-query">¿Qué concepto quieres encontrar?</label>
+      <textarea
+        id="source-query"
+        name="query"
+        [(ngModel)]="query"
+        required
+        maxlength="1000"
+        rows="3"
+        placeholder="Por ejemplo: ¿qué representa la tasa de cambio instantánea?"
+        [disabled]="loading()"
+        aria-describedby="search-help"
+      ></textarea>
+      <p id="search-help">
+        Hasta 1000 caracteres. Solo se consultan documentos propios con un índice compatible y
+        listo.
+      </p>
+      <div class="options">
+        <div>
+          <label for="top-k">Máximo de fragmentos</label
+          ><input
+            id="top-k"
+            name="topK"
+            type="number"
+            min="1"
+            max="10"
+            step="1"
+            required
+            [(ngModel)]="topK"
+            [disabled]="loading()"
+          />
+        </div>
+        <div>
+          <label for="min-similarity">Similitud mínima · 0 a 1</label
+          ><input
+            id="min-similarity"
+            name="minSimilarity"
+            type="number"
+            min="0"
+            max="1"
+            step="0.01"
+            required
+            [(ngModel)]="minSimilarity"
+            [disabled]="loading()"
+          />
+        </div>
+      </div>
+      <p>
+        La similitud ordena cercanía temática; no mide certeza ni corrección. El filtro es
+        orientativo.
+      </p>
+      <button type="submit" [disabled]="loading() || searchForm.invalid || !query.trim()">
+        {{ loading() ? 'Buscando en tus fuentes…' : 'Buscar fuentes' }}
+        <span aria-hidden="true">↗</span>
+      </button>
+    </form>
+  </section>
+  @if (error()) {
+    <p class="notice error" role="alert">{{ error() }}</p>
+  }
+  @if (loading()) {
+    <p class="notice" role="status">
+      Preparando tu consulta con el modelo local y recuperando fragmentos…
+    </p>
+  }
+  @if (response(); as result) {
+    <section class="results" aria-labelledby="results-title" aria-live="polite">
+      <div class="heading">
+        <h2 id="results-title">
+          {{ result.results.length }}
+          {{ result.results.length === 1 ? 'fuente encontrada' : 'fuentes encontradas' }}
+        </h2>
+        <span
+          >{{ result.elapsed_ms }} ms · {{ result.available_chunks }}
+          {{
+            result.available_chunks === 1 ? 'fragmento disponible' : 'fragmentos disponibles'
+          }}</span
+        >
+      </div>
+      <p class="searched">Consulta: «{{ result.query }}»</p>
+      @if (result.embedding_query !== result.query) {
+        <p class="searched">Términos matemáticos equivalentes: «{{ result.embedding_query }}»</p>
+      }
+      @if (!result.results.length) {
+        <div class="panel empty">
+          <h3>
+            {{
+              result.available_chunks
+                ? 'Sin coincidencias con este filtro'
+                : 'Aún no hay fuentes disponibles'
+            }}
+          </h3>
+          <p>
+            {{
+              result.available_chunks
+                ? 'Prueba otra consulta o reduce la similitud mínima. No se generó ninguna respuesta.'
+                : 'Carga, procesa e indexa tus materiales para empezar a buscar.'
+            }}
+          </p>
+          <a routerLink="/documentos">Ir a documentos ↗</a>
+        </div>
+      }
+      @for (hit of result.results; track hit.id) {
+        <article class="panel source">
+          <div class="heading">
+            <div>
+              <p class="eyebrow">
+                FUENTE {{ $index + 1 }} · {{ hit.source_kind === 'page' ? 'PÁGINA' : 'PÁRRAFO' }}
+                {{ hit.source_index }}
+              </p>
+              <h3>{{ hit.document_title }}</h3>
+              <p class="filename">{{ hit.filename }} · Fragmento {{ hit.position + 1 }}</p>
+            </div>
+            <span class="score">Similitud {{ hit.similarity | number: '1.3-3' }}</span>
+          </div>
+          <blockquote>{{ hit.text }}</blockquote>
+          <details>
+            <summary>Referencia verificable</summary>
+            <dl>
+              <dt>Documento</dt>
+              <dd>{{ hit.document_id }}</dd>
+              <dt>Fragmento</dt>
+              <dd>{{ hit.id }}</dd>
+              <dt>Intervalo en texto normalizado</dt>
+              <dd>{{ hit.char_start }}–{{ hit.char_end }} · inicio incluido, final excluido</dd>
+              <dt>SHA-256 de la unidad fuente</dt>
+              <dd>{{ hit.source_sha256 }}</dd>
+              <dt>SHA-256 del archivo</dt>
+              <dd>{{ hit.document_sha256 }}</dd>
+            </dl>
+          </details>
+        </article>
+      }
+      <p class="footnote">
+        Recuperación local por distancia coseno. Estos fragmentos son citas del material, no una
+        respuesta generada por IA.
+      </p>
+    </section>
+  }
+}

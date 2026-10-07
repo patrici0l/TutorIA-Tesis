@@ -1,9 +1,4 @@
-import json
 import math
-import os
-import subprocess
-import sys
-from pathlib import Path
 from threading import BoundedSemaphore
 from uuid import UUID
 
@@ -12,10 +7,12 @@ from fastapi import HTTPException
 from app.configuracion.settings import Settings
 from app.modulos.documentos.servicios.document_service import DocumentService
 from app.modulos.rag.repositorios.index_repository import IndexRepository
+from app.modulos.rag.servicios.embedding_worker_client import EmbeddingWorkerClient
 from app.modulos.rag.servicios.model_spec import DIMENSIONS, EMBEDDING_VERSION, MODEL_REVISION
 
 INDEX_SLOTS = BoundedSemaphore(1)
 INDEX_ERRORS = {
+    "embedding_busy": "El modelo local está ocupado. Inténtalo en un momento.",
     "model_unavailable": (
         "El modelo local no está preparado o no supera la verificación de integridad."
     ),
@@ -82,7 +79,8 @@ class IndexDocumentService:
                     )
                     self.repository.fail(identifier, token, code)
                     raise HTTPException(
-                        503 if code == "model_unavailable" else 422, INDEX_ERRORS[code]
+                        {"model_unavailable": 503, "embedding_busy": 429}.get(code, 422),
+                        INDEX_ERRORS[code],
                     )
                 try:
                     rows = validated_vectors(result, snapshot)
@@ -103,32 +101,4 @@ class IndexDocumentService:
             INDEX_SLOTS.release()
 
     def embed(self, texts: list[str], kind: str = "passage"):
-        environment = {
-            **os.environ,
-            "OPENBLAS_NUM_THREADS": "1",
-            "OMP_NUM_THREADS": "1",
-            "TOKENIZERS_PARALLELISM": "false",
-        }
-        try:
-            process = subprocess.run(
-                [sys.executable, "-m", "app.modulos.rag.servicios.embedding_worker"],
-                input=json.dumps(
-                    {
-                        "texts": texts,
-                        "kind": kind,
-                        "model_path": str(self.settings.embedding_model_path.resolve()),
-                    }
-                ).encode(),
-                stdout=subprocess.PIPE,
-                stderr=subprocess.DEVNULL,
-                cwd=Path(__file__).resolve().parents[4],
-                env=environment,
-                timeout=self.settings.embedding_timeout_seconds,
-                check=False,
-                creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0,
-            )
-        except subprocess.TimeoutExpired:
-            return {"error": "embedding_timeout"}
-        if process.returncode or not process.stdout or len(process.stdout) > 12 * 1024 * 1024:
-            return {"error": "embedding_failed"}
-        return json.loads(process.stdout)
+        return EmbeddingWorkerClient(self.settings).encode(texts, kind)

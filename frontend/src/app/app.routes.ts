@@ -2,6 +2,13 @@ import { Routes } from '@angular/router';
 import { authGuard } from './nucleo/guardias/auth.guard';
 
 export const routes: Routes = [
+  {
+    path: 'busqueda',
+    title: 'Búsqueda de fuentes | TutorIA',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./modulos/rag/paginas/busqueda/search.component').then((m) => m.SearchComponent),
+  },
   { path: '', redirectTo: 'inicio', pathMatch: 'full' },
   {
     path: 'login',

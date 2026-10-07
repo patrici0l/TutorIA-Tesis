@@ -1,0 +1,24 @@
+{
+  "version": "calculo-sintetico-v1",
+  "notice": "Material y consultas sintéticos para verificación técnica, sin validación académica.",
+  "passages": [
+    {"key":"derivada","title":"Derivada y tasa de cambio","text":"La derivada mide la tasa de cambio instantánea de una función. Para f(x)=x^2 se obtiene f'(x)=2x. Es el límite del cociente incremental cuando el incremento tiende a cero."},
+    {"key":"tangente","title":"Recta tangente","text":"La recta tangente a la curva y=f(x) en x=a tiene pendiente f'(a). Su ecuación es y=f(a)+f'(a)(x-a). Por ejemplo, en f(x)=x^2 y a=1, la recta tangente es y=1+2(x-1)."},
+    {"key":"cadena","title":"Regla de la cadena","text":"Para derivar una composición f(g(x)), la regla de la cadena multiplica la derivada de la función exterior evaluada en la interior por la derivada de la interior: f'(g(x))g'(x). Ejemplo: la derivada de (3x+1)^2 es 2(3x+1)3."},
+    {"key":"producto","title":"Regla del producto","text":"La derivada del producto de dos funciones u(x)v(x) es u'(x)v(x)+u(x)v'(x). Se deriva cada factor manteniendo el otro y se suman los dos términos."},
+    {"key":"cociente","title":"Regla del cociente","text":"La derivada del cociente u(x)/v(x), para v(x) distinto de cero, es (u'(x)v(x)-u(x)v'(x))/(v(x))^2. El denominador se eleva al cuadrado."},
+    {"key":"limite","title":"Límite y continuidad","text":"El límite de una función describe el valor al que se aproxima f(x) cuando x se acerca a un punto a. La función es continua en a si f(a) está definida y coincide con el límite."},
+    {"key":"potencia","title":"Regla de la potencia","text":"Para una potencia x^n, la derivada es n*x^(n-1). El exponente baja como coeficiente y se reduce en uno. Una constante tiene derivada cero."},
+    {"key":"crecimiento","title":"Crecimiento y decrecimiento","text":"El signo de la primera derivada permite estudiar intervalos de crecimiento: si f'(x)>0 la función crece, y si f'(x)<0 decrece. Los puntos críticos ayudan a localizar máximos y mínimos."}
+  ],
+  "queries": [
+    {"text":"¿Qué representa la tasa de cambio instantánea?","relevant":"derivada"},
+    {"text":"¿Cómo obtengo la ecuación de la recta tangente a una curva en un punto?","relevant":"tangente"},
+    {"text":"¿Qué regla uso para derivar una función compuesta?","relevant":"cadena"},
+    {"text":"¿Cómo derivo la multiplicación de dos funciones?","relevant":"producto"},
+    {"text":"¿Cómo derivo una división entre funciones?","relevant":"cociente"},
+    {"text":"¿Cuándo es continua una función en un punto?","relevant":"limite"},
+    {"text":"¿Qué ocurre con el exponente al derivar x elevado a n?","relevant":"potencia"},
+    {"text":"¿Cómo determina el signo de la derivada si una función crece o decrece?","relevant":"crecimiento"}
+  ]
+}
