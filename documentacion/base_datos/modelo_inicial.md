@@ -1,12 +1,16 @@
 # Modelo de datos y evolución
 
-La migración 0001 habilita pgvector. La migración 0002 crea usuarios institucionales, sesiones y solicitudes de acceso. La 0003 crea documentos, la 0004 incorpora extracción trazable y fragmentos, y la 0005 añade embeddings e índice HNSW. Las cinco están aplicadas en PostgreSQL local; se conservan inmutables las migraciones anteriores.
+La migración 0001 habilita pgvector. La migración 0002 crea usuarios institucionales, sesiones y solicitudes de acceso. La 0003 crea documentos, la 0004 incorpora extracción trazable y fragmentos, la 0005 añade embeddings e índice HNSW y la 0006 prepara trazabilidad de contenidos. Las seis están aplicadas en PostgreSQL local; se conservan inmutables las migraciones anteriores.
 
 `usuarios`: id, institutional_email único, institutional_id opcional único, nombre, apellido, rol (student/teacher/admin), activo, created_at y last_login. No existe password ni password_hash.
 
 `sesiones_autenticacion`: hash del token como identificador, usuario con FK, modo y expiración. `intentos_sso`: hash del estado, modo, URL service y expiración. El estado de acceso se consume una sola vez; la sesión se revoca al cerrar sesión. Los hashes no permiten reconstruir el token del navegador.
 
-La gestión administrativa de roles y las entidades posteriores todavía no están implementadas. El rol local actual está en usuarios; una entidad de roles independiente se evaluará al implementar la gestión de permisos.
+La gestión administrativa de roles y las entidades de perfiles/métricas/evaluación todavía no están implementadas. El rol local actual está en usuarios; una entidad de roles independiente se evaluará al implementar la gestión de permisos.
+
+`generaciones_contenido` (0006): UUID, propietario FK/índice, request_snapshot, sources_snapshot, retrieval_snapshot JSONB privados; instructions/prompt exactos, prompt_version/hash; status prepared/succeeded/failed; proveedor/modelo solicitado/versión/id de respuesta; usage/latencia/costo nullable; recurso validado o código de error; created_at/completed_at. Restricciones de coherencia terminal, costo/latencia no negativos. Cierre condicional por propietario+estado prepared. Prepared no implica llamada LLM. Modelo/proveedor pueden vincularse desde backend antes del envío; sin selección quedan desconocidos. Sin perfiles, cálculo de costo, historial HTTP ni métricas aún.
+
+Las fuentes son snapshots, no FK con cascada que borre evidencia tras cambiar/eliminar documentos. La política de retención/purga debe concretarse antes de datos institucionales. La base mínima agrupa las entidades conceptuales generaciones/fuentes/métricas del plan; su normalización posterior dependerá del historial/benchmark, no se consideran tablas pendientes completadas por el JSONB. Ver decisión 0008 y api/contenidos.md. Los registros de pruebas se revierten; no hay generaciones reales almacenadas.
 
 Entidades exigidas por la sección 10: usuarios, roles, documentos, fragmentos_documento, perfiles_rendimiento, generaciones, fuentes_generacion, proveedores_llm, metricas_generacion y evaluaciones_contenido.
 

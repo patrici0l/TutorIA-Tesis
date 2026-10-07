@@ -11,6 +11,17 @@ def validate_model(value: str) -> str:
     return value
 
 
+class GenerationTarget(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+    provider: Literal["gemini", "openai", "claude"]
+    requested_model: str
+
+    @field_validator("requested_model")
+    @classmethod
+    def valid_model(cls, value: str) -> str:
+        return validate_model(value)
+
+
 class GenerationRequest(BaseModel):
     """Contrato interno: los prompts serán construidos por el módulo educativo."""
 

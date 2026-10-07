@@ -93,7 +93,13 @@ Las carpetas de módulos futuros son reservas de estructura, no funcionalidades 
 
 El autor eligió Gemini como primer proveedor. La interfaz interna `LLMProvider.generate`, su fábrica y el adaptador REST están implementados con configuración explícita, límites y errores seguros. La conexión permanece **desactivada** por indicación del autor: `LLM_ENABLED=false`. Las pruebas utilizan transporte y datos ficticios, sin consumir la API. No hay todavía generación educativa ni un endpoint público nuevo; OpenAI/Claude están previstos y se rechazan hasta contar con sus adaptadores.
 
-Antes de activar Gemini quedan pendientes modelo, presupuesto/cupo, clave local privada, trazabilidad persistida y una prueba real autorizada. Nunca enviar la clave por el chat ni ponerla en Angular/Git. La plantilla `.env.example` documenta las variables; el `.env` existente no se sobrescribe. Consultar el [contrato interno](documentacion/api/proveedores_ia.md), la [decisión 0007](documentacion/decisiones_tecnicas/0007-proveedores-ia.md) y la [evidencia](documentacion/pruebas/hito_06_proveedores.md). Hito 6 sigue parcialmente completado.
+Antes de activar Gemini quedan pendientes modelo, presupuesto/cupo, clave local privada, coordinador de generación y una prueba real autorizada. La base de trazabilidad ya está preparada; debe integrarse al coordinador antes del envío. Nunca enviar la clave por el chat ni ponerla en Angular/Git. La plantilla `.env.example` documenta las variables; el `.env` existente no se sobrescribe. Consultar el [contrato interno](documentacion/api/proveedores_ia.md), la [decisión 0007](documentacion/decisiones_tecnicas/0007-proveedores-ia.md) y la [evidencia](documentacion/pruebas/hito_06_proveedores.md). Hito 6 sigue parcialmente completado.
+
+## Preparación de recursos educativos
+
+Contratos internos para explicación, ejercicio, quiz y feedback, prompts versionados con fuentes y validación estructural/citas implementados. El servicio de preparación usa recuperación propia top-3 y no llama IA. La migración 0006 incorpora trazabilidad privada de solicitudes, prompt y fuentes exactos, con estados prepared/succeeded/failed y finalización limitada al propietario. Datos desconocidos de consumo/costo quedan null; aún no hay perfil académico ni costo calculado.
+
+No se habilitaron rutas educativas ni recursos ficticios en Angular. Preparado no significa generado; el flujo real permanece pendiente. Esta validación no certifica exactitud matemática. Consultar [contratos educativos](documentacion/api/contenidos.md), [decisión 0008](documentacion/decisiones_tecnicas/0008-recursos-y-trazabilidad.md) y [pruebas de preparación](documentacion/pruebas/hito_07_preparacion.md).
 
 ## Reglas de trabajo
 

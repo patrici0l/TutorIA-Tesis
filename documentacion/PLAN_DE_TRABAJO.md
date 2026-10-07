@@ -34,10 +34,10 @@ Hitos 1, 3 y 4 cerrados técnicamente con material sintético; estilo ajustado a
 | 4 Ingesta | Extracción, normalización, segmentación, embeddings e índices | Corpus trazable y reproducible en pgvector | Completado técnicamente con material sintético |
 | 5 RAG | Búsqueda semántica y top-k | Recuperación validada con corpus y consultas de referencia, sin LLM | Completado técnicamente con muestra sintética; validación independiente pendiente |
 | 6 IA | Interfaz generate, fábrica y primer proveedor | Proveedor intercambiable, errores y límites controlados | Interfaz/fábrica/Gemini preparados y probados sin red; conexión real desactivada por el autor |
-| 7 Recursos | Explicación, ejercicio, quiz y feedback | Flujo completo por recurso, fuentes y validación | Pendiente |
+| 7 Recursos | Explicación, ejercicio, quiz y feedback | Flujo completo por recurso, fuentes y validación | Contratos/prompts/validación y preparación interna listos; API/UI y generación real pendientes |
 | 8 Perfiles | Recepción por API de rendimiento externo | Validación y persistencia de perfiles sintéticos | Pendiente |
 | 9 Personalización | Alto, medio, dificultades y dificultad localizada | Diferencias justificadas para mismo tema y distintos perfiles | Pendiente |
-| 10 Trazabilidad | Fuentes, historial y métricas | Reconstrucción de cada generación y sus fallos | Pendiente |
+| 10 Trazabilidad | Fuentes, historial y métricas | Reconstrucción de cada generación y sus fallos | Base de snapshots y estados preparada por migración 0006; historial/métricas/perfiles/costo pendientes |
 | 11 Benchmark | Directo/RAG, perfiles, OpenAI/Gemini/Claude | Experimentos controlados y resultados reales registrados | Pendiente |
 | 12 Cierre | Endurecimiento, documentación, pruebas y MVP | Evidencia final, manuales e informe | Pendiente |
 
@@ -56,8 +56,8 @@ La tabla de etapas 0–15 de la sección 19 se conserva íntegra en la fuente. L
 | 10 | Diez entidades iniciales y Alembic | Modelo conceptual; columnas tras validar casos de uso |
 | 11–12 | Flujo completo y RAG antes del LLM | Hitos 3–7, validación independiente de recuperación |
 | 13 | Perfil externo y variables académicas | Hito 8; campos completos en la fuente |
-| 14–15 | Recursos ampliables y personalización | Hitos 7 y 9 |
-| 16 | Evidencia de cada generación | Hito 10; diseñar campos antes de generar contenido |
+| 14–15 | Recursos ampliables y personalización | Hito 7: cuatro contratos iniciales preparados, dificultad manual; personalización hito 9 pendiente |
+| 16 | Evidencia de cada generación | Base mínima persistida en 0006; historial, perfiles y métricas por completar en hitos 8–10 |
 | 17–18 | Docker, Git y GitHub | Docker y Git local; remoto pendiente de cuenta/visibilidad |
 | 19–22 | Orden y criterio del primer bloque | Este seguimiento y evidencia de pruebas |
 | 23–25 | Pruebas, seguridad y definición de terminado | Aplicar por hito; lista de cierre abajo |
@@ -89,6 +89,8 @@ Generación: POST `/content/generate`, `/content/quiz`, `/content/feedback`, `/c
 Seguridad vigente: validación CAS en backend, hashes de tokens opacos, expiración y revocación de sesiones, autorización por rol, validación de documentos, no ejecutar cargas, saneamiento según contexto, límites de tamaño/frecuencia de solicitudes LLM y logs sin contenido sensible.
 
 Actualización del hito 6: Gemini elegido directamente por el autor. Interfaz `generate`, fábrica, esquemas de texto/metadata, adaptador REST y límites implementados con pruebas de transporte ficticio. El autor pidió dejar la conexión real para después: LLM_ENABLED=false, sin llamadas/gasto y sin endpoint de generación todavía. El criterio de integración real del hito 6 permanece pendiente. No se salta a recursos generados de hito 7; puede prepararse su diseño y trazabilidad sin invocar el proveedor. Ver decisión 0007 y pruebas/hito_06_proveedores.md.
+
+Preparación del hito 7 implementada: ContentRequest, cuatro esquemas discriminados, prompts educational-rag-v1, referencias S1…S10 y validación de JSON/citas. PrepareContentService usa recuperación propia top-3 sin llamada LLM. Migración 0006 y repositorio/servicio de trazabilidad guardan prompt/fuentes/solicitud y estados antes de una futura llamada; cierre condicional por propietario impide sobrescritura terminal. No hay perfil ni adaptación automática ni rutas content/historial todavía. 223 pruebas backend aprobadas; evidencia pruebas/hito_07_preparacion.md. No se declara hito 7/10 completo ni evaluación académica.
 
 ## Decisiones académicas y externas por concretar
 
