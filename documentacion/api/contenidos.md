@@ -1,6 +1,24 @@
-# Contratos internos de contenidos — preparación
+# Contratos de contenidos — preparación
 
-No se publican todavía /content/generate, /content/explanation, /content/quiz ni /content/feedback. La interfaz pública y respuestas HTTP se implementarán con el coordinador de generación; Gemini permanece desactivado por decisión del autor. No hay contenido ficticio en el producto.
+POST `/api/v1/content/prepare` y Angular `/recursos` permiten preparar solicitudes y revisar fuentes propias sin invocar IA. No se publican todavía /content/generate, /content/explanation, /content/quiz ni /content/feedback. Gemini permanece desactivado; la generación real requiere coordinador, modelo y límite de gasto definidos.
+
+## POST /api/v1/content/prepare
+
+Requiere sesión teacher/admin y protección CSRF mediante el header de cliente existente. ContentRequest es el cuerpo JSON; el propietario procede exclusivamente de la sesión. Máximo 16 KiB antes de parsear y cinco intentos por propietario/minuto/proceso antes de inferencia local o persistencia. En producción se requiere coordinación compartida del cupo.
+
+201 devuelve `id`, `status=prepared`, `topic`, `learning_objective`, `resource_type`, `difficulty`, `question_count` (null salvo quiz) y `sources`. Cada fuente contiene texto, alias `citation_id`, UUID de documento/fragmento, título, nombre de archivo, posición, página/párrafo, offsets, hashes y similitud del contrato SearchHit. No devuelve prompt, instrucciones internas, respuesta a revisar, owner_id, claves ni vectores. Todas las respuestas del módulo llevan Cache-Control: no-store.
+
+| Estado | Significado |
+|---|---|
+| 401 | Sesión inexistente o inválida |
+| 403 | Rol o protección CSRF inválidos |
+| 413 | Cuerpo excesivo |
+| 422 | Solicitud inválida, ausencia de fuentes o contexto excesivo |
+| 429 | Cupo agotado; Retry-After: 60 |
+| 503 | Fuentes no verificables, recuperación o preparación no disponible |
+| 500 | Error inesperado; el cliente no reintenta automáticamente |
+
+Ruta → PreparationService → PrepareContentService/SearchService/EducationalPromptBuilder → GenerationRepository. Se confirma el snapshot en PostgreSQL antes de responder. Esta operación nunca llama al proveedor, incluso si se cambia LLM_ENABLED. Preparado no significa generado. Aún no hay historial HTTP para recuperar preparaciones tras recargar; el identificador permite verificar el registro guardado y queda preparado para el futuro flujo.
 
 ## ContentRequest
 
@@ -13,7 +31,7 @@ No se publican todavía /content/generate, /content/explanation, /content/quiz n
 | question_count | Solo QUIZ, entero 1–5; tres por defecto |
 | student_answer | Solo FEEDBACK, obligatoria, hasta 2000 caracteres |
 
-Entrada normalizada a NFC, sin controles no textuales/surrogates ni campos extra. Dificultad manual; student_profile, owner_id, provider, model y claves no se admiten. El propietario proviene de sesión en el futuro router, no del JSON del navegador. Student_answer no implica identificar a un estudiante; perfiles reales quedan para hito 8.
+Entrada normalizada a NFC, sin controles no textuales/surrogates ni campos extra. Dificultad manual; student_profile, owner_id, provider, model y claves no se admiten. El propietario proviene de sesión, no del JSON del navegador. Student_answer no implica identificar a un estudiante; perfiles reales quedan para hito 8. Angular avisa que la respuesta se guarda en el snapshot y pide usar datos de prueba sin identificadores personales.
 
 ## EducationalResource
 
@@ -36,6 +54,6 @@ PrepareContentService.prepare → recuperación propia top-3 → EducationalProm
 
 GenerationRepository.prepare confirma la evidencia en PostgreSQL y retorna UUID; GenerationTarget opcional viene del backend. Cuando se conecte IA, debe requerirse target explícito y conservar la preparación antes del envío. GenerationTraceService.finish valida la salida y registra éxito o fallo conocido; fail registra un código de error permitido sin cuerpo remoto. Solo propietario+estado prepared permiten finalizar. Lecturas privadas terminan transacción antes de una futura inferencia. No publicar estas funciones como API sin roles/CSRF y límites HTTP.
 
-Códigos internos: content_no_sources, content_invalid_sources, content_context_limit, content_invalid_output, content_wrong_resource, content_quiz_count, content_invalid_citations, content_insufficient_sources, content_target_mismatch, content_trace_unavailable, content_invalid_error_code. El mapeo HTTP queda pendiente; generation_interrupted está reservado para cerrar una preparación interrumpida explícitamente.
+Códigos internos: content_no_sources, content_invalid_sources, content_context_limit, content_invalid_output, content_wrong_resource, content_quiz_count, content_invalid_citations, content_insufficient_sources, content_target_mismatch, content_trace_unavailable, content_invalid_error_code. PreparationService mapea ausencia de fuentes/contexto a 422 y fuentes inválidas a 503; la generación futura necesitará su propio mapeo. generation_interrupted está reservado para cerrar una preparación interrumpida explícitamente.
 
 No hay recursos reales, historial HTTP, cálculo de costo, perfiles ni adaptación por rendimiento en este bloque. Ver decisión 0008 para retención/purga y estado exacto de los hitos.
