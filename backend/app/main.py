@@ -13,6 +13,7 @@ from app.configuracion.settings import get_settings
 from app.modulos.autenticacion.router import router as auth_router
 from app.modulos.contenidos.router import router as content_router
 from app.modulos.documentos.router import router as documents_router
+from app.modulos.perfiles.router import router as profiles_router
 from app.modulos.rag.router import router as rag_router
 from app.nucleo.seguridad.rate_limiter import AuthRateLimiter
 from app.nucleo.seguridad.upload_limit import UploadLimitMiddleware
@@ -43,6 +44,7 @@ def create_app() -> FastAPI:
     app.include_router(documents_router, prefix=API_PREFIX)
     app.include_router(rag_router, prefix=API_PREFIX)
     app.include_router(content_router, prefix=API_PREFIX)
+    app.include_router(profiles_router, prefix=API_PREFIX)
     app.add_middleware(UploadLimitMiddleware)
     limiter = AuthRateLimiter()
 
@@ -67,7 +69,12 @@ def create_app() -> FastAPI:
             response.headers["Cache-Control"] = "no-store"
             response.headers["Referrer-Policy"] = "no-referrer"
         if request.url.path.startswith(
-            (f"{API_PREFIX}/documents", f"{API_PREFIX}/rag", f"{API_PREFIX}/content")
+            (
+                f"{API_PREFIX}/documents",
+                f"{API_PREFIX}/rag",
+                f"{API_PREFIX}/content",
+                f"{API_PREFIX}/profiles",
+            )
         ):
             response.headers["Cache-Control"] = "no-store"
         return response

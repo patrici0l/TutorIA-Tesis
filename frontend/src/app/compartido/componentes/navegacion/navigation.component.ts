@@ -51,6 +51,12 @@ export class NavigationComponent {
     ];
     if (user.rol === 'teacher' || user.rol === 'admin') {
       links.push({
+        path: '/perfiles',
+        label: 'Perfiles',
+        description: 'Revisa observaciones sintéticas de rendimiento',
+        icon: 'document',
+      });
+      links.push({
         path: '/documentos',
         label: 'Documentos',
         description: 'Organiza los materiales de tu curso',

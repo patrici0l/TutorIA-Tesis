@@ -3,6 +3,15 @@ import { authGuard } from './nucleo/guardias/auth.guard';
 
 export const routes: Routes = [
   {
+    path: 'perfiles',
+    title: 'Perfiles de aprendizaje | TutorIA',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./modulos/perfiles/paginas/perfiles/profiles.component').then(
+        (m) => m.ProfilesComponent,
+      ),
+  },
+  {
     path: 'recursos',
     title: 'Preparar recursos | TutorIA',
     canActivate: [authGuard],

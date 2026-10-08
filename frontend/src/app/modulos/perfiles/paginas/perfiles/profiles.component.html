@@ -1,0 +1,228 @@
+@if (!allowed()) {
+  <section class="panel">
+    <h1>Espacio docente</h1>
+    <p>Los perfiles de prueba son privados para docentes.</p>
+  </section>
+} @else {
+  <header>
+    <p class="eyebrow">COMPRENDER PARA ACOMPAÑAR</p>
+    <h1>Perfiles de aprendizaje</h1>
+    <p>
+      Registra una observación de rendimiento ficticia y conserva sus datos para la próxima etapa.
+    </p>
+  </header>
+  <p class="notice">
+    Demostración con datos sintéticos. No ingreses nombres, correos, matrículas ni notas de
+    estudiantes reales. Guardar y consultar no consume Gemini.
+  </p>
+  <div class="workspace">
+    <section class="panel" aria-labelledby="profile-form-title">
+      <h2 id="profile-form-title">Nueva observación</h2>
+      <form (ngSubmit)="save()" #form="ngForm">
+        <fieldset [disabled]="busy()">
+          <label for="studentId">Identificador ficticio</label
+          ><input
+            id="studentId"
+            name="studentId"
+            [(ngModel)]="studentId"
+            placeholder="SYN-001"
+            required
+            maxlength="64"
+            pattern="[A-Za-z0-9_-]+"
+          />
+          <label for="profileTopic">Tema</label
+          ><input
+            id="profileTopic"
+            name="topic"
+            [(ngModel)]="topic"
+            placeholder="Derivadas"
+            required
+            maxlength="160"
+          />
+          <div class="options">
+            <div>
+              <label for="performance">Desempeño (%)</label
+              ><input
+                type="number"
+                id="performance"
+                name="performance"
+                [(ngModel)]="performance"
+                required
+                min="0"
+                max="100"
+                step="any"
+              />
+            </div>
+            <div>
+              <label for="attempts">Intentos</label
+              ><input
+                type="number"
+                id="attempts"
+                name="attempts"
+                [(ngModel)]="attempts"
+                required
+                min="1"
+                max="10000"
+                step="1"
+              />
+            </div>
+            <div>
+              <label for="mastery">Nivel de dominio informado</label
+              ><select id="mastery" name="mastery" [(ngModel)]="mastery">
+                <option value="low">Bajo</option>
+                <option value="medium">Medio</option>
+                <option value="high">Alto</option>
+              </select>
+            </div>
+            <div>
+              <label for="support">Apoyo recomendado</label
+              ><select id="support" name="support" [(ngModel)]="support">
+                <option value="reinforcement">Refuerzo</option>
+                <option value="practice">Práctica guiada</option>
+                <option value="challenge">Retos</option>
+              </select>
+            </div>
+          </div>
+          <p class="help">
+            Se conserva el nivel informado. TutorIA todavía no lo calcula ni adapta la generación.
+          </p>
+          <label for="frequentErrors">Errores frecuentes (uno por línea)</label
+          ><textarea
+            id="frequentErrors"
+            name="errors"
+            [(ngModel)]="errorsText"
+            rows="3"
+            maxlength="1010"
+            placeholder="regla_potencia"
+          ></textarea>
+          <p class="help">Hasta diez etiquetas diferentes, de 100 caracteres como máximo.</p>
+          <details>
+            <summary>Datos adicionales, opcionales</summary>
+            <label for="time">Tiempo de resolución (segundos)</label
+            ><input
+              type="number"
+              id="time"
+              name="time"
+              [(ngModel)]="resolutionTime"
+              min="0"
+              max="86400"
+              step="any"
+            /><label for="trend">Tendencia informada</label
+            ><select id="trend" name="trend" [(ngModel)]="trend">
+              <option value="">Sin informar</option>
+              <option value="improving">Mejora</option>
+              <option value="stable">Estable</option>
+              <option value="declining">Descenso</option>
+            </select>
+          </details>
+          <label class="check"
+            ><input type="checkbox" name="confirmed" [(ngModel)]="confirmed" required />Confirmo que
+            son datos ficticios</label
+          >
+          <button type="submit" [disabled]="form.invalid || !confirmed">
+            Guardar perfil sintético ↗
+          </button>
+        </fieldset>
+      </form>
+    </section>
+    <section class="panel" aria-labelledby="saved-title">
+      <div class="title">
+        <h2 id="saved-title">Mis perfiles</h2>
+        <button type="button" [disabled]="busy()" (click)="load()">Actualizar lista</button>
+      </div>
+      <p>Observaciones privadas, ordenadas de más reciente a más antigua.</p>
+      @if (page(); as records) {
+        @if (!records.total) {
+          <p>Aún no tienes perfiles guardados.</p>
+        }
+        <ul>
+          @for (item of records.items; track item.id) {
+            <li>
+              <strong>{{ item.student_id }} · {{ item.topic }}</strong>
+              <p>
+                {{ item.performance }} % · Dominio {{ masteryLabels[item.mastery_level] }} ·
+                {{ item.created_at | date: 'dd/MM/yyyy HH:mm' }}
+              </p>
+              <button
+                type="button"
+                [disabled]="busy()"
+                (click)="open(item.id)"
+                [attr.aria-label]="'Abrir perfil ' + item.student_id"
+              >
+                Abrir perfil
+              </button>
+            </li>
+          }
+        </ul>
+        @if (records.total) {
+          <nav aria-label="Páginas de perfiles">
+            <button
+              type="button"
+              [disabled]="busy() || !records.offset"
+              (click)="load(records.offset - records.limit)"
+            >
+              Anteriores</button
+            ><span
+              >{{ records.offset + 1 }}–{{ records.offset + records.items.length }} de
+              {{ records.total }}</span
+            ><button
+              type="button"
+              [disabled]="busy() || records.offset + records.limit >= records.total"
+              (click)="load(records.offset + records.limit)"
+            >
+              Siguientes
+            </button>
+          </nav>
+        }
+      } @else {
+        <p>Consulta tus perfiles guardados con «Actualizar lista».</p>
+      }
+    </section>
+  </div>
+  @if (busy()) {
+    <p class="notice" role="status">Procesando la solicitud…</p>
+  }
+  @if (error()) {
+    <p class="notice" role="alert">{{ error() }}</p>
+  }
+  @if (selected(); as profile) {
+    <section class="panel detail" aria-labelledby="profile-detail-title" aria-live="polite">
+      <p class="eyebrow">OBSERVACIÓN GUARDADA · DATOS SINTÉTICOS</p>
+      <h2 id="profile-detail-title">{{ profile.student_id }} · {{ profile.topic }}</h2>
+      <dl>
+        <dt>Desempeño</dt>
+        <dd>{{ profile.performance }} %</dd>
+        <dt>Intentos</dt>
+        <dd>{{ profile.attempts }}</dd>
+        <dt>Dominio informado</dt>
+        <dd>{{ masteryLabels[profile.mastery_level] }}</dd>
+        <dt>Apoyo recomendado</dt>
+        <dd>{{ supportLabels[profile.recommended_support] }}</dd>
+        <dt>Errores frecuentes</dt>
+        <dd>{{ profile.frequent_errors.join(', ') || 'Sin informar' }}</dd>
+        <dt>Tiempo de resolución</dt>
+        <dd>
+          {{ profile.resolution_time_seconds ?? 'Sin informar' }}
+          @if (
+            profile.resolution_time_seconds !== undefined &&
+            profile.resolution_time_seconds !== null
+          ) {
+            segundos
+          }
+        </dd>
+        <dt>Tendencia</dt>
+        <dd>{{ profile.progress_trend ? trendLabels[profile.progress_trend] : 'Sin informar' }}</dd>
+        <dt>Guardado</dt>
+        <dd>{{ profile.created_at | date: 'dd/MM/yyyy HH:mm' }}</dd>
+      </dl>
+      <details>
+        <summary>Referencia del perfil</summary>
+        <code>{{ profile.id }}</code>
+        <p>{{ profile.schema_version }}</p>
+      </details>
+      <p>
+        Esta instantánea se conserva sin sobrescribirla. Una nueva observación crea otro registro.
+      </p>
+    </section>
+  }
+}

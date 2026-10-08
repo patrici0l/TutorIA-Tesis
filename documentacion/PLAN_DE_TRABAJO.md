@@ -26,6 +26,8 @@ Hitos 1, 3 y 4 cerrados técnicamente con material sintético; estilo ajustado a
 
 ## Secuencia obligatoria de hitos
 
+Actualización del bloque actual: hito 8 sintético implementado con API privada, migración 0008 y pantalla `/perfiles`. 275 pruebas backend y 54 Angular aprobadas, guardado/recuperación en navegador comprobados sin IA. Ver [contrato](api/perfiles.md), [decisión 0009](decisiones_tecnicas/0009-perfiles-sinteticos.md) y [evidencia](pruebas/hito_08_perfiles.md). Próximo hito: personalización explicable y trazabilidad del perfil; la integración externa con datos reales sigue pendiente.
+
 | Hito | Alcance | Criterio de cierre | Estado |
 |---|---|---|---|
 | 1 Base | Preparación, backend, BD, frontend, Docker | Un comando levanta todo; interfaz confirma API y BD real | Completado |
@@ -35,7 +37,7 @@ Hitos 1, 3 y 4 cerrados técnicamente con material sintético; estilo ajustado a
 | 5 RAG | Búsqueda semántica y top-k | Recuperación validada con corpus y consultas de referencia, sin LLM | Completado técnicamente con muestra sintética; validación independiente pendiente |
 | 6 IA | Interfaz generate, fábrica y primer proveedor | Proveedor intercambiable, errores y límites controlados | Interfaz/fábrica/Gemini probados y primera conexión real 3.1 Flash-Lite verificada; generación habilitada localmente bajo Free Tier confirmado, coordinador/cap global persistente implementados |
 | 7 Recursos | Explicación, ejercicio, quiz y feedback | Flujo completo por recurso, fuentes y validación | Preparación API/UI y coordinador interno listos; explicación RAG real verificada, API/UI de generación e historial privado implementados; cuatro recorridos mínimos reales comprobados; validación académica/escenarios extensos pendientes |
-| 8 Perfiles | Recepción por API de rendimiento externo | Validación y persistencia de perfiles sintéticos | Pendiente |
+| 8 Perfiles | Recepción por API de rendimiento externo | Validación y persistencia de perfiles sintéticos | Completado técnicamente con API/UI sintética privada; integración externa institucional pendiente |
 | 9 Personalización | Alto, medio, dificultades y dificultad localizada | Diferencias justificadas para mismo tema y distintos perfiles | Pendiente |
 | 10 Trazabilidad | Fuentes, historial y métricas | Reconstrucción de cada generación y sus fallos | Base de snapshots y estados preparada por migración 0006; historial privado implementado; métricas/perfiles/costo/retención pendientes |
 | 11 Benchmark | Directo/RAG, perfiles, OpenAI/Gemini/Claude | Experimentos controlados y resultados reales registrados | Pendiente |
@@ -69,7 +71,7 @@ La tabla de etapas 0–15 de la sección 19 se conserva íntegra en la fuente. L
 
 Autenticación implementada: GET `/auth/login`, GET `/auth/callback`, GET `/auth/me`, POST `/auth/logout`. Alta automática después de validar la identidad; sin registro por contraseña ni refresh JWT. El rol local se conserva al iniciar sesión. La gestión administrativa de permisos y las políticas institucionales quedan por concretar.
 
-Documentos implementados: POST `/documents/upload`, GET `/documents`, GET y DELETE `/documents/{id}`, POST `/documents/{id}/process`, GET `/documents/{id}/chunks` y POST `/documents/{id}/index` (rebuild=true para reconstruir). Perfiles pendientes: POST `/profiles`, GET `/profiles/{id}`. Recuperación implementada: POST `/rag/search`, restringida al corpus propio teacher/admin. Preparación implementada: POST `/content/prepare` y Angular `/recursos`, con sesión, propiedad, CSRF y límites; no llama IA.
+Documentos implementados: POST `/documents/upload`, GET `/documents`, GET y DELETE `/documents/{id}`, POST `/documents/{id}/process`, GET `/documents/{id}/chunks` y POST `/documents/{id}/index` (rebuild=true para reconstruir). Perfiles implementados: POST `/profiles`, GET `/profiles` paginado y GET `/profiles/{id}`, propios teacher/admin, solo sintéticos. Recuperación implementada: POST `/rag/search`, restringida al corpus propio teacher/admin. Preparación implementada: POST `/content/prepare` y Angular `/recursos`, con sesión, propiedad, CSRF y límites; no llama IA.
 
 Generación: POST `/content/generate`, `/content/quiz`, `/content/feedback`, `/content/explanation`, `/content/challenge`. Ejercicios se identificarán por `resource_type=EXERCISE` en el contrato genérico. Historial: GET `/generations` y `/generations/{id}`. Métricas: GET `/metrics`. Todas estas rutas llevarán el prefijo `/api/v1`.
 

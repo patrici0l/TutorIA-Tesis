@@ -19,6 +19,7 @@ class UploadLimitMiddleware:
                 "/api/v1/documents/upload",
                 "/api/v1/rag/search",
                 "/api/v1/content/prepare",
+                "/api/v1/profiles",
             }
         ):
             return await self.app(scope, receive, send)

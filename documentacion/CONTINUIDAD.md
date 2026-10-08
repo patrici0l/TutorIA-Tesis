@@ -1,6 +1,6 @@
 # Continuidad de TutorIA-Lucero
 
-Actualizado: 7 de octubre de 2026. Estado vigente al cerrar generación API/UI. No se dispone de un porcentaje fiable de tokens restantes; no se inventa uno.
+Actualizado: 7 de octubre de 2026, sesión nocturna local (8 UTC). Estado vigente al cerrar perfiles sintéticos API/UI. No se dispone de un porcentaje fiable de tokens restantes; no se inventa uno.
 
 ## Instrucciones vigentes
 
@@ -18,7 +18,8 @@ Gemini elegido. Presupuesto autorizado USD 0: queda descartada la propuesta de U
 - Hito 6 parcial: interfaz LLMProvider, fábrica, adaptador Gemini REST, límites y metadata/errores seguros. gemini-3.1-flash-lite comprobado realmente; OpenAI/Claude pendientes, sin fallback.
 - Hito 7 en curso: explicación/ejercicio/quiz/feedback, dificultad manual, quiz 1–5 y respuesta sintética requerida para feedback. Prompt educational-rag-v1, preparación propia top-3, snapshots y validación JSON/citas. Coordinador interno probado con cuatro recursos y fallos.
 - Generación API/UI conectada: /recursos → preparar/revisar fuentes → botón explícito → POST /api/v1/content/{id}/generate → una llamada → validación → recurso/fallo. Los cuatro contratos mínimos confirmados realmente desde Angular con material sintético, citas y persistencia. Roles/propiedad/CSRF, no-store, cuerpo vacío sin configuración cliente y máximo 16 KiB.
-- Trazabilidad: prepared→generating→succeeded/failed, reserva persistida antes de red, cierre condicional, snapshots/modelo/consumo conocido o null. Migraciones 0001–0007 aplicadas, anteriores inmutables. Historial privado HTTP implementado; métricas académicas/costo calculado y adaptación pendientes.
+- Trazabilidad: prepared→generating→succeeded/failed, reserva persistida antes de red, cierre condicional, snapshots/modelo/consumo conocido o null. Migraciones 0001–0008 aplicadas, anteriores inmutables. Historial privado HTTP implementado; métricas académicas/costo calculado y adaptación pendientes.
+- Hito 8 técnico: POST /profiles, GET /profiles y GET /profiles/{id}; observaciones sintéticas inmutables privadas por creador teacher/admin, campos estrictos y versión performance-profile-v1. Angular /perfiles guarda, lista y abre detalle. Porcentaje/dominio/apoyo informados, sin calcular notas ni vincular usuarios reales; integración externa institucional pendiente. Ver api/perfiles.md y decisión 0009.
 
 ## Límites y estado local
 
@@ -26,11 +27,11 @@ Gemini elegido. Presupuesto autorizado USD 0: queda descartada la propuesta de U
 
 La ruta reserva cinco intentos globales por día UTC en PostgreSQL, incluidos fallos; una llamada simultánea y 60 s entre inicios. Reiniciar Docker no restaura el cupo. Preparación de un solo envío; terminal inmutable. Intentos abiertos >90 s se cierran como interrumpidos al reclamar otra preparación, sin reenvío. Documentos deben seguir disponibles para su propietario. Scripts manuales y otros clientes de la clave NO pasan por este cupo API. Limita solicitudes, no verifica facturación ni impone tope monetario en Google.
 
-Docker backend/frontend/postgres saludable; datos/modelos conservados. Navegador /recursos con sesión docente ficticia y explicación real; selector de nuevos accesos sigue student. CAS no conectado. Sin contenido en localStorage; tras recargar se consulta Mis recursos para reabrir snapshot/resultado conservado en PostgreSQL.
+Docker backend/frontend/postgres saludable; datos/modelos conservados. Navegador /perfiles con sesión docente ficticia y perfil sintético recuperado; selector de nuevos accesos sigue student. CAS no conectado. Sin contenido en localStorage; tras recargar se consulta la lista para reabrir recursos o perfiles conservados en PostgreSQL.
 
 ## Pruebas y evidencia
 
-Última suite: 247 backend/PostgreSQL aprobadas en 18,92 s, dos advertencias conocidas Starlette/HTTPX y pypdf; 50 Angular en 13 archivos. Ruff check/format limpios, 135 archivos; build sin advertencias, 305,44 kB inicial y 24,81 kB módulo preparación (compilación inicial del bloque, Docker final también aprobado). Tests automáticos sin Gemini.
+Última suite: 275 backend/PostgreSQL aprobadas en 27,01 s, dos advertencias conocidas Starlette/HTTPX y pypdf; 54 Angular en 14 archivos. Ruff check/format limpios, 143 archivos; build sin advertencias, 305,72 kB inicial y 15,91 kB módulo perfiles. Tests automáticos sin Gemini. Perfil sintético 5bb5b546-d9bb-49b6-ada5-f26528952c01 guardado y recuperado tras recargar; captura escritorio/móvil y verificación SQL en pruebas/hito_08_perfiles.md. Ninguna llamada Gemini en el bloque de perfiles.
 
 Prueba Angular real sintética: e4fcd956-cdf4-43a1-8487-d82997e096b3, succeeded, gemini-3.1-flash-lite, S1, 1076 input/312 output/1388 total, 2355 ms. Reserva 2026-10-07 22:06:57 UTC y persistencia SQL confirmadas. Una llamada en este bloque; costo desconocido/null, no afirmar cargo medido cero. Evidencia pruebas/hito_07_generacion_ui.md y capturas hito_07_generacion_desktop.png / mobile.png. Móvil 390×844 solicitado, ancho DOM útil/scrollWidth 375 px sin desbordamiento, viewport restaurado.
 
@@ -40,17 +41,17 @@ Evaluación RAG calculo-sintetico-v1: recall@3 base 0,875; alias explícitos mej
 
 ## Punto exacto siguiente
 
-Flujo técnico de explicación real conectado; hito 7 NO cerrado. Historial privado/API implementado y verificado tras recargar; cinco entradas propias, éxitos y fallos reabiertos sin inferencia. Evidencia pruebas/hito_07_historial.md. Al cerrar el historial en la sesión de tarde, el contador del día UTC 7 seguía en uno; al cerrar las tres pruebas nocturnas, el nuevo día UTC 8 tiene tres intentos. Tres recorridos restantes ya verificados realmente y recuperados desde historial. Ver pruebas/hito_07_cuatro_recursos.md. Próximo bloque: hito 8, definir/implementar recepción API de perfiles sintéticos de rendimiento externo con propiedad/privacidad, sin adaptación hasta validar contratos. Nunca llamadas externas en suites/healthchecks/arranque.
+Hito 7: cuatro recorridos técnicos mínimos reales e historial privado comprobados, validación académica pendiente. Evidencia pruebas/hito_07_historial.md y pruebas/hito_07_cuatro_recursos.md. Al cerrar las tres pruebas nocturnas, el día UTC 8 tenía tres intentos; este bloque de perfiles no agrega llamadas. Hito 8 técnico sintético terminado. Próximo bloque: hito 9, reglas deterministas y explicables para adaptar dificultad/apoyo a perfiles propios, con snapshot/versionado en la preparación y diferencias comprobadas para el mismo tema. Primero pruebas offline; no aumentar cuotas ni lanzar inferencias automáticas. Nunca llamadas externas en suites/healthchecks/arranque.
 
-Pendientes: validación académica con corpus/rúbrica autorizados y consultas independientes; perfiles/adaptación hito 8; métricas/retención/purga e historial completo hito 10; CAS TI, administración global de roles/asignación de corpus estudiantil. PDF escaneados necesitan OCR, fórmulas/columnas requieren cotejo, OfficeMath se rechaza. Producción requiere cola/aislamiento/retención/limpieza de huérfanos. Snapshots conservan texto tras borrar documentos: definir purga antes de datos reales. Licencia y cuenta/visibilidad GitHub pendientes.
+Pendientes: validación académica con corpus/rúbrica autorizados y consultas independientes; integración externa de perfiles, vocabularios, idempotencia y política de datos; adaptación hito 9; métricas/retención/purga e historial completo hito 10; CAS TI, administración global de roles/asignación de corpus estudiantil. PDF escaneados necesitan OCR, fórmulas/columnas requieren cotejo, OfficeMath se rechaza. Producción requiere cola/aislamiento/retención/limpieza de huérfanos. Snapshots conservan texto tras borrar documentos: definir purga antes de datos reales. Licencia y cuenta/visibilidad GitHub pendientes.
 
 ## Git y cómo retomar
 
-Repositorio C:/C_PROJECTS/TESIS COMPUTACION/TutorIA-Lucero, rama feature/resource-preparation, sin remoto/publicación. Bloques previos 8f2e735 (historial) y 33dc800 (documentación); este bloque en commit descriptivo (git log -1). Revisar git status y preservar cambios.
+Repositorio C:/C_PROJECTS/TESIS COMPUTACION/TutorIA-Lucero, rama feature/resource-preparation, sin remoto/publicación. Bloques previos 8f2e735 (historial), 33dc800 (documentación) y 2f723ac (cuatro recursos reales); perfiles en commit descriptivo (git log -1). Revisar git status y preservar cambios.
 
-Leer AGENTS.md, README.md, PLAN_DE_TRABAJO.md, decisiones 0002/0004/0005/0006/0007/0008 y api/contenidos.md / limites_gemini.md. Levantar con docker compose up -d --build --wait sin imprimir secretos, sin docker compose config ni eliminar volúmenes. Si faltan pesos: docker compose --profile embeddings run --no-deps --rm prepare-embeddings. No repetir verificaciones cerradas sin cambios/fallos que lo justifiquen.
+Leer AGENTS.md, README.md, PLAN_DE_TRABAJO.md, decisiones 0002/0004/0005/0006/0007/0008/0009 y api/contenidos.md / perfiles.md / limites_gemini.md. Levantar con docker compose up -d --build --wait sin imprimir secretos, sin docker compose config ni eliminar volúmenes. Si faltan pesos: docker compose --profile embeddings run --no-deps --rm prepare-embeddings. No repetir verificaciones cerradas sin cambios/fallos que lo justifiquen.
 
-## Verificación de contratos restantes en curso
+## Evidencia conservada: contratos de recursos
 
 7 de octubre, sesión nocturna: Docker Desktop se inició tras encontrar el motor detenido; datos/modelos conservados. Sesión docente ficticia renovada, selector de nuevos logins restaurado a student. 50 pruebas Angular aprobadas en 13 archivos, incluidas presentación de ejercicio/quiz/feedback; backend conserva 247 aprobadas (sin cambios backend posteriores).
 
