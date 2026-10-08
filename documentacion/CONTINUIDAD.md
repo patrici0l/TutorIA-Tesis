@@ -17,7 +17,7 @@ Gemini elegido. Presupuesto autorizado USD 0: queda descartada la propuesta de U
 - Hito 5 técnico: búsqueda exacta propia con top-k/fuentes/filtros, pantalla /busqueda. HNSW contrastado contra referencia exacta en muestra sintética; no equivale a benchmark académico.
 - Hito 6 parcial: interfaz LLMProvider, fábrica, adaptador Gemini REST, límites y metadata/errores seguros. gemini-3.1-flash-lite comprobado realmente; OpenAI/Claude pendientes, sin fallback.
 - Hito 7 en curso: explicación/ejercicio/quiz/feedback, dificultad manual, quiz 1–5 y respuesta sintética requerida para feedback. Prompt educational-rag-v1, preparación propia top-3, snapshots y validación JSON/citas. Coordinador interno probado con cuatro recursos y fallos.
-- Generación API/UI conectada: /recursos → preparar/revisar fuentes → botón explícito → POST /api/v1/content/{id}/generate → una llamada → validación → recurso/fallo. Componentes para cuatro contratos; una explicación real confirmada desde Angular. Roles/propiedad/CSRF, no-store, cuerpo vacío sin configuración cliente y máximo 16 KiB.
+- Generación API/UI conectada: /recursos → preparar/revisar fuentes → botón explícito → POST /api/v1/content/{id}/generate → una llamada → validación → recurso/fallo. Los cuatro contratos mínimos confirmados realmente desde Angular con material sintético, citas y persistencia. Roles/propiedad/CSRF, no-store, cuerpo vacío sin configuración cliente y máximo 16 KiB.
 - Trazabilidad: prepared→generating→succeeded/failed, reserva persistida antes de red, cierre condicional, snapshots/modelo/consumo conocido o null. Migraciones 0001–0007 aplicadas, anteriores inmutables. Historial privado HTTP implementado; métricas académicas/costo calculado y adaptación pendientes.
 
 ## Límites y estado local
@@ -30,7 +30,7 @@ Docker backend/frontend/postgres saludable; datos/modelos conservados. Navegador
 
 ## Pruebas y evidencia
 
-Última suite: 247 backend/PostgreSQL aprobadas en 18,92 s, dos advertencias conocidas Starlette/HTTPX y pypdf; 47 Angular en 13 archivos. Ruff check/format limpios, 135 archivos; build sin advertencias, 305,44 kB inicial y 24,81 kB módulo preparación (compilación inicial del bloque, Docker final también aprobado). Tests automáticos sin Gemini.
+Última suite: 247 backend/PostgreSQL aprobadas en 18,92 s, dos advertencias conocidas Starlette/HTTPX y pypdf; 50 Angular en 13 archivos. Ruff check/format limpios, 135 archivos; build sin advertencias, 305,44 kB inicial y 24,81 kB módulo preparación (compilación inicial del bloque, Docker final también aprobado). Tests automáticos sin Gemini.
 
 Prueba Angular real sintética: e4fcd956-cdf4-43a1-8487-d82997e096b3, succeeded, gemini-3.1-flash-lite, S1, 1076 input/312 output/1388 total, 2355 ms. Reserva 2026-10-07 22:06:57 UTC y persistencia SQL confirmadas. Una llamada en este bloque; costo desconocido/null, no afirmar cargo medido cero. Evidencia pruebas/hito_07_generacion_ui.md y capturas hito_07_generacion_desktop.png / mobile.png. Móvil 390×844 solicitado, ancho DOM útil/scrollWidth 375 px sin desbordamiento, viewport restaurado.
 
@@ -40,12 +40,18 @@ Evaluación RAG calculo-sintetico-v1: recall@3 base 0,875; alias explícitos mej
 
 ## Punto exacto siguiente
 
-Flujo técnico de explicación real conectado; hito 7 NO cerrado. Historial privado/API implementado y verificado tras recargar; cinco entradas propias, éxitos y fallos reabiertos sin inferencia. Evidencia pruebas/hito_07_historial.md. Contador API diario sigue en uno. Próximo bloque autorizado: verificar recorridos reales de ejercicio/quiz/feedback sintéticos dentro del cupo, hasta tres llamadas nuevas separadas 60 s, y mejorar presentación matemática según evidencia. Nunca llamadas externas en suites/healthchecks/arranque.
+Flujo técnico de explicación real conectado; hito 7 NO cerrado. Historial privado/API implementado y verificado tras recargar; cinco entradas propias, éxitos y fallos reabiertos sin inferencia. Evidencia pruebas/hito_07_historial.md. Al cerrar el historial en la sesión de tarde, el contador del día UTC 7 seguía en uno; al cerrar las tres pruebas nocturnas, el nuevo día UTC 8 tiene tres intentos. Tres recorridos restantes ya verificados realmente y recuperados desde historial. Ver pruebas/hito_07_cuatro_recursos.md. Próximo bloque: hito 8, definir/implementar recepción API de perfiles sintéticos de rendimiento externo con propiedad/privacidad, sin adaptación hasta validar contratos. Nunca llamadas externas en suites/healthchecks/arranque.
 
 Pendientes: validación académica con corpus/rúbrica autorizados y consultas independientes; perfiles/adaptación hito 8; métricas/retención/purga e historial completo hito 10; CAS TI, administración global de roles/asignación de corpus estudiantil. PDF escaneados necesitan OCR, fórmulas/columnas requieren cotejo, OfficeMath se rechaza. Producción requiere cola/aislamiento/retención/limpieza de huérfanos. Snapshots conservan texto tras borrar documentos: definir purga antes de datos reales. Licencia y cuenta/visibilidad GitHub pendientes.
 
 ## Git y cómo retomar
 
-Repositorio C:/C_PROJECTS/TESIS COMPUTACION/TutorIA-Lucero, rama feature/resource-preparation, sin remoto/publicación. Bloque previo 2ce1680; este bloque en commit descriptivo (git log -1). Revisar git status y preservar cambios.
+Repositorio C:/C_PROJECTS/TESIS COMPUTACION/TutorIA-Lucero, rama feature/resource-preparation, sin remoto/publicación. Bloques previos 8f2e735 (historial) y 33dc800 (documentación); este bloque en commit descriptivo (git log -1). Revisar git status y preservar cambios.
 
 Leer AGENTS.md, README.md, PLAN_DE_TRABAJO.md, decisiones 0002/0004/0005/0006/0007/0008 y api/contenidos.md / limites_gemini.md. Levantar con docker compose up -d --build --wait sin imprimir secretos, sin docker compose config ni eliminar volúmenes. Si faltan pesos: docker compose --profile embeddings run --no-deps --rm prepare-embeddings. No repetir verificaciones cerradas sin cambios/fallos que lo justifiquen.
+
+## Verificación de contratos restantes en curso
+
+7 de octubre, sesión nocturna: Docker Desktop se inició tras encontrar el motor detenido; datos/modelos conservados. Sesión docente ficticia renovada, selector de nuevos logins restaurado a student. 50 pruebas Angular aprobadas en 13 archivos, incluidas presentación de ejercicio/quiz/feedback; backend conserva 247 aprobadas (sin cambios backend posteriores).
+
+Ejercicio real 34cbaee3-9dbe-40f6-a41b-65e3568d606b: succeeded, 1115 input/324 output/1439 total, 2088 ms, S1. Quiz real de una pregunta 42289db1-b80a-4290-b7bd-b26d1b03b845: succeeded, 1168 input/222 output/1390 total, 7516 ms, S1, cuatro opciones y respuesta desplegable comprobadas. Feedback 77754fbb-be92-4495-bdae-781db4a6b964 también succeeded: 1080 input/250 output/1330 total, 14146 ms, S1. Tres llamadas nuevas completadas, cupo UTC del 8 de octubre (fecha local 7), anterior llamada UI en día UTC previo. Los tres se recuperaron desde historial sin inferencia. Evidencia pruebas/hito_07_cuatro_recursos.md y recursos_reales.json. Pruebas externas de estos contratos cerradas: no repetirlas automáticamente. No reenvío ni gasto verificado.
