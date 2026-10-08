@@ -38,7 +38,7 @@ Actualización del bloque actual: hito 8 sintético implementado con API privada
 | 6 IA | Interfaz generate, fábrica y primer proveedor | Proveedor intercambiable, errores y límites controlados | Interfaz/fábrica/Gemini probados y primera conexión real 3.1 Flash-Lite verificada; generación habilitada localmente bajo Free Tier confirmado, coordinador/cap global persistente implementados |
 | 7 Recursos | Explicación, ejercicio, quiz y feedback | Flujo completo por recurso, fuentes y validación | Preparación API/UI y coordinador interno listos; explicación RAG real verificada, API/UI de generación e historial privado implementados; cuatro recorridos mínimos reales comprobados; validación académica/escenarios extensos pendientes |
 | 8 Perfiles | Recepción por API de rendimiento externo | Validación y persistencia de perfiles sintéticos | Completado técnicamente con API/UI sintética privada; integración externa institucional pendiente |
-| 9 Personalización | Alto, medio, dificultades y dificultad localizada | Diferencias justificadas para mismo tema y distintos perfiles | Política/preparación API/UI e historial implementados y probados offline; diferencias en salidas reales y evaluación pedagógica pendientes |
+| 9 Personalización | Alto, medio, dificultades y dificultad localizada | Diferencias justificadas para mismo tema y distintos perfiles | Implementación API/UI e historial comprobados; salidas reales bajo/medio registradas con limitaciones, alto preparado pendiente de cupo; evaluación pedagógica pendiente |
 | 10 Trazabilidad | Fuentes, historial y métricas | Reconstrucción de cada generación y sus fallos | Snapshots/estados/historial privados y perfil/política de adaptación conservados; métricas/costo/retención pendientes |
 | 11 Benchmark | Directo/RAG, perfiles, OpenAI/Gemini/Claude | Experimentos controlados y resultados reales registrados | Pendiente |
 | 12 Cierre | Endurecimiento, documentación, pruebas y MVP | Evidencia final, manuales e informe | Pendiente |
@@ -68,6 +68,8 @@ La tabla de etapas 0–15 de la sección 19 se conserva íntegra en la fuente. L
 | 28–30 | Evitar desorden y avanzar verticalmente | AGENTS.md y revisiones de cada entrega |
 
 ## Contratos aún pendientes
+
+Continuación del 8 de octubre: protocolo controlado fijado y dos explicaciones adaptadas reales persistidas/restauradas. Fuentes y entradas fijas idénticas comprobadas por SQL. Perfil alto queda preparado al alcanzar cinco inicios UTC; sin bypass ni reintentos. Las diferencias observadas son pequeñas y hay afirmaciones sin respaldo explícito en la fuente, por lo que no se declara cierre académico. Ver [comparación parcial](pruebas/hito_09_comparacion_parcial.md).
 
 Actualización del 8 de octubre: personalización de preparación implementada mediante profile_id propio, política versionada y snapshot en migración 0009. API/UI y generación con proveedor ficticio comprobadas, 292 pruebas backend y 56 Angular. Ver [contrato](api/personalizacion.md), [decisión](decisiones_tecnicas/0010-adaptacion-explicable.md) y [evidencia](pruebas/hito_09_personalizacion.md). Falta comparar calidad de salidas reales y completar métricas/benchmark/cierre; no declarar la tesis completa.
 

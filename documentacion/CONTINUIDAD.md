@@ -1,8 +1,10 @@
 # Continuidad de TutorIA-Lucero
 
-Actualizado: 8 de octubre de 2026, America/Guayaquil. Estado vigente al implementar personalización de preparaciones API/UI. No se dispone de un porcentaje fiable de tokens restantes; no se inventa uno.
+Actualizado: 8 de octubre de 2026, America/Guayaquil. Estado vigente al registrar dos salidas adaptadas reales y bitácora privada. No se dispone de un porcentaje fiable de tokens restantes; no se inventa uno.
 
 ## Instrucciones vigentes
+
+El autor pide itinerario personal por día/sesión en seguimiento_privado/BITACORA.md, excluido de Git/GitHub. Actualizar con trabajo, verificación, pendientes y commits; no copiar su contenido privado a documentación pública. Hacer commit al cerrar cada punto verificable, sin declarar hitos incompletos como terminados. Exclusión y regla persistente comprobadas en 05b7cec.
 
 Seguir el plan por etapas. Las instrucciones directas del autor reemplazan autenticación local/Google y registro abierto por SSO/CAS UPS, modos mock/cas y cookie HttpOnly/SameSite. Angular no solicita contraseñas ni almacena tokens. CAS espera parámetros de TI. Conservar Angular, FastAPI, PostgreSQL/pgvector, Alembic y Docker; interfaz española, paleta UPS azul/amarillo/blanco y navegación superior accesible/responsiva.
 
@@ -42,7 +44,9 @@ Evaluación RAG calculo-sintetico-v1: recall@3 base 0,875; alias explícitos mej
 
 ## Punto exacto siguiente
 
-Hito 7: cuatro recorridos técnicos mínimos reales e historial privado comprobados, validación académica pendiente. Hito 8 sintético técnico terminado; hito 9 política/preparación/historial implementado. Próximo bloque: completar diferencias de contenido adaptado para mismo tema con perfiles low/medium/high, con protocolo controlado y cupo existente, sin afirmar efecto pedagógico. Después hito 10: métricas privadas de estados/latencia/tokens con null/desconocido explícito, sin inventar costo ni notas, y política de retención antes de datos reales. Nunca llamadas externas en suites/healthchecks/arranque. El día UTC 8 tenía tres inicios de las pruebas nocturnas previas; los bloques de perfiles y adaptación no agregan llamadas.
+Hito 7: cuatro recorridos mínimos reales e historial privado comprobados; validación académica pendiente. Hito 8 sintético técnico terminado; hito 9 implementación disponible y comparación real parcial registrada. Próximo bloque: recuperar la preparación alta 32960f76-5d6d-43b7-9e9b-8d552c9970ed desde historial y completar esa comparación cuando el cupo lo permita, sin recrear preparaciones ni reintentar bajo/medio. UTC 8 termina en cinco inicios (tres anteriores + dos actuales). Renovación UTC 9: 8 de octubre a las 19:00 de Guayaquil; no hay ejecución programada. Verificar modelo/límites y documentar separación temporal. Después hito 10: métricas privadas de estados/latencia/tokens con null/desconocido explícito, sin inventar costo ni notas, y retención antes de datos reales. Nunca llamadas externas en suites/healthchecks/arranque.
+
+Comparación actual: c00981b5-8f00-4e76-87fe-c4384ab11d47 (low, succeeded, 1161/381/1542 tokens, 1951 ms) y 39f18cd0-5529-4e25-a025-81f098d56033 (medium, succeeded, 1154/339/1493, 1999 ms), ambas 3.1 Flash-Lite/S1 con fuentes y datos fijos iguales. Dos salidas recuperadas tras recargar sin nuevas llamadas. Limitación: ambas añaden regla general de potencia no expresada en fuente; diferencias pequeñas, sin beneficio académico probado. Preservar protocolo/evidencia en pruebas/hito_09_comparacion_parcial.md y JSON. No cambiar esta muestra retrospectivamente; futuros corpus/rúbricas se documentarán por separado. Cambio UI únicamente informativo, build aprobado; las suites funcionales anteriores siguen siendo 292/56 y no se han repetido en este bloque.
 
 Pendientes: validación académica con corpus/rúbrica autorizados y consultas independientes; integración externa de perfiles, vocabularios, idempotencia y política de datos; evaluación de salidas adaptadas hito 9; métricas/retención/purga e historial completo hito 10; benchmark comparativo/proveedores restantes hito 11; endurecimiento/manuales/informe hito 12; CAS TI, administración global de roles/asignación de corpus estudiantil. PDF escaneados necesitan OCR, fórmulas/columnas requieren cotejo, OfficeMath se rechaza. Producción requiere cola/aislamiento/retención/limpieza de huérfanos. Snapshots conservan texto tras borrar documentos: definir purga antes de datos reales. Licencia y cuenta/visibilidad GitHub pendientes.
 
