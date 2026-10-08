@@ -33,11 +33,11 @@ Hitos 1, 3 y 4 cerrados técnicamente con material sintético; estilo ajustado a
 | 3 Corpus | PDF/DOCX/TXT, MIME/extensión/tamaño, permisos y gestión | Cargar, listar, consultar y eliminar documentos propios | Completado |
 | 4 Ingesta | Extracción, normalización, segmentación, embeddings e índices | Corpus trazable y reproducible en pgvector | Completado técnicamente con material sintético |
 | 5 RAG | Búsqueda semántica y top-k | Recuperación validada con corpus y consultas de referencia, sin LLM | Completado técnicamente con muestra sintética; validación independiente pendiente |
-| 6 IA | Interfaz generate, fábrica y primer proveedor | Proveedor intercambiable, errores y límites controlados | Interfaz/fábrica/Gemini probados y primera conexión real 3.1 Flash-Lite verificada; generación general desactivada, coordinador/cap pendientes |
-| 7 Recursos | Explicación, ejercicio, quiz y feedback | Flujo completo por recurso, fuentes y validación | Preparación API/UI y coordinador interno listos; explicación RAG real verificada, API/UI de generación y validación restante pendientes |
+| 6 IA | Interfaz generate, fábrica y primer proveedor | Proveedor intercambiable, errores y límites controlados | Interfaz/fábrica/Gemini probados y primera conexión real 3.1 Flash-Lite verificada; generación habilitada localmente bajo Free Tier confirmado, coordinador/cap global persistente implementados |
+| 7 Recursos | Explicación, ejercicio, quiz y feedback | Flujo completo por recurso, fuentes y validación | Preparación API/UI y coordinador interno listos; explicación RAG real verificada, API/UI de generación e historial privado implementados; recorridos reales restantes y validación académica pendientes |
 | 8 Perfiles | Recepción por API de rendimiento externo | Validación y persistencia de perfiles sintéticos | Pendiente |
 | 9 Personalización | Alto, medio, dificultades y dificultad localizada | Diferencias justificadas para mismo tema y distintos perfiles | Pendiente |
-| 10 Trazabilidad | Fuentes, historial y métricas | Reconstrucción de cada generación y sus fallos | Base de snapshots y estados preparada por migración 0006; historial/métricas/perfiles/costo pendientes |
+| 10 Trazabilidad | Fuentes, historial y métricas | Reconstrucción de cada generación y sus fallos | Base de snapshots y estados preparada por migración 0006; historial privado implementado; métricas/perfiles/costo/retención pendientes |
 | 11 Benchmark | Directo/RAG, perfiles, OpenAI/Gemini/Claude | Experimentos controlados y resultados reales registrados | Pendiente |
 | 12 Cierre | Endurecimiento, documentación, pruebas y MVP | Evidencia final, manuales e informe | Pendiente |
 
