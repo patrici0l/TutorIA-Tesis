@@ -2,6 +2,7 @@
 .env.*
 !.env.example
 secretos_locales/
+seguimiento_privado/
 *.pem
 *.key
 *.p12

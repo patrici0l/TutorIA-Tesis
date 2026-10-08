@@ -6,6 +6,8 @@ La instrucción del autor del 5 de octubre de 2026 reemplaza la autenticación d
 
 Actualizar documentacion/CONTINUIDAD.md al cerrar cada bloque y antes de interrumpir trabajo extenso: estado, pruebas reales, cambios pendientes, rama y próximo paso. No inventar porcentajes de contexto o resultados.
 
+Mantener seguimiento_privado/BITACORA.md como itinerario personal por fecha y sesión (America/Guayaquil): objetivo, trabajo realizado, pruebas/resultados, limitaciones, commit y próximo paso. Esta carpeta está excluida de Git; nunca forzar su incorporación ni copiar la bitácora a documentación pública. Reconstrucciones históricas deben indicar su fuente y no inventar horarios/duración. No registrar secretos ni datos institucionales reales. Al cerrar cada punto verificable del plan, hacer un commit descriptivo de sus cambios y actualizar la bitácora privada con su hash; no etiquetar pendientes como terminados ni incluir cambios ajenos.
+
 - Stack: Angular, FastAPI, PostgreSQL/pgvector, Alembic, Docker.
 - Carpetas de dominio en español sin tildes. Servicios, clases, métodos y API en inglés. Interfaz en español.
 - Endpoints bajo /api/v1; lógica fuera de routers y SQL en repositorios.
