@@ -3,6 +3,15 @@ import { authGuard } from './nucleo/guardias/auth.guard';
 
 export const routes: Routes = [
   {
+    path: 'metricas',
+    title: 'Métricas de generación | TutorIA',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./modulos/metricas/paginas/metricas/metrics.component').then(
+        (m) => m.MetricsComponent,
+      ),
+  },
+  {
     path: 'perfiles',
     title: 'Perfiles de aprendizaje | TutorIA',
     canActivate: [authGuard],

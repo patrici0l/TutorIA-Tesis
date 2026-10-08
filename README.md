@@ -37,6 +37,11 @@ docker compose stop
 
 ## Desarrollo y pruebas
 
+La pantalla `/metricas` permite a docentes/admin consultar sus estados de generación,
+tokens y latencia registrados, con cobertura conocida/desconocida. No consume Gemini ni
+consulta facturación. Ver [contrato](documentacion/api/metricas.md) y
+[evidencia del hito 10](documentacion/pruebas/hito_10_metricas.md).
+
 Frontend con Node 24.15 o compatible con Angular 22:
 
 ```powershell

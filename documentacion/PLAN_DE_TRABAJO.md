@@ -39,7 +39,7 @@ Actualización del bloque actual: hito 8 sintético implementado con API privada
 | 7 Recursos | Explicación, ejercicio, quiz y feedback | Flujo completo por recurso, fuentes y validación | Preparación API/UI y coordinador interno listos; explicación RAG real verificada, API/UI de generación e historial privado implementados; cuatro recorridos mínimos reales comprobados; validación académica/escenarios extensos pendientes |
 | 8 Perfiles | Recepción por API de rendimiento externo | Validación y persistencia de perfiles sintéticos | Completado técnicamente con API/UI sintética privada; integración externa institucional pendiente |
 | 9 Personalización | Alto, medio, dificultades y dificultad localizada | Diferencias justificadas para mismo tema y distintos perfiles | Implementación API/UI e historial comprobados; salidas reales bajo/medio registradas con limitaciones, alto preparado pendiente de cupo; evaluación pedagógica pendiente |
-| 10 Trazabilidad | Fuentes, historial y métricas | Reconstrucción de cada generación y sus fallos | Snapshots/estados/historial privados y perfil/política de adaptación conservados; métricas/costo/retención pendientes |
+| 10 Trazabilidad | Fuentes, historial y métricas | Reconstrucción de cada generación y sus fallos | Snapshots/estados/historial/perfil conservados; API y UI de métricas privadas con cobertura implementadas; costo versionado/retención/purga pendientes |
 | 11 Benchmark | Directo/RAG, perfiles, OpenAI/Gemini/Claude | Experimentos controlados y resultados reales registrados | Pendiente |
 | 12 Cierre | Endurecimiento, documentación, pruebas y MVP | Evidencia final, manuales e informe | Pendiente |
 
@@ -68,6 +68,12 @@ La tabla de etapas 0–15 de la sección 19 se conserva íntegra en la fuente. L
 | 28–30 | Evitar desorden y avanzar verticalmente | AGENTS.md y revisiones de cada entrega |
 
 ## Contratos aún pendientes
+
+Continuación del 8 de octubre: GET `/metrics` y Angular `/metricas` implementados sin IA,
+con conteos propios de estados/reservas/trazas, sumas conocidas de tokens y latencia con
+cobertura explícita. Costo desconocido conservado; sin calcular factura/tarifas. 295 backend
+y 59 Angular aprobadas. Ver [contrato](api/metricas.md) y [evidencia](pruebas/hito_10_metricas.md).
+Hito 9 alto sigue preparado por cuota, hito 10 retención/costo sigue abierto.
 
 Continuación del 8 de octubre: protocolo controlado fijado y dos explicaciones adaptadas reales persistidas/restauradas. Fuentes y entradas fijas idénticas comprobadas por SQL. Perfil alto queda preparado al alcanzar cinco inicios UTC; sin bypass ni reintentos. Las diferencias observadas son pequeñas y hay afirmaciones sin respaldo explícito en la fuente, por lo que no se declara cierre académico. Ver [comparación parcial](pruebas/hito_09_comparacion_parcial.md).
 

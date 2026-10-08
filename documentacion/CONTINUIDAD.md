@@ -1,5 +1,33 @@
 # Continuidad de TutorIA-Lucero
 
+## Estado vigente — continuación del 8 de octubre, métricas
+
+Punto técnico cerrado: GET `/api/v1/metrics` y Angular `/metricas`, navegación docente,
+resumen privado de todo el historial propio mediante una sola agregación SQL. Conteos de
+estados, reservas y trazas separados; tokens y latencia con cobertura explícita/null;
+solo cobertura de estimación de costo, sin tarifas ni verificación de facturación. No hubo
+nuevas llamadas Gemini, cambios de cupo, migraciones ni modificación de credenciales.
+Backend 295 pruebas aprobadas (29.51 s), Angular 59/15 archivos (54.04 s), Ruff limpio,
+build Docker inicial 306.23 kB y métricas lazy 9.51 kB; Compose saludable. Navegador:
+12 preparaciones, 4 prepared/0 generating/7 succeeded/1 failed, 8 trazas y 6 reservas,
+9985 tokens totales conocidos en 7 trazas/1 sin dato, latencia promedio 4515.14 ms,
+8 costos sin estimación. Actualización explícita y móvil sin desbordamiento verificados.
+Evidencia `pruebas/hito_10_metricas.md`, contrato `api/metricas.md`, decisión 0011.
+
+La bitácora personal se mantiene en seguimiento_privado/BITACORA.md, excluida y sin archivos
+versionados. Cerrar este punto con commit feat descriptivo y registrar hash únicamente en
+bitácora privada. Rama feature/resource-preparation, sin remoto.
+
+Próximo paso: cuando se renueve el cupo UTC 9 (8 de octubre 19:00 Guayaquil), recuperar del
+historial la preparación alta 32960f76-5d6d-43b7-9e9b-8d552c9970ed, verificar límites/modelo,
+enviar una sola vez y completar evidencia de comparación. Sigue sin enviar al cerrar este
+bloque anterior a las 19:00. No aumentar cuota ni repetir bajo/medio. Después completar
+metadatos de trazabilidad consultables por recurso y política de retención/purga antes de
+datos reales. Estimación monetaria necesita precio/moneda/versionado; benchmark/cierre/CAS
+TI pendientes. Las secciones históricas siguientes se conservan como antecedentes; esta
+sección reemplaza sus referencias a métricas aún no implementadas. No declarar hito 9
+académico ni hito 10 completo.
+
 Actualizado: 8 de octubre de 2026, America/Guayaquil. Estado vigente al registrar dos salidas adaptadas reales y bitácora privada. No se dispone de un porcentaje fiable de tokens restantes; no se inventa uno.
 
 ## Instrucciones vigentes

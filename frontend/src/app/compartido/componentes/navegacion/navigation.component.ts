@@ -51,6 +51,12 @@ export class NavigationComponent {
     ];
     if (user.rol === 'teacher' || user.rol === 'admin') {
       links.push({
+        path: '/metricas',
+        label: 'Métricas',
+        description: 'Consulta resultados y consumo registrado',
+        icon: 'document',
+      });
+      links.push({
         path: '/perfiles',
         label: 'Perfiles',
         description: 'Revisa observaciones sintéticas de rendimiento',
