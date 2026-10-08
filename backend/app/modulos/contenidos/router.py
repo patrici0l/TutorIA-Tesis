@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.base_datos.session import get_session
 from app.configuracion.settings import get_settings
+from app.modulos.contenidos.adaptation_schemas import PreparationRequest
 from app.modulos.contenidos.history_schemas import HistoryDetail, HistoryPage
 from app.modulos.contenidos.preparation_schemas import PreparationResponse
 from app.modulos.contenidos.repositorios.generation_claim_repository import (
@@ -13,7 +14,7 @@ from app.modulos.contenidos.repositorios.generation_claim_repository import (
 )
 from app.modulos.contenidos.repositorios.generation_repository import GenerationRepository
 from app.modulos.contenidos.repositorios.history_repository import HistoryRepository
-from app.modulos.contenidos.schemas import ContentRequest
+from app.modulos.contenidos.servicios.adaptation_service import AdaptationService
 from app.modulos.contenidos.servicios.generate_preparation_service import (
     GeneratePreparationService,
     GenerationCommand,
@@ -25,6 +26,7 @@ from app.modulos.contenidos.servicios.preparation_service import PreparationServ
 from app.modulos.contenidos.servicios.prepare_content_service import PrepareContentService
 from app.modulos.contenidos.servicios.resource_validation_service import ResourceValidationService
 from app.modulos.documentos.router import Owner
+from app.modulos.perfiles.repositorios.profile_repository import ProfileRepository
 from app.modulos.rag.prompts.educational_prompt import EducationalPromptBuilder
 from app.modulos.rag.router import get_search_service
 from app.modulos.rag.servicios.search_service import SearchService
@@ -64,6 +66,7 @@ def get_preparation_service(
         PrepareContentService(search, EducationalPromptBuilder()),
         GenerationRepository(db),
         get_settings().llm_max_input_chars,
+        adaptation=AdaptationService(ProfileRepository(db)),
     )
 
 
@@ -74,7 +77,7 @@ def get_preparation_service(
     dependencies=[Depends(require_client_header)],
 )
 def prepare(
-    request: ContentRequest,
+    request: PreparationRequest,
     user: Owner,
     service: Annotated[PreparationService, Depends(get_preparation_service)],
 ):

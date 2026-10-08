@@ -47,6 +47,7 @@ def test_api_authorization_safe_response_and_body_limit(document_app):
         "difficulty",
         "question_count",
         "sources",
+        "adaptation",
     }
     assert actual.repository.prepare.call_args.args[0] == owner.id
     assert "prompt" not in result and "student_answer" not in result

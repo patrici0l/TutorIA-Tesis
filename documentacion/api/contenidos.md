@@ -1,6 +1,6 @@
 # Contratos de contenidos — preparación
 
-POST `/api/v1/content/prepare` y Angular `/recursos` permiten preparar solicitudes y revisar fuentes propias sin invocar IA. No se publican todavía /content/generate, /content/explanation, /content/quiz ni /content/feedback. Gemini permanece desactivado; la generación real requiere coordinador, modelo y límite de gasto definidos.
+POST `/api/v1/content/prepare` y Angular `/recursos` permiten preparar solicitudes y revisar fuentes propias sin invocar IA. La generación explícita está disponible por POST `/api/v1/content/{id}/generate`, con cuotas persistentes y cuatro contratos iniciales. El modo manual permanece compatible; un profile_id propio opcional habilita [personalización](personalizacion.md), guarda la política y restaura el snapshot en el historial.
 
 ## POST /api/v1/content/prepare
 

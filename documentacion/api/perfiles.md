@@ -52,4 +52,4 @@ Migración 0008: `perfiles_rendimiento`, UUID, creador, payload JSONB validado, 
 
 Angular `/perfiles` ofrece formulario, validaciones, estados de carga/error, lista de diez entradas, paginación y detalle. No guarda perfiles en localStorage; al recargar se consulta la lista. Texto interpolado, sin HTML activo ni reintentos automáticos. Guardar bloquea envíos dobles mientras está pendiente.
 
-La adaptación de recursos, vínculo de perfil con generación, credenciales de integración externa y políticas de retención/purga quedan para las etapas siguientes. No activar perfiles reales antes de definir esos controles.
+La preparación de recursos ya admite perfiles propios y conserva su snapshot/política: ver [personalización](personalizacion.md). Credenciales de integración externa, validación de contenido adaptado y políticas de retención/purga quedan para las etapas siguientes. No activar perfiles reales antes de definir esos controles.

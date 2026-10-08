@@ -53,6 +53,7 @@ class HistoryRepository:
                     ContentGeneration.created_at,
                     ContentGeneration.completed_at,
                     ContentGeneration.resource,
+                    ContentGeneration.adaptation_snapshot,
                 ).where(ContentGeneration.id == identifier, ContentGeneration.owner_id == owner)
             )
             .mappings()

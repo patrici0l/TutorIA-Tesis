@@ -1,4 +1,5 @@
 import { SearchHit } from '../../rag/modelos/search.model';
+import { ProfileResponse } from '../../perfiles/modelos/profile.model';
 
 export type ResourceType = 'EXPLANATION' | 'EXERCISE' | 'QUIZ' | 'FEEDBACK';
 export type Difficulty = 'basic' | 'intermediate' | 'advanced';
@@ -9,6 +10,17 @@ export interface PreparationRequest {
   difficulty: Difficulty;
   question_count?: number;
   student_answer?: string;
+  profile_id?: string;
+}
+export interface AdaptationSnapshot {
+  policy_version: string;
+  profile: ProfileResponse;
+  requested_difficulty: Difficulty;
+  effective_difficulty: Difficulty;
+  guidance: string;
+  reason: string;
+  focus_errors: string[];
+  suggested_resources: ResourceType[];
 }
 export interface PreparationResponse {
   id: string;
@@ -19,6 +31,7 @@ export interface PreparationResponse {
   difficulty: Difficulty;
   question_count: number | null;
   sources: (SearchHit & { citation_id: string })[];
+  adaptation?: AdaptationSnapshot | null;
 }
 
 export interface CitedText {

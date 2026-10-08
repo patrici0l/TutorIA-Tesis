@@ -3,6 +3,7 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
+from app.modulos.contenidos.adaptation_schemas import AdaptationSnapshot
 from app.modulos.contenidos.schemas import Difficulty, ResourceType
 from app.modulos.rag.schemas import SearchHit
 
@@ -20,3 +21,4 @@ class PreparationResponse(BaseModel):
     difficulty: Difficulty
     question_count: int | None
     sources: list[PreparationSource]
+    adaptation: AdaptationSnapshot | None = None

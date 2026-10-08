@@ -6,7 +6,7 @@ Están implementados la base Angular → FastAPI → PostgreSQL/pgvector y el ac
 
 ## Ejecutar en Windows con Docker
 
-La pantalla `/perfiles` permite registrar, listar y consultar observaciones ficticias privadas de rendimiento, sin consumir Gemini. El nivel y el apoyo se conservan como datos informados; la adaptación de recursos corresponde al siguiente hito. Consulta el [contrato de perfiles](documentacion/api/perfiles.md) y la [evidencia del hito 8](documentacion/pruebas/hito_08_perfiles.md).
+La pantalla `/perfiles` permite registrar, listar y consultar observaciones ficticias privadas de rendimiento, sin consumir Gemini. En `/recursos` puedes elegir un perfil propio del mismo tema para ajustar dificultad y apoyo, revisar el motivo y conservar la decisión en el historial. Consulta el [contrato de perfiles](documentacion/api/perfiles.md), la [personalización](documentacion/api/personalizacion.md) y sus evidencias de [hito 8](documentacion/pruebas/hito_08_perfiles.md) y [hito 9](documentacion/pruebas/hito_09_personalizacion.md).
 
 Requisitos: Docker Desktop iniciado con contenedores Linux y Docker Compose. Desde esta carpeta, preparar una sola vez la configuración local:
 

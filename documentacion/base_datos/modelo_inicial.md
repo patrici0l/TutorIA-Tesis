@@ -16,6 +16,8 @@ Las fuentes son snapshots, no FK con cascada que borre evidencia tras cambiar/el
 
 Cuatro recorridos mínimos Gemini con material sintético almacenados (pruebas/hito_07_cuatro_recursos.md). Reserva con cap global persistente; sin cálculo monetario, evaluación académica ni adaptación de perfiles.
 
+Desde 0009: `generaciones_contenido.adaptation_snapshot` JSONB nullable, restringido a objeto cuando existe. Contiene el perfil sintético completo, versión de política, motivo, orientación, dificultades solicitada/efectiva, errores focalizados y recursos sugeridos. No tiene FK al perfil que invalide evidencia histórica; los registros manuales anteriores conservan null. Prompt adaptado educational-rag-profile-v2; el proveedor no recibe UUID ni identificador del estudiante. Ver api/personalizacion.md y decisión 0010. Las nueve migraciones están aplicadas; adaptación de preparación disponible, evaluación de salidas pendiente.
+
 Entidades exigidas por la sección 10: usuarios, roles, documentos, fragmentos_documento, perfiles_rendimiento, generaciones, fuentes_generacion, proveedores_llm, metricas_generacion y evaluaciones_contenido.
 
 Relaciones conceptuales propuestas para validar: usuarios asociados a roles; documentos con fragmentos; perfiles asociados a generaciones; generaciones vinculadas a fragmentos mediante fuentes_generacion, a proveedor/modelo, a métricas y a evaluaciones. Cardinalidades, política de eliminación, propiedad de documentos y retención se decidirán al implementar sus casos de uso.

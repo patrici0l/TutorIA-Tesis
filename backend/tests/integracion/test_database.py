@@ -22,4 +22,4 @@ def test_real_database_and_vector():
             distance = connection.execute(text("SELECT '[1,2]'::vector <-> '[1,2]'::vector"))
             assert distance.scalar_one() == 0
             revision = connection.execute(text("SELECT version_num FROM alembic_version"))
-            assert revision.scalar_one() == "0008_performance_profiles"
+            assert revision.scalar_one() == "0009_content_adaptation"

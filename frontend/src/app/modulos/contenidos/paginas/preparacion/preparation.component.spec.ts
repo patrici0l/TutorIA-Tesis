@@ -172,6 +172,79 @@ describe('Preparación docente', () => {
     http.expectOne('/api/v1/content/prepare').flush(response);
     expect(component.result()?.id).toBe('test-prepared');
   });
+  it('selecciona un perfil propio y envía únicamente su identificador', async () => {
+    const fixture = setup(),
+      component = fixture.componentInstance;
+    component.loadProfiles();
+    const profile = {
+      id: 'profile-test',
+      student_id: 'SYN-001',
+      topic: 'Derivadas',
+      performance: 42,
+      mastery_level: 'low' as const,
+      created_at: '2026-10-08T00:00:00Z',
+    };
+    http
+      .expectOne('/api/v1/profiles?offset=0&limit=10')
+      .flush({ items: [profile], total: 1, offset: 0, limit: 10 });
+    component.chooseProfile(profile);
+    component.objective = 'Practicar';
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('#difficulty').disabled).toBe(true);
+    component.prepare();
+    const call = http.expectOne('/api/v1/content/prepare');
+    expect(call.request.body.profile_id).toBe('profile-test');
+    expect(call.request.body.profile).toBeUndefined();
+    call.flush(response);
+    component.chooseProfile(null);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('#difficulty').disabled).toBe(false);
+    expect(component.result()).toBeNull();
+  });
+  it('muestra la adaptación conservada sin generar al abrir historial', () => {
+    const fixture = setup(),
+      component = fixture.componentInstance;
+    const adaptation = {
+      policy_version: 'profile-adaptation-v1',
+      profile: {
+        id: 'p1',
+        student_id: 'SYN-001',
+        topic: 'Derivadas',
+        performance: 42,
+        attempts: 4,
+        mastery_level: 'low' as const,
+        recommended_support: 'reinforcement' as const,
+        frequent_errors: ['<script>no ejecutar</script>'],
+        data_kind: 'synthetic' as const,
+        schema_version: 'performance-profile-v1' as const,
+        created_at: '2026-10-08T00:00:00Z',
+      },
+      requested_difficulty: 'advanced' as const,
+      effective_difficulty: 'basic' as const,
+      guidance: 'Paso a paso',
+      reason: 'Dominio bajo informado',
+      focus_errors: ['<script>no ejecutar</script>'],
+      suggested_resources: ['EXERCISE' as const],
+    };
+    component.restore({
+      preparation: { ...response, adaptation },
+      status: 'prepared',
+      created_at: '2026-10-08T00:00:00Z',
+      completed_at: null,
+      resource: null,
+      message: null,
+    });
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Dominio bajo informado');
+    expect(fixture.nativeElement.textContent).toContain('Aplicada: Básica');
+    expect(fixture.nativeElement.querySelector('script')).toBeNull();
+    http.expectNone('/api/v1/content/prepare');
+    http.expectNone('/api/v1/content/test-prepared/generate');
+  });
   it('rechaza campos incompletos y evita peticiones del estudiante', () => {
     const fixture = setup(),
       component = fixture.componentInstance;

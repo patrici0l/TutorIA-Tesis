@@ -24,6 +24,9 @@ class GenerationRepository:
             request_snapshot=prepared.request.model_dump(mode="json", exclude_none=True),
             sources_snapshot=json.loads(prepared.sources_json),
             retrieval_snapshot=json.loads(prepared.retrieval_json),
+            adaptation_snapshot=prepared.adaptation.model_dump(mode="json")
+            if prepared.adaptation
+            else None,
             instructions=prepared.generation_request.instructions,
             prompt=prepared.generation_request.prompt,
             prompt_version=prepared.prompt_version,

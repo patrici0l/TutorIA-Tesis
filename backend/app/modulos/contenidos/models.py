@@ -13,6 +13,10 @@ class ContentGeneration(Base):
     __tablename__ = "generaciones_contenido"
     __table_args__ = (
         CheckConstraint(
+            "adaptation_snapshot IS NULL OR jsonb_typeof(adaptation_snapshot) = 'object'",
+            name="ck_generaciones_adaptation",
+        ),
+        CheckConstraint(
             "status IN ('prepared','generating','succeeded','failed')",
             name="ck_generaciones_status",
         ),
@@ -35,6 +39,7 @@ class ContentGeneration(Base):
     request_snapshot: Mapped[dict] = mapped_column(JSONB)
     sources_snapshot: Mapped[list] = mapped_column(JSONB)
     retrieval_snapshot: Mapped[dict] = mapped_column(JSONB)
+    adaptation_snapshot: Mapped[dict | None] = mapped_column(JSONB(none_as_null=True))
     instructions: Mapped[str] = mapped_column(Text)
     prompt: Mapped[str] = mapped_column(Text)
     prompt_version: Mapped[str] = mapped_column(String(40))

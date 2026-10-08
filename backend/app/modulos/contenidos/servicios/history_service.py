@@ -29,6 +29,7 @@ class HistoryService:
                 difficulty=request["difficulty"],
                 question_count=request.get("question_count"),
                 sources=row["sources_snapshot"],
+                adaptation=row.get("adaptation_snapshot"),
             ),
             status=row["status"],
             created_at=row["created_at"],

@@ -17,8 +17,12 @@ class PrepareContentService:
     def __init__(self, search: SearchService, builder: EducationalPromptBuilder):
         self.search, self.builder = search, builder
 
-    def prepare(self, request: ContentRequest, owner: UUID, max_input_chars: int = 12000):
+    def prepare(
+        self, request: ContentRequest, owner: UUID, max_input_chars: int = 12000, adaptation=None
+    ):
         retrieval = self.search.search(
             SearchRequest(query=f"{request.topic}. {request.learning_objective}", top_k=3), owner
         )
-        return self.builder.build(request, retrieval, max_input_chars)
+        if adaptation is None:
+            return self.builder.build(request, retrieval, max_input_chars)
+        return self.builder.build(request, retrieval, max_input_chars, adaptation=adaptation)

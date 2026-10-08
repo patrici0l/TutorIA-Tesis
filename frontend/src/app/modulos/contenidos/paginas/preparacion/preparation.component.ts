@@ -15,6 +15,8 @@ import {
   ResourceType,
 } from '../../modelos/preparation.model';
 import { PreparationService } from '../../servicios/preparation.service';
+import { ProfileService } from '../../../perfiles/servicios/profile.service';
+import { ProfilePage, ProfileSummary } from '../../../perfiles/modelos/profile.model';
 
 @Component({
   selector: 'app-resource-preparation',
@@ -26,6 +28,10 @@ export class PreparationComponent {
   private readonly service = inject(PreparationService);
   private readonly auth = inject(AuthService);
   private readonly destroy = inject(DestroyRef);
+  private readonly profiles = inject(ProfileService);
+  readonly profilePage = signal<ProfilePage | null>(null);
+  readonly selectedProfile = signal<ProfileSummary | null>(null);
+  readonly loadingProfiles = signal(false);
   readonly canPrepare = computed(() => ['teacher', 'admin'].includes(this.auth.user()?.rol ?? ''));
   readonly loading = signal(false);
   readonly generating = signal(false);
@@ -62,6 +68,37 @@ export class PreparationComponent {
   difficulty: Difficulty = 'basic';
   questionCount = 3;
   studentAnswer = '';
+
+  loadProfiles(offset = 0) {
+    if (!this.canPrepare() || this.loadingProfiles() || this.loading() || this.generating()) return;
+    this.loadingProfiles.set(true);
+    this.error.set('');
+    this.profiles
+      .page(offset)
+      .pipe(takeUntilDestroyed(this.destroy))
+      .subscribe({
+        next: (page) => {
+          this.profilePage.set(page);
+          this.loadingProfiles.set(false);
+        },
+        error: () => {
+          this.error.set('No se pudieron consultar los perfiles.');
+          this.loadingProfiles.set(false);
+        },
+      });
+  }
+  chooseProfile(profile: ProfileSummary | null) {
+    if (this.loading() || this.generating() || this.loadingProfiles()) return;
+    this.selectedProfile.set(profile);
+    if (profile) this.topic = profile.topic;
+    this.clearResult();
+  }
+  difficultyLabel(value: Difficulty) {
+    return { basic: 'Básica', intermediate: 'Intermedia', advanced: 'Avanzada' }[value];
+  }
+  masteryLabel(value: 'low' | 'medium' | 'high') {
+    return { low: 'Bajo', medium: 'Medio', high: 'Alto' }[value];
+  }
 
   clearResult() {
     this.restoredPending.set(false);
@@ -147,6 +184,7 @@ export class PreparationComponent {
     };
     if (this.resourceType === 'QUIZ') request.question_count = this.questionCount;
     if (this.resourceType === 'FEEDBACK') request.student_answer = this.studentAnswer.trim();
+    if (this.selectedProfile()) request.profile_id = this.selectedProfile()!.id;
     this.error.set('');
     this.loading.set(true);
     this.service

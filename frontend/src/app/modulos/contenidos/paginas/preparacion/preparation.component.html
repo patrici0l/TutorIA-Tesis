@@ -17,7 +17,52 @@
         <h2 id="prepare-title">Prepara tu recurso</h2>
       </div>
       <form (ngSubmit)="prepare()" #form="ngForm">
-        <fieldset [disabled]="loading() || generating()">
+        <fieldset [disabled]="loading() || generating() || loadingProfiles()">
+          <h3>Personalización</h3>
+          <p id="profile-choice" class="help">
+            Opcional: usa una observación ficticia del mismo tema. El servidor ajustará la
+            dificultad y explicará el apoyo.
+          </p>
+          <button type="button" (click)="loadProfiles()">Consultar mis perfiles</button>
+          @if (selectedProfile(); as profile) {
+            <p class="help">
+              Perfil elegido: {{ profile.student_id }} · {{ profile.topic }} · Dominio
+              {{ masteryLabel(profile.mastery_level) }}
+            </p>
+            <button type="button" (click)="chooseProfile(null)">Usar dificultad manual</button>
+          }
+          @if (profilePage(); as page) {
+            @for (profile of page.items; track profile.id) {
+              <button
+                type="button"
+                (click)="chooseProfile(profile)"
+                [attr.aria-pressed]="selectedProfile()?.id === profile.id"
+              >
+                {{ profile.student_id }} · {{ profile.topic }} ·
+                {{ masteryLabel(profile.mastery_level) }}
+              </button>
+            } @empty {
+              <p class="help">
+                No tienes perfiles guardados. <a routerLink="/perfiles">Crear un perfil ficticio</a>
+              </p>
+            }
+            <div class="options">
+              <button
+                type="button"
+                (click)="loadProfiles(page.offset - page.limit)"
+                [disabled]="page.offset === 0"
+              >
+                Perfiles anteriores
+              </button>
+              <button
+                type="button"
+                (click)="loadProfiles(page.offset + page.limit)"
+                [disabled]="page.offset + page.limit >= page.total"
+              >
+                Perfiles siguientes
+              </button>
+            </div>
+          }
           <label for="topic">Tema</label>
           <input
             id="topic"
@@ -60,6 +105,7 @@
                 name="difficulty"
                 [(ngModel)]="difficulty"
                 (ngModelChange)="clearResult()"
+                [disabled]="!!selectedProfile()"
               >
                 <option value="basic">Básica</option>
                 <option value="intermediate">Intermedia</option>
@@ -67,7 +113,14 @@
               </select>
             </div>
           </div>
-          <p class="help">{{ description() }} La dificultad la eliges tú.</p>
+          <p class="help">
+            {{ description() }}
+            {{
+              selectedProfile()
+                ? 'La dificultad se ajustará al dominio informado. Conservas la elección del recurso.'
+                : 'La dificultad la eliges tú.'
+            }}
+          </p>
           @if (resourceType === 'QUIZ') {
             <label for="questions">Número de preguntas · 1 a 5</label
             ><input
@@ -160,6 +213,34 @@
         </p>
         <h2 id="sources-title">{{ label(prepared.resource_type) }} · {{ prepared.topic }}</h2>
         <p>{{ prepared.learning_objective }}</p>
+        @if (prepared.adaptation; as adaptation) {
+          <div class="status-note">
+            <h3>Adaptación revisable</h3>
+            <p>
+              {{ adaptation.profile.student_id }} · {{ adaptation.profile.topic }} ·
+              {{ adaptation.policy_version }}
+            </p>
+            <p>{{ adaptation.reason }}</p>
+            <p>
+              Dificultad solicitada: {{ difficultyLabel(adaptation.requested_difficulty) }}.
+              Aplicada: {{ difficultyLabel(adaptation.effective_difficulty) }}.
+            </p>
+            <p>{{ adaptation.guidance }}</p>
+            @if (adaptation.focus_errors.length) {
+              <p>Foco: {{ adaptation.focus_errors.join(', ') }}</p>
+            }
+            <p>
+              Recursos sugeridos:
+              @for (resource of adaptation.suggested_resources; track resource) {
+                {{ label(resource) }} ·
+              }
+            </p>
+            <p>
+              Instantánea conservada con la preparación. No se calculan notas ni diagnósticos
+              personales.
+            </p>
+          </div>
+        }
         <p>
           Preparación guardada. Revisa las fuentes seleccionadas; la similitud no garantiza que sean
           suficientes.
