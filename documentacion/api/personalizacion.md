@@ -1,5 +1,13 @@
 # Personalización de preparaciones sintéticas
 
+Estado actual, 9 de octubre: nuevas preparaciones usan `profile-adaptation-v2` y
+`educational-rag-profile-v4`. Apoyo guiado para low, guía concentrada para medium y
+análisis conceptual para high, dentro del mismo objetivo/fuentes. Ver
+[decisión 0014](../decisiones_tecnicas/0014-orientacion-por-nivel.md). Snapshots históricos
+v1 y prompts v2/v3 se conservan y siguen siendo legibles/enviables según su estado.
+Los párrafos siguientes describen la evolución histórica; el piloto v3 está en
+[su informe](../pruebas/hito_09_piloto_v3.md). La evaluación humana permanece pendiente.
+
 Actualización 9 de octubre: nuevas preparaciones adaptadas usan `educational-rag-profile-v3`.
 El objetivo explícito y el respaldo de las fuentes tienen prioridad sobre ampliar complejidad;
 el flujo manual sigue v1 y preparaciones históricas conservan v2. Ver

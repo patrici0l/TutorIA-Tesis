@@ -53,6 +53,7 @@ class HistoryService:
                 usage=row["usage"],
                 latency_ms=row["latency_ms"],
                 estimated_cost=row["estimated_cost"],
+                cost_basis=row.get("cost_basis"),
                 error_code=row["error_code"]
                 if row["error_code"] in CONTENT_ERRORS | set(get_args(ErrorCode))
                 else None,

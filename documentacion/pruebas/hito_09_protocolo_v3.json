@@ -1,0 +1,86 @@
+{
+  "protocol_id": "personalizacion-x2-v3-piloto-01",
+  "created_date": "2026-10-09",
+  "prompt_version": "educational-rag-profile-v3",
+  "policy_version": "profile-adaptation-v1",
+  "request": {
+    "topic": "Derivadas",
+    "learning_objective": "Explicar la derivada de f(x)=x² como tasa de cambio instantánea, justificando f'(x)=2x con la fuente; usar únicamente esta función, sin añadir otras funciones ni ejercicios.",
+    "resource_type": "EXPLANATION",
+    "difficulty": "basic"
+  },
+  "profiles_in_execution_order": [
+    {
+      "student_id": "SYN-V3-LOW-001",
+      "topic": "Derivadas",
+      "performance": 42.0,
+      "attempts": 4,
+      "frequent_errors": [
+        "cociente_incremental"
+      ],
+      "mastery_level": "low",
+      "recommended_support": "reinforcement",
+      "resolution_time_seconds": 120.0,
+      "progress_trend": "improving",
+      "data_kind": "synthetic"
+    },
+    {
+      "student_id": "SYN-V3-MEDIUM-001",
+      "topic": "Derivadas",
+      "performance": 42.0,
+      "attempts": 4,
+      "frequent_errors": [
+        "cociente_incremental"
+      ],
+      "mastery_level": "medium",
+      "recommended_support": "reinforcement",
+      "resolution_time_seconds": 120.0,
+      "progress_trend": "improving",
+      "data_kind": "synthetic"
+    },
+    {
+      "student_id": "SYN-V3-HIGH-001",
+      "topic": "Derivadas",
+      "performance": 42.0,
+      "attempts": 4,
+      "frequent_errors": [
+        "cociente_incremental"
+      ],
+      "mastery_level": "high",
+      "recommended_support": "reinforcement",
+      "resolution_time_seconds": 120.0,
+      "progress_trend": "improving",
+      "data_kind": "synthetic"
+    }
+  ],
+  "corpus": [
+    {
+      "path": "datos/ejemplos/derivada_x2_v3.txt",
+      "sha256": "37a34e9d007229e53253f0b553e89132b9e595c5d55b8e6baa1a95151db50bba",
+      "normalized_text_sha256": "8fb6557cdb7e85acdf3fab38a336159697e926865b08283b9176a6cd02519f19",
+      "chunk_count": 1,
+      "text_chars": 882
+    },
+    {
+      "path": "datos/ejemplos/derivadas_sinteticas.txt",
+      "sha256": "8a281568815d0381a75a66fe4004806aa424a520cb8f6b145eeda104e5f08789",
+      "normalized_text_sha256": "6a88d828d463dd478ed9927fc3c2aedd190b91ebd0387e88156d70f08d3f34c1",
+      "chunk_count": 1,
+      "text_chars": 318
+    }
+  ],
+  "provider": "gemini",
+  "model": "gemini-3.1-flash-lite",
+  "max_attempts": 3,
+  "max_attempts_per_level": 1,
+  "max_input_chars": 12000,
+  "max_output_tokens": 512,
+  "timeout_seconds": 30,
+  "daily_request_limit": 5,
+  "minimum_start_interval_seconds": 60,
+  "temperature": null,
+  "seed": null,
+  "authorized_budget_usd": 0,
+  "semantic_review": "pending_human",
+  "causal_comparison_with_v2": false
+}

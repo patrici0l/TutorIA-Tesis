@@ -46,6 +46,11 @@ Al abrir Mis recursos en `/recursos`, “Ver trazabilidad de este recurso” mue
 versiones, consumo y fechas conservados, incluidos fallos y datos desconocidos, sin IA.
 Ver [contrato de auditoría](documentacion/api/auditoria_recursos.md).
 
+Nuevas ejecuciones conservan la base versionada del nivel gratuito confirmado localmente.
+El costo se muestra como estimación condicionada en USD con uso de entrada/salida conocido;
+históricos y consumo incompleto siguen desconocidos. No certifica facturación de Google.
+Ver [alcance y verificación](documentacion/pruebas/hito_10_costo_condicionado.md).
+
 Frontend con Node 24.15 o compatible con Angular 22:
 
 ```powershell
@@ -110,7 +115,7 @@ La plantilla mantiene LLM_ENABLED=false y LLM_FREE_TIER_CONFIRMED=false; el ento
 
 Contratos para explicación, ejercicio, quiz y feedback; prompts versionados y validación estructural/citas. Docentes/admin preparan en /recursos tema, objetivo, tipo y dificultad manual. Quiz admite 1–5 preguntas; feedback requiere respuesta de prueba. Preparar y revisar fuentes guarda la solicitud y recupera hasta tres fragmentos propios sin IA. El botón posterior envía únicamente su identificador a POST /api/v1/content/{id}/generate; backend reserva el intento antes de una llamada y guarda el recurso validado o fallo seguro.
 
-Una preparación se envía una sola vez. La interfaz muestra carga, citas y errores, sin renderizar HTML activo ni guardar contenido en localStorage. Roles/propiedad/CSRF y no-store se conservan. Migraciones 0006/0007 mantienen snapshots y estados prepared/generating/succeeded/failed; consumo/costo desconocidos null. Mis recursos permite reabrir preparaciones, resultados y fuentes tras recargar mediante historial privado paginado, sin consumir Gemini. La adaptación por perfil sintético está implementada; las nuevas preparaciones adaptadas usan instrucciones v3 y las salidas v2 se conservan. La validación de formato/citas no certifica exactitud matemática ni calidad pedagógica. Ver [contratos](documentacion/api/contenidos.md), [personalización](documentacion/api/personalizacion.md) y [continuidad](documentacion/CONTINUIDAD.md). La evaluación académica sigue pendiente.
+Una preparación se envía una sola vez. La interfaz muestra carga, citas y errores, sin renderizar HTML activo ni guardar contenido en localStorage. Roles/propiedad/CSRF y no-store se conservan. Migraciones 0006/0007 mantienen snapshots y estados prepared/generating/succeeded/failed; consumo/costo desconocidos null. Mis recursos permite reabrir preparaciones, resultados y fuentes tras recargar mediante historial privado paginado, sin consumir Gemini. La adaptación por perfil sintético está implementada; las nuevas preparaciones adaptadas usan instrucciones v4 y política v2; las salidas históricas v2/v3 se conservan. La validación de formato/citas no certifica exactitud matemática ni calidad pedagógica. Ver [contratos](documentacion/api/contenidos.md), [personalización](documentacion/api/personalizacion.md) y [continuidad](documentacion/CONTINUIDAD.md). La evaluación académica sigue pendiente.
 
 La [revisión offline](documentacion/pruebas/hito_09_revision_offline.md) organiza evidencia
 sintética guardada para cotejar afirmaciones, objetivos y fuentes sin nuevas inferencias.

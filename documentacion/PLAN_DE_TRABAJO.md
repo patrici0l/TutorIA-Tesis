@@ -4,6 +4,20 @@ Fuente rectora: Plan_Implementacion_TutorIA-Lucero.docx, entregado por el autor 
 
 ## Bloque actual
 
+Avance posterior del 9 de octubre: estimación condicionada gratuita implementada en
+trazabilidad (0010, base versionada al reservar, historial y Angular). 40 pruebas backend
+y 3 Angular aprobadas; despliegue saludable, cero llamadas Gemini. Sin backfill histórico.
+Ver [evidencia](pruebas/hito_10_costo_condicionado.md). Pendiente de commit humano;
+no equivale a facturación verificada ni tarifas generales.
+
+Último avance del 9 de octubre: piloto v3 de tres perfiles completado por API, conservando
+protocolo, fuentes y la pausa entre sesiones. Los tres recursos respetaron x² pero mostraron
+poca diferenciación; no se cierra el criterio pedagógico. Ajuste posterior de nuevas
+preparaciones a política v2/prompt v4: guía diferenciada y compatibilidad histórica probadas
+con 58 pruebas enfocadas, sin inferencias v4. Ver [piloto](pruebas/hito_09_piloto_v3.md) y
+[verificación del ajuste](pruebas/hito_09_orientacion_v4.md). Commit humano anterior b0eb5c3
+verificado; estos dos nuevos bloques están pendientes de commit humano.
+
 Actualización de alcance del autor — 9 de octubre de 2026 (prevalece sobre anotaciones
 históricas): no conectar sistemas universitarios en esta etapa inicial. CAS real y
 recepción institucional de rendimiento quedan fuera del alcance actual, no bloquean el
@@ -16,7 +30,8 @@ propone mensaje, sin ejecutar commits automáticos. Los commits históricos se c
 Ubicación en la sección 19 del DOCX adjunto: etapas 11–13 (personalización, trazabilidad,
 historial/métricas). Etapa 11 implementada técnicamente con comparación sintética de tres
 perfiles y evaluación pedagógica pendiente; etapas 12–13 con fuentes, modelo, tokens,
-latencia, historial y métricas visibles, costo estimado aún desconocido. No estamos en
+latencia, historial y métricas visibles, estimación gratuita condicionada para nuevas ejecuciones;
+históricos desconocidos y tarifas generales pendientes. No estamos en
 etapa 14 de evaluación formal ni en etapa 15 de cierre. Retención es una tarea auxiliar
 de endurecimiento, no una fase adicional del itinerario original ni requisito explícito
 para empezar la evaluación sin purgar datos. Separar reservas solo es requisito previo
@@ -57,7 +72,7 @@ Estado actual: personalización implementada y tres perfiles comparados; revisi�
 | 7 Recursos | Explicación, ejercicio, quiz y feedback | Flujo completo por recurso, fuentes y validación | Preparación API/UI y coordinador interno listos; explicación RAG real verificada, API/UI de generación e historial privado implementados; cuatro recorridos mínimos reales comprobados; validación académica/escenarios extensos pendientes |
 | 8 Perfiles | Recepción por API de rendimiento externo | Validación y persistencia de perfiles sintéticos | Completado técnicamente con API/UI sintética privada; conexión institucional fuera del alcance actual |
 | 9 Personalización | Alto, medio, dificultades y dificultad localizada | Diferencias justificadas para mismo tema y distintos perfiles | API/UI/historial y tres salidas reales comprobados; desviación de alcance/fidelidad registrada, evaluación pedagógica pendiente |
-| 10 Trazabilidad | Fuentes, historial y métricas | Reconstrucción de cada generación y sus fallos | Snapshots/estados/historial/perfil conservados; API y UI de métricas privadas con cobertura implementadas; costo versionado pendiente; retención/purga opcional en endurecimiento |
+| 10 Trazabilidad | Fuentes, historial y métricas | Reconstrucción de cada generación y sus fallos | Snapshots/estados/historial/perfil conservados; métricas privadas y costo gratuito condicionado versionado implementados; nueva traza real y tarifas generales pendientes; retención/purga opcional |
 | 11 Benchmark | Directo/RAG, perfiles, OpenAI/Gemini/Claude | Experimentos controlados y resultados reales registrados | Pendiente |
 | 12 Cierre | Endurecimiento, documentación, pruebas y MVP | Evidencia final, manuales e informe | Pendiente |
 
@@ -77,7 +92,7 @@ La tabla de etapas 0–15 de la sección 19 se conserva íntegra en la fuente. L
 | 11–12 | Flujo completo y RAG antes del LLM | Hitos 3–7, validación independiente de recuperación |
 | 13 | Perfil externo y variables académicas | Hito 8; campos completos en la fuente |
 | 14–15 | Recursos ampliables y personalización | Cuatro recursos iniciales y adaptación por perfil implementados; evaluación académica pendiente |
-| 16 | Evidencia de cada generación | Snapshots, historial, perfiles, métricas y auditoría por recurso implementados; costo estimado pendiente |
+| 16 | Evidencia de cada generación | Snapshots, historial, perfiles, métricas y auditoría implementados; estimación gratuita condicionada versionada, históricos desconocidos |
 | 17–18 | Docker, Git y GitHub | Docker y Git local; remoto pendiente de cuenta/visibilidad |
 | 19–22 | Orden y criterio del primer bloque | Este seguimiento y evidencia de pruebas |
 | 23–25 | Pruebas, seguridad y definición de terminado | Aplicar por hito; lista de cierre abajo |

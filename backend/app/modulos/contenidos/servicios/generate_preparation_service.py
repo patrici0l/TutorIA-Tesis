@@ -5,6 +5,7 @@ from fastapi import HTTPException
 from pydantic import BaseModel, ConfigDict
 
 from app.configuracion.settings import Settings
+from app.modulos.contenidos.cost_schemas import CostBasis
 from app.modulos.contenidos.errors import ContentError
 from app.modulos.contenidos.repositorios.generation_claim_repository import (
     GenerationClaimRepository,
@@ -45,7 +46,14 @@ class GeneratePreparationService:
         target = GenerationTarget(
             provider=self.settings.llm_default_provider, requested_model=self.settings.llm_model
         )
-        request = self.claim.claim(identifier, owner, target, self.settings.llm_daily_request_limit)
+        cost_basis = (
+            CostBasis(requested_model=target.requested_model)
+            if target.provider == "gemini"
+            else None
+        )
+        request = self.claim.claim(
+            identifier, owner, target, self.settings.llm_daily_request_limit, cost_basis=cost_basis
+        )
         try:
             result = provider.generate(request)
         except ProviderError as error:

@@ -4,15 +4,22 @@ import pytest
 from fastapi import HTTPException
 from sqlalchemy import update
 
+from app.modulos.contenidos.cost_schemas import CostBasis
+from app.modulos.contenidos.errors import ContentError
 from app.modulos.contenidos.models import ContentGeneration
 from app.modulos.contenidos.repositorios.generation_claim_repository import (
     GenerationClaimRepository,
 )
+from app.modulos.contenidos.repositorios.history_repository import HistoryRepository
+from app.modulos.contenidos.servicios.generation_trace_service import GenerationTraceService
+from app.modulos.contenidos.servicios.history_service import HistoryService
+from app.modulos.contenidos.servicios.resource_validation_service import ResourceValidationService
 from app.modulos.documentos.models import Document
 from app.modulos.proveedores_ia.schemas import GenerationTarget
 from app.modulos.rag.prompts.educational_prompt import EducationalPromptBuilder
 from tests.fixtures.content_reference import request, retrieval
 from tests.integracion.test_content_trace_database import pytestmark as trace_marks
+from tests.integracion.test_content_trace_database import response
 from tests.integracion.test_content_trace_database import trace_database as trace_database
 
 pytestmark = trace_marks
@@ -97,3 +104,26 @@ def test_abandoned_attempt_is_closed_without_resending_it(claim_database):
     db.expire_all()
     assert db.get(ContentGeneration, first).error_code == "generation_interrupted"
     assert not repository.finish(first, owners[0], status="failed", error_code="llm_timeout")
+
+
+@pytest.mark.parametrize("outcome", ["valid", "invalid", "timeout"])
+def test_cost_basis_is_durable_before_send_and_survives_failure(claim_database, outcome):
+    db, repository, owners = claim_database
+    identifier = preparation(db, repository, owners[0])
+    basis = CostBasis(requested_model=TARGET.requested_model)
+    GenerationClaimRepository(db).claim(identifier, owners[0], TARGET, 5, cost_basis=basis)
+    db.expire_all()
+    record = db.get(ContentGeneration, identifier)
+    assert record.cost_basis == basis.model_dump(mode="json")
+    assert record.estimated_cost is None
+    trace = GenerationTraceService(repository, ResourceValidationService())
+    if outcome == "timeout":
+        trace.fail(identifier, owners[0], "llm_timeout")
+    elif outcome == "invalid":
+        with pytest.raises(ContentError):
+            trace.finish(identifier, owners[0], response().model_copy(update={"text": "invalid"}))
+    else:
+        trace.finish(identifier, owners[0], response())
+    detail = HistoryService(HistoryRepository(db)).detail(identifier, owners[0])
+    assert detail.audit.cost_basis == basis
+    assert detail.audit.estimated_cost == (None if outcome == "timeout" else 0)

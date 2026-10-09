@@ -1,6 +1,49 @@
 # Continuidad de TutorIA-Lucero
 
-## Estado actual — 9 de octubre, orden del repositorio y revisión offline
+## Estado actual — 9 de octubre, costo condicionado versionado
+
+cost_basis guardado antes de inferencia: confirmed-free-tier-v1, proveedor/modelo, USD,
+tarifa asumida gratuita confirmada por operador. Importe 0 con entrada/salida conocidas;
+consumo parcial e históricos null. No certifica facturación. Migración 0010 aplicada,
+15 registros sin backfill. 40 pruebas backend y 3 Angular aprobadas; build y salud correctos.
+Cero llamadas Gemini; cuatro reservas UTC 9 al verificar. Sin cambios de acceso/cuota.
+Ver pruebas/hito_10_costo_condicionado.md para comandos, evidencia y límites.
+Tercer bloque pendiente de commit humano: `feat: registra estimacion condicionada de costo por generacion`.
+Dos bloques previos también pendientes; separar por propósito, incluidos fragmentos
+compartidos de test_content_adaptation.py y documentación. No ejecutar commits automáticos.
+
+## Avance conservado — piloto v3 y orientación v4
+
+Commit humano verificado: b0eb5c3 contiene el bloque previo de orden y revisión offline.
+No hacer commits automáticos. Dos bloques nuevos pendientes de revisión/commit humano:
+evidencia/protocolo/corpus del piloto v3 y corrección de orientaciones v4/política v2.
+
+Piloto v3 completado por API autenticada, una llamada por nivel: 2466/2428/2471 tokens,
+7365 en total. Tres succeeded; 2643/15589/1988 ms de proveedor. Mismas fuentes y factores
+comprobables; pausa de 4 h 14 min 14 s por interrupción, no reintentos. Registro parcial
+conservado y resultados completos separados. Informe pruebas/hito_09_piloto_v3.md.
+Los tres recursos repiten cuatro pasos parecidos: mejor correspondencia observable con
+la función/fundamentos, pero personalización poco diferenciada y sin aprobación académica.
+High introduce a=3 por sustitución correcta, no explícita en S2: observación preservada.
+
+Nuevas preparaciones: profile-adaptation-v2 + educational-rag-profile-v4. Low guiado,
+medium concentrado, high condiciones/interpretación; no inventar casos para aparentar
+complejidad. Historial v1 aceptado; ausente versión sigue v1. No modificar snapshots v2/v3.
+58 pruebas enfocadas Docker aprobadas (1.15 s), Ruff limpio, sin nuevas pruebas Angular.
+No atribuir al ajuste v4 las generaciones v3. Evaluación real v4 todavía pendiente.
+
+Docker recuperado tras fallo de socket temporal; carpeta run conservada mediante renombrado
+reversible, sin reset de fábrica ni borrado de volúmenes. Detalles locales en bitácora privada.
+Selector mock restaurado a student; UTC 9 lleva cuatro reservas globales y cero activas al
+cerrar piloto. No aumentar cuota ni enviar un caso aislado para aparentar comparación completa.
+
+Próximos puntos: evaluación prospectiva de orientación v4 con corpus fijo y revisión humana;
+verificar costo en la próxima ejecución planificada; después etapa 14 (directo/RAG,
+perfiles/proveedores según presupuesto USD 0) y etapa 15 (manuales, revisión final y evidencia).
+Sistemas universitarios fuera de esta etapa. Retención opcional; reservas independientes
+solo antes de purgar. Rama feature/resource-preparation; bitácora privada excluida.
+
+## Antecedente — 9 de octubre, orden del repositorio y revisión offline
 
 Sin commits nuevos: control humano vigente. Cambios del ajuste de alcance todavía
 pendientes de commit junto con limpieza documental; separar el bloque de herramienta

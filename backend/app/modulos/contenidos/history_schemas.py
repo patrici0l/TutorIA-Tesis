@@ -5,6 +5,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.modulos.contenidos.cost_schemas import CostBasis
 from app.modulos.contenidos.preparation_schemas import PreparationResponse
 from app.modulos.contenidos.schemas import Difficulty, EducationalResource, ResourceType
 from app.modulos.proveedores_ia.schemas import TokenUsage
@@ -36,6 +37,7 @@ class GenerationAudit(BaseModel):
     usage: TokenUsage | None
     latency_ms: int | None = Field(ge=0)
     estimated_cost: Decimal | None = Field(ge=0)
+    cost_basis: CostBasis | None = None
     error_code: str | None = Field(max_length=40)
     retrieval: RetrievalAudit
 

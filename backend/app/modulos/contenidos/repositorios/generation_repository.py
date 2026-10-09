@@ -46,6 +46,7 @@ class GenerationRepository:
                 ContentGeneration.status,
                 ContentGeneration.provider,
                 ContentGeneration.requested_model,
+                ContentGeneration.cost_basis,
             ).where(ContentGeneration.id == identifier, ContentGeneration.owner_id == owner)
         ).first()
         self.db.commit()  # No conservar transacción de lectura durante inferencia futura.

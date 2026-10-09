@@ -13,7 +13,10 @@ class PreparationRequest(ContentRequest):
 
 class AdaptationSnapshot(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
-    policy_version: Literal["profile-adaptation-v1"] = "profile-adaptation-v1"
+    # Mantener el valor antiguo al leer snapshots históricos que omitan la versión.
+    policy_version: Literal["profile-adaptation-v1", "profile-adaptation-v2"] = (
+        "profile-adaptation-v1"
+    )
     profile: ProfileResponse
     requested_difficulty: Difficulty
     effective_difficulty: Difficulty

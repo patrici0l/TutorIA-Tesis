@@ -39,7 +39,7 @@ def test_coordinator_commits_before_network_and_validates_each_resource(trace_da
     def generate(value):
         assert not db.in_transaction()
         snapshot = repository.owned_snapshot(identifiers[0], owners[0])
-        assert snapshot[2:] == ("prepared", "gemini", "model-test-v1")
+        assert snapshot[2:] == ("prepared", "gemini", "model-test-v1", None)
         assert repository.owned_snapshot(identifiers[0], owners[1]) is None
         assert value == prepared.generation_request
         assert not db.in_transaction()

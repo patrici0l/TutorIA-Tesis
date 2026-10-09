@@ -71,4 +71,30 @@ describe('Auditoría de recursos', () => {
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('details')).toBeNull();
   });
+  it('distingue cero condicionado de un valor antiguo sin moneda', () => {
+    TestBed.configureTestingModule({ imports: [ResourceAuditComponent] });
+    const fixture = TestBed.createComponent(ResourceAuditComponent);
+    const audit = { ...detail.audit!, estimated_cost: '0.00000000' };
+    fixture.componentRef.setInput('detail', { ...detail, audit });
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('falta política de moneda/tarifa');
+    fixture.componentRef.setInput('detail', {
+      ...detail,
+      audit: {
+        ...audit,
+        cost_basis: {
+          version: 'confirmed-free-tier-v1',
+          currency: 'USD',
+          basis: 'operator_confirmed_free_tier',
+          provider: 'gemini',
+          requested_model: 'test-model',
+          input_per_million: '0',
+          output_per_million: '0',
+        },
+      },
+    });
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('0.00000000 USD (estimación condicionada)');
+    expect(fixture.nativeElement.textContent).toContain('no comprueba el plan de Google');
+  });
 });

@@ -15,7 +15,8 @@ La lista paginada permanece ligera; audit solo aparece en detalle.
 | prompt_version, prompt_sha256 | Versión e identificador SHA-256 del prompt conservado |
 | usage | input/output/total/reasoning/cached_input_tokens, cada uno nullable; uso entero reportado |
 | latency_ms | Latencia registrada del proveedor, nullable |
-| estimated_cost | Valor persistido nullable, sin inferir cero, moneda ni facturación |
+| estimated_cost | Decimal nullable; cero condicionado a la base gratuita guardada y uso de entrada/salida conocido |
+| cost_basis | Nullable; versión, moneda, proveedor/modelo y tarifa asumida del nivel gratuito confirmado por el operador |
 | error_code | Solo códigos de error controlados; desconocidos se omiten como null |
 | retrieval | method, query_version, embedding_model/revision/version, top_k, min_similarity, available_chunks, elapsed_ms |
 
@@ -36,3 +37,9 @@ con la configuración actual. Fecha de reserva no demuestra recepción de red. E
 garantiza salida idéntica de un modelo probabilístico. Una cita válida no certifica todas
 las afirmaciones. Esta auditoría no equivale a una exportación íntegra de experimento ni
 a una política de purga. Ver [métricas](metricas.md).
+
+Desde 0010, nuevas ejecuciones Gemini guardan `confirmed-free-tier-v1` antes del envío
+bajo LLM_FREE_TIER_CONFIRMED: USD, 0 por millón de entrada/salida, procedencia
+`operator_confirmed_free_tier`. No comprueba el plan real de Google ni la factura.
+Uso parcial, fallo sin consumo e históricos sin base permanecen desconocidos; sin backfill.
+Ver [reglas y pruebas](../pruebas/hito_10_costo_condicionado.md).

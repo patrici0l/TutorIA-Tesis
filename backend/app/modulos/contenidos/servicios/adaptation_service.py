@@ -6,25 +6,40 @@ from app.modulos.contenidos.adaptation_schemas import AdaptationSnapshot
 from app.modulos.contenidos.schemas import ContentRequest
 from app.modulos.perfiles.schemas import ProfileResponse
 
+POLICY_VERSION = "profile-adaptation-v2"
+
 RULES = {
     "low": (
         "basic",
-        "Refuerza los prerrequisitos presentes en las fuentes, "
-        "explica paso a paso y ofrece pistas.",
+        "Prioriza el apoyo guiado: explica los símbolos y prerrequisitos que aparecen en "
+        "las fuentes, separa las transiciones del procedimiento y explica por qué son válidas. "
+        "Anticipa el error informado con una advertencia concreta respaldada por el contexto. "
+        "Para EXPLANATION, desarrolla el procedimiento antes de interpretar el resultado. "
+        "No inventes prerrequisitos ausentes ni casos numéricos para alargar la respuesta.",
         ["EXPLANATION", "EXERCISE", "QUIZ"],
         "Dominio bajo informado: dificultad básica y refuerzo guiado.",
     ),
     "medium": (
         "intermediate",
-        "Ofrece una explicación breve y práctica guiada con complejidad intermedia.",
+        "Prioriza una guía concentrada: resume las transiciones esenciales y explica la "
+        "decisión que evita el error informado, sin repetir todas las definiciones básicas. "
+        "Para EXPLANATION, combina operaciones rutinarias en pasos coherentes y destaca "
+        "por qué funciona el procedimiento. Usa el ejemplo disponible, sin añadir otro "
+        "ejercicio ni casos numéricos que las fuentes no desarrollan.",
         ["EXERCISE", "QUIZ", "EXPLANATION"],
         "Dominio medio informado: dificultad intermedia y práctica guiada.",
     ),
     "high": (
         "advanced",
-        "Propón mayor complejidad y razonamiento, con menos explicación de conceptos básicos.",
+        "Prioriza profundidad conceptual: justifica condiciones de validez, interpreta "
+        "consecuencias y distingue una conclusión válida de un error conceptual, siempre "
+        "con respaldo explícito en las fuentes. Para EXPLANATION, sintetiza el cálculo "
+        "rutinario y dedica los pasos al porqué y a las condiciones; no repitas como eje "
+        "la secuencia elemental de un refuerzo básico. La complejidad procede de analizar "
+        "el mismo caso, no de cambiar la función ni inventar valores numéricos. "
+        "Si el contexto no permite profundizar, reconoce esa limitación sin añadir contenido.",
         ["EXERCISE", "QUIZ"],
-        "Dominio alto informado: dificultad avanzada y problemas de mayor complejidad.",
+        "Dominio alto informado: dificultad avanzada y análisis conceptual del mismo objetivo.",
     ),
 }
 
@@ -55,6 +70,7 @@ class AdaptationService:
                 " Foco localizado en las etiquetas de error informadas, sin inferir su gravedad."
             )
         snapshot = AdaptationSnapshot(
+            policy_version=POLICY_VERSION,
             profile=profile,
             requested_difficulty=request.difficulty,
             effective_difficulty=difficulty,

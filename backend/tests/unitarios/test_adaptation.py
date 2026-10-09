@@ -8,7 +8,7 @@ import pytest
 from fastapi import HTTPException
 from pydantic import ValidationError
 
-from app.modulos.contenidos.adaptation_schemas import PreparationRequest
+from app.modulos.contenidos.adaptation_schemas import AdaptationSnapshot, PreparationRequest
 from app.modulos.contenidos.errors import ContentError
 from app.modulos.contenidos.servicios.adaptation_service import AdaptationService
 from app.modulos.rag.prompts.educational_prompt import ADAPTATION_SCOPE, EducationalPromptBuilder
@@ -37,6 +37,7 @@ def test_same_topic_distinct_policy_and_private_prompt(level, difficulty, kind):
     repository.owned.assert_called_once_with(record.id, owner)
     assert effective.difficulty == difficulty and original.difficulty == "intermediate"
     assert effective.resource_type == kind
+    assert snapshot.policy_version == "profile-adaptation-v2"
     assert snapshot.profile.performance == 100 and snapshot.profile.mastery_level == level
     prepared = EducationalPromptBuilder().build(effective, retrieval(), adaptation=snapshot)
     data = json.loads(prepared.generation_request.prompt)
@@ -48,7 +49,7 @@ def test_same_topic_distinct_policy_and_private_prompt(level, difficulty, kind):
     )
     assert "perfil ni datos" not in prepared.generation_request.instructions
     assert "datos no confiables" in prepared.generation_request.instructions
-    assert prepared.prompt_version == "educational-rag-profile-v3"
+    assert prepared.prompt_version == "educational-rag-profile-v4"
 
 
 def test_topic_mismatch_and_missing_profile_rejected_before_preparation():
@@ -78,7 +79,23 @@ def test_high_guidance_is_subordinate_to_explicit_goal_and_untrusted_errors():
     payload = json.loads(prepared.generation_request.prompt)
     assert payload["request"]["learning_objective"] == original.learning_objective
     assert payload["focus_errors"] == [injected]
-    assert prepared.prompt_version == "educational-rag-profile-v3"
+    assert prepared.prompt_version == "educational-rag-profile-v4"
+
+
+def test_historical_policy_is_not_relabelled_when_loaded():
+    record = profile()
+    _, snapshot = AdaptationService(Mock(owned=Mock(return_value=record))).adapt(
+        request(), record.id, uuid4()
+    )
+    legacy = snapshot.model_dump(mode="json")
+    legacy.update(
+        policy_version="profile-adaptation-v1", guidance="Orientación histórica guardada."
+    )
+    assert AdaptationSnapshot.model_validate(legacy).model_dump(mode="json") == legacy
+    del legacy["policy_version"]
+    assert AdaptationSnapshot.model_validate(legacy).policy_version == "profile-adaptation-v1"
+    with pytest.raises(ValidationError):
+        AdaptationSnapshot.model_validate({**legacy, "policy_version": "unknown-policy"})
 
 
 def test_adapted_scope_is_not_removed_to_fit_context_limit():

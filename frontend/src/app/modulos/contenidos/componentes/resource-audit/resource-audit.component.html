@@ -50,10 +50,23 @@
         {{
           audit.estimated_cost === null
             ? 'Desconocida'
-            : 'Existe un valor guardado; falta política de moneda/tarifa'
+            : audit.cost_basis
+              ? audit.estimated_cost +
+                ' ' +
+                audit.cost_basis.currency +
+                ' (estimación condicionada)'
+              : 'Existe un valor guardado; falta política de moneda/tarifa'
         }}
       </dd>
     </dl>
+    @if (audit.cost_basis; as cost) {
+      <p class="help">
+        Base: nivel gratuito confirmado por el operador al iniciar la solicitud. Versión
+        {{ cost.version }} · modelo {{ cost.requested_model }}. Tarifa asumida: 0 USD por millón de
+        tokens de entrada y salida. Esta configuración no comprueba el plan de Google ni garantiza
+        ausencia de cargos.
+      </p>
+    }
     <p class="help">
       Ausente no significa cero. El total de tokens es el reportado; la latencia no incluye todo el
       flujo y esta vista no verifica facturación.

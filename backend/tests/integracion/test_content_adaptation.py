@@ -2,6 +2,7 @@ from types import SimpleNamespace
 from unittest.mock import Mock
 from uuid import UUID
 
+import pytest
 from fastapi.testclient import TestClient
 
 from app.base_datos.session import get_session
@@ -35,11 +36,20 @@ pytestmark = trace_marks
 HEADERS = {"X-TutorIA-Client": "web"}
 
 
-def test_saved_adaptation_is_sent_once_with_fake_provider(claim_database, monkeypatch):
+@pytest.mark.parametrize("policy_version", ["profile-adaptation-v1", "profile-adaptation-v2"])
+def test_saved_adaptation_is_sent_once_with_fake_provider(
+    claim_database, monkeypatch, policy_version
+):
     db, repository, owners = claim_database
     profiles = ProfileRepository(db)
     record = profiles.create(ProfileRequest(**SAMPLE), owners[0])
     effective, adaptation = AdaptationService(profiles).adapt(request(), record.id, owners[0])
+    if policy_version == "profile-adaptation-v1":
+        adaptation = adaptation.model_copy(update={
+            "policy_version": policy_version,
+            "guidance": "Refuerza los prerrequisitos presentes en las fuentes, "
+                        "explica paso a paso y ofrece pistas.",
+        })
     found = retrieval()
     hit = found.results[0]
     db.add(
@@ -55,12 +65,18 @@ def test_saved_adaptation_is_sent_once_with_fake_provider(claim_database, monkey
     )
     db.commit()
     prepared = EducationalPromptBuilder().build(effective, found, adaptation=adaptation)
+    if policy_version == "profile-adaptation-v1":
+        prepared = prepared.model_copy(update={"prompt_version": "educational-rag-profile-v3"})
     identifier = repository.prepare(owners[0], prepared)
     provider = Mock()
 
     def generate(payload):
         assert not db.in_transaction()
         assert payload == prepared.generation_request
+        # La base de costo ya es durable antes de que el proveedor responda.
+        assert repository.owned_snapshot(identifier, owners[0])[5]["version"] == (
+            "confirmed-free-tier-v1"
+        )
         return response()
 
     provider.generate.side_effect = generate
@@ -85,7 +101,11 @@ def test_saved_adaptation_is_sent_once_with_fake_provider(claim_database, monkey
     provider.generate.assert_called_once()
     stored = db.get(ContentGeneration, identifier)
     assert stored.adaptation_snapshot == adaptation.model_dump(mode="json")
+    assert stored.adaptation_snapshot["policy_version"] == policy_version
+    assert stored.prompt_version == prepared.prompt_version
+    assert stored.prompt_sha256 == prepared.prompt_sha256
     assert stored.resource["resource_type"] == "EXPLANATION"
+    assert stored.estimated_cost == 0
 
 
 def test_api_profile_snapshot_private_history_and_no_external_inference(trace_database):

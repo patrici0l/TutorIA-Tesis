@@ -1,6 +1,7 @@
 from typing import get_args
 from uuid import UUID
 
+from app.modulos.contenidos.cost_schemas import CostBasis
 from app.modulos.contenidos.errors import ContentError
 from app.modulos.contenidos.repositorios.generation_repository import GenerationRepository
 from app.modulos.contenidos.schemas import ContentRequest
@@ -35,6 +36,7 @@ class GenerationTraceService:
             self.fail(identifier, owner, "content_target_mismatch")
             raise ContentError("content_target_mismatch")
         request = ContentRequest(**snapshot[0])
+        cost_basis = CostBasis.model_validate(snapshot[5]) if snapshot[5] else None
         metadata = dict(
             provider=result.provider,
             requested_model=result.requested_model,
@@ -42,6 +44,7 @@ class GenerationTraceService:
             response_id=result.response_id,
             usage=result.usage.model_dump(),
             latency_ms=result.latency_ms,
+            estimated_cost=cost_basis.estimate(result) if cost_basis else None,
         )
         try:
             resource = self.validator.validate(

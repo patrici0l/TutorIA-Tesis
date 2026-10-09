@@ -5,6 +5,7 @@ from fastapi import HTTPException
 from sqlalchemy import func, select, text, update
 from sqlalchemy.orm import Session
 
+from app.modulos.contenidos.cost_schemas import CostBasis
 from app.modulos.contenidos.models import ContentGeneration
 from app.modulos.documentos.models import Document
 from app.modulos.proveedores_ia.schemas import GenerationRequest, GenerationTarget
@@ -14,7 +15,14 @@ class GenerationClaimRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def claim(self, identifier: UUID, owner: UUID, target: GenerationTarget, daily_limit: int):
+    def claim(
+        self,
+        identifier: UUID,
+        owner: UUID,
+        target: GenerationTarget,
+        daily_limit: int,
+        cost_basis: CostBasis | None = None,
+    ):
         try:
             self.db.execute(text("SELECT pg_advisory_xact_lock(739117)"))
             now = self.db.scalar(select(func.clock_timestamp())).astimezone(UTC)
@@ -85,6 +93,7 @@ class GenerationClaimRepository:
             record.generation_started_at = now
             record.provider = target.provider
             record.requested_model = target.requested_model
+            record.cost_basis = cost_basis.model_dump(mode="json") if cost_basis else None
             self.db.commit()
             return payload
         except Exception:

@@ -28,7 +28,8 @@ muestran sin sustituir un fallo por cifras ficticias. La navegación docente inc
   extracción, recuperación, cola ni duración completa de la aplicación. Fallos sin medición
   no cuentan como cero en el promedio. Decimal del promedio se serializa como cadena JSON.
 - cost_known_records/cost_unknown_records: cobertura de estimated_cost entre execution_records.
-  No se calcula tarifa ni importe agregado: falta una política de precio/moneda/versionado.
+  No se calcula importe agregado ni se mezclan bases. Desde 0010, nuevas ejecuciones pueden
+  tener estimación condicionada y versionada al nivel gratuito; ver auditoria_recursos.md.
   Null significa estimación desconocida; Free Tier confirmado no prueba facturación cero.
 
 Sin registros, los conteos son cero y sumas/promedios/min/max son null. La vista no representa
@@ -40,4 +41,5 @@ se muestra tal como está; la lectura no ejecuta recuperación de procesos inter
 No hay filtros temporales, agrupación por modelo, exportación, dashboard administrativo global
 ni evaluación pedagógica. El índice de owner_id existente limita la lectura a registros propios;
 para volúmenes de producción habrá que medir costo de agregación y planificar paginación temporal
-o resúmenes. Retención/purga y estimación monetaria versionada siguen pendientes del hito 10.
+o resúmenes. Retención/purga y tarifas generales siguen pendientes; la estimación versionada
+del supuesto gratuito está implementada sin certificar facturación externa.

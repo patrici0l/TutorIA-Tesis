@@ -66,3 +66,7 @@ v3: corpus con fundamentos suficientes, mismos factores, criterios de rechazo,
 repeticiones y presupuesto de intentos disponibles. La versión v3 de instrucciones no ha
 sido evaluada con Gemini. Después iniciar evaluación de etapa 14 con su protocolo propio.
 No conectar sistemas universitarios ni activar proveedores adicionales por este informe.
+
+Continuación del 9 de octubre: [cotejo técnico v2 asistido por Codex](hito_09_revision_tecnica_v2.md)
+y [piloto v3 ejecutado](hito_09_piloto_v3.md). Ninguno sustituye una revisión humana ni
+rellena como aprobados los campos pendientes de esta plantilla.

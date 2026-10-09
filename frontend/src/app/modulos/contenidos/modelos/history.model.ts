@@ -47,6 +47,15 @@ export interface GenerationAudit {
   } | null;
   latency_ms: number | null;
   estimated_cost: string | null;
+  cost_basis?: {
+    version: 'confirmed-free-tier-v1';
+    currency: 'USD';
+    basis: 'operator_confirmed_free_tier';
+    provider: 'gemini';
+    requested_model: string;
+    input_per_million: '0';
+    output_per_million: '0';
+  } | null;
   error_code: string | null;
   retrieval: {
     method: 'exact_cosine';
