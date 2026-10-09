@@ -4,6 +4,12 @@ Fuente rectora: Plan_Implementacion_TutorIA-Lucero.docx, entregado por el autor 
 
 ## Bloque actual
 
+Reanudación del 9 de octubre: commit humano 6082e6f confirmado para los bloques anteriores.
+Protocolo [v4](pruebas/hito_09_protocolo_v4.md) fijado sin inferencias; revisión offline v3
+preparada para el autor. Cuatro reservas de cinco a las 21:09 UTC: lote de tres pendiente
+de cupo suficiente. Sin elevar límites ni declarar aprobación humana. Esta es la actualización
+vigente; las menciones de commits pendientes en los párrafos anteriores de trabajo son históricas.
+
 Avance posterior del 9 de octubre: estimación condicionada gratuita implementada en
 trazabilidad (0010, base versionada al reservar, historial y Angular). 40 pruebas backend
 y 3 Angular aprobadas; despliegue saludable, cero llamadas Gemini. Sin backfill histórico.

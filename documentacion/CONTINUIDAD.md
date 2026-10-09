@@ -1,5 +1,22 @@
 # Continuidad de TutorIA-Lucero
 
+## Reanudación — 9 de octubre, protocolo prospectivo v4
+
+Trabajo retomado en feature/resource-preparation. Commit humano 6082e6f verificado:
+incluye piloto v3, orientación v4 y costo; las menciones pendientes de abajo son históricas.
+Sin operaciones de integración/publicación en esta sesión.
+Protocolo v4 fijado en pruebas/hito_09_protocolo_v4.md y .json, aún sin ejecutar ni crear
+preparaciones. SHA del manifiesto: 42d0d77582b1ef3518dc6c33115d64ea962603852b128190a881fd97fcd1d1a1.
+A las 21:09 UTC había 4/5 reservas, cero activas; no enviar lote de tres con un solo cupo.
+Configuración no sensible coincide: Gemini 3.1 Flash-Lite, 12000/512, timeout 30 s, mock.
+Verificada diferencia de bytes LF/CRLF del corpus complementario; manifiesto distingue
+archivo local del original cargado. Reutilizar documentos indexados, no recargarlos.
+Revisión offline v3 generada en seguimiento_privado/revision_perfiles_v3.json: tres casos,
+cuatro controles mecánicos verdaderos, 7365 tokens; decisiones humanas pendientes.
+Próximo: comprobar cuota al retomar, preparar tres casos v4 y conservar preflight antes
+de enviar. No programación automática. Evaluación humana/benchmark/manuales pendientes.
+Bloque documental pendiente de commit humano: `docs: fija protocolo prospectivo de personalizacion v4`.
+
 ## Estado actual — 9 de octubre, costo condicionado versionado
 
 cost_basis guardado antes de inferencia: confirmed-free-tier-v1, proveedor/modelo, USD,
