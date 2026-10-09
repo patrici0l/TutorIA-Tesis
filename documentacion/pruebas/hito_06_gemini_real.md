@@ -1,3 +1,9 @@
+> Nota histórica
+
+El ensayo de este documento corresponde al 7 de octubre. Su script manual fue retirado el 9
+de octubre al estar disponible el flujo API/UI con cuota persistente. Las condiciones
+y resultados de esta evidencia se conservan; no son instrucciones de ejecución actuales.
+
 # Primera prueba real de Gemini
 
 7 de octubre de 2026; autorizada directamente por el autor tras configurar su clave en .env. No se cambió facturación, no se enviaron documentos ni datos personales, y no se habilitó generación desde Angular.

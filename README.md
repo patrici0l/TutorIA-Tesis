@@ -90,7 +90,7 @@ Para preparar el modelo local una sola vez, con internet para descargar sus peso
 docker compose --profile embeddings run --no-deps --rm prepare-embeddings
 ```
 
-Después, Detalles → Preparar índice vectorial genera embeddings E5 multilingües de 384 dimensiones en CPU y los guarda en pgvector. Los pesos quedan en el volumen embedding_data, fuera de Git. La inferencia funciona sin internet; la preparación repetida verifica/reutiliza los archivos. Reconstruir índice es una acción explícita que conserva fragmentos/texto y reemplaza vectores de forma atómica. El detalle conserva modelo, revisión y fecha. En Buscar fuentes (`/busqueda`) puedes consultar el corpus propio indexado, limitar top-k y revisar citas con sus referencias. La similitud mide cercanía, no certeza; aún no se genera contenido con un LLM. Consulta el [contrato RAG](documentacion/api/rag.md).
+Después, Detalles → Preparar índice vectorial genera embeddings E5 multilingües de 384 dimensiones en CPU y los guarda en pgvector. Los pesos quedan en el volumen embedding_data, fuera de Git. La inferencia funciona sin internet; la preparación repetida verifica/reutiliza los archivos. Reconstruir índice es una acción explícita que conserva fragmentos/texto y reemplaza vectores de forma atómica. El detalle conserva modelo, revisión y fecha. En Buscar fuentes (`/busqueda`) puedes consultar el corpus propio indexado, limitar top-k y revisar citas con sus referencias. La similitud mide cercanía, no certeza. Buscar fuentes no llama al LLM; la generación se solicita explícitamente en `/recursos`. Consulta el [contrato RAG](documentacion/api/rag.md).
 
 La extracción admite PDF con capa de texto, párrafos DOCX y TXT UTF-8. PDF escaneados requieren OCR, aún pendiente. OfficeMath y ciertos estilos matemáticos heredados se rechazan para evitar alterar fórmulas. El docente debe cotejar la extracción con el original. Límites: 200 páginas PDF, 500 000 caracteres y 1000 fragmentos, además del máximo de carga. Variables: `DOCUMENT_CHUNK_CHARS=1000`, `DOCUMENT_CHUNK_OVERLAP=150`, `EXTRACTION_TIMEOUT_SECONDS=15`; el detalle conserva la configuración usada. Consultar el [contrato de documentos](documentacion/api/documentos.md), la [decisión de extracción](documentacion/decisiones_tecnicas/0004-extraccion-trazable.md) y la [decisión de corpus y estilo UPS](documentacion/decisiones_tecnicas/0003-corpus-y-estilo-ups.md).
 
@@ -110,13 +110,22 @@ La plantilla mantiene LLM_ENABLED=false y LLM_FREE_TIER_CONFIRMED=false; el ento
 
 Contratos para explicación, ejercicio, quiz y feedback; prompts versionados y validación estructural/citas. Docentes/admin preparan en /recursos tema, objetivo, tipo y dificultad manual. Quiz admite 1–5 preguntas; feedback requiere respuesta de prueba. Preparar y revisar fuentes guarda la solicitud y recupera hasta tres fragmentos propios sin IA. El botón posterior envía únicamente su identificador a POST /api/v1/content/{id}/generate; backend reserva el intento antes de una llamada y guarda el recurso validado o fallo seguro.
 
-Una preparación se envía una sola vez. La interfaz muestra carga, citas y errores, sin renderizar HTML activo ni guardar contenido en localStorage. Roles/propiedad/CSRF y no-store se conservan. Migraciones 0006/0007 mantienen snapshots y estados prepared/generating/succeeded/failed; consumo/costo desconocidos null. Mis recursos permite reabrir preparaciones, resultados y fuentes tras recargar mediante historial privado paginado, sin consumir Gemini. Adaptación por rendimiento pendiente. La validación de formato/citas no certifica exactitud matemática. Ver [contratos](documentacion/api/contenidos.md), [decisión 0008](documentacion/decisiones_tecnicas/0008-recursos-y-trazabilidad.md) y [continuidad](documentacion/CONTINUIDAD.md). Hito 7 sigue en curso.
+Una preparación se envía una sola vez. La interfaz muestra carga, citas y errores, sin renderizar HTML activo ni guardar contenido en localStorage. Roles/propiedad/CSRF y no-store se conservan. Migraciones 0006/0007 mantienen snapshots y estados prepared/generating/succeeded/failed; consumo/costo desconocidos null. Mis recursos permite reabrir preparaciones, resultados y fuentes tras recargar mediante historial privado paginado, sin consumir Gemini. La adaptación por perfil sintético está implementada; las nuevas preparaciones adaptadas usan instrucciones v3 y las salidas v2 se conservan. La validación de formato/citas no certifica exactitud matemática ni calidad pedagógica. Ver [contratos](documentacion/api/contenidos.md), [personalización](documentacion/api/personalizacion.md) y [continuidad](documentacion/CONTINUIDAD.md). La evaluación académica sigue pendiente.
+
+La [revisión offline](documentacion/pruebas/hito_09_revision_offline.md) organiza evidencia
+sintética guardada para cotejar afirmaciones, objetivos y fuentes sin nuevas inferencias.
+Sus comprobaciones mecánicas no asignan puntuaciones pedagógicas.
 
 ## Reglas de trabajo
 
 Carpetas de dominio en español sin tildes; clases, métodos, servicios y endpoints en inglés. Interfaz en español. HTML, SCSS, TS y pruebas en archivos separados. Toda modificación del esquema usa Alembic. Ninguna clave de proveedor llega al navegador.
 
 Ramas: `main`, `develop`, `feature/*`, `fix/*`, `refactor/*`, `docs/*`. Commits descriptivos con prefijos `feat`, `fix`, `docs`, `test`, `refactor`. No fusionar si fallan Docker, contratos o pruebas.
+
+El autor realiza los commits; Codex comunica cada bloque listo y propone un mensaje,
+sin ejecutar commits automáticos. Pruebas proporcionales a cada cambio. En esta etapa
+inicial no se conectan sistemas universitarios: se conserva el diseño SSO por dominio
+y se utiliza mock con datos sintéticos.
 
 El repositorio se inicia localmente; la publicación en GitHub requiere elegir la cuenta y visibilidad. No hay remoto configurado por defecto.
 

@@ -30,7 +30,11 @@ Entrada limitada por caracteres/bytes, salida máxima 512 tokens y respuesta rem
 
 ## Pruebas externas explícitas
 
-Scripts app.modulos.proveedores_ia.smoke y app.modulos.contenidos.smoke requieren --free-tier-confirmed. Cada ejecución hace una nueva petición y NO utiliza el contador diario API. El primero usa texto fijo, salida 128 tokens y timeout 15 s; el segundo solo la muestra sintética conocida, salida 512 tokens y timeout 30 s. No usarlos como healthcheck/test automático/arranque ni ejecutarlos para comprobar rutinariamente salud.
+Los antiguos scripts app.modulos.proveedores_ia.smoke y app.modulos.contenidos.smoke
+se retiraron el 9 de octubre: eran ensayos iniciales fuera del contador diario API.
+Sus resultados y configuración históricos se conservan en la documentación de pruebas.
+Las nuevas pruebas reales deben usar el flujo de preparación/generación autenticado
+con cuota persistente; no ejecutar llamadas directas para eludir límites.
 
 Prueba UI actual: una explicación sintética con citas S1, 1388 tokens totales, 2355 ms, persistida y mostrada. Ver ../pruebas/hito_07_generacion_ui.md; prueba anterior del coordinador en hito_07_coordinador.md. No afirmar cargo efectivo cero: no se verificó gasto en Google.
 

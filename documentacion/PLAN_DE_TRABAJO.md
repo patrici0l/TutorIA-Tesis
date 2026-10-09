@@ -4,6 +4,24 @@ Fuente rectora: Plan_Implementacion_TutorIA-Lucero.docx, entregado por el autor 
 
 ## Bloque actual
 
+Actualización de alcance del autor — 9 de octubre de 2026 (prevalece sobre anotaciones
+históricas): no conectar sistemas universitarios en esta etapa inicial. CAS real y
+recepción institucional de rendimiento quedan fuera del alcance actual, no bloquean el
+MVP local con datos sintéticos. Se conserva autenticación preparada para dominio/SSO,
+mock y sesión HttpOnly; no se implementa login por contraseña del documento original.
+Pruebas proporcionales al riesgo y al cambio; sin duplicar ni repetir suites por documentación.
+Todos los commits los realiza el autor: Codex avisa explícitamente qué bloque se cierra y
+propone mensaje, sin ejecutar commits automáticos. Los commits históricos se conservan.
+
+Ubicación en la sección 19 del DOCX adjunto: etapas 11–13 (personalización, trazabilidad,
+historial/métricas). Etapa 11 implementada técnicamente con comparación sintética de tres
+perfiles y evaluación pedagógica pendiente; etapas 12–13 con fuentes, modelo, tokens,
+latencia, historial y métricas visibles, costo estimado aún desconocido. No estamos en
+etapa 14 de evaluación formal ni en etapa 15 de cierre. Retención es una tarea auxiliar
+de endurecimiento, no una fase adicional del itinerario original ni requisito explícito
+para empezar la evaluación sin purgar datos. Separar reservas solo es requisito previo
+si se decide implementar purga. OpenAI/Claude y benchmark completo siguen pendientes.
+
 Hitos 1, 3 y 4 cerrados técnicamente con material sintético; estilo ajustado a colores UPS. Extracción, normalización, segmentación, revisión de fuentes y embeddings locales reproducibles en pgvector implementados; evidencia en `pruebas/hito_04_extraccion.md` y `pruebas/hito_04_indice.md`. Hito 5 técnico completado con búsqueda exacta, permisos, fuentes y comparación HNSW en corpus sintético; evidencia en pruebas/hito_05.md. Hito 6: interfaz/fábrica/adaptador Gemini probados, generación real habilitada localmente bajo Free Tier confirmado por el autor y cap API persistente. Hito 7: cuatro contratos mínimos generados/persistidos realmente con material sintético, historial privado disponible; validación académica pendiente. Hito 2 implementado en modo mock y con adaptador CAS preparado; integración institucional pendiente de TI. Las verificaciones están en `pruebas/hito_01.md` y `pruebas/hito_02.md`. La instrucción directa del autor del 5 de octubre de 2026 reemplaza el login tradicional/JWT del documento por SSO/CAS y sesiones opacas HttpOnly; la fuente original se conserva íntegra. No dar por completados los siguientes hitos por haber creado sus carpetas.
 
 | Paso | Entregable | Evidencia prevista |
@@ -26,20 +44,20 @@ Hitos 1, 3 y 4 cerrados técnicamente con material sintético; estilo ajustado a
 
 ## Secuencia obligatoria de hitos
 
-Actualización del bloque actual: hito 8 sintético implementado con API privada, migración 0008 y pantalla `/perfiles`. 275 pruebas backend y 54 Angular aprobadas, guardado/recuperación en navegador comprobados sin IA. Ver [contrato](api/perfiles.md), [decisión 0009](decisiones_tecnicas/0009-perfiles-sinteticos.md) y [evidencia](pruebas/hito_08_perfiles.md). Próximo hito: personalización explicable y trazabilidad del perfil; la integración externa con datos reales sigue pendiente.
+Estado actual: personalización implementada y tres perfiles comparados; revisión semántica pendiente. Fuentes, historial, auditoría y métricas disponibles. Ver [revisión offline y rúbrica propuesta](pruebas/hito_09_revision_offline.md). Las evidencias de cada hito conservan las pruebas y condiciones de su fecha.
 
 | Hito | Alcance | Criterio de cierre | Estado |
 |---|---|---|---|
 | 1 Base | Preparación, backend, BD, frontend, Docker | Un comando levanta todo; interfaz confirma API y BD real | Completado |
-| 2 Seguridad | SSO/CAS, usuarios institucionales, sesión HttpOnly, logout, roles, guards e interceptores | Acceso mock y rechazo de sesiones inválidas probados; integración UPS autorizada por TI | Mock completado; CAS pendiente de TI |
+| 2 Seguridad | SSO/CAS, usuarios institucionales, sesión HttpOnly, logout, roles, guards e interceptores | Acceso mock y rechazo de sesiones inválidas probados en esta etapa | Mock completado; CAS real fuera del alcance actual |
 | 3 Corpus | PDF/DOCX/TXT, MIME/extensión/tamaño, permisos y gestión | Cargar, listar, consultar y eliminar documentos propios | Completado |
 | 4 Ingesta | Extracción, normalización, segmentación, embeddings e índices | Corpus trazable y reproducible en pgvector | Completado técnicamente con material sintético |
 | 5 RAG | Búsqueda semántica y top-k | Recuperación validada con corpus y consultas de referencia, sin LLM | Completado técnicamente con muestra sintética; validación independiente pendiente |
 | 6 IA | Interfaz generate, fábrica y primer proveedor | Proveedor intercambiable, errores y límites controlados | Interfaz/fábrica/Gemini probados y primera conexión real 3.1 Flash-Lite verificada; generación habilitada localmente bajo Free Tier confirmado, coordinador/cap global persistente implementados |
 | 7 Recursos | Explicación, ejercicio, quiz y feedback | Flujo completo por recurso, fuentes y validación | Preparación API/UI y coordinador interno listos; explicación RAG real verificada, API/UI de generación e historial privado implementados; cuatro recorridos mínimos reales comprobados; validación académica/escenarios extensos pendientes |
-| 8 Perfiles | Recepción por API de rendimiento externo | Validación y persistencia de perfiles sintéticos | Completado técnicamente con API/UI sintética privada; integración externa institucional pendiente |
+| 8 Perfiles | Recepción por API de rendimiento externo | Validación y persistencia de perfiles sintéticos | Completado técnicamente con API/UI sintética privada; conexión institucional fuera del alcance actual |
 | 9 Personalización | Alto, medio, dificultades y dificultad localizada | Diferencias justificadas para mismo tema y distintos perfiles | API/UI/historial y tres salidas reales comprobados; desviación de alcance/fidelidad registrada, evaluación pedagógica pendiente |
-| 10 Trazabilidad | Fuentes, historial y métricas | Reconstrucción de cada generación y sus fallos | Snapshots/estados/historial/perfil conservados; API y UI de métricas privadas con cobertura implementadas; costo versionado/retención/purga pendientes |
+| 10 Trazabilidad | Fuentes, historial y métricas | Reconstrucción de cada generación y sus fallos | Snapshots/estados/historial/perfil conservados; API y UI de métricas privadas con cobertura implementadas; costo versionado pendiente; retención/purga opcional en endurecimiento |
 | 11 Benchmark | Directo/RAG, perfiles, OpenAI/Gemini/Claude | Experimentos controlados y resultados reales registrados | Pendiente |
 | 12 Cierre | Endurecimiento, documentación, pruebas y MVP | Evidencia final, manuales e informe | Pendiente |
 
@@ -54,12 +72,12 @@ La tabla de etapas 0–15 de la sección 19 se conserva íntegra en la fuente. L
 | 4–6 | Raíz, backend, módulos, frontend y animaciones | Estructura inicial; cada módulo se implementa en su hito |
 | 7 | Variables, secretos y exclusiones | Plantillas, script local y .gitignore |
 | 8 | Interfaz LLM, OpenAI, Gemini y Claude | Hito 6: interfaz/fábrica y primer adaptador Gemini; OpenAI/Claude y comparación pendientes |
-| 9 | REST/OpenAPI versionada | Health actual; catálogo restante pendiente |
-| 10 | Diez entidades iniciales y Alembic | Modelo conceptual; columnas tras validar casos de uso |
+| 9 | REST/OpenAPI versionada | Health, auth, documentos, RAG, perfiles, contenidos, historial y métricas implementados; contratos en api/ |
+| 10 | Diez entidades iniciales y Alembic | Alembic 0001–0009; identidad, documentos/chunks/índice, generaciones y perfiles implementados |
 | 11–12 | Flujo completo y RAG antes del LLM | Hitos 3–7, validación independiente de recuperación |
 | 13 | Perfil externo y variables académicas | Hito 8; campos completos en la fuente |
-| 14–15 | Recursos ampliables y personalización | Hito 7: cuatro contratos iniciales preparados, dificultad manual; personalización hito 9 pendiente |
-| 16 | Evidencia de cada generación | Base mínima persistida en 0006; historial, perfiles y métricas por completar en hitos 8–10 |
+| 14–15 | Recursos ampliables y personalización | Cuatro recursos iniciales y adaptación por perfil implementados; evaluación académica pendiente |
+| 16 | Evidencia de cada generación | Snapshots, historial, perfiles, métricas y auditoría por recurso implementados; costo estimado pendiente |
 | 17–18 | Docker, Git y GitHub | Docker y Git local; remoto pendiente de cuenta/visibilidad |
 | 19–22 | Orden y criterio del primer bloque | Este seguimiento y evidencia de pruebas |
 | 23–25 | Pruebas, seguridad y definición de terminado | Aplicar por hito; lista de cierre abajo |
@@ -67,7 +85,7 @@ La tabla de etapas 0–15 de la sección 19 se conserva íntegra en la fuente. L
 | 27 | Documentación continua | README, arquitectura, BD, API, decisiones, pruebas; ampliar por hito |
 | 28–30 | Evitar desorden y avanzar verticalmente | AGENTS.md y revisiones de cada entrega |
 
-## Contratos aún pendientes
+## Avances registrados por sesión (históricos; prevalece el bloque actual)
 
 9 de octubre: instrucciones de adaptación v3 refuerzan alcance del objetivo/fuentes, sin
 alterar snapshots v2 del experimento. 298 backend aprobadas; pruebas de instrucciones no

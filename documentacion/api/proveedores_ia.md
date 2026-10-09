@@ -47,7 +47,11 @@ Las claves existentes de OpenAI/Anthropic en la plantilla son reservas del plan;
 
 ## Prueba real manual
 
-El autor autorizó una prueba real el 7 de octubre de 2026. gemini-3.1-flash-lite respondió con 35 tokens de entrada y 20 de salida. app.modulos.proveedores_ia.smoke realiza una petición sintética por ejecución; importar el módulo o ejecutar --help no llama red. La aplicación sigue desactivada hasta disponer del coordinador. Ver [límites](limites_gemini.md) y [evidencia](../pruebas/hito_06_gemini_real.md).
+El autor autorizó una prueba real el 7 de octubre de 2026. gemini-3.1-flash-lite respondió
+con 35 tokens de entrada y 20 de salida. El script inicial se retiró el 9 de octubre
+al existir el flujo API/UI con cuota persistente. La generación local está habilitada
+bajo las condiciones del autor; la plantilla permanece desactivada por defecto.
+Ver [límites](limites_gemini.md) y [evidencia histórica](../pruebas/hito_06_gemini_real.md).
 
 ## Estado vigente: generación API/UI
 

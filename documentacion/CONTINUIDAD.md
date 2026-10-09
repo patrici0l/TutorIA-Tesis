@@ -1,6 +1,52 @@
 # Continuidad de TutorIA-Lucero
 
-## Estado vigente — 9 de octubre, cierre de instrucciones v3
+## Estado actual — 9 de octubre, orden del repositorio y revisión offline
+
+Sin commits nuevos: control humano vigente. Cambios del ajuste de alcance todavía
+pendientes de commit junto con limpieza documental; separar el bloque de herramienta
+de evaluación en otro commit humano. Retirados dos scripts smoke iniciales que llamaban
+Gemini fuera de la cuota API. Evidencia histórica conservada y marcada; README y matriz
+del plan corregidos para no presentar generación/personalización como no implementadas.
+Los apartados de sesiones anteriores son antecedentes, no estados actuales simultáneos.
+
+Nuevo módulo evaluacion/offline_review.py prepara revisión de tres resultados sintéticos
+guardados, sin BD/configuración/IA; revalida contrato/citas, compara factores, conserva
+desconocidos y extrae bloques para cotejo humano. Salida nueva exclusiva, sin sobrescribir
+evidencia. Informe hito_09_revision_offline.json conserva hash de entrada, tres casos,
+4577 tokens conocidos y decisiones semánticas pendientes. Rúbrica operativa propuesta
+en hito_09_revision_offline.md, sin aprobación académica ni puntuaciones automáticas.
+57 pruebas locales enfocadas (revisión, adaptación y contratos) aprobadas en 6.17 s;
+Ruff limpio. No se repitieron suites completas ni se generó contenido nuevo con Gemini.
+
+Backend reconstruido y desplegado: backend/frontend/postgres healthy, /health confirma
+API/BD/pgvector ok. Los dos smoke no existen en la imagen activa; revisión offline sí.
+SHA-256 del informe cotejado con entrada original. Limpieza de tres cachés locales fue
+rechazada por revisión automática: se conservaron; siguen excluidas de Git y no son código.
+
+Etapas 11–13 / hitos 9–10: siguiente paso, cotejo humano de afirmaciones v2 y protocolo
+v3 fijado antes de inferir, con corpus suficiente, factores y repeticiones definidos dentro
+de cuotas. No cerrar etapa 14 ni calidad pedagógica por este informe. Sistemas universitarios
+fuera de esta etapa. Costo estimado sigue desconocido. Retención/purga opcional de cierre:
+si se implementa, separar reservas antes de eliminar datos; no es un bloqueo para evaluar.
+Rama feature/resource-preparation; diario privado excluido. No tocar secretos, dependencias
+instaladas, datos persistentes, corpus ni capturas de evidencia como limpieza.
+
+## Instrucción vigente del autor — 9 de octubre, ajuste de alcance y control humano
+
+Cero commits automáticos desde esta actualización; avisar al autor cada bloque listo,
+con cambios y mensaje sugerido. No reescribir commits históricos. AGENTS.md y plan
+actualizados, pendientes de commit humano. Ningún commit nuevo por esta revisión.
+Integración con sistemas universitarios fuera de esta etapa inicial; conservar diseño
+de dominio/SSO y entorno mock con identidades ficticias, sin conectar CAS ni datos reales.
+Pruebas proporcionales, enfocadas al cambio; sin repetir suites por documentación.
+La sección 19 del DOCX adjunto ubica el avance en etapas 11–13, hitos 9–10: implementación
+de personalización, trazabilidad e historial/métricas disponible; validación académica y
+costo versionado pendientes. Etapas 14–15/hitos 11–12 aún por realizar. Retención/purga
+es endurecimiento auxiliar; no imponerla como fase obligatoria antes de evaluar si no se
+van a borrar datos. El registro independiente de reservas es previo a cualquier purga.
+Los estados antiguos de integración pendiente de TI son históricos, no bloqueos actuales.
+
+## Antecedente de sesión — 9 de octubre, cierre de instrucciones v3
 
 Bloques cerrados: 819e3b0 auditoría por recurso, 9c77e44 comparación real de tres perfiles
 (sin aprobación académica), f60f5fa propuesta/diagnóstico de retención estrictamente de
@@ -19,7 +65,7 @@ CAS TI, corpus real autorizado, política de datos/roles, rúbrica y benchmark s
 Documento de continuidad y diario privado guardan pendientes; no inventar porcentaje de
 tokens disponibles. Rama feature/resource-preparation, sin remoto, secretos/diario excluidos.
 
-## Estado vigente — 9 de octubre, comparación alta completada
+## Antecedente de sesión — 9 de octubre, comparación alta completada
 
 Auditoría cerrada en 819e3b0; métricas en 31d3e6b. Docker Desktop iniciado, volúmenes
 conservados y Compose saludable; selector mock restaurado a student tras login docente.
@@ -38,7 +84,7 @@ de lectura preparados; todavía no hay purga/TTL institucional aprobado. Antes d
 separar reservas del contenido para no reponer cupo ni ignorar ejecuciones activas.
 Suites de código vigentes: 296 backend y 61 Angular; no repetidas por evidencia documental.
 
-## Estado vigente — 9 de octubre, auditoría por recurso
+## Antecedente de sesión — 9 de octubre, auditoría por recurso
 
 El 8 de octubre se implementó y probó el objeto audit del detalle del historial y un
 desplegable Angular con fechas, proveedor/modelo, uso parcial, latencia, costo nullable,
@@ -57,7 +103,7 @@ un registro independiente de reservas), estimación de costo versionada y benchm
 CAS/corpus institucional/evaluación académica siguen pendientes de parámetros/autorización.
 La sección de métricas del 8 es antecedente, cerrada en 31d3e6b.
 
-## Estado vigente — continuación del 8 de octubre, métricas
+## Antecedente de sesión — continuación del 8 de octubre, métricas
 
 Punto técnico cerrado: GET `/api/v1/metrics` y Angular `/metricas`, navegación docente,
 resumen privado de todo el historial propio mediante una sola agregación SQL. Conteos de

@@ -1,3 +1,9 @@
+> Nota histórica
+
+El ensayo de este documento precede al flujo API/UI. Su script manual fue retirado el 9 de octubre
+porque no utilizaba la cuota persistente. El coordinador interno y sus pruebas se conservan;
+las generaciones nuevas se solicitan por la API/UI autenticada con reserva de cuota.
+
 # Coordinador educativo y prueba RAG real
 
 7 de octubre de 2026. El autor confirmó mediante captura de AI Studio que el proyecto de su clave está en Nivel gratuito y autorizó usarlo. Se mantiene presupuesto USD 0, sin modificar facturación ni activar compras/recargas. Captura y clave no se copian al repositorio.

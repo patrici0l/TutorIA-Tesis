@@ -1,0 +1,255 @@
+{
+  "review_version": "synthetic-review-v1",
+  "semantic_review_status": "pending",
+  "mechanical_checks": {
+    "same_request_except_difficulty": true,
+    "same_profile_except_level_and_identity": true,
+    "same_sources_snapshot": true,
+    "same_provider_model_prompt_policy": true
+  },
+  "mechanically_comparable": true,
+  "generation_start_span_seconds": 35775.622761,
+  "known_total_tokens_sum": 4577,
+  "total_tokens_known_cases": 3,
+  "case_count": 3,
+  "limitations": [
+    "Citas válidas no certifican respaldo semántico ni corrección matemática.",
+    "Una salida por nivel no demuestra mejora del aprendizaje ni controla aleatoriedad.",
+    "No se comprueban aquí parámetros de envío ausentes ni facturación.",
+    "Las dimensiones requieren revisión humana con evidencia; null significa pendiente."
+  ],
+  "cases": [
+    {
+      "id": "c00981b5-8f00-4e76-87fe-c4384ab11d47",
+      "level": "low",
+      "difficulty": "basic",
+      "prompt_sha256": "5dc1a2254a53645a4d62a61d0686c139cc4414aca0e66c0eacd84101be6cba08",
+      "generation_started_at": "2026-10-08T23:12:00.014684+00:00",
+      "usage": {
+        "input_tokens": 1161,
+        "output_tokens": 381,
+        "reasoning_tokens": null,
+        "cached_input_tokens": null,
+        "total_tokens": 1542
+      },
+      "claims": [
+        {
+          "path": "resource.summary",
+          "text": "La derivada de una función representa su tasa de cambio instantánea. En el caso específico de f(x) = x², su derivada es f'(x) = 2x, la cual se obtiene aplicando las reglas de derivación para funciones polinómicas.",
+          "citations": [
+            "S1"
+          ],
+          "source_support": null,
+          "reviewer_note": null
+        },
+        {
+          "path": "resource.steps[0]",
+          "text": "Entender que la derivada busca medir cómo cambia una función en un punto específico. Para f(x) = x², esta tasa de cambio instantánea se denota como f'(x).",
+          "citations": [
+            "S1"
+          ],
+          "source_support": null,
+          "reviewer_note": null
+        },
+        {
+          "path": "resource.steps[1]",
+          "text": "Aplicar la regla general para potencias. Cuando tenemos una función de la forma x^n, su derivada es n * x^(n-1). Al aplicar esto a x², obtenemos 2 * x^(2-1) = 2x.",
+          "citations": [
+            "S1"
+          ],
+          "source_support": null,
+          "reviewer_note": null
+        },
+        {
+          "path": "resource.worked_example",
+          "text": "Ejemplo propuesto: Dada la función f(x) = x², identificamos que la potencia es 2. Siguiendo la regla de la potencia, bajamos el exponente a multiplicar y restamos uno al exponente original: f'(x) = 2 * x^(2-1), lo que resulta en f'(x) = 2x.",
+          "citations": [
+            "S1"
+          ],
+          "source_support": null,
+          "reviewer_note": null
+        }
+      ],
+      "review": {
+        "fidelity_to_sources": {
+          "verdict": null,
+          "evidence": null
+        },
+        "objective_scope": {
+          "verdict": null,
+          "evidence": null
+        },
+        "mathematical_correctness": {
+          "verdict": null,
+          "evidence": null
+        },
+        "difficulty_and_support": {
+          "verdict": null,
+          "evidence": null
+        },
+        "clarity": {
+          "verdict": null,
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "39f18cd0-5529-4e25-a025-81f098d56033",
+      "level": "medium",
+      "difficulty": "intermediate",
+      "prompt_sha256": "d967dc9a0da07eb8349a3ca9423adaaa8f4d2bddfb33fee3d4c5fb4b737e9fc7",
+      "generation_started_at": "2026-10-08T23:13:24.999215+00:00",
+      "usage": {
+        "input_tokens": 1154,
+        "output_tokens": 339,
+        "reasoning_tokens": null,
+        "cached_input_tokens": null,
+        "total_tokens": 1493
+      },
+      "claims": [
+        {
+          "path": "resource.summary",
+          "text": "La derivada representa la tasa de cambio instantánea de una función. Para la función cuadrática f(x) = x², su derivada indica cómo cambia el valor de la función en cualquier punto dado.",
+          "citations": [
+            "S1"
+          ],
+          "source_support": null,
+          "reviewer_note": null
+        },
+        {
+          "path": "resource.steps[0]",
+          "text": "Identifica la función base f(x) = x².",
+          "citations": [
+            "S1"
+          ],
+          "source_support": null,
+          "reviewer_note": null
+        },
+        {
+          "path": "resource.steps[1]",
+          "text": "Aplica la regla de la potencia: al derivar xⁿ, el exponente n baja a multiplicar y se resta uno al exponente original (n-1).",
+          "citations": [
+            "S1"
+          ],
+          "source_support": null,
+          "reviewer_note": null
+        },
+        {
+          "path": "resource.steps[2]",
+          "text": "Para f(x) = x², el exponente 2 baja y el nuevo exponente es 2-1 = 1, resultando en f'(x) = 2x.",
+          "citations": [
+            "S1"
+          ],
+          "source_support": null,
+          "reviewer_note": null
+        },
+        {
+          "path": "resource.worked_example",
+          "text": "Ejemplo propuesto basado en el material: Si tenemos f(x) = x², al aplicar la regla de la potencia obtenemos f'(x) = 2x, lo que representa la tasa de cambio instantánea de dicha función en cualquier punto x.",
+          "citations": [
+            "S1"
+          ],
+          "source_support": null,
+          "reviewer_note": null
+        }
+      ],
+      "review": {
+        "fidelity_to_sources": {
+          "verdict": null,
+          "evidence": null
+        },
+        "objective_scope": {
+          "verdict": null,
+          "evidence": null
+        },
+        "mathematical_correctness": {
+          "verdict": null,
+          "evidence": null
+        },
+        "difficulty_and_support": {
+          "verdict": null,
+          "evidence": null
+        },
+        "clarity": {
+          "verdict": null,
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "32960f76-5d6d-43b7-9e9b-8d552c9970ed",
+      "level": "high",
+      "difficulty": "advanced",
+      "prompt_sha256": "a66539acff2d5c2341812fcaa2c19c5ae03561367a58cacc851141a7f4f78300",
+      "generation_started_at": "2026-10-09T09:08:15.637445+00:00",
+      "usage": {
+        "input_tokens": 1156,
+        "output_tokens": 386,
+        "reasoning_tokens": null,
+        "cached_input_tokens": null,
+        "total_tokens": 1542
+      },
+      "claims": [
+        {
+          "path": "resource.summary",
+          "text": "La derivada f'(x) representa la tasa de cambio instantánea de una función. Para el caso específico de f(x) = x², la derivada resulta en f'(x) = 2x, consolidando la aplicación del comportamiento polinómico bajo esta tasa de variación.",
+          "citations": [
+            "S1"
+          ],
+          "source_support": null,
+          "reviewer_note": null
+        },
+        {
+          "path": "resource.steps[0]",
+          "text": "Identificar la función dada como f(x) = x², la cual modela una tasa de cambio que evoluciona proporcionalmente al valor de x.",
+          "citations": [
+            "S1"
+          ],
+          "source_support": null,
+          "reviewer_note": null
+        },
+        {
+          "path": "resource.steps[1]",
+          "text": "Aplicar la relación establecida para esta función donde la derivada, o tasa de cambio instantánea, se define como f'(x) = 2x.",
+          "citations": [
+            "S1"
+          ],
+          "source_support": null,
+          "reviewer_note": null
+        },
+        {
+          "path": "resource.worked_example",
+          "text": "Ejemplo propuesto: Dada la función polinómica g(x) = 3x² + 2x, determine su derivada utilizando la regla de la potencia aplicada a la tasa de cambio observada en f(x) = x². Solución: Derivando término a término, la derivada de 3x² es 3(2x) = 6x y la derivada de 2x es 2, resultando en g'(x) = 6x + 2.",
+          "citations": [
+            "S1"
+          ],
+          "source_support": null,
+          "reviewer_note": null
+        }
+      ],
+      "review": {
+        "fidelity_to_sources": {
+          "verdict": null,
+          "evidence": null
+        },
+        "objective_scope": {
+          "verdict": null,
+          "evidence": null
+        },
+        "mathematical_correctness": {
+          "verdict": null,
+          "evidence": null
+        },
+        "difficulty_and_support": {
+          "verdict": null,
+          "evidence": null
+        },
+        "clarity": {
+          "verdict": null,
+          "evidence": null
+        }
+      }
+    }
+  ],
+  "input_sha256": "0e35a0d41e26964a161ce9737e47dc677167b1026a84f2ec18de2aabf0f57564"
+}
