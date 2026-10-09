@@ -1,5 +1,24 @@
 # Continuidad de TutorIA-Lucero
 
+## Estado vigente — 9 de octubre, comparación alta completada
+
+Auditoría cerrada en 819e3b0; métricas en 31d3e6b. Docker Desktop iniciado, volúmenes
+conservados y Compose saludable; selector mock restaurado a student tras login docente.
+Alta 32960f76-5d6d-43b7-9e9b-8d552c9970ed generada una vez con configuración existente:
+succeeded, inicio 2026-10-09 09:08:15.637445 UTC, 1156 entrada/386 salida/1542 total,
+18901 ms. Recuperada tras recargar sin inferencia; contador UTC 9 = 1. Proveedor/modelo,
+fuentes y protocolo sin cambios; casi diez horas de separación del bajo/medio. Evidencia
+pruebas/hito_09_comparacion_completa.md/JSON y capturas, sin identidades/credenciales.
+
+Hallazgo pendiente: ejemplo alto g(x)=3x²+2x es más complejo y su derivada correcta, pero
+se aparta del objetivo limitado a x² y usa reglas no explícitas en S1. No afirmar calidad
+pedagógica ni fidelidad semántica certificada. Próximo bloque: prioridad objetiva/fuentes
+en instrucciones de adaptación con versión nueva y pruebas, sin alterar preparaciones
+guardadas ni repetir el experimento. Después retención: propuesta 0012 y diagnóstico SQL
+de lectura preparados; todavía no hay purga/TTL institucional aprobado. Antes de purga,
+separar reservas del contenido para no reponer cupo ni ignorar ejecuciones activas.
+Suites de código vigentes: 296 backend y 61 Angular; no repetidas por evidencia documental.
+
 ## Estado vigente — 9 de octubre, auditoría por recurso
 
 El 8 de octubre se implementó y probó el objeto audit del detalle del historial y un

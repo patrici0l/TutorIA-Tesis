@@ -38,7 +38,7 @@ Actualización del bloque actual: hito 8 sintético implementado con API privada
 | 6 IA | Interfaz generate, fábrica y primer proveedor | Proveedor intercambiable, errores y límites controlados | Interfaz/fábrica/Gemini probados y primera conexión real 3.1 Flash-Lite verificada; generación habilitada localmente bajo Free Tier confirmado, coordinador/cap global persistente implementados |
 | 7 Recursos | Explicación, ejercicio, quiz y feedback | Flujo completo por recurso, fuentes y validación | Preparación API/UI y coordinador interno listos; explicación RAG real verificada, API/UI de generación e historial privado implementados; cuatro recorridos mínimos reales comprobados; validación académica/escenarios extensos pendientes |
 | 8 Perfiles | Recepción por API de rendimiento externo | Validación y persistencia de perfiles sintéticos | Completado técnicamente con API/UI sintética privada; integración externa institucional pendiente |
-| 9 Personalización | Alto, medio, dificultades y dificultad localizada | Diferencias justificadas para mismo tema y distintos perfiles | Implementación API/UI e historial comprobados; salidas reales bajo/medio registradas con limitaciones, alto preparado pendiente de cupo; evaluación pedagógica pendiente |
+| 9 Personalización | Alto, medio, dificultades y dificultad localizada | Diferencias justificadas para mismo tema y distintos perfiles | API/UI/historial y tres salidas reales comprobados; desviación de alcance/fidelidad registrada, evaluación pedagógica pendiente |
 | 10 Trazabilidad | Fuentes, historial y métricas | Reconstrucción de cada generación y sus fallos | Snapshots/estados/historial/perfil conservados; API y UI de métricas privadas con cobertura implementadas; costo versionado/retención/purga pendientes |
 | 11 Benchmark | Directo/RAG, perfiles, OpenAI/Gemini/Claude | Experimentos controlados y resultados reales registrados | Pendiente |
 | 12 Cierre | Endurecimiento, documentación, pruebas y MVP | Evidencia final, manuales e informe | Pendiente |
@@ -68,6 +68,12 @@ La tabla de etapas 0–15 de la sección 19 se conserva íntegra en la fuente. L
 | 28–30 | Evitar desorden y avanzar verticalmente | AGENTS.md y revisiones de cada entrega |
 
 ## Contratos aún pendientes
+
+9 de octubre: alto generado una vez desde su preparación original, 1542 tokens/18901 ms,
+recuperado tras recargar sin IA. Tres recorridos reales disponibles; fuente/entradas fijas
+idénticas por SQL. Ejemplo alto más complejo, pero fuera del alcance explícito del objetivo
+y con reglas no respaldadas expresamente. No cerrar evaluación académica. Ver
+[comparación completada técnicamente](pruebas/hito_09_comparacion_completa.md).
 
 Continuación 8–9 de octubre: detalle del historial añade audit consultable con versión/hash
 de prompt, metadatos RAG, fechas, modelo, consumo/latencia/costo nullable y código seguro.

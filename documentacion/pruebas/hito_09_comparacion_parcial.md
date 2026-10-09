@@ -1,5 +1,9 @@
 # Comparación exploratoria: resultados bajo y medio
 
+Registro histórico del 8 de octubre. El envío alto se completó el 9; consultar la
+[continuación de tres perfiles](hito_09_comparacion_completa.md). Se conserva este registro
+parcial con sus condiciones originales.
+
 8 de octubre de 2026, America/Guayaquil. Protocolo fijado antes de ver las salidas: [comparación sintética](hito_09_protocolo_comparacion.md). Evidencia exportada desde PostgreSQL: [JSON de tres preparaciones](hito_09_comparacion_parcial.json), únicamente entradas/salidas sintéticas y metadata; sin propietario, correo institucional, sesiones ni claves.
 
 ## Control de entradas
