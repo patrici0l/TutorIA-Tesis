@@ -69,6 +69,12 @@ La tabla de etapas 0–15 de la sección 19 se conserva íntegra en la fuente. L
 
 ## Contratos aún pendientes
 
+Continuación 8–9 de octubre: detalle del historial añade audit consultable con versión/hash
+de prompt, metadatos RAG, fechas, modelo, consumo/latencia/costo nullable y código seguro.
+Angular muestra auditoría propia desplegable sin IA; 296 backend/61 Angular aprobadas.
+Ver [contrato](api/auditoria_recursos.md) y [evidencia](pruebas/hito_10_auditoria.md).
+Retención/purga y evaluación/costo permanecen abiertos.
+
 Continuación del 8 de octubre: GET `/metrics` y Angular `/metricas` implementados sin IA,
 con conteos propios de estados/reservas/trazas, sumas conocidas de tokens y latencia con
 cobertura explícita. Costo desconocido conservado; sin calcular factura/tarifas. 295 backend

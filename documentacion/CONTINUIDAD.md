@@ -1,5 +1,24 @@
 # Continuidad de TutorIA-Lucero
 
+## Estado vigente — 9 de octubre, auditoría por recurso
+
+El 8 de octubre se implementó y probó el objeto audit del detalle del historial y un
+desplegable Angular con fechas, proveedor/modelo, uso parcial, latencia, costo nullable,
+código seguro, versión/hash de prompt y metadatos de recuperación. Lectura propia sin
+inferencias ni errores crudos. 296 backend (32.44 s), 61 Angular/16 archivos (10.92 s),
+Ruff limpio, build inicial 306.23 kB/preparación lazy 34.55 kB. Navegador verificó recurso
+intermedio, fallo llm_timeout y alto aún preparado; móvil sin desbordamiento. Evidencia
+pruebas/hito_10_auditoria.md y api/auditoria_recursos.md. El 9 se reanudó el cierre documental;
+Docker estaba detenido y se inició conservando volúmenes. No repetir suites aprobadas si
+solo se añade documentación. Cerrar este punto con commit y registrar en bitácora privada.
+
+Próximo paso: comprobar cuota UTC actual/estado preparado y generar una vez el alto
+32960f76-5d6d-43b7-9e9b-8d552c9970ed; actualizar la comparación con separación temporal.
+Después retención/purga segura (el cupo depende de trazas: no borrarlas sin conservar
+un registro independiente de reservas), estimación de costo versionada y benchmark.
+CAS/corpus institucional/evaluación académica siguen pendientes de parámetros/autorización.
+La sección de métricas del 8 es antecedente, cerrada en 31d3e6b.
+
 ## Estado vigente — continuación del 8 de octubre, métricas
 
 Punto técnico cerrado: GET `/api/v1/metrics` y Angular `/metricas`, navegación docente,

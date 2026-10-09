@@ -5,6 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ResourceViewComponent } from '../../componentes/resource-view/resource-view.component';
 import { ResourceHistoryComponent } from '../../componentes/resource-history/resource-history.component';
+import { ResourceAuditComponent } from '../../componentes/resource-audit/resource-audit.component';
 import { HistoryDetail } from '../../modelos/history.model';
 import { AuthService } from '../../../../nucleo/servicios/auth.service';
 import {
@@ -20,7 +21,13 @@ import { ProfilePage, ProfileSummary } from '../../../perfiles/modelos/profile.m
 
 @Component({
   selector: 'app-resource-preparation',
-  imports: [FormsModule, RouterLink, ResourceViewComponent, ResourceHistoryComponent],
+  imports: [
+    FormsModule,
+    RouterLink,
+    ResourceViewComponent,
+    ResourceHistoryComponent,
+    ResourceAuditComponent,
+  ],
   templateUrl: './preparation.component.html',
   styleUrl: './preparation.component.scss',
 })
@@ -40,6 +47,7 @@ export class PreparationComponent {
   readonly error = signal('');
   readonly result = signal<PreparationResponse | null>(null);
   readonly restoredPending = signal(false);
+  readonly historyDetail = signal<HistoryDetail | null>(null);
   readonly resources: { value: ResourceType; label: string; description: string }[] = [
     {
       value: 'EXPLANATION',
@@ -101,6 +109,7 @@ export class PreparationComponent {
   }
 
   clearResult() {
+    this.historyDetail.set(null);
     this.restoredPending.set(false);
     this.result.set(null);
     this.generation.set(null);
@@ -111,6 +120,7 @@ export class PreparationComponent {
     if (this.loading() || this.generating()) return;
     this.clearResult();
     this.result.set(detail.preparation);
+    this.historyDetail.set(detail);
     this.sent.set(detail.status !== 'prepared');
     this.restoredPending.set(detail.status === 'generating');
     if (detail.status === 'succeeded' || detail.status === 'failed') {
@@ -136,6 +146,7 @@ export class PreparationComponent {
     const prepared = this.result();
     if (!prepared || this.generating() || this.sent() || !this.canPrepare()) return;
     this.sent.set(true);
+    this.historyDetail.set(null);
     this.generating.set(true);
     this.error.set('');
     this.service
@@ -159,6 +170,7 @@ export class PreparationComponent {
   prepare() {
     if (!this.canPrepare() || this.loading() || this.generating()) return;
     this.result.set(null);
+    this.historyDetail.set(null);
     const topic = this.topic.trim(),
       objective = this.objective.trim();
     if (

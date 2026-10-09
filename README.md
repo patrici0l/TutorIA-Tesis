@@ -42,6 +42,10 @@ tokens y latencia registrados, con cobertura conocida/desconocida. No consume Ge
 consulta facturación. Ver [contrato](documentacion/api/metricas.md) y
 [evidencia del hito 10](documentacion/pruebas/hito_10_metricas.md).
 
+Al abrir Mis recursos en `/recursos`, “Ver trazabilidad de este recurso” muestra el modelo,
+versiones, consumo y fechas conservados, incluidos fallos y datos desconocidos, sin IA.
+Ver [contrato de auditoría](documentacion/api/auditoria_recursos.md).
+
 Frontend con Node 24.15 o compatible con Angular 22:
 
 ```powershell

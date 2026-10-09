@@ -54,6 +54,17 @@ class HistoryRepository:
                     ContentGeneration.completed_at,
                     ContentGeneration.resource,
                     ContentGeneration.adaptation_snapshot,
+                    ContentGeneration.generation_started_at,
+                    ContentGeneration.provider,
+                    ContentGeneration.requested_model,
+                    ContentGeneration.model_version,
+                    ContentGeneration.prompt_version,
+                    ContentGeneration.prompt_sha256,
+                    ContentGeneration.usage,
+                    ContentGeneration.latency_ms,
+                    ContentGeneration.estimated_cost,
+                    ContentGeneration.error_code,
+                    ContentGeneration.retrieval_snapshot,
                 ).where(ContentGeneration.id == identifier, ContentGeneration.owner_id == owner)
             )
             .mappings()

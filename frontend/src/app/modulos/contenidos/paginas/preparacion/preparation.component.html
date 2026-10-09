@@ -278,6 +278,11 @@
           <summary>Identificador de la preparación</summary>
           <code>{{ prepared.id }}</code>
         </details>
+        @if (historyDetail(); as detail) {
+          <app-resource-audit [detail]="detail" />
+        } @else {
+          <p>Para consultar la trazabilidad guardada, abre este recurso desde Mis recursos.</p>
+        }
       </div>
       @for (source of prepared.sources; track source.id) {
         <article class="panel source">

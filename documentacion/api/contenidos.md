@@ -22,6 +22,10 @@ Ruta → PreparationService → PrepareContentService/SearchService/EducationalP
 
 ## ContentRequest
 
+Actualización del detalle privado: GET `/content/history/{id}` incluye `audit` con metadatos
+de ejecución y recuperación; ver [auditoría](auditoria_recursos.md). No cambia el resumen
+paginado ni expone los prompts completos.
+
 | Campo | Regla |
 |---|---|
 | topic | Texto no vacío, hasta 160 caracteres |

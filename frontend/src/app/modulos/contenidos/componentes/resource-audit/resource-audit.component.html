@@ -1,0 +1,94 @@
+@if (detail().audit; as audit) {
+  <details class="audit">
+    <summary>Ver trazabilidad de este recurso</summary>
+    <p>Datos conservados al preparar y ejecutar. Consultarlos no consume Gemini.</p>
+    <h3>Recorrido guardado</h3>
+    <dl>
+      <dt>Estado al consultar</dt>
+      <dd>{{ statusLabels[detail().status] }}</dd>
+      <dt>Preparación</dt>
+      <dd>{{ detail().created_at | date: 'dd/MM/yyyy HH:mm:ss' }}</dd>
+      <dt>Reserva de ejecución</dt>
+      <dd>
+        {{
+          audit.generation_started_at
+            ? (audit.generation_started_at | date: 'dd/MM/yyyy HH:mm:ss')
+            : 'Sin fecha registrada'
+        }}
+      </dd>
+      <dt>Finalización</dt>
+      <dd>
+        {{
+          detail().completed_at
+            ? (detail().completed_at | date: 'dd/MM/yyyy HH:mm:ss')
+            : 'Sin finalización registrada'
+        }}
+      </dd>
+      <dt>Proveedor</dt>
+      <dd>{{ audit.provider ?? 'Sin proveedor registrado' }}</dd>
+      <dt>Modelo solicitado</dt>
+      <dd>{{ audit.requested_model ?? 'Sin dato' }}</dd>
+      <dt>Versión devuelta</dt>
+      <dd>{{ audit.model_version ?? 'Sin dato' }}</dd>
+      <dt>Código de fallo</dt>
+      <dd>{{ audit.error_code ?? 'Sin código registrado' }}</dd>
+    </dl>
+    <p class="help">
+      La fecha de reserva no certifica recepción por el proveedor. Algunas trazas antiguas no tienen
+      esa fecha. No se muestran respuestas crudas de error.
+    </p>
+    <h3>Consumo y tiempo</h3>
+    <dl>
+      @for (token of tokens; track token.key) {
+        <dt>{{ token.label }}</dt>
+        <dd>{{ audit.usage?.[token.key] ?? 'Desconocido' }}</dd>
+      }
+      <dt>Latencia del proveedor</dt>
+      <dd>{{ audit.latency_ms === null ? 'Desconocida' : audit.latency_ms + ' ms' }}</dd>
+      <dt>Estimación de costo</dt>
+      <dd>
+        {{
+          audit.estimated_cost === null
+            ? 'Desconocida'
+            : 'Existe un valor guardado; falta política de moneda/tarifa'
+        }}
+      </dd>
+    </dl>
+    <p class="help">
+      Ausente no significa cero. El total de tokens es el reportado; la latencia no incluye todo el
+      flujo y esta vista no verifica facturación.
+    </p>
+    <h3>Preparación reproducible</h3>
+    <dl>
+      <dt>Versión del prompt</dt>
+      <dd>{{ audit.prompt_version }}</dd>
+      <dt>SHA-256 del prompt</dt>
+      <dd>
+        <code>{{ audit.prompt_sha256 }}</code>
+      </dd>
+      <dt>Recuperación</dt>
+      <dd>
+        {{ audit.retrieval.method }} · top-k {{ audit.retrieval.top_k }} · umbral
+        {{ audit.retrieval.min_similarity }}
+      </dd>
+      <dt>Versión de consulta</dt>
+      <dd>{{ audit.retrieval.query_version }}</dd>
+      <dt>Modelo de embeddings</dt>
+      <dd>{{ audit.retrieval.embedding_model }}</dd>
+      <dt>Revisión de embeddings</dt>
+      <dd>
+        <code>{{ audit.retrieval.embedding_revision }}</code>
+      </dd>
+      <dt>Versión del procesamiento vectorial</dt>
+      <dd>{{ audit.retrieval.embedding_version }}</dd>
+      <dt>Fragmentos disponibles al buscar</dt>
+      <dd>{{ audit.retrieval.available_chunks }}</dd>
+      <dt>Tiempo de recuperación</dt>
+      <dd>{{ audit.retrieval.elapsed_ms }} ms</dd>
+    </dl>
+    <p class="help">
+      Las fuentes y la decisión de adaptación se muestran con el recurso. El hash identifica la
+      entrada conservada; no garantiza repetir exactamente una salida del modelo.
+    </p>
+  </details>
+}

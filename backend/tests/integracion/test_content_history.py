@@ -8,7 +8,7 @@ from app.modulos.contenidos.models import ContentGeneration
 from app.modulos.contenidos.repositorios.history_repository import HistoryRepository
 from app.modulos.contenidos.servicios.history_service import HistoryService
 from app.modulos.rag.prompts.educational_prompt import EducationalPromptBuilder
-from tests.fixtures.content_reference import request, retrieval
+from tests.fixtures.content_reference import request, resource, retrieval
 from tests.integracion.test_content_trace_database import pytestmark as trace_marks
 from tests.integracion.test_content_trace_database import trace_database as trace_database
 
@@ -40,7 +40,13 @@ def test_history_private_pagination_snapshots_without_live_documents(trace_datab
     detail = service.detail(identifiers[0], owners[0])
     assert detail.preparation.sources[0].text == retrieval().results[0].text
     assert detail.resource is None and detail.status == "prepared"
-    assert "prompt" not in detail.model_dump_json() and "owner_id" not in detail.model_dump_json()
+    assert '"prompt":' not in detail.model_dump_json()
+    assert '"instructions":' not in detail.model_dump_json()
+    assert "owner_id" not in detail.model_dump_json()
+    assert detail.audit.prompt_sha256 == prepared.prompt_sha256
+    assert detail.audit.prompt_version == prepared.prompt_version
+    assert detail.audit.retrieval.embedding_revision == retrieval().embedding_revision
+    assert detail.audit.usage is None and detail.audit.latency_ms is None
     for identifier in (identifiers[0], uuid4()):
         with pytest.raises(HTTPException) as error:
             service.detail(identifier, owners[1])
@@ -65,3 +71,34 @@ def test_history_failed_and_generating_are_not_retried_or_mutated(trace_database
         detail = service.detail(identifier, owners[0])
         assert detail.status == "failed" and detail.resource is None
         assert detail.completed_at is not None and detail.message
+        assert detail.audit.error_code == "llm_timeout"
+        assert detail.audit.usage is None and detail.audit.estimated_cost is None
+
+
+def test_history_audit_preserves_reported_zero_partial_usage_and_safe_errors(trace_database):
+    db, writer, owners = trace_database
+    prepared = EducationalPromptBuilder().build(request(), retrieval())
+    identifier = writer.prepare(owners[0], prepared)
+    assert writer.finish(
+        identifier,
+        owners[0],
+        status="succeeded",
+        resource=resource(),
+        provider="gemini",
+        requested_model="model-test-v1",
+        model_version="model-test-v1-001",
+        usage={"input_tokens": 0},
+        latency_ms=0,
+    )
+    service = HistoryService(HistoryRepository(db))
+    detail = service.detail(identifier, owners[0])
+    assert detail.audit.provider == "gemini"
+    assert detail.audit.model_version == "model-test-v1-001"
+    assert detail.audit.usage.input_tokens == 0
+    assert detail.audit.usage.total_tokens is None
+    assert detail.audit.latency_ms == 0 and detail.audit.estimated_cost is None
+    assert detail.audit.generation_started_at is None  # Traza inicial, sin reserva persistente.
+    failed = writer.prepare(owners[0], prepared)
+    assert writer.finish(failed, owners[0], status="failed", error_code="private-unknown-error")
+    assert service.detail(failed, owners[0]).audit.error_code is None
+    assert "private-unknown-error" not in service.detail(failed, owners[0]).model_dump_json()
