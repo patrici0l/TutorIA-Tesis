@@ -1,5 +1,24 @@
 # Continuidad de TutorIA-Lucero
 
+## Estado vigente — 9 de octubre, cierre de instrucciones v3
+
+Bloques cerrados: 819e3b0 auditoría por recurso, 9c77e44 comparación real de tres perfiles
+(sin aprobación académica), f60f5fa propuesta/diagnóstico de retención estrictamente de
+lectura. Instrucciones nuevas educational-rag-profile-v3 subordinan dificultad/apoyo al
+objetivo y respaldo explícito de fuentes; política y flujo manual sin cambios, v2 histórico
+intacto. 298 backend aprobadas (45.99 s), Ruff limpio. Frontend conserva 61/16 archivos y
+build de auditoría, sin nuevos cambios Angular. SQL confirma las tres versiones/hashes v2
+conservadas. No nuevas llamadas por este ajuste. Punto técnico cerrado con commit descriptivo; hash registrado en la bitácora privada.
+
+Próximo punto de plan: separar registro persistente de reservas del contenido antes de
+implementar retención/purga; probar backfill, cupo tras eliminación, reinicio y concurrencia.
+No hay TTL ni purga aprobados; no borrar muestras ni volúmenes. Evaluación real v3 necesita
+protocolo propio antes de generar y revisión con corpus suficiente; no repetir/reemplazar
+v2 para ocultar sus limitaciones. UTC 9 registra una reserva en esta sesión (alto original).
+CAS TI, corpus real autorizado, política de datos/roles, rúbrica y benchmark siguen abiertos.
+Documento de continuidad y diario privado guardan pendientes; no inventar porcentaje de
+tokens disponibles. Rama feature/resource-preparation, sin remoto, secretos/diario excluidos.
+
 ## Estado vigente — 9 de octubre, comparación alta completada
 
 Auditoría cerrada en 819e3b0; métricas en 31d3e6b. Docker Desktop iniciado, volúmenes

@@ -1,5 +1,11 @@
 # Personalización de preparaciones sintéticas
 
+Actualización 9 de octubre: nuevas preparaciones adaptadas usan `educational-rag-profile-v3`.
+El objetivo explícito y el respaldo de las fuentes tienen prioridad sobre ampliar complejidad;
+el flujo manual sigue v1 y preparaciones históricas conservan v2. Ver
+[decisión 0013](../decisiones_tecnicas/0013-prioridad-objetivo-adaptado.md). Las referencias v2
+siguientes describen la primera implementación y el experimento conservado.
+
 8 de octubre de 2026. POST `/api/v1/content/prepare` conserva los campos anteriores y admite `profile_id` UUID opcional. Sin identificador, el flujo manual conserva `educational-rag-v1`. No acepta payload de perfil ni reglas desde Angular. El servidor busca el perfil propio, lo valida y aplica `profile-adaptation-v1` antes de preparar fuentes/prompt.
 
 Ejemplo: solicitud de explicación de Derivadas, dificultad advanced y perfil sintético de dominio low → respuesta prepared con dificultad basic y objeto adaptation. El recurso sigue siendo una explicación: las sugerencias de tipo son revisables por el docente, no cambian la selección automáticamente.

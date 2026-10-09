@@ -69,6 +69,11 @@ La tabla de etapas 0–15 de la sección 19 se conserva íntegra en la fuente. L
 
 ## Contratos aún pendientes
 
+9 de octubre: instrucciones de adaptación v3 refuerzan alcance del objetivo/fuentes, sin
+alterar snapshots v2 del experimento. 298 backend aprobadas; pruebas de instrucciones no
+certifican fidelidad del proveedor. Ver [verificación](pruebas/hito_09_alcance_v3.md).
+Antes de retención, separar reservas del contenido para mantener cupo al purgar.
+
 9 de octubre: alto generado una vez desde su preparación original, 1542 tokens/18901 ms,
 recuperado tras recargar sin IA. Tres recorridos reales disponibles; fuente/entradas fijas
 idénticas por SQL. Ejemplo alto más complejo, pero fuera del alcance explícito del objetivo
