@@ -56,3 +56,7 @@ incompletas, con pruebas simuladas y sin guardar texto crudo. Después definir u
 nuevo para investigar el límite de salida, antes de consumir más inferencias. No cambiar
 el protocolo ni las salidas v4 ya ejecutadas. Revisión humana y benchmark siguen pendientes.
 Commit humano sugerido: `test: conserva resultados completos del piloto v4`.
+
+Continuación del 10 de octubre: [paquete de revisión y cotejo de seis bloques](hito_09_revision_v4.md)
+preparado sin inferencias. Conserva los tres estados originales y decisiones humanas
+pendientes; documenta integridad y falta de cupo para el protocolo separado salida1024.

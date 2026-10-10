@@ -1,0 +1,27 @@
+{
+  "checked_at": "2026-10-10 15:42:31.371248+00:00",
+  "initial_comparison_explanation": "Raw DB snapshot has internal text_sha256 absent from API projection. No shared field differed.",
+  "checks": [
+    {
+      "level": "low",
+      "api_projection_matches_preflight": true,
+      "all_raw_sources_match_baseline_v4": true,
+      "internal_text_hashes_valid": true
+    },
+    {
+      "level": "medium",
+      "api_projection_matches_preflight": true,
+      "all_raw_sources_match_baseline_v4": true,
+      "internal_text_hashes_valid": true
+    },
+    {
+      "level": "high",
+      "api_projection_matches_preflight": true,
+      "all_raw_sources_match_baseline_v4": true,
+      "internal_text_hashes_valid": true
+    }
+  ],
+  "source_integrity_passed": true,
+  "configuration_modified": false,
+  "generation_requested": false
+}

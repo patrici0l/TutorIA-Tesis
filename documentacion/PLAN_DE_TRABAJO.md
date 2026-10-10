@@ -4,6 +4,18 @@ Fuente rectora: Plan_Implementacion_TutorIA-Lucero.docx, entregado por el autor 
 
 ## Bloque actual
 
+10 de octubre, revisión sin inferencias: [paquete v4 y cotejo técnico](pruebas/hito_09_revision_v4.md)
+conservan dos fallos y un éxito, seis bloques citados y decisiones humanas pendientes.
+Verificados los tres IDs salida1024 sin reserva y su integridad respecto al preflight/v4.
+A las 15:42 UTC hay 3/5 reservas y cero activas: lote pendiente por cupo insuficiente.
+No se modificó configuración ni se repitieron generaciones. Próximo paso sigue siendo
+salida1024 con nueva comprobación y revisión humana; no se cierra hito 9 ni benchmark.
+
+Avance auxiliar del 10 de octubre mientras falta cupo para salida1024: [guía docente
+del MVP](manuales/guia_docente_mvp.md) redactada contra la interfaz actual y texto de
+indexación corregido. Compilación Angular aprobada. Borrador operativo, sin cerrar hito
+12 ni sustituir la evaluación pendiente. Sin nuevas inferencias; lote preparado intacto.
+
 10 de octubre, avance posterior: [protocolo de salida 1024](pruebas/hito_09_protocolo_salida1024.md)
 fijado y tres preparaciones reales guardadas, con perfiles/fuentes/hashes iguales a v4.
 No se ejecutó IA: hay dos cupos disponibles y el lote exige tres. Configuración activa

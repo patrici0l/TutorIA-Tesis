@@ -1,5 +1,45 @@
 # Continuidad de TutorIA-Lucero
 
+## Estado vigente — 10 de octubre, revisión v4 y disponibilidad salida1024
+
+Continuación autorizada por el autor. Cuota comprobada a 15:42 UTC (10:42 Guayaquil):
+3/5 reservas y cero activas; no iniciar lote de tres con solo dos cupos. No se hicieron
+inferencias ni cambios de configuración. Selector activo observado teacher; preservado.
+Salida activa 512, no 1024. Nueva renovación UTC a las 19:00 locales del 10; volver a
+comprobar al retomar, sin ejecución automática ni garantías de cupo futuro.
+
+Tres IDs salida1024 siguen prepared sin reserva. Hash del manifiesto igual al preflight;
+prompts/adaptación iguales, documentos disponibles. Primer cotejo DB/API de fuentes false
+por campo interno text_sha256; evidencia inicial conservada. Cotejo posterior confirma
+proyección pública igual, snapshots crudos iguales a v4 y hashes de texto correctos.
+Evidencia: pruebas/hito_09_salida1024_disponibilidad_20261010.json e integridad_20261010.json.
+
+Paquete público pruebas/hito_09_revision_v4.json y explicación .md: tres casos originales,
+dos fallos sin contenido/consumo reconstruido, un éxito y seis bloques citados cotejados.
+Contratos HistoryDetail y ResourceValidationService revalidados; hashes de entrada
+conservados. Observaciones Codex separadas de decisiones humanas null. Diferenciación
+entre tres niveles no evaluable. Sin suites repetidas por documentación ni cierre académico.
+
+Rama feature/resource-preparation. Bloque listo para revisión/commit humano:
+`docs: prepara revision del piloto v4 y verifica integridad de salida1024`.
+Sin commits automáticos. Conservar los cambios previos de README/guía docente/HTML,
+que corresponden a otro bloque. Próximo: ejecutar únicamente los IDs preparados según
+protocolo salida1024 con cupo y configuración verificados, luego cotejar resultados.
+
+## Avance paralelo — 10 de octubre, guía docente
+
+Commit humano 4d37560 de las preparaciones verificado. Cupo UTC 10 consultado a 11:10:
+3/5 reservas, cero activas; lote salida1024 aún sin enviar. No cambios de configuración.
+Guía práctica creada en manuales/guia_docente_mvp.md, enlazada desde README, cotejada
+con rutas/plantillas y contratos actuales. Describe roles, ingesta, índice, perfiles,
+preparación/generación, historial/métricas y fallos. Es borrador operativo: validación
+de usabilidad y cierre de manuales pendientes, sin saltar la evaluación de etapas 11–13.
+Corregido texto obsoleto de Documentos sobre disponibilidad de búsqueda. Build Angular
+de producción aprobado, diff sin errores; sin nuevas pruebas de lógica ni llamadas IA.
+Commit humano sugerido: `docs: agrega guia docente del MVP y aclara indexacion`.
+Próximo paso principal sigue siendo ejecutar lote salida1024 con cupo suficiente y
+verificación de configuración previa, usando sus IDs ya guardados.
+
 ## Estado actual — 10 de octubre, comparación de capacidad preparada
 
 Commit humano 1610020 verificado para metadatos seguros. Nuevo protocolo fijado:
@@ -298,3 +338,15 @@ Leer AGENTS.md, README.md, PLAN_DE_TRABAJO.md, decisiones 0002/0004/0005/0006/00
 7 de octubre, sesión nocturna: Docker Desktop se inició tras encontrar el motor detenido; datos/modelos conservados. Sesión docente ficticia renovada, selector de nuevos logins restaurado a student. 50 pruebas Angular aprobadas en 13 archivos, incluidas presentación de ejercicio/quiz/feedback; backend conserva 247 aprobadas (sin cambios backend posteriores).
 
 Ejercicio real 34cbaee3-9dbe-40f6-a41b-65e3568d606b: succeeded, 1115 input/324 output/1439 total, 2088 ms, S1. Quiz real de una pregunta 42289db1-b80a-4290-b7bd-b26d1b03b845: succeeded, 1168 input/222 output/1390 total, 7516 ms, S1, cuatro opciones y respuesta desplegable comprobadas. Feedback 77754fbb-be92-4495-bdae-781db4a6b964 también succeeded: 1080 input/250 output/1330 total, 14146 ms, S1. Tres llamadas nuevas completadas, cupo UTC del 8 de octubre (fecha local 7), anterior llamada UI en día UTC previo. Los tres se recuperaron desde historial sin inferencia. Evidencia pruebas/hito_07_cuatro_recursos.md y recursos_reales.json. Pruebas externas de estos contratos cerradas: no repetirlas automáticamente. No reenvío ni gasto verificado.
+
+## Consulta operativa — 10 de octubre, estado y acceso local
+
+Revisión de solo lectura del código, plan y configuración no secreta activa. API /health:
+api/database/pgvector ok; PostgreSQL accesible, ocho tablas y migración 0010_cost_basis.
+Frontend inicialmente Exited (1): nginx no resolvió backend durante el arranque.
+Recuperado con docker compose up -d --wait frontend; backend/frontend/postgres healthy,
+migrate Exited (0), /login HTTP 200. Sin cambios de código/configuración, sin inferencias
+ni borrado de datos. No se repitieron suites: comprobación operativa de salud y acceso.
+Mock activo student; Gemini habilitado. La validación pedagógica, lote salida1024 y
+benchmark conservan sus pendientes y protocolos. Rama feature/resource-preparation.
+Registro documental pendiente de revisión/commit humano; no se ejecutó git commit.
