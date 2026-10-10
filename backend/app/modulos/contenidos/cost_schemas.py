@@ -3,7 +3,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.modulos.proveedores_ia.schemas import GenerationResult
+from app.modulos.proveedores_ia.schemas import FailureMetadata, GenerationResult
 
 
 class CostBasis(BaseModel):
@@ -18,7 +18,7 @@ class CostBasis(BaseModel):
     input_per_million: Literal["0"] = "0"
     output_per_million: Literal["0"] = "0"
 
-    def estimate(self, result: GenerationResult) -> Decimal | None:
+    def estimate(self, result: GenerationResult | FailureMetadata) -> Decimal | None:
         # No inferir consumo desde el total ni completar componentes ausentes con cero.
         if (
             result.provider != self.provider

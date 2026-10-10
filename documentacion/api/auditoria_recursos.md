@@ -43,3 +43,8 @@ bajo LLM_FREE_TIER_CONFIRMED: USD, 0 por millón de entrada/salida, procedencia
 `operator_confirmed_free_tier`. No comprueba el plan real de Google ni la factura.
 Uso parcial, fallo sin consumo e históricos sin base permanecen desconocidos; sin backfill.
 Ver [reglas y pruebas](../pruebas/hito_10_costo_condicionado.md).
+
+Desde la corrección del 10 de octubre, fallos llm_incomplete por MAX_TOKENS pueden tener
+uso y latencia conocidos. Contadores ausentes/inválidos son null y el recurso sigue null.
+El costo mantiene su condición de base gratuita y entrada/salida conocidas; no se altera
+el historial anterior. No se expone texto truncado ni respuesta cruda del proveedor.

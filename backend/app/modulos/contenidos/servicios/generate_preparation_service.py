@@ -57,7 +57,7 @@ class GeneratePreparationService:
         try:
             result = provider.generate(request)
         except ProviderError as error:
-            self.trace.fail(identifier, owner, error.code)
+            self.trace.fail(identifier, owner, error.code, metadata=error.metadata)
             return GenerationResponse(
                 id=identifier,
                 status="failed",

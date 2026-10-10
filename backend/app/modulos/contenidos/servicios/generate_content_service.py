@@ -40,7 +40,7 @@ class GenerateContentService:
         try:
             result = self.provider.generate(prepared.generation_request)
         except ProviderError as error:
-            self.trace.fail(identifier, owner, error.code)
+            self.trace.fail(identifier, owner, error.code, metadata=error.metadata)
             return GenerationOutcome(identifier, error_code=error.code)
         except Exception:
             self.trace.fail(identifier, owner, "generation_interrupted")

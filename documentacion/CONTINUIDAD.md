@@ -1,5 +1,19 @@
 # Continuidad de TutorIA-Lucero
 
+## Estado actual — 10 de octubre, metadatos de truncamiento
+
+Commit humano d68c12d del piloto v4 verificado. Corrección posterior implementada:
+MAX_TOKENS conserva solo uso válido y latencia en FailureMetadata; ambos coordinadores
+lo propagan y la traza comprueba propietario/estado/modelo antes de persistir. Recurso
+sigue null y estado failed; cero condicionado solo con entrada/salida conocidas y base.
+Históricos low/high v4 permanecen desconocidos, sin reconstrucción ni reintentos.
+80 pruebas enfocadas Docker/PostgreSQL aprobadas (2.79 s), Ruff/diff correctos; sin llamadas
+Gemini ni cambios de límite, frontend o esquema. Sesión anterior de pruebas interrumpida,
+resultado confirmado en la reanudación. Evidencia: pruebas/hito_10_metadatos_truncamiento.md.
+Pendiente de commit humano: `fix: conserva metadatos seguros ante truncamiento de Gemini`.
+Próximo: fijar protocolo nuevo para estudiar límite de salida; no repetir el piloto v4.
+Etapas 11–13, validación humana y benchmark todavía pendientes.
+
 ## Estado actual — 9 de octubre, piloto v4 ejecutado
 
 Commit humano adabe88 verificado; protocolo anterior incorporado. Piloto ejecutado a

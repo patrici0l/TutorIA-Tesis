@@ -127,3 +127,50 @@ def test_cost_basis_is_durable_before_send_and_survives_failure(claim_database, 
     detail = HistoryService(HistoryRepository(db)).detail(identifier, owners[0])
     assert detail.audit.cost_basis == basis
     assert detail.audit.estimated_cost == (None if outcome == "timeout" else 0)
+
+
+@pytest.mark.parametrize("output_tokens", [10, None])
+def test_incomplete_provider_metadata_reaches_private_history(
+    claim_database, monkeypatch, output_tokens
+):
+    from types import SimpleNamespace
+    from unittest.mock import Mock
+
+    from app.modulos.contenidos.servicios.generate_preparation_service import (
+        GeneratePreparationService,
+    )
+    from app.modulos.proveedores_ia.errors import ProviderError
+    from app.modulos.proveedores_ia.schemas import FailureMetadata, TokenUsage
+
+    db, repository, owners = claim_database
+    identifier = preparation(db, repository, owners[0])
+    metadata = FailureMetadata(
+        provider="gemini",
+        requested_model=TARGET.requested_model,
+        usage=TokenUsage(input_tokens=20, output_tokens=output_tokens),
+        latency_ms=7,
+    )
+    provider = Mock()
+    provider.generate.side_effect = ProviderError("llm_incomplete", metadata=metadata)
+    monkeypatch.setattr(
+        "app.modulos.contenidos.servicios.generate_preparation_service.create_provider",
+        lambda _: provider,
+    )
+    settings = SimpleNamespace(
+        llm_enabled=True,
+        llm_free_tier_confirmed=True,
+        llm_default_provider="gemini",
+        llm_model=TARGET.requested_model,
+        llm_daily_request_limit=5,
+    )
+    result = GeneratePreparationService(
+        GenerationClaimRepository(db),
+        GenerationTraceService(repository, ResourceValidationService()),
+        settings,
+    ).generate(identifier, owners[0])
+    assert result.status == "failed" and result.resource is None
+    provider.generate.assert_called_once()
+    detail = HistoryService(HistoryRepository(db)).detail(identifier, owners[0])
+    assert detail.audit.usage == metadata.usage and detail.audit.latency_ms == 7
+    assert detail.audit.error_code == "llm_incomplete"
+    assert detail.audit.estimated_cost == (None if output_tokens is None else 0)

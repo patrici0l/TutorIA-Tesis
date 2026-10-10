@@ -7,7 +7,7 @@ from app.modulos.contenidos.repositorios.generation_repository import Generation
 from app.modulos.contenidos.schemas import ContentRequest
 from app.modulos.contenidos.servicios.resource_validation_service import ResourceValidationService
 from app.modulos.proveedores_ia.errors import ErrorCode
-from app.modulos.proveedores_ia.schemas import GenerationResult
+from app.modulos.proveedores_ia.schemas import FailureMetadata, GenerationResult
 
 CONTENT_ERRORS = {
     "content_target_mismatch",
@@ -72,8 +72,26 @@ class GenerationTraceService:
             raise ContentError("content_trace_unavailable")
         return resource
 
-    def fail(self, identifier: UUID, owner: UUID, code: str):
+    def fail(
+        self, identifier: UUID, owner: UUID, code: str, metadata: FailureMetadata | None = None
+    ):
         if code not in CONTENT_ERRORS | set(get_args(ErrorCode)):
             raise ContentError("content_invalid_error_code")
-        if not self.repository.finish(identifier, owner, status="failed", error_code=code):
+        values = {}
+        if metadata is not None:
+            snapshot = self.repository.owned_snapshot(identifier, owner)
+            if snapshot is None or snapshot[2] not in {"prepared", "generating"}:
+                raise ContentError("content_trace_unavailable")
+            if snapshot[3:5] != (metadata.provider, metadata.requested_model):
+                self.fail(identifier, owner, "content_target_mismatch")
+                raise ContentError("content_target_mismatch")
+            basis = CostBasis.model_validate(snapshot[5]) if snapshot[5] else None
+            values = dict(
+                usage=metadata.usage.model_dump(),
+                latency_ms=metadata.latency_ms,
+                estimated_cost=basis.estimate(metadata) if basis else None,
+            )
+        if not self.repository.finish(
+            identifier, owner, status="failed", error_code=code, **values
+        ):
             raise ContentError("content_trace_unavailable")

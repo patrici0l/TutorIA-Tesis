@@ -15,6 +15,48 @@ FAKE_KEY = "fictitious-key-for-unit-tests-only"
 REQUEST = GenerationRequest(instructions="Instrucción sintética.", prompt="Consulta sintética.")
 
 
+@pytest.mark.parametrize(
+    "raw,expected",
+    [
+        ({"promptTokenCount": 20, "candidatesTokenCount": 0}, (20, 0)),
+        ({"promptTokenCount": True, "candidatesTokenCount": -1}, (None, None)),
+        ({"promptTokenCount": "20", "candidatesTokenCount": 10}, (None, 10)),
+        (None, (None, None)),
+    ],
+)
+def test_incomplete_preserves_only_safe_measurements(raw, expected):
+    calls = []
+
+    def respond(request):
+        calls.append(request)
+        return httpx.Response(
+            200,
+            json=answer(
+                candidates=[
+                    {
+                        "finishReason": "MAX_TOKENS",
+                        "content": {"parts": [{"text": "PRIVATE_PARTIAL_RESPONSE"}]},
+                    }
+                ],
+                usageMetadata=raw,
+            ),
+        )
+
+    with pytest.raises(ProviderError) as caught:
+        provider(respond).generate(REQUEST)
+    error = caught.value
+    assert str(error) == "llm_incomplete" and len(calls) == 1
+    assert (error.metadata.usage.input_tokens, error.metadata.usage.output_tokens) == expected
+    assert error.metadata.latency_ms >= 0
+    assert "PRIVATE_PARTIAL_RESPONSE" not in error.metadata.model_dump_json()
+    assert set(error.metadata.model_dump()) == {
+        "provider",
+        "requested_model",
+        "usage",
+        "latency_ms",
+    }
+
+
 def configuration(**changes):
     values = dict(
         llm_enabled=True,

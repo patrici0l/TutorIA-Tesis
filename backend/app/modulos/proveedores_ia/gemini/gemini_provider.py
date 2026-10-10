@@ -7,7 +7,12 @@ from pydantic import ValidationError
 from app.configuracion.settings import Settings
 from app.modulos.proveedores_ia.errors import ProviderError
 from app.modulos.proveedores_ia.interfaces.llm_provider import LLMProvider
-from app.modulos.proveedores_ia.schemas import GenerationRequest, GenerationResult, TokenUsage
+from app.modulos.proveedores_ia.schemas import (
+    FailureMetadata,
+    GenerationRequest,
+    GenerationResult,
+    TokenUsage,
+)
 from app.modulos.proveedores_ia.servicios.request_limiter import LLM_LIMITER, RequestLimiter
 
 
@@ -112,7 +117,9 @@ class GeminiProvider(LLMProvider):
                 raise ProviderError("llm_blocked")
             reason = candidate.get("finishReason")
             if reason == "MAX_TOKENS":
-                raise ProviderError("llm_incomplete")
+                raise ProviderError(
+                    "llm_incomplete", metadata=self._failure_metadata(payload, latency_ms)
+                )
             if reason in {"SAFETY", "RECITATION", "BLOCKLIST", "PROHIBITED_CONTENT", "SPII"}:
                 raise ProviderError("llm_blocked")
             if reason != "STOP":
@@ -151,3 +158,25 @@ class GeminiProvider(LLMProvider):
             )
         except (KeyError, TypeError, AttributeError, ValueError, ValidationError):
             raise ProviderError("llm_invalid_response") from None
+
+    def _failure_metadata(self, payload: dict, latency_ms: int) -> FailureMetadata:
+        raw = payload.get("usageMetadata")
+        raw = raw if isinstance(raw, dict) else {}
+        fields = {
+            "input_tokens": "promptTokenCount",
+            "output_tokens": "candidatesTokenCount",
+            "reasoning_tokens": "thoughtsTokenCount",
+            "cached_input_tokens": "cachedContentTokenCount",
+            "total_tokens": "totalTokenCount",
+        }
+        # Campos inválidos permanecen desconocidos, sin descartar las otras mediciones.
+        values = {
+            field: value if type(value := raw.get(key)) is int and value >= 0 else None
+            for field, key in fields.items()
+        }
+        return FailureMetadata(
+            provider="gemini",
+            requested_model=self.settings.llm_model,
+            usage=TokenUsage(**values),
+            latency_ms=latency_ms,
+        )

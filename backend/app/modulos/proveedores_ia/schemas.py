@@ -50,6 +50,13 @@ class TokenUsage(BaseModel):
     total_tokens: int | None = Field(default=None, ge=0, strict=True)
 
 
+class FailureMetadata(GenerationTarget):
+    """Solo mediciones; nunca texto parcial, respuestas crudas ni identificadores externos."""
+
+    usage: TokenUsage
+    latency_ms: int = Field(ge=0)
+
+
 class GenerationResult(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
     provider: Literal["gemini", "openai", "claude"]

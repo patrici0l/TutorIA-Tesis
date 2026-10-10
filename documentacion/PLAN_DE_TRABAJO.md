@@ -4,6 +4,11 @@ Fuente rectora: Plan_Implementacion_TutorIA-Lucero.docx, entregado por el autor 
 
 ## Bloque actual
 
+10 de octubre: corregida conservación de uso/latencia ante MAX_TOKENS, sin publicar
+contenido truncado ni reconstruir históricos. 80 pruebas enfocadas aprobadas, sin IA real.
+Ver [evidencia](pruebas/hito_10_metadatos_truncamiento.md). Próximo: protocolo nuevo para
+investigar límite de salida. No se cierra la evaluación de personalización por este arreglo.
+
 Piloto v4 ejecutado el 9 de octubre 20:43–20:45 Guayaquil, ya en UTC 10: un éxito
 (medium) y dos fallos MAX_TOKENS, sin reintentos. Fuentes/versiones comprobadas; no
 demuestra diferenciación entre niveles. Costo condicionado verificado en traza real.
