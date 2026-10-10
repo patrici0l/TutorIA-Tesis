@@ -1,5 +1,21 @@
 # Continuidad de TutorIA-Lucero
 
+## Estado actual — 9 de octubre, piloto v4 ejecutado
+
+Commit humano adabe88 verificado; protocolo anterior incorporado. Piloto ejecutado a
+20:43–20:45 Guayaquil (UTC 10), tras renovar cupo: tres preparaciones con fuentes iguales
+a v3 y versiones verificadas. Low/high failed llm_incomplete (MAX_TOKENS); medium succeeded,
+2029/447/2476 tokens, 19667 ms, costo condicionado 0 USD. Fallos con uso/costo desconocidos.
+No reintentos ni cambios de límites. Base de costo persistida en los tres casos.
+Evidencia en pruebas/hito_09_piloto_v4.md y cuatro JSON (preparaciones y tres detalles).
+No permite comparar tres niveles ni cerrar validación pedagógica. Observación técnica
+del medio separada de revisión humana pendiente. No correr comparación de tres éxitos.
+Selector student restaurado, sesiones de prueba cerradas, salud correcta; 3/5 reservas
+UTC 10, cero activas. Próximo: preservar metadatos seguros en errores MAX_TOKENS mediante
+pruebas simuladas; definir después protocolo nuevo para investigar límite de salida.
+No gastar los dos cupos restantes en reintentos del piloto cerrado.
+Commit humano pendiente: `test: conserva resultados completos del piloto v4`.
+
 ## Reanudación — 9 de octubre, protocolo prospectivo v4
 
 Trabajo retomado en feature/resource-preparation. Commit humano 6082e6f verificado:

@@ -4,6 +4,12 @@ Fuente rectora: Plan_Implementacion_TutorIA-Lucero.docx, entregado por el autor 
 
 ## Bloque actual
 
+Piloto v4 ejecutado el 9 de octubre 20:43–20:45 Guayaquil, ya en UTC 10: un éxito
+(medium) y dos fallos MAX_TOKENS, sin reintentos. Fuentes/versiones comprobadas; no
+demuestra diferenciación entre niveles. Costo condicionado verificado en traza real.
+Ver [resultado completo](pruebas/hito_09_piloto_v4.md). Siguiente: metadatos de uso ante
+truncamiento con simulaciones y nuevo protocolo previo a más IA. Etapas 11–13 continúan.
+
 Reanudación del 9 de octubre: commit humano 6082e6f confirmado para los bloques anteriores.
 Protocolo [v4](pruebas/hito_09_protocolo_v4.md) fijado sin inferencias; revisión offline v3
 preparada para el autor. Cuatro reservas de cinco a las 21:09 UTC: lote de tres pendiente
