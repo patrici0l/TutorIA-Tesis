@@ -1,5 +1,21 @@
 # Continuidad de TutorIA-Lucero
 
+## Estado actual — 10 de octubre, comparación de capacidad preparada
+
+Commit humano 1610020 verificado para metadatos seguros. Nuevo protocolo fijado:
+pruebas/hito_09_protocolo_salida1024.md y .json. SHA manifiesto
+48be7fc1d89f61c4946043f545d91bc1623df34d856c2841edf3ff569857aae6.
+Tres registros nuevos prepared por API, reutilizando perfiles v4. Fuentes/adaptación y SHA
+del prompt exactamente iguales a sus respectivos v4, comprobados. Preflight en
+pruebas/hito_09_salida1024_preparaciones.json; todavía SIN inferencias.
+Solo se propone cambiar salida 512→1024 al ejecutar; configuración activa conservada
+en 512, no confundir preparación con configuración de envío validada. Cupo consultado:
+3/5 UTC 10 y cero activas, insuficiente para tres. No automatización ni aumento de cuota.
+Próximo: con tres cupos disponibles, verificar configuración real temporal 1024, preservar
+evidencia antes de enviar y ejecutar únicamente los IDs guardados sin reserva previa.
+Restaurar 512 y mock student al cerrar. No repetir v4 ni elevar límites después de fallos.
+Bloque listo para commit humano: `test: prepara comparacion de capacidad de salida`.
+
 ## Estado actual — 10 de octubre, metadatos de truncamiento
 
 Commit humano d68c12d del piloto v4 verificado. Corrección posterior implementada:

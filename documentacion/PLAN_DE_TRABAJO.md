@@ -4,6 +4,12 @@ Fuente rectora: Plan_Implementacion_TutorIA-Lucero.docx, entregado por el autor 
 
 ## Bloque actual
 
+10 de octubre, avance posterior: [protocolo de salida 1024](pruebas/hito_09_protocolo_salida1024.md)
+fijado y tres preparaciones reales guardadas, con perfiles/fuentes/hashes iguales a v4.
+No se ejecutó IA: hay dos cupos disponibles y el lote exige tres. Configuración activa
+sigue 512; la verificación de envío queda pendiente. Metadatos corregidos en commit
+humano 1610020. Revisión pedagógica y benchmark continúan pendientes.
+
 10 de octubre: corregida conservación de uso/latencia ante MAX_TOKENS, sin publicar
 contenido truncado ni reconstruir históricos. 80 pruebas enfocadas aprobadas, sin IA real.
 Ver [evidencia](pruebas/hito_10_metadatos_truncamiento.md). Próximo: protocolo nuevo para

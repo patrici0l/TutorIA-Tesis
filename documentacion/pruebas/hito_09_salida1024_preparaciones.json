@@ -1,0 +1,621 @@
+{
+  "protocol_sha256": "48be7fc1d89f61c4946043f545d91bc1623df34d856c2841edf3ff569857aae6",
+  "recorded_before_generation_at": "2026-10-10T10:38:08.732460+00:00",
+  "execution_configuration_verified": false,
+  "preparations": [
+    {
+      "level": "low",
+      "profile": {
+        "student_id": "SYN-V4-LOW-001",
+        "topic": "Derivadas",
+        "performance": 42.0,
+        "attempts": 4,
+        "frequent_errors": [
+          "cociente_incremental"
+        ],
+        "mastery_level": "low",
+        "recommended_support": "reinforcement",
+        "resolution_time_seconds": 120.0,
+        "progress_trend": "improving",
+        "data_kind": "synthetic",
+        "id": "9c213464-32a7-48d2-81cb-f87cf231c0e3",
+        "created_at": "2026-10-10T01:42:57.058382Z",
+        "schema_version": "performance-profile-v1"
+      },
+      "preparation": {
+        "id": "b989369e-0b18-487c-9ac3-c39fe4f8ed2d",
+        "status": "prepared",
+        "topic": "Derivadas",
+        "learning_objective": "Explicar la derivada de f(x)=x² como tasa de cambio instantánea, justificando f'(x)=2x con la fuente; usar únicamente esta función, sin añadir otras funciones ni ejercicios.",
+        "resource_type": "EXPLANATION",
+        "difficulty": "basic",
+        "question_count": null,
+        "sources": [
+          {
+            "id": "25136e79-2641-45c7-938b-a295cc3a54e5",
+            "position": 0,
+            "source_kind": "paragraph",
+            "source_index": 1,
+            "char_start": 0,
+            "char_end": 318,
+            "text": "TutorIA-Lucero: material sintético de prueba\nTema: derivada de una función polinómica\nObjetivo: reconocer la tasa de cambio instantánea.\nEjemplo: si f(x) = x^2, su derivada es f'(x) = 2x.\nEjercicio: determina la derivada de g(x) = 3x^2 + 2x.\nEste texto se creó exclusivamente para comprobar carga y gestión del corpus.",
+            "document_id": "84ed0928-238d-46ec-9de2-8f704249ddc3",
+            "document_title": "Derivadas · Material sintético de prueba",
+            "filename": "derivadas_sinteticas.txt",
+            "document_sha256": "8a281568815d0381a75a66fe4004806aa424a520cb8f6b145eeda104e5f08789",
+            "source_sha256": "6a88d828d463dd478ed9927fc3c2aedd190b91ebd0387e88156d70f08d3f34c1",
+            "processing_version": "text-v1",
+            "similarity": 0.9101924896240234,
+            "citation_id": "S1"
+          },
+          {
+            "id": "7dfe36e9-1a1c-4bd3-87e0-904b2fb839be",
+            "position": 0,
+            "source_kind": "paragraph",
+            "source_index": 1,
+            "char_start": 0,
+            "char_end": 882,
+            "text": "Material sintético TutorIA para revisión de personalización v3.\nTema: Derivadas. Única función estudiada: f(x)=x², con x real.\nLa derivada f'(x) mide la tasa de cambio instantánea de f respecto de x.\nPara h distinto de cero, el cociente de cambio es [f(x+h)-f(x)]/h.\nComo (x+h)²=x²+2xh+h², el cociente es (2xh+h²)/h=2x+h.\nAl tomar el límite cuando h tiende a cero, se obtiene f'(x)=2x.\nNo se sustituye h=0 antes de simplificar: la división por cero no está definida.\nEn un punto x=a, la pendiente de la tangente es f'(a)=2a.\nLa pendiente es negativa si a<0, cero si a=0 y positiva si a>0.\nUna pendiente cero en a=0 no significa que f sea constante en todo su dominio.\nTodos estos enunciados corresponden a f(x)=x². No se estudian otras funciones ni la regla general de la potencia.\nTexto creado para una prueba técnica; no constituye material institucional ni validación pedagógica.",
+            "document_id": "5b0e79d5-5989-453a-b1f3-a3946873f19a",
+            "document_title": "Derivada de x²: fundamentos sintéticos para piloto v3",
+            "filename": "derivada_x2_v3.txt",
+            "document_sha256": "37a34e9d007229e53253f0b553e89132b9e595c5d55b8e6baa1a95151db50bba",
+            "source_sha256": "8fb6557cdb7e85acdf3fab38a336159697e926865b08283b9176a6cd02519f19",
+            "processing_version": "text-v1",
+            "similarity": 0.909554660320282,
+            "citation_id": "S2"
+          }
+        ],
+        "adaptation": {
+          "policy_version": "profile-adaptation-v2",
+          "profile": {
+            "student_id": "SYN-V4-LOW-001",
+            "topic": "Derivadas",
+            "performance": 42.0,
+            "attempts": 4,
+            "frequent_errors": [
+              "cociente_incremental"
+            ],
+            "mastery_level": "low",
+            "recommended_support": "reinforcement",
+            "resolution_time_seconds": 120.0,
+            "progress_trend": "improving",
+            "data_kind": "synthetic",
+            "id": "9c213464-32a7-48d2-81cb-f87cf231c0e3",
+            "created_at": "2026-10-10T01:42:57.058382Z",
+            "schema_version": "performance-profile-v1"
+          },
+          "requested_difficulty": "basic",
+          "effective_difficulty": "basic",
+          "guidance": "Prioriza el apoyo guiado: explica los símbolos y prerrequisitos que aparecen en las fuentes, separa las transiciones del procedimiento y explica por qué son válidas. Anticipa el error informado con una advertencia concreta respaldada por el contexto. Para EXPLANATION, desarrolla el procedimiento antes de interpretar el resultado. No inventes prerrequisitos ausentes ni casos numéricos para alargar la respuesta. Concentra el apoyo en los errores informados del tema; no generalices dificultades.",
+          "reason": "Dominio bajo informado: dificultad básica y refuerzo guiado. Foco localizado en las etiquetas de error informadas, sin inferir su gravedad.",
+          "focus_errors": [
+            "cociente_incremental"
+          ],
+          "suggested_resources": [
+            "EXPLANATION",
+            "EXERCISE",
+            "QUIZ"
+          ]
+        }
+      },
+      "history": {
+        "preparation": {
+          "id": "b989369e-0b18-487c-9ac3-c39fe4f8ed2d",
+          "status": "prepared",
+          "topic": "Derivadas",
+          "learning_objective": "Explicar la derivada de f(x)=x² como tasa de cambio instantánea, justificando f'(x)=2x con la fuente; usar únicamente esta función, sin añadir otras funciones ni ejercicios.",
+          "resource_type": "EXPLANATION",
+          "difficulty": "basic",
+          "question_count": null,
+          "sources": [
+            {
+              "id": "25136e79-2641-45c7-938b-a295cc3a54e5",
+              "position": 0,
+              "source_kind": "paragraph",
+              "source_index": 1,
+              "char_start": 0,
+              "char_end": 318,
+              "text": "TutorIA-Lucero: material sintético de prueba\nTema: derivada de una función polinómica\nObjetivo: reconocer la tasa de cambio instantánea.\nEjemplo: si f(x) = x^2, su derivada es f'(x) = 2x.\nEjercicio: determina la derivada de g(x) = 3x^2 + 2x.\nEste texto se creó exclusivamente para comprobar carga y gestión del corpus.",
+              "document_id": "84ed0928-238d-46ec-9de2-8f704249ddc3",
+              "document_title": "Derivadas · Material sintético de prueba",
+              "filename": "derivadas_sinteticas.txt",
+              "document_sha256": "8a281568815d0381a75a66fe4004806aa424a520cb8f6b145eeda104e5f08789",
+              "source_sha256": "6a88d828d463dd478ed9927fc3c2aedd190b91ebd0387e88156d70f08d3f34c1",
+              "processing_version": "text-v1",
+              "similarity": 0.9101924896240234,
+              "citation_id": "S1"
+            },
+            {
+              "id": "7dfe36e9-1a1c-4bd3-87e0-904b2fb839be",
+              "position": 0,
+              "source_kind": "paragraph",
+              "source_index": 1,
+              "char_start": 0,
+              "char_end": 882,
+              "text": "Material sintético TutorIA para revisión de personalización v3.\nTema: Derivadas. Única función estudiada: f(x)=x², con x real.\nLa derivada f'(x) mide la tasa de cambio instantánea de f respecto de x.\nPara h distinto de cero, el cociente de cambio es [f(x+h)-f(x)]/h.\nComo (x+h)²=x²+2xh+h², el cociente es (2xh+h²)/h=2x+h.\nAl tomar el límite cuando h tiende a cero, se obtiene f'(x)=2x.\nNo se sustituye h=0 antes de simplificar: la división por cero no está definida.\nEn un punto x=a, la pendiente de la tangente es f'(a)=2a.\nLa pendiente es negativa si a<0, cero si a=0 y positiva si a>0.\nUna pendiente cero en a=0 no significa que f sea constante en todo su dominio.\nTodos estos enunciados corresponden a f(x)=x². No se estudian otras funciones ni la regla general de la potencia.\nTexto creado para una prueba técnica; no constituye material institucional ni validación pedagógica.",
+              "document_id": "5b0e79d5-5989-453a-b1f3-a3946873f19a",
+              "document_title": "Derivada de x²: fundamentos sintéticos para piloto v3",
+              "filename": "derivada_x2_v3.txt",
+              "document_sha256": "37a34e9d007229e53253f0b553e89132b9e595c5d55b8e6baa1a95151db50bba",
+              "source_sha256": "8fb6557cdb7e85acdf3fab38a336159697e926865b08283b9176a6cd02519f19",
+              "processing_version": "text-v1",
+              "similarity": 0.909554660320282,
+              "citation_id": "S2"
+            }
+          ],
+          "adaptation": {
+            "policy_version": "profile-adaptation-v2",
+            "profile": {
+              "student_id": "SYN-V4-LOW-001",
+              "topic": "Derivadas",
+              "performance": 42.0,
+              "attempts": 4,
+              "frequent_errors": [
+                "cociente_incremental"
+              ],
+              "mastery_level": "low",
+              "recommended_support": "reinforcement",
+              "resolution_time_seconds": 120.0,
+              "progress_trend": "improving",
+              "data_kind": "synthetic",
+              "id": "9c213464-32a7-48d2-81cb-f87cf231c0e3",
+              "created_at": "2026-10-10T01:42:57.058382Z",
+              "schema_version": "performance-profile-v1"
+            },
+            "requested_difficulty": "basic",
+            "effective_difficulty": "basic",
+            "guidance": "Prioriza el apoyo guiado: explica los símbolos y prerrequisitos que aparecen en las fuentes, separa las transiciones del procedimiento y explica por qué son válidas. Anticipa el error informado con una advertencia concreta respaldada por el contexto. Para EXPLANATION, desarrolla el procedimiento antes de interpretar el resultado. No inventes prerrequisitos ausentes ni casos numéricos para alargar la respuesta. Concentra el apoyo en los errores informados del tema; no generalices dificultades.",
+            "reason": "Dominio bajo informado: dificultad básica y refuerzo guiado. Foco localizado en las etiquetas de error informadas, sin inferir su gravedad.",
+            "focus_errors": [
+              "cociente_incremental"
+            ],
+            "suggested_resources": [
+              "EXPLANATION",
+              "EXERCISE",
+              "QUIZ"
+            ]
+          }
+        },
+        "status": "prepared",
+        "created_at": "2026-10-10T10:38:16.192305Z",
+        "completed_at": null,
+        "resource": null,
+        "message": null,
+        "audit": {
+          "generation_started_at": null,
+          "provider": null,
+          "requested_model": null,
+          "model_version": null,
+          "prompt_version": "educational-rag-profile-v4",
+          "prompt_sha256": "d45727064a608396f44dec559964260bf407a456ce693f9291ccca3d3556eef3",
+          "usage": null,
+          "latency_ms": null,
+          "estimated_cost": null,
+          "cost_basis": null,
+          "error_code": null,
+          "retrieval": {
+            "method": "exact_cosine",
+            "query_version": "calculo-alias-v1",
+            "embedding_model": "intfloat/multilingual-e5-small",
+            "embedding_revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+            "embedding_version": "e5-onnx-v1",
+            "top_k": 3,
+            "min_similarity": 0.0,
+            "available_chunks": 2,
+            "elapsed_ms": 4785
+          }
+        }
+      }
+    },
+    {
+      "level": "medium",
+      "profile": {
+        "student_id": "SYN-V4-MEDIUM-001",
+        "topic": "Derivadas",
+        "performance": 42.0,
+        "attempts": 4,
+        "frequent_errors": [
+          "cociente_incremental"
+        ],
+        "mastery_level": "medium",
+        "recommended_support": "reinforcement",
+        "resolution_time_seconds": 120.0,
+        "progress_trend": "improving",
+        "data_kind": "synthetic",
+        "id": "62b3f3bb-8938-4c0d-921e-fb1c4523c748",
+        "created_at": "2026-10-10T01:43:00.565891Z",
+        "schema_version": "performance-profile-v1"
+      },
+      "preparation": {
+        "id": "0987537d-1448-4b06-8cfb-e01f3c8ec04a",
+        "status": "prepared",
+        "topic": "Derivadas",
+        "learning_objective": "Explicar la derivada de f(x)=x² como tasa de cambio instantánea, justificando f'(x)=2x con la fuente; usar únicamente esta función, sin añadir otras funciones ni ejercicios.",
+        "resource_type": "EXPLANATION",
+        "difficulty": "intermediate",
+        "question_count": null,
+        "sources": [
+          {
+            "id": "25136e79-2641-45c7-938b-a295cc3a54e5",
+            "position": 0,
+            "source_kind": "paragraph",
+            "source_index": 1,
+            "char_start": 0,
+            "char_end": 318,
+            "text": "TutorIA-Lucero: material sintético de prueba\nTema: derivada de una función polinómica\nObjetivo: reconocer la tasa de cambio instantánea.\nEjemplo: si f(x) = x^2, su derivada es f'(x) = 2x.\nEjercicio: determina la derivada de g(x) = 3x^2 + 2x.\nEste texto se creó exclusivamente para comprobar carga y gestión del corpus.",
+            "document_id": "84ed0928-238d-46ec-9de2-8f704249ddc3",
+            "document_title": "Derivadas · Material sintético de prueba",
+            "filename": "derivadas_sinteticas.txt",
+            "document_sha256": "8a281568815d0381a75a66fe4004806aa424a520cb8f6b145eeda104e5f08789",
+            "source_sha256": "6a88d828d463dd478ed9927fc3c2aedd190b91ebd0387e88156d70f08d3f34c1",
+            "processing_version": "text-v1",
+            "similarity": 0.9101924896240234,
+            "citation_id": "S1"
+          },
+          {
+            "id": "7dfe36e9-1a1c-4bd3-87e0-904b2fb839be",
+            "position": 0,
+            "source_kind": "paragraph",
+            "source_index": 1,
+            "char_start": 0,
+            "char_end": 882,
+            "text": "Material sintético TutorIA para revisión de personalización v3.\nTema: Derivadas. Única función estudiada: f(x)=x², con x real.\nLa derivada f'(x) mide la tasa de cambio instantánea de f respecto de x.\nPara h distinto de cero, el cociente de cambio es [f(x+h)-f(x)]/h.\nComo (x+h)²=x²+2xh+h², el cociente es (2xh+h²)/h=2x+h.\nAl tomar el límite cuando h tiende a cero, se obtiene f'(x)=2x.\nNo se sustituye h=0 antes de simplificar: la división por cero no está definida.\nEn un punto x=a, la pendiente de la tangente es f'(a)=2a.\nLa pendiente es negativa si a<0, cero si a=0 y positiva si a>0.\nUna pendiente cero en a=0 no significa que f sea constante en todo su dominio.\nTodos estos enunciados corresponden a f(x)=x². No se estudian otras funciones ni la regla general de la potencia.\nTexto creado para una prueba técnica; no constituye material institucional ni validación pedagógica.",
+            "document_id": "5b0e79d5-5989-453a-b1f3-a3946873f19a",
+            "document_title": "Derivada de x²: fundamentos sintéticos para piloto v3",
+            "filename": "derivada_x2_v3.txt",
+            "document_sha256": "37a34e9d007229e53253f0b553e89132b9e595c5d55b8e6baa1a95151db50bba",
+            "source_sha256": "8fb6557cdb7e85acdf3fab38a336159697e926865b08283b9176a6cd02519f19",
+            "processing_version": "text-v1",
+            "similarity": 0.909554660320282,
+            "citation_id": "S2"
+          }
+        ],
+        "adaptation": {
+          "policy_version": "profile-adaptation-v2",
+          "profile": {
+            "student_id": "SYN-V4-MEDIUM-001",
+            "topic": "Derivadas",
+            "performance": 42.0,
+            "attempts": 4,
+            "frequent_errors": [
+              "cociente_incremental"
+            ],
+            "mastery_level": "medium",
+            "recommended_support": "reinforcement",
+            "resolution_time_seconds": 120.0,
+            "progress_trend": "improving",
+            "data_kind": "synthetic",
+            "id": "62b3f3bb-8938-4c0d-921e-fb1c4523c748",
+            "created_at": "2026-10-10T01:43:00.565891Z",
+            "schema_version": "performance-profile-v1"
+          },
+          "requested_difficulty": "basic",
+          "effective_difficulty": "intermediate",
+          "guidance": "Prioriza una guía concentrada: resume las transiciones esenciales y explica la decisión que evita el error informado, sin repetir todas las definiciones básicas. Para EXPLANATION, combina operaciones rutinarias en pasos coherentes y destaca por qué funciona el procedimiento. Usa el ejemplo disponible, sin añadir otro ejercicio ni casos numéricos que las fuentes no desarrollan. Concentra el apoyo en los errores informados del tema; no generalices dificultades.",
+          "reason": "Dominio medio informado: dificultad intermedia y práctica guiada. Foco localizado en las etiquetas de error informadas, sin inferir su gravedad.",
+          "focus_errors": [
+            "cociente_incremental"
+          ],
+          "suggested_resources": [
+            "EXERCISE",
+            "QUIZ",
+            "EXPLANATION"
+          ]
+        }
+      },
+      "history": {
+        "preparation": {
+          "id": "0987537d-1448-4b06-8cfb-e01f3c8ec04a",
+          "status": "prepared",
+          "topic": "Derivadas",
+          "learning_objective": "Explicar la derivada de f(x)=x² como tasa de cambio instantánea, justificando f'(x)=2x con la fuente; usar únicamente esta función, sin añadir otras funciones ni ejercicios.",
+          "resource_type": "EXPLANATION",
+          "difficulty": "intermediate",
+          "question_count": null,
+          "sources": [
+            {
+              "id": "25136e79-2641-45c7-938b-a295cc3a54e5",
+              "position": 0,
+              "source_kind": "paragraph",
+              "source_index": 1,
+              "char_start": 0,
+              "char_end": 318,
+              "text": "TutorIA-Lucero: material sintético de prueba\nTema: derivada de una función polinómica\nObjetivo: reconocer la tasa de cambio instantánea.\nEjemplo: si f(x) = x^2, su derivada es f'(x) = 2x.\nEjercicio: determina la derivada de g(x) = 3x^2 + 2x.\nEste texto se creó exclusivamente para comprobar carga y gestión del corpus.",
+              "document_id": "84ed0928-238d-46ec-9de2-8f704249ddc3",
+              "document_title": "Derivadas · Material sintético de prueba",
+              "filename": "derivadas_sinteticas.txt",
+              "document_sha256": "8a281568815d0381a75a66fe4004806aa424a520cb8f6b145eeda104e5f08789",
+              "source_sha256": "6a88d828d463dd478ed9927fc3c2aedd190b91ebd0387e88156d70f08d3f34c1",
+              "processing_version": "text-v1",
+              "similarity": 0.9101924896240234,
+              "citation_id": "S1"
+            },
+            {
+              "id": "7dfe36e9-1a1c-4bd3-87e0-904b2fb839be",
+              "position": 0,
+              "source_kind": "paragraph",
+              "source_index": 1,
+              "char_start": 0,
+              "char_end": 882,
+              "text": "Material sintético TutorIA para revisión de personalización v3.\nTema: Derivadas. Única función estudiada: f(x)=x², con x real.\nLa derivada f'(x) mide la tasa de cambio instantánea de f respecto de x.\nPara h distinto de cero, el cociente de cambio es [f(x+h)-f(x)]/h.\nComo (x+h)²=x²+2xh+h², el cociente es (2xh+h²)/h=2x+h.\nAl tomar el límite cuando h tiende a cero, se obtiene f'(x)=2x.\nNo se sustituye h=0 antes de simplificar: la división por cero no está definida.\nEn un punto x=a, la pendiente de la tangente es f'(a)=2a.\nLa pendiente es negativa si a<0, cero si a=0 y positiva si a>0.\nUna pendiente cero en a=0 no significa que f sea constante en todo su dominio.\nTodos estos enunciados corresponden a f(x)=x². No se estudian otras funciones ni la regla general de la potencia.\nTexto creado para una prueba técnica; no constituye material institucional ni validación pedagógica.",
+              "document_id": "5b0e79d5-5989-453a-b1f3-a3946873f19a",
+              "document_title": "Derivada de x²: fundamentos sintéticos para piloto v3",
+              "filename": "derivada_x2_v3.txt",
+              "document_sha256": "37a34e9d007229e53253f0b553e89132b9e595c5d55b8e6baa1a95151db50bba",
+              "source_sha256": "8fb6557cdb7e85acdf3fab38a336159697e926865b08283b9176a6cd02519f19",
+              "processing_version": "text-v1",
+              "similarity": 0.909554660320282,
+              "citation_id": "S2"
+            }
+          ],
+          "adaptation": {
+            "policy_version": "profile-adaptation-v2",
+            "profile": {
+              "student_id": "SYN-V4-MEDIUM-001",
+              "topic": "Derivadas",
+              "performance": 42.0,
+              "attempts": 4,
+              "frequent_errors": [
+                "cociente_incremental"
+              ],
+              "mastery_level": "medium",
+              "recommended_support": "reinforcement",
+              "resolution_time_seconds": 120.0,
+              "progress_trend": "improving",
+              "data_kind": "synthetic",
+              "id": "62b3f3bb-8938-4c0d-921e-fb1c4523c748",
+              "created_at": "2026-10-10T01:43:00.565891Z",
+              "schema_version": "performance-profile-v1"
+            },
+            "requested_difficulty": "basic",
+            "effective_difficulty": "intermediate",
+            "guidance": "Prioriza una guía concentrada: resume las transiciones esenciales y explica la decisión que evita el error informado, sin repetir todas las definiciones básicas. Para EXPLANATION, combina operaciones rutinarias en pasos coherentes y destaca por qué funciona el procedimiento. Usa el ejemplo disponible, sin añadir otro ejercicio ni casos numéricos que las fuentes no desarrollan. Concentra el apoyo en los errores informados del tema; no generalices dificultades.",
+            "reason": "Dominio medio informado: dificultad intermedia y práctica guiada. Foco localizado en las etiquetas de error informadas, sin inferir su gravedad.",
+            "focus_errors": [
+              "cociente_incremental"
+            ],
+            "suggested_resources": [
+              "EXERCISE",
+              "QUIZ",
+              "EXPLANATION"
+            ]
+          }
+        },
+        "status": "prepared",
+        "created_at": "2026-10-10T10:38:20.044264Z",
+        "completed_at": null,
+        "resource": null,
+        "message": null,
+        "audit": {
+          "generation_started_at": null,
+          "provider": null,
+          "requested_model": null,
+          "model_version": null,
+          "prompt_version": "educational-rag-profile-v4",
+          "prompt_sha256": "e4b6f4a7f64c0e506938f8f3cc498b8bb7bb2778e18ce14760444cf51f736296",
+          "usage": null,
+          "latency_ms": null,
+          "estimated_cost": null,
+          "cost_basis": null,
+          "error_code": null,
+          "retrieval": {
+            "method": "exact_cosine",
+            "query_version": "calculo-alias-v1",
+            "embedding_model": "intfloat/multilingual-e5-small",
+            "embedding_revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+            "embedding_version": "e5-onnx-v1",
+            "top_k": 3,
+            "min_similarity": 0.0,
+            "available_chunks": 2,
+            "elapsed_ms": 3797
+          }
+        }
+      }
+    },
+    {
+      "level": "high",
+      "profile": {
+        "student_id": "SYN-V4-HIGH-001",
+        "topic": "Derivadas",
+        "performance": 42.0,
+        "attempts": 4,
+        "frequent_errors": [
+          "cociente_incremental"
+        ],
+        "mastery_level": "high",
+        "recommended_support": "reinforcement",
+        "resolution_time_seconds": 120.0,
+        "progress_trend": "improving",
+        "data_kind": "synthetic",
+        "id": "5451e733-a131-424b-b14d-4c901de5fa96",
+        "created_at": "2026-10-10T01:43:03.717291Z",
+        "schema_version": "performance-profile-v1"
+      },
+      "preparation": {
+        "id": "e2f5b13b-af24-4c14-9166-82ac742889cd",
+        "status": "prepared",
+        "topic": "Derivadas",
+        "learning_objective": "Explicar la derivada de f(x)=x² como tasa de cambio instantánea, justificando f'(x)=2x con la fuente; usar únicamente esta función, sin añadir otras funciones ni ejercicios.",
+        "resource_type": "EXPLANATION",
+        "difficulty": "advanced",
+        "question_count": null,
+        "sources": [
+          {
+            "id": "25136e79-2641-45c7-938b-a295cc3a54e5",
+            "position": 0,
+            "source_kind": "paragraph",
+            "source_index": 1,
+            "char_start": 0,
+            "char_end": 318,
+            "text": "TutorIA-Lucero: material sintético de prueba\nTema: derivada de una función polinómica\nObjetivo: reconocer la tasa de cambio instantánea.\nEjemplo: si f(x) = x^2, su derivada es f'(x) = 2x.\nEjercicio: determina la derivada de g(x) = 3x^2 + 2x.\nEste texto se creó exclusivamente para comprobar carga y gestión del corpus.",
+            "document_id": "84ed0928-238d-46ec-9de2-8f704249ddc3",
+            "document_title": "Derivadas · Material sintético de prueba",
+            "filename": "derivadas_sinteticas.txt",
+            "document_sha256": "8a281568815d0381a75a66fe4004806aa424a520cb8f6b145eeda104e5f08789",
+            "source_sha256": "6a88d828d463dd478ed9927fc3c2aedd190b91ebd0387e88156d70f08d3f34c1",
+            "processing_version": "text-v1",
+            "similarity": 0.9101924896240234,
+            "citation_id": "S1"
+          },
+          {
+            "id": "7dfe36e9-1a1c-4bd3-87e0-904b2fb839be",
+            "position": 0,
+            "source_kind": "paragraph",
+            "source_index": 1,
+            "char_start": 0,
+            "char_end": 882,
+            "text": "Material sintético TutorIA para revisión de personalización v3.\nTema: Derivadas. Única función estudiada: f(x)=x², con x real.\nLa derivada f'(x) mide la tasa de cambio instantánea de f respecto de x.\nPara h distinto de cero, el cociente de cambio es [f(x+h)-f(x)]/h.\nComo (x+h)²=x²+2xh+h², el cociente es (2xh+h²)/h=2x+h.\nAl tomar el límite cuando h tiende a cero, se obtiene f'(x)=2x.\nNo se sustituye h=0 antes de simplificar: la división por cero no está definida.\nEn un punto x=a, la pendiente de la tangente es f'(a)=2a.\nLa pendiente es negativa si a<0, cero si a=0 y positiva si a>0.\nUna pendiente cero en a=0 no significa que f sea constante en todo su dominio.\nTodos estos enunciados corresponden a f(x)=x². No se estudian otras funciones ni la regla general de la potencia.\nTexto creado para una prueba técnica; no constituye material institucional ni validación pedagógica.",
+            "document_id": "5b0e79d5-5989-453a-b1f3-a3946873f19a",
+            "document_title": "Derivada de x²: fundamentos sintéticos para piloto v3",
+            "filename": "derivada_x2_v3.txt",
+            "document_sha256": "37a34e9d007229e53253f0b553e89132b9e595c5d55b8e6baa1a95151db50bba",
+            "source_sha256": "8fb6557cdb7e85acdf3fab38a336159697e926865b08283b9176a6cd02519f19",
+            "processing_version": "text-v1",
+            "similarity": 0.909554660320282,
+            "citation_id": "S2"
+          }
+        ],
+        "adaptation": {
+          "policy_version": "profile-adaptation-v2",
+          "profile": {
+            "student_id": "SYN-V4-HIGH-001",
+            "topic": "Derivadas",
+            "performance": 42.0,
+            "attempts": 4,
+            "frequent_errors": [
+              "cociente_incremental"
+            ],
+            "mastery_level": "high",
+            "recommended_support": "reinforcement",
+            "resolution_time_seconds": 120.0,
+            "progress_trend": "improving",
+            "data_kind": "synthetic",
+            "id": "5451e733-a131-424b-b14d-4c901de5fa96",
+            "created_at": "2026-10-10T01:43:03.717291Z",
+            "schema_version": "performance-profile-v1"
+          },
+          "requested_difficulty": "basic",
+          "effective_difficulty": "advanced",
+          "guidance": "Prioriza profundidad conceptual: justifica condiciones de validez, interpreta consecuencias y distingue una conclusión válida de un error conceptual, siempre con respaldo explícito en las fuentes. Para EXPLANATION, sintetiza el cálculo rutinario y dedica los pasos al porqué y a las condiciones; no repitas como eje la secuencia elemental de un refuerzo básico. La complejidad procede de analizar el mismo caso, no de cambiar la función ni inventar valores numéricos. Si el contexto no permite profundizar, reconoce esa limitación sin añadir contenido. Concentra el apoyo en los errores informados del tema; no generalices dificultades.",
+          "reason": "Dominio alto informado: dificultad avanzada y análisis conceptual del mismo objetivo. Foco localizado en las etiquetas de error informadas, sin inferir su gravedad.",
+          "focus_errors": [
+            "cociente_incremental"
+          ],
+          "suggested_resources": [
+            "EXERCISE",
+            "QUIZ"
+          ]
+        }
+      },
+      "history": {
+        "preparation": {
+          "id": "e2f5b13b-af24-4c14-9166-82ac742889cd",
+          "status": "prepared",
+          "topic": "Derivadas",
+          "learning_objective": "Explicar la derivada de f(x)=x² como tasa de cambio instantánea, justificando f'(x)=2x con la fuente; usar únicamente esta función, sin añadir otras funciones ni ejercicios.",
+          "resource_type": "EXPLANATION",
+          "difficulty": "advanced",
+          "question_count": null,
+          "sources": [
+            {
+              "id": "25136e79-2641-45c7-938b-a295cc3a54e5",
+              "position": 0,
+              "source_kind": "paragraph",
+              "source_index": 1,
+              "char_start": 0,
+              "char_end": 318,
+              "text": "TutorIA-Lucero: material sintético de prueba\nTema: derivada de una función polinómica\nObjetivo: reconocer la tasa de cambio instantánea.\nEjemplo: si f(x) = x^2, su derivada es f'(x) = 2x.\nEjercicio: determina la derivada de g(x) = 3x^2 + 2x.\nEste texto se creó exclusivamente para comprobar carga y gestión del corpus.",
+              "document_id": "84ed0928-238d-46ec-9de2-8f704249ddc3",
+              "document_title": "Derivadas · Material sintético de prueba",
+              "filename": "derivadas_sinteticas.txt",
+              "document_sha256": "8a281568815d0381a75a66fe4004806aa424a520cb8f6b145eeda104e5f08789",
+              "source_sha256": "6a88d828d463dd478ed9927fc3c2aedd190b91ebd0387e88156d70f08d3f34c1",
+              "processing_version": "text-v1",
+              "similarity": 0.9101924896240234,
+              "citation_id": "S1"
+            },
+            {
+              "id": "7dfe36e9-1a1c-4bd3-87e0-904b2fb839be",
+              "position": 0,
+              "source_kind": "paragraph",
+              "source_index": 1,
+              "char_start": 0,
+              "char_end": 882,
+              "text": "Material sintético TutorIA para revisión de personalización v3.\nTema: Derivadas. Única función estudiada: f(x)=x², con x real.\nLa derivada f'(x) mide la tasa de cambio instantánea de f respecto de x.\nPara h distinto de cero, el cociente de cambio es [f(x+h)-f(x)]/h.\nComo (x+h)²=x²+2xh+h², el cociente es (2xh+h²)/h=2x+h.\nAl tomar el límite cuando h tiende a cero, se obtiene f'(x)=2x.\nNo se sustituye h=0 antes de simplificar: la división por cero no está definida.\nEn un punto x=a, la pendiente de la tangente es f'(a)=2a.\nLa pendiente es negativa si a<0, cero si a=0 y positiva si a>0.\nUna pendiente cero en a=0 no significa que f sea constante en todo su dominio.\nTodos estos enunciados corresponden a f(x)=x². No se estudian otras funciones ni la regla general de la potencia.\nTexto creado para una prueba técnica; no constituye material institucional ni validación pedagógica.",
+              "document_id": "5b0e79d5-5989-453a-b1f3-a3946873f19a",
+              "document_title": "Derivada de x²: fundamentos sintéticos para piloto v3",
+              "filename": "derivada_x2_v3.txt",
+              "document_sha256": "37a34e9d007229e53253f0b553e89132b9e595c5d55b8e6baa1a95151db50bba",
+              "source_sha256": "8fb6557cdb7e85acdf3fab38a336159697e926865b08283b9176a6cd02519f19",
+              "processing_version": "text-v1",
+              "similarity": 0.909554660320282,
+              "citation_id": "S2"
+            }
+          ],
+          "adaptation": {
+            "policy_version": "profile-adaptation-v2",
+            "profile": {
+              "student_id": "SYN-V4-HIGH-001",
+              "topic": "Derivadas",
+              "performance": 42.0,
+              "attempts": 4,
+              "frequent_errors": [
+                "cociente_incremental"
+              ],
+              "mastery_level": "high",
+              "recommended_support": "reinforcement",
+              "resolution_time_seconds": 120.0,
+              "progress_trend": "improving",
+              "data_kind": "synthetic",
+              "id": "5451e733-a131-424b-b14d-4c901de5fa96",
+              "created_at": "2026-10-10T01:43:03.717291Z",
+              "schema_version": "performance-profile-v1"
+            },
+            "requested_difficulty": "basic",
+            "effective_difficulty": "advanced",
+            "guidance": "Prioriza profundidad conceptual: justifica condiciones de validez, interpreta consecuencias y distingue una conclusión válida de un error conceptual, siempre con respaldo explícito en las fuentes. Para EXPLANATION, sintetiza el cálculo rutinario y dedica los pasos al porqué y a las condiciones; no repitas como eje la secuencia elemental de un refuerzo básico. La complejidad procede de analizar el mismo caso, no de cambiar la función ni inventar valores numéricos. Si el contexto no permite profundizar, reconoce esa limitación sin añadir contenido. Concentra el apoyo en los errores informados del tema; no generalices dificultades.",
+            "reason": "Dominio alto informado: dificultad avanzada y análisis conceptual del mismo objetivo. Foco localizado en las etiquetas de error informadas, sin inferir su gravedad.",
+            "focus_errors": [
+              "cociente_incremental"
+            ],
+            "suggested_resources": [
+              "EXERCISE",
+              "QUIZ"
+            ]
+          }
+        },
+        "status": "prepared",
+        "created_at": "2026-10-10T10:38:24.029037Z",
+        "completed_at": null,
+        "resource": null,
+        "message": null,
+        "audit": {
+          "generation_started_at": null,
+          "provider": null,
+          "requested_model": null,
+          "model_version": null,
+          "prompt_version": "educational-rag-profile-v4",
+          "prompt_sha256": "aeec78d3e9a24f6c58a0dcedc107a5927240b4ee737af703f4c43c5032cbb10c",
+          "usage": null,
+          "latency_ms": null,
+          "estimated_cost": null,
+          "cost_basis": null,
+          "error_code": null,
+          "retrieval": {
+            "method": "exact_cosine",
+            "query_version": "calculo-alias-v1",
+            "embedding_model": "intfloat/multilingual-e5-small",
+            "embedding_revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+            "embedding_version": "e5-onnx-v1",
+            "top_k": 3,
+            "min_similarity": 0.0,
+            "available_chunks": 2,
+            "elapsed_ms": 3939
+          }
+        }
+      }
+    }
+  ],
+  "preparation_checks_passed": true
+}
