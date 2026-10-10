@@ -1,0 +1,118 @@
+{
+  "protocol_id": "personalizacion-x2-salida1024-piloto-01",
+  "created_date": "2026-10-10",
+  "prompt_version": "educational-rag-profile-v4",
+  "policy_version": "profile-adaptation-v2",
+  "request": {
+    "topic": "Derivadas",
+    "learning_objective": "Explicar la derivada de f(x)=x² como tasa de cambio instantánea, justificando f'(x)=2x con la fuente; usar únicamente esta función, sin añadir otras funciones ni ejercicios.",
+    "resource_type": "EXPLANATION",
+    "difficulty": "basic"
+  },
+  "profiles_in_execution_order": [
+    {
+      "student_id": "SYN-V4-LOW-001",
+      "topic": "Derivadas",
+      "performance": 42.0,
+      "attempts": 4,
+      "frequent_errors": [
+        "cociente_incremental"
+      ],
+      "mastery_level": "low",
+      "recommended_support": "reinforcement",
+      "resolution_time_seconds": 120.0,
+      "progress_trend": "improving",
+      "data_kind": "synthetic"
+    },
+    {
+      "student_id": "SYN-V4-MEDIUM-001",
+      "topic": "Derivadas",
+      "performance": 42.0,
+      "attempts": 4,
+      "frequent_errors": [
+        "cociente_incremental"
+      ],
+      "mastery_level": "medium",
+      "recommended_support": "reinforcement",
+      "resolution_time_seconds": 120.0,
+      "progress_trend": "improving",
+      "data_kind": "synthetic"
+    },
+    {
+      "student_id": "SYN-V4-HIGH-001",
+      "topic": "Derivadas",
+      "performance": 42.0,
+      "attempts": 4,
+      "frequent_errors": [
+        "cociente_incremental"
+      ],
+      "mastery_level": "high",
+      "recommended_support": "reinforcement",
+      "resolution_time_seconds": 120.0,
+      "progress_trend": "improving",
+      "data_kind": "synthetic"
+    }
+  ],
+  "corpus": [
+    {
+      "path": "datos/ejemplos/derivada_x2_v3.txt",
+      "sha256": "37a34e9d007229e53253f0b553e89132b9e595c5d55b8e6baa1a95151db50bba",
+      "normalized_text_sha256": "8fb6557cdb7e85acdf3fab38a336159697e926865b08283b9176a6cd02519f19",
+      "chunk_count": 1,
+      "text_chars": 882,
+      "working_tree_sha256": "37a34e9d007229e53253f0b553e89132b9e595c5d55b8e6baa1a95151db50bba",
+      "sha256_meaning": "original_uploaded_bytes"
+    },
+    {
+      "path": "datos/ejemplos/derivadas_sinteticas.txt",
+      "sha256": "8a281568815d0381a75a66fe4004806aa424a520cb8f6b145eeda104e5f08789",
+      "normalized_text_sha256": "6a88d828d463dd478ed9927fc3c2aedd190b91ebd0387e88156d70f08d3f34c1",
+      "chunk_count": 1,
+      "text_chars": 318,
+      "working_tree_sha256": "b7d0510c51faa4f51768eb24964dc17f63a5a54a8822efa082ba5e06b71d755d",
+      "sha256_meaning": "original_uploaded_bytes"
+    }
+  ],
+  "provider": "gemini",
+  "model": "gemini-3.1-flash-lite",
+  "max_attempts": 3,
+  "max_attempts_per_level": 1,
+  "max_input_chars": 12000,
+  "max_output_tokens": 1024,
+  "timeout_seconds": 30,
+  "daily_request_limit": 5,
+  "minimum_start_interval_seconds": 60,
+  "temperature": null,
+  "seed": null,
+  "authorized_budget_usd": 0,
+  "semantic_review": "pending_human",
+  "causal_comparison_with_v2": false,
+  "execution_status": "not_started",
+  "cost_basis_version": "confirmed-free-tier-v1",
+  "causal_comparison_with_v3": false,
+  "source_strategy": "reuse_existing_indexed_documents_no_reupload",
+  "baseline_protocol": "personalizacion-x2-v4-piloto-01",
+  "causal_comparison_with_v4": false,
+  "profile_strategy": "reuse_v4_profiles",
+  "metadata_capture_revision": "1610020",
+  "baseline_cases": [
+    {
+      "level": "low",
+      "profile_id": "9c213464-32a7-48d2-81cb-f87cf231c0e3",
+      "generation_id": "c3ab007f-b3ba-472e-a805-39312ec0a29e",
+      "prompt_sha256": "d45727064a608396f44dec559964260bf407a456ce693f9291ccca3d3556eef3"
+    },
+    {
+      "level": "medium",
+      "profile_id": "62b3f3bb-8938-4c0d-921e-fb1c4523c748",
+      "generation_id": "78efd789-7465-4865-b7e8-4489c7186963",
+      "prompt_sha256": "e4b6f4a7f64c0e506938f8f3cc498b8bb7bb2778e18ce14760444cf51f736296"
+    },
+    {
+      "level": "high",
+      "profile_id": "5451e733-a131-424b-b14d-4c901de5fa96",
+      "generation_id": "d04edfe3-4860-4e3b-b0e0-92e5cb49997c",
+      "prompt_sha256": "aeec78d3e9a24f6c58a0dcedc107a5927240b4ee737af703f4c43c5032cbb10c"
+    }
+  ]
+}

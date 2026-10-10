@@ -1,0 +1,103 @@
+:host {
+  display: block;
+  margin-top: 24px;
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+}
+.heading,
+.reference,
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+p {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.count,
+.reference,
+.pagination {
+  font-size: 12px;
+}
+.count {
+  color: var(--blue-dark);
+}
+.help {
+  margin: 10px 0 18px;
+}
+.chunks {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+li {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.reference {
+  padding: 12px 16px;
+  background: var(--blue-soft);
+  color: var(--blue-dark);
+}
+.text {
+  padding: 16px;
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--ink);
+}
+button {
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--blue-dark);
+  background: white;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 180ms ease;
+}
+button:hover:not(:disabled) {
+  background: var(--blue-soft);
+}
+button:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.error {
+  color: #a1292b;
+}
+.error p {
+  color: inherit;
+}
+@media (max-width: 600px) {
+  .heading,
+  .reference {
+    flex-wrap: wrap;
+  }
+  .pagination {
+    gap: 8px;
+  }
+  .pagination button {
+    padding: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  button {
+    transition: none;
+  }
+}

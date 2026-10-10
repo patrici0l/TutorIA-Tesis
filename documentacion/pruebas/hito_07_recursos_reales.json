@@ -1,0 +1,152 @@
+[
+  {
+    "id": "34cbaee3-9dbe-40f6-a41b-65e3568d606b",
+    "model": "gemini-3.1-flash-lite",
+    "usage": {
+      "input_tokens": 1115,
+      "total_tokens": 1439,
+      "output_tokens": 324,
+      "reasoning_tokens": null,
+      "cached_input_tokens": null
+    },
+    "status": "succeeded",
+    "chunk_id": "25136e79-2641-45c7-938b-a295cc3a54e5",
+    "provider": "gemini",
+    "resource": {
+      "hints": [
+        {
+          "text": "Recuerda que para cualquier función de la forma f(x) = x², la tasa de cambio instantánea o derivada es f'(x) = 2x.",
+          "citations": [
+            "S1"
+          ]
+        }
+      ],
+      "title": "Derivación de una función potencia básica",
+      "answer": {
+        "text": "La derivada de h(x) = x² es h'(x) = 2x.",
+        "citations": [
+          "S1"
+        ]
+      },
+      "statement": {
+        "text": "Considerando la regla de derivación para la función f(x) = x², determina la derivada de la función h(x) = x².",
+        "citations": [
+          "S1"
+        ]
+      },
+      "resource_type": "EXERCISE",
+      "solution_steps": [
+        {
+          "text": "Identificar la función dada, que en este caso corresponde a la forma básica x².",
+          "citations": [
+            "S1"
+          ]
+        },
+        {
+          "text": "Aplicar la regla de derivación establecida para esta potencia: si f(x) = x², entonces f'(x) = 2x.",
+          "citations": [
+            "S1"
+          ]
+        }
+      ]
+    },
+    "error_code": null,
+    "latency_ms": 2088,
+    "started_at": "2026-10-07T21:42:16.981584-05:00",
+    "citation_id": "S1",
+    "document_id": "84ed0928-238d-46ec-9de2-8f704249ddc3",
+    "completed_at": "2026-10-07T21:42:19.100686-05:00",
+    "resource_type": "EXERCISE"
+  },
+  {
+    "id": "42289db1-b80a-4290-b7bd-b26d1b03b845",
+    "model": "gemini-3.1-flash-lite",
+    "usage": {
+      "input_tokens": 1168,
+      "total_tokens": 1390,
+      "output_tokens": 222,
+      "reasoning_tokens": null,
+      "cached_input_tokens": null
+    },
+    "status": "succeeded",
+    "chunk_id": "25136e79-2641-45c7-938b-a295cc3a54e5",
+    "provider": "gemini",
+    "resource": {
+      "title": "Evaluación básica: Derivada de x²",
+      "questions": [
+        {
+          "options": [
+            "f'(x) = x",
+            "f'(x) = 2x",
+            "f'(x) = x²",
+            "f'(x) = 2"
+          ],
+          "statement": {
+            "text": "Dada la función f(x) = x², ¿cuál es su derivada f'(x)?",
+            "citations": [
+              "S1"
+            ]
+          },
+          "explanation": {
+            "text": "De acuerdo con el material de referencia, para la función f(x) = x², su derivada correspondiente es f'(x) = 2x.",
+            "citations": [
+              "S1"
+            ]
+          },
+          "correct_option": 1
+        }
+      ],
+      "resource_type": "QUIZ"
+    },
+    "error_code": null,
+    "latency_ms": 7516,
+    "started_at": "2026-10-07T21:43:27.682126-05:00",
+    "citation_id": "S1",
+    "document_id": "84ed0928-238d-46ec-9de2-8f704249ddc3",
+    "completed_at": "2026-10-07T21:43:35.209953-05:00",
+    "resource_type": "QUIZ"
+  },
+  {
+    "id": "77754fbb-be92-4495-bdae-781db4a6b964",
+    "model": "gemini-3.1-flash-lite",
+    "usage": {
+      "input_tokens": 1080,
+      "total_tokens": 1330,
+      "output_tokens": 250,
+      "reasoning_tokens": null,
+      "cached_input_tokens": null
+    },
+    "status": "succeeded",
+    "chunk_id": "25136e79-2641-45c7-938b-a295cc3a54e5",
+    "provider": "gemini",
+    "resource": {
+      "title": "Retroalimentación sobre la derivada de f(x) = x²",
+      "diagnosis": {
+        "text": "Tu respuesta indica que la derivada de f(x) = x² es f'(x) = x. Este resultado es incorrecto, ya que no aplica la regla de derivación correspondiente para potencias de x.",
+        "citations": [
+          "S1"
+        ]
+      },
+      "next_step": {
+        "text": "Como siguiente paso, te propongo resolver el ejercicio propuesto en el material: determina la derivada de g(x) = 3x² + 2x, aplicando el principio de que la derivada de x² es 2x.",
+        "citations": [
+          "S1"
+        ]
+      },
+      "correction": {
+        "text": "De acuerdo con el material de referencia, la derivada de la función f(x) = x² es f'(x) = 2x.",
+        "citations": [
+          "S1"
+        ]
+      },
+      "resource_type": "FEEDBACK"
+    },
+    "error_code": null,
+    "latency_ms": 14146,
+    "started_at": "2026-10-07T21:44:40.337996-05:00",
+    "citation_id": "S1",
+    "document_id": "84ed0928-238d-46ec-9de2-8f704249ddc3",
+    "completed_at": "2026-10-07T21:44:54.503282-05:00",
+    "resource_type": "FEEDBACK"
+  }
+]

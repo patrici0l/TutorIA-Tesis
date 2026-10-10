@@ -1,0 +1,139 @@
+[
+  {
+    "id": "5afd899a-f8b5-4239-9898-3534470e6daa",
+    "level": "low",
+    "status": "succeeded",
+    "profile": {
+      "student_id": "SYN-V3-LOW-001",
+      "topic": "Derivadas",
+      "performance": 42.0,
+      "attempts": 4,
+      "frequent_errors": [
+        "cociente_incremental"
+      ],
+      "mastery_level": "low",
+      "recommended_support": "reinforcement",
+      "resolution_time_seconds": 120.0,
+      "progress_trend": "improving",
+      "data_kind": "synthetic",
+      "id": "7c03e0d8-88dd-4a1a-b520-1fe4d11a4ca8",
+      "created_at": "2026-10-09T10:13:06.835585Z",
+      "schema_version": "performance-profile-v1"
+    },
+    "request": {
+      "topic": "Derivadas",
+      "learning_objective": "Explicar la derivada de f(x)=x² como tasa de cambio instantánea, justificando f'(x)=2x con la fuente; usar únicamente esta función, sin añadir otras funciones ni ejercicios.",
+      "resource_type": "EXPLANATION",
+      "difficulty": "basic"
+    },
+    "sources": [
+      {
+        "id": "25136e79-2641-45c7-938b-a295cc3a54e5",
+        "position": 0,
+        "source_kind": "paragraph",
+        "source_index": 1,
+        "char_start": 0,
+        "char_end": 318,
+        "text": "TutorIA-Lucero: material sintético de prueba\nTema: derivada de una función polinómica\nObjetivo: reconocer la tasa de cambio instantánea.\nEjemplo: si f(x) = x^2, su derivada es f'(x) = 2x.\nEjercicio: determina la derivada de g(x) = 3x^2 + 2x.\nEste texto se creó exclusivamente para comprobar carga y gestión del corpus.",
+        "document_id": "84ed0928-238d-46ec-9de2-8f704249ddc3",
+        "document_title": "Derivadas · Material sintético de prueba",
+        "filename": "derivadas_sinteticas.txt",
+        "document_sha256": "8a281568815d0381a75a66fe4004806aa424a520cb8f6b145eeda104e5f08789",
+        "source_sha256": "6a88d828d463dd478ed9927fc3c2aedd190b91ebd0387e88156d70f08d3f34c1",
+        "processing_version": "text-v1",
+        "similarity": 0.9101924896240234,
+        "citation_id": "S1"
+      },
+      {
+        "id": "7dfe36e9-1a1c-4bd3-87e0-904b2fb839be",
+        "position": 0,
+        "source_kind": "paragraph",
+        "source_index": 1,
+        "char_start": 0,
+        "char_end": 882,
+        "text": "Material sintético TutorIA para revisión de personalización v3.\nTema: Derivadas. Única función estudiada: f(x)=x², con x real.\nLa derivada f'(x) mide la tasa de cambio instantánea de f respecto de x.\nPara h distinto de cero, el cociente de cambio es [f(x+h)-f(x)]/h.\nComo (x+h)²=x²+2xh+h², el cociente es (2xh+h²)/h=2x+h.\nAl tomar el límite cuando h tiende a cero, se obtiene f'(x)=2x.\nNo se sustituye h=0 antes de simplificar: la división por cero no está definida.\nEn un punto x=a, la pendiente de la tangente es f'(a)=2a.\nLa pendiente es negativa si a<0, cero si a=0 y positiva si a>0.\nUna pendiente cero en a=0 no significa que f sea constante en todo su dominio.\nTodos estos enunciados corresponden a f(x)=x². No se estudian otras funciones ni la regla general de la potencia.\nTexto creado para una prueba técnica; no constituye material institucional ni validación pedagógica.",
+        "document_id": "5b0e79d5-5989-453a-b1f3-a3946873f19a",
+        "document_title": "Derivada de x²: fundamentos sintéticos para piloto v3",
+        "filename": "derivada_x2_v3.txt",
+        "document_sha256": "37a34e9d007229e53253f0b553e89132b9e595c5d55b8e6baa1a95151db50bba",
+        "source_sha256": "8fb6557cdb7e85acdf3fab38a336159697e926865b08283b9176a6cd02519f19",
+        "processing_version": "text-v1",
+        "similarity": 0.909554660320282,
+        "citation_id": "S2"
+      }
+    ],
+    "resource": {
+      "resource_type": "EXPLANATION",
+      "title": "La tasa de cambio instantánea para f(x) = x²",
+      "summary": {
+        "text": "La derivada f'(x) representa la tasa de cambio instantánea de la función f(x) = x². Mediante el análisis del cociente incremental y su límite cuando h tiende a cero, se obtiene que f'(x) = 2x.",
+        "citations": [
+          "S1",
+          "S2"
+        ]
+      },
+      "steps": [
+        {
+          "text": "Se define el cociente incremental para la función f(x) = x² como [f(x+h) - f(x)] / h, donde h debe ser distinto de cero.",
+          "citations": [
+            "S2"
+          ]
+        },
+        {
+          "text": "Al sustituir f(x+h) = (x+h)² = x² + 2xh + h², el cociente resulta en (x² + 2xh + h² - x²) / h, lo que equivale a (2xh + h²) / h.",
+          "citations": [
+            "S2"
+          ]
+        },
+        {
+          "text": "Simplificando el cociente dividiendo por h, obtenemos la expresión 2x + h.",
+          "citations": [
+            "S2"
+          ]
+        },
+        {
+          "text": "Al calcular el límite cuando h tiende a cero, evitamos la división por cero y obtenemos la tasa de cambio instantánea f'(x) = 2x.",
+          "citations": [
+            "S2"
+          ]
+        }
+      ],
+      "worked_example": {
+        "text": "Para la función f(x) = x², si deseamos conocer la tasa de cambio en un punto específico a, utilizamos la derivada f'(a) = 2a. Si a = 0, la pendiente es f'(0) = 2(0) = 0.",
+        "citations": [
+          "S2"
+        ]
+      }
+    },
+    "policy_version": "profile-adaptation-v1",
+    "created_at": "2026-10-09T10:13:10.827804Z",
+    "completed_at": "2026-10-09T10:13:23.052297Z",
+    "generation_started_at": "2026-10-09T10:13:20.384599Z",
+    "provider": "gemini",
+    "requested_model": "gemini-3.1-flash-lite",
+    "model_version": "gemini-3.1-flash-lite",
+    "prompt_version": "educational-rag-profile-v3",
+    "prompt_sha256": "a112330df26ab7d225d172725e1a80b4e0f85aa228b4b1222210ef4061bd7a1e",
+    "usage": {
+      "input_tokens": 1980,
+      "output_tokens": 486,
+      "reasoning_tokens": null,
+      "cached_input_tokens": null,
+      "total_tokens": 2466
+    },
+    "latency_ms": 2643,
+    "estimated_cost": null,
+    "error_code": null,
+    "retrieval": {
+      "method": "exact_cosine",
+      "query_version": "calculo-alias-v1",
+      "embedding_model": "intfloat/multilingual-e5-small",
+      "embedding_revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+      "embedding_version": "e5-onnx-v1",
+      "top_k": 3,
+      "min_similarity": 0.0,
+      "available_chunks": 2,
+      "elapsed_ms": 3929
+    }
+  }
+]

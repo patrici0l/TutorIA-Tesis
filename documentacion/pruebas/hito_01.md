@@ -31,7 +31,7 @@ Comando reproducible desde la raíz:
 docker compose -f docker-compose.yml -f infraestructura/docker/compose.test.yml run --build --rm test-backend
 ```
 
-Esta ejecución activa RUN_DB_TESTS y comprueba una consulta vectorial real, la revisión de Alembic y la respuesta de FastAPI contra PostgreSQL. Resultado: pendiente de finalizar la ejecución inicial.
+Esta ejecución activa RUN_DB_TESTS y comprueba una consulta vectorial real, la revisión de Alembic y la respuesta de FastAPI contra PostgreSQL. Resultado: integración completada durante el cierre del hito 2 el 6 de octubre de 2026. La suite conjunta en Docker aprobó 37 pruebas, incluidas consultas reales de PostgreSQL/pgvector y revisión Alembic 0002. La evidencia original de interfaz corresponde al hito 1; el estado actualizado está en hito_02.md.
 
 ## Límites de esta evidencia
 

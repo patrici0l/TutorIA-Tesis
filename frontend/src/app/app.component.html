@@ -1,25 +1,48 @@
-<a class="skip-link" href="#contenido">Saltar al contenido</a>
+<a class="skip-link" [href]="router.url.split('?')[0] + '#contenido'">Saltar al contenido</a>
 <div class="shell">
-  <aside class="sidebar" aria-label="Navegación principal">
-    <a class="brand" routerLink="/inicio" aria-label="TutorIA inicio"
-      ><span class="brand-icon">t</span> TutorIA<span class="brand-dot">.</span></a
-    >
-    <p class="workspace-label">ESPACIO DOCENTE</p>
-    <nav>
-      <a routerLink="/inicio" routerLinkActive="active"><span aria-hidden="true">◈</span> Inicio</a>
-    </nav>
-    <div class="sidebar-note">
-      <span class="eyebrow">EN DESARROLLO</span>
-      <p>Aprendizaje con contexto.<br />Contenido con fundamento.</p>
-      <small>Proyecto de titulación · 2026</small>
+  <header class="site-header">
+    <div class="masthead">
+      <a class="brand" routerLink="/inicio" aria-label="TutorIA inicio"
+        ><span class="brand-icon">t</span> TutorIA<span class="brand-dot">.</span></a
+      >
+      <div class="institution">
+        <span>UNIVERSIDAD POLITÉCNICA SALESIANA</span
+        ><small>Aprendizaje con contexto. Contenido con fundamento.</small>
+      </div>
+      <div class="account">
+        @if (auth.user(); as user) {
+          <span class="avatar" aria-hidden="true">{{
+            (user.nombre || user.institutional_email).slice(0, 1).toUpperCase()
+          }}</span>
+          <span class="account-name"
+            >{{ user.nombre || user.institutional_email }} {{ user.apellido
+            }}<small>{{
+              user.rol === 'student' ? 'Espacio de estudiante' : 'Espacio docente'
+            }}</small></span
+          >
+          <button (click)="logout()" [disabled]="signingOut()">
+            {{ signingOut() ? 'Cerrando…' : 'Cerrar sesión' }}
+          </button>
+        } @else {
+          <span class="tag">Acceso institucional UPS</span>
+        }
+      </div>
     </div>
-  </aside>
-  <div class="workspace">
-    <header class="topbar">
-      <span>TutorIA-Lucero <span class="divider">/</span> Vista general</span
-      ><span class="tag">Entorno local</span>
-    </header>
-    <main id="contenido"><router-outlet /></main>
-    <footer>Computación · AdaptIA UPS <span>Cálculo Diferencial</span></footer>
-  </div>
+    <app-workspace-navigation />
+  </header>
+  <main id="contenido" tabindex="-1">
+    @if (auth.mode() === 'mock') {
+      <p class="mock-notice" role="status">
+        <span class="notice-dot" aria-hidden="true"></span>Sesión de demostración · Usuario
+        ficticio. Sin conexión al SSO de la UPS.
+      </p>
+    }
+    @if (logoutError()) {
+      <p role="alert">{{ logoutError() }}</p>
+    }
+    <router-outlet />
+  </main>
+  <footer>
+    <span>TutorIA-Lucero · Computación · AdaptIA UPS</span><span>Cálculo Diferencial</span>
+  </footer>
 </div>

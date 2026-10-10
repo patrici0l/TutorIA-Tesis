@@ -29,18 +29,16 @@ describe('InicioComponent', () => {
   it('distingue una API disponible de una base de datos caída', async () => {
     const fixture = TestBed.createComponent(InicioComponent);
     fixture.detectChanges();
-    http
-      .expectOne('/api/v1/health')
-      .flush(
-        {
-          status: 'degraded',
-          api: 'ok',
-          database: 'unavailable',
-          pgvector: 'unavailable',
-          version: '0.1.0',
-        },
-        { status: 503, statusText: 'Unavailable' },
-      );
+    http.expectOne('/api/v1/health').flush(
+      {
+        status: 'degraded',
+        api: 'ok',
+        database: 'unavailable',
+        pgvector: 'unavailable',
+        version: '0.1.0',
+      },
+      { status: 503, statusText: 'Unavailable' },
+    );
     await fixture.whenStable();
     expect(fixture.nativeElement.textContent).toContain('hay servicios pendientes');
     expect(fixture.nativeElement.querySelectorAll('.available').length).toBe(1);

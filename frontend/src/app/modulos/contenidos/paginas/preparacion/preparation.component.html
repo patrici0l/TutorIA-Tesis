@@ -1,0 +1,315 @@
+@if (!canPrepare()) {
+  <section class="panel">
+    <h1>Espacio docente</h1>
+    <p>La preparación de recursos está disponible para docentes sobre sus materiales propios.</p>
+    <a routerLink="/inicio">Volver al inicio</a>
+  </section>
+} @else {
+  <header class="intro">
+    <p class="eyebrow">DEL MATERIAL A LA PRÁCTICA</p>
+    <h1>Una buena clase empieza aquí.</h1>
+    <p>Define qué quieres enseñar y revisa las fuentes que darán fundamento a tu recurso.</p>
+  </header>
+  <div class="workspace">
+    <section class="panel" aria-labelledby="prepare-title">
+      <div class="section-title">
+        <span class="step" aria-hidden="true">01</span>
+        <h2 id="prepare-title">Prepara tu recurso</h2>
+      </div>
+      <form (ngSubmit)="prepare()" #form="ngForm">
+        <fieldset [disabled]="loading() || generating() || loadingProfiles()">
+          <h3>Personalización</h3>
+          <p id="profile-choice" class="help">
+            Opcional: usa una observación ficticia del mismo tema. El servidor ajustará la
+            dificultad y explicará el apoyo.
+          </p>
+          <button type="button" (click)="loadProfiles()">Consultar mis perfiles</button>
+          @if (selectedProfile(); as profile) {
+            <p class="help">
+              Perfil elegido: {{ profile.student_id }} · {{ profile.topic }} · Dominio
+              {{ masteryLabel(profile.mastery_level) }}
+            </p>
+            <button type="button" (click)="chooseProfile(null)">Usar dificultad manual</button>
+          }
+          @if (profilePage(); as page) {
+            @for (profile of page.items; track profile.id) {
+              <button
+                type="button"
+                (click)="chooseProfile(profile)"
+                [attr.aria-pressed]="selectedProfile()?.id === profile.id"
+              >
+                {{ profile.student_id }} · {{ profile.topic }} ·
+                {{ masteryLabel(profile.mastery_level) }}
+              </button>
+            } @empty {
+              <p class="help">
+                No tienes perfiles guardados. <a routerLink="/perfiles">Crear un perfil ficticio</a>
+              </p>
+            }
+            <div class="options">
+              <button
+                type="button"
+                (click)="loadProfiles(page.offset - page.limit)"
+                [disabled]="page.offset === 0"
+              >
+                Perfiles anteriores
+              </button>
+              <button
+                type="button"
+                (click)="loadProfiles(page.offset + page.limit)"
+                [disabled]="page.offset + page.limit >= page.total"
+              >
+                Perfiles siguientes
+              </button>
+            </div>
+          }
+          <label for="topic">Tema</label>
+          <input
+            id="topic"
+            name="topic"
+            [(ngModel)]="topic"
+            (ngModelChange)="clearResult()"
+            required
+            maxlength="160"
+            placeholder="Por ejemplo: la derivada y la tasa de cambio"
+          />
+          <label for="objective">¿Qué debería comprender o practicar?</label>
+          <textarea
+            id="objective"
+            name="objective"
+            [(ngModel)]="objective"
+            (ngModelChange)="clearResult()"
+            required
+            maxlength="400"
+            rows="3"
+            placeholder="Relacionar la derivada con la variación instantánea de una función."
+          ></textarea>
+          <div class="options">
+            <div>
+              <label for="resource">Tipo de recurso</label
+              ><select
+                id="resource"
+                name="resource"
+                [(ngModel)]="resourceType"
+                (ngModelChange)="changeResource()"
+              >
+                @for (resource of resources; track resource.value) {
+                  <option [value]="resource.value">{{ resource.label }}</option>
+                }
+              </select>
+            </div>
+            <div>
+              <label for="difficulty">Dificultad</label
+              ><select
+                id="difficulty"
+                name="difficulty"
+                [(ngModel)]="difficulty"
+                (ngModelChange)="clearResult()"
+                [disabled]="!!selectedProfile()"
+              >
+                <option value="basic">Básica</option>
+                <option value="intermediate">Intermedia</option>
+                <option value="advanced">Avanzada</option>
+              </select>
+            </div>
+          </div>
+          <p class="help">
+            {{ description() }}
+            {{
+              selectedProfile()
+                ? 'La dificultad se ajustará al dominio informado. Conservas la elección del recurso.'
+                : 'La dificultad la eliges tú.'
+            }}
+          </p>
+          @if (resourceType === 'QUIZ') {
+            <label for="questions">Número de preguntas · 1 a 5</label
+            ><input
+              id="questions"
+              name="questions"
+              type="number"
+              min="1"
+              max="5"
+              step="1"
+              required
+              [(ngModel)]="questionCount"
+              (ngModelChange)="clearResult()"
+            />
+          }
+          @if (resourceType === 'FEEDBACK') {
+            <label for="answer">Respuesta a revisar</label
+            ><textarea
+              id="answer"
+              name="answer"
+              rows="4"
+              maxlength="2000"
+              required
+              [(ngModel)]="studentAnswer"
+              (ngModelChange)="clearResult()"
+              aria-describedby="answer-help"
+            ></textarea>
+            <p id="answer-help" class="help">
+              Usa una respuesta de prueba, sin nombres ni datos personales. Se guardará con esta
+              preparación.
+            </p>
+          }
+          <p class="help">
+            Al preparar, se guardan tu solicitud y hasta tres fragmentos de tus materiales
+            indexados.
+          </p>
+          <button
+            type="submit"
+            [disabled]="
+              loading() ||
+              form.invalid ||
+              !topic.trim() ||
+              !objective.trim() ||
+              (resourceType === 'FEEDBACK' && !studentAnswer.trim())
+            "
+          >
+            {{ loading() ? 'Buscando y preparando…' : 'Preparar y revisar fuentes' }}
+            <span aria-hidden="true">↗</span>
+          </button>
+        </fieldset>
+      </form>
+    </section>
+    <aside class="panel guide" aria-labelledby="guide-title">
+      <p class="eyebrow">TU CRITERIO, PRIMERO</p>
+      <h2 id="guide-title">Revisa antes de crear.</h2>
+      <ol>
+        <li>Define un objetivo concreto.</li>
+        <li>Comprueba que las fuentes sean pertinentes.</li>
+        <li>Conserva la preparación para el siguiente paso.</li>
+      </ol>
+      <div class="status-note">
+        <strong>Generación gratuita, bajo tu control.</strong>
+        <p>
+          Primero prepara y revisa las fuentes. Después podrás generar explícitamente con Gemini.
+          Máximo cinco intentos al día para toda la demostración; sin reintentos automáticos.
+        </p>
+      </div>
+      <a routerLink="/documentos">Gestionar mis materiales ↗</a>
+    </aside>
+  </div>
+  <app-resource-history [locked]="loading() || generating()" (selected)="restore($event)" />
+  @if (error()) {
+    <p class="notice error" role="alert">
+      {{ error() }} <a routerLink="/documentos">Revisar materiales</a>
+    </p>
+  }
+  @if (loading()) {
+    <p class="notice" role="status">Buscando en tus documentos y guardando la preparación…</p>
+  }
+  @if (result(); as prepared) {
+    <section class="results" aria-labelledby="sources-title" aria-live="polite">
+      <div class="panel confirmation">
+        <p class="eyebrow">
+          {{
+            generation()?.status === 'succeeded'
+              ? 'RECURSO GENERADO'
+              : sent()
+                ? 'PREPARACIÓN ENVIADA'
+                : 'PREPARADO, SIN GENERAR'
+          }}
+        </p>
+        <h2 id="sources-title">{{ label(prepared.resource_type) }} · {{ prepared.topic }}</h2>
+        <p>{{ prepared.learning_objective }}</p>
+        @if (prepared.adaptation; as adaptation) {
+          <div class="status-note">
+            <h3>Adaptación revisable</h3>
+            <p>
+              {{ adaptation.profile.student_id }} · {{ adaptation.profile.topic }} ·
+              {{ adaptation.policy_version }}
+            </p>
+            <p>{{ adaptation.reason }}</p>
+            <p>
+              Dificultad solicitada: {{ difficultyLabel(adaptation.requested_difficulty) }}.
+              Aplicada: {{ difficultyLabel(adaptation.effective_difficulty) }}.
+            </p>
+            <p>{{ adaptation.guidance }}</p>
+            @if (adaptation.focus_errors.length) {
+              <p>Foco: {{ adaptation.focus_errors.join(', ') }}</p>
+            }
+            <p>
+              Recursos sugeridos:
+              @for (resource of adaptation.suggested_resources; track resource) {
+                {{ label(resource) }} ·
+              }
+            </p>
+            <p>
+              Instantánea conservada con la preparación. No se calculan notas ni diagnósticos
+              personales.
+            </p>
+          </div>
+        }
+        <p>
+          Preparación guardada. Revisa las fuentes seleccionadas; la similitud no garantiza que sean
+          suficientes.
+        </p>
+        <p>
+          Revisa las fuentes antes de enviar. La IA puede cometer errores; coteja el resultado con
+          el material.
+        </p>
+        <button type="button" [disabled]="sent() || generating()" (click)="generate()">
+          {{
+            generating()
+              ? 'Generando…'
+              : sent()
+                ? 'Solicitud enviada'
+                : 'Generar con Gemini · nivel gratuito'
+          }}
+        </button>
+        @if (generating()) {
+          <p role="status">Generando con las fuentes revisadas…</p>
+        }
+        @if (restoredPending()) {
+          <p role="status">
+            Esta solicitud está registrada como pendiente. Consulta de nuevo el historial para
+            comprobar su resultado; no vuelvas a enviarla.
+          </p>
+        }
+        @if (generation(); as generated) {
+          @if (generated.resource; as resource) {
+            <app-resource-view [resource]="resource" />
+          } @else {
+            <p role="alert">{{ generated.message }}</p>
+          }
+        }
+        <details>
+          <summary>Identificador de la preparación</summary>
+          <code>{{ prepared.id }}</code>
+        </details>
+        @if (historyDetail(); as detail) {
+          <app-resource-audit [detail]="detail" />
+        } @else {
+          <p>Para consultar la trazabilidad guardada, abre este recurso desde Mis recursos.</p>
+        }
+      </div>
+      @for (source of prepared.sources; track source.id) {
+        <article class="panel source">
+          <p class="eyebrow">
+            {{ source.citation_id }} · {{ source.source_kind === 'page' ? 'PÁGINA' : 'PÁRRAFO' }}
+            {{ source.source_index }}
+          </p>
+          <h3>{{ source.document_title }}</h3>
+          <p>{{ source.filename }} · Fragmento {{ source.position + 1 }}</p>
+          <blockquote>{{ source.text }}</blockquote>
+          <details>
+            <summary>Referencia verificable</summary>
+            <dl>
+              <dt>Documento</dt>
+              <dd>{{ source.document_id }}</dd>
+              <dt>Fragmento</dt>
+              <dd>{{ source.id }}</dd>
+              <dt>Intervalo de texto</dt>
+              <dd>{{ source.char_start }}–{{ source.char_end }} · final excluido</dd>
+              <dt>SHA-256 de la unidad fuente</dt>
+              <dd>{{ source.source_sha256 }}</dd>
+              <dt>SHA-256 del archivo</dt>
+              <dd>{{ source.document_sha256 }}</dd>
+            </dl>
+          </details>
+        </article>
+      }
+    </section>
+  }
+}

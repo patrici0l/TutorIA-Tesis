@@ -1,0 +1,45 @@
+<section aria-labelledby="chunks-title" [attr.aria-busy]="loading()">
+  <div class="heading">
+    <h3 id="chunks-title">Fragmentos extraídos</h3>
+    <span class="count">{{ total() }} {{ total() === 1 ? 'fragmento' : 'fragmentos' }}</span>
+  </div>
+  <p class="help">Cada fragmento conserva su referencia al documento original.</p>
+  @if (error()) {
+    <div class="error" role="alert">
+      <p>{{ error() }}</p>
+      <button (click)="load()" [disabled]="loading()">Reintentar</button>
+    </div>
+  }
+  @if (loading()) {
+    <p role="status">Cargando fragmentos…</p>
+  } @else if (!error() && chunks().length === 0) {
+    <p>No hay fragmentos disponibles para este documento.</p>
+  } @else if (!error()) {
+    <ol class="chunks" [attr.start]="offset() + 1">
+      @for (chunk of chunks(); track chunk.id) {
+        <li>
+          <div class="reference">
+            <strong>Fragmento {{ offset() + $index + 1 }}</strong>
+            <span
+              >{{ chunk.source_kind === 'page' ? 'Página' : 'Párrafo' }}
+              {{ chunk.source_index }}</span
+            >
+          </div>
+          <p class="text">{{ chunk.text }}</p>
+        </li>
+      }
+    </ol>
+    <nav class="pagination" aria-label="Páginas de fragmentos">
+      <button (click)="load(offset() - 10)" [disabled]="offset() === 0 || loading()">
+        Anteriores
+      </button>
+      <span>{{ offset() + 1 }}–{{ offset() + chunks().length }} de {{ total() }}</span>
+      <button
+        (click)="load(offset() + 10)"
+        [disabled]="offset() + chunks().length >= total() || loading()"
+      >
+        Siguientes
+      </button>
+    </nav>
+  }
+</section>

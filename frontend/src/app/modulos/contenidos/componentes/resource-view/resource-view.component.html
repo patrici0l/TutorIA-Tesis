@@ -1,0 +1,39 @@
+<article aria-label="Recurso generado">
+  <h3>{{ resource().title }}</h3>
+  @for (section of sections(); track section.heading) {
+    <section>
+      <h4>{{ section.heading }}</h4>
+      @for (block of section.blocks; track $index) {
+        <p>
+          {{ block.text }} <small>Fuentes: {{ block.citations.join(', ') }}</small>
+        </p>
+      }
+    </section>
+  }
+  @if (resource(); as r) {
+    @if (r.resource_type === 'QUIZ') {
+      @for (question of r.questions; track $index) {
+        <section>
+          <h4>Pregunta {{ $index + 1 }}</h4>
+          <p>
+            {{ question.statement.text }}
+            <small>Fuentes: {{ question.statement.citations.join(', ') }}</small>
+          </p>
+          <ol type="A">
+            @for (option of question.options; track $index) {
+              <li>{{ option }}</li>
+            }
+          </ol>
+          <details>
+            <summary>Respuesta y explicación</summary>
+            <p>Respuesta: {{ question.options[question.correct_option] }}</p>
+            <p>
+              {{ question.explanation.text }}
+              <small>Fuentes: {{ question.explanation.citations.join(', ') }}</small>
+            </p>
+          </details>
+        </section>
+      }
+    }
+  }
+</article>

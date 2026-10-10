@@ -6,7 +6,7 @@ RUN pip install --no-cache-dir -r requirements/base.txt
 COPY app app
 COPY alembic alembic
 COPY alembic.ini .
-RUN useradd --create-home appuser
+RUN useradd --create-home appuser && mkdir -p /app/uploads/documents /app/models/e5-small && chown -R appuser:appuser /app/uploads /app/models
 USER appuser
 EXPOSE 8000
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--no-access-log"]

@@ -1,0 +1,164 @@
+{
+  "dataset": "calculo-sintetico-v1",
+  "model": "intfloat/multilingual-e5-small",
+  "revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+  "embedding_version": "e5-onnx-v1",
+  "documents": 8,
+  "queries": 8,
+  "query_version": "calculo-alias-v1",
+  "baseline_top1_accuracy": 0.875,
+  "baseline_recall_at_3": 0.875,
+  "top1_accuracy": 0.875,
+  "recall_at_3": 1.0,
+  "mrr_at_3": 0.9375,
+  "hnsw_recall_at_3": 1.0,
+  "hnsw_ef_search": 80,
+  "hnsw_iterative_scan": "strict_order",
+  "results": [
+    {
+      "query": "¿Qué representa la tasa de cambio instantánea?",
+      "embedding_query": "¿Qué representa la tasa de cambio instantánea?",
+      "baseline_retrieved": [
+        "derivada",
+        "crecimiento",
+        "cociente"
+      ],
+      "baseline_rank": 1,
+      "relevant": "derivada",
+      "retrieved": [
+        "derivada",
+        "crecimiento",
+        "cociente"
+      ],
+      "rank": 1,
+      "hnsw_recall_at_3": 1.0
+    },
+    {
+      "query": "¿Cómo obtengo la ecuación de la recta tangente a una curva en un punto?",
+      "embedding_query": "¿Cómo obtengo la ecuación de la recta tangente a una curva en un punto?",
+      "baseline_retrieved": [
+        "tangente",
+        "potencia",
+        "cociente"
+      ],
+      "baseline_rank": 1,
+      "relevant": "tangente",
+      "retrieved": [
+        "tangente",
+        "potencia",
+        "cociente"
+      ],
+      "rank": 1,
+      "hnsw_recall_at_3": 1.0
+    },
+    {
+      "query": "¿Qué regla uso para derivar una función compuesta?",
+      "embedding_query": "¿Qué regla uso para derivar una función compuesta?",
+      "baseline_retrieved": [
+        "cadena",
+        "derivada",
+        "producto"
+      ],
+      "baseline_rank": 1,
+      "relevant": "cadena",
+      "retrieved": [
+        "cadena",
+        "derivada",
+        "producto"
+      ],
+      "rank": 1,
+      "hnsw_recall_at_3": 1.0
+    },
+    {
+      "query": "¿Cómo derivo la multiplicación de dos funciones?",
+      "embedding_query": "¿Cómo derivo la producto de dos funciones?",
+      "baseline_retrieved": [
+        "producto",
+        "cadena",
+        "derivada"
+      ],
+      "baseline_rank": 1,
+      "relevant": "producto",
+      "retrieved": [
+        "producto",
+        "cadena",
+        "derivada"
+      ],
+      "rank": 1,
+      "hnsw_recall_at_3": 1.0
+    },
+    {
+      "query": "¿Cómo derivo una división entre funciones?",
+      "embedding_query": "¿Cómo derivo un cociente entre funciones?",
+      "baseline_retrieved": [
+        "producto",
+        "cadena",
+        "derivada"
+      ],
+      "baseline_rank": null,
+      "relevant": "cociente",
+      "retrieved": [
+        "derivada",
+        "cociente",
+        "cadena"
+      ],
+      "rank": 2,
+      "hnsw_recall_at_3": 1.0
+    },
+    {
+      "query": "¿Cuándo es continua una función en un punto?",
+      "embedding_query": "¿Cuándo es continua una función en un punto?",
+      "baseline_retrieved": [
+        "limite",
+        "crecimiento",
+        "potencia"
+      ],
+      "baseline_rank": 1,
+      "relevant": "limite",
+      "retrieved": [
+        "limite",
+        "crecimiento",
+        "potencia"
+      ],
+      "rank": 1,
+      "hnsw_recall_at_3": 1.0
+    },
+    {
+      "query": "¿Qué ocurre con el exponente al derivar x elevado a n?",
+      "embedding_query": "¿Qué ocurre con el exponente al derivar x elevado a n?",
+      "baseline_retrieved": [
+        "potencia",
+        "cociente",
+        "derivada"
+      ],
+      "baseline_rank": 1,
+      "relevant": "potencia",
+      "retrieved": [
+        "potencia",
+        "cociente",
+        "derivada"
+      ],
+      "rank": 1,
+      "hnsw_recall_at_3": 1.0
+    },
+    {
+      "query": "¿Cómo determina el signo de la derivada si una función crece o decrece?",
+      "embedding_query": "¿Cómo determina el signo de la derivada si una función crece o decrece?",
+      "baseline_retrieved": [
+        "crecimiento",
+        "derivada",
+        "producto"
+      ],
+      "baseline_rank": 1,
+      "relevant": "crecimiento",
+      "retrieved": [
+        "crecimiento",
+        "derivada",
+        "producto"
+      ],
+      "rank": 1,
+      "hnsw_recall_at_3": 1.0
+    }
+  ],
+  "scope": "Synthetic technical verification; not an academic benchmark or production performance claim."
+}

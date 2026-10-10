@@ -1,6 +1,7 @@
 from functools import lru_cache
 
 from sqlalchemy import Engine, create_engine
+from sqlalchemy.orm import Session
 
 from app.configuracion.settings import get_settings
 
@@ -15,3 +16,8 @@ def get_engine() -> Engine:
         connect_args={"connect_timeout": 3, "options": "-c statement_timeout=3000"},
         hide_parameters=True,
     )
+
+
+def get_session():
+    with Session(get_engine(), expire_on_commit=False) as session:
+        yield session

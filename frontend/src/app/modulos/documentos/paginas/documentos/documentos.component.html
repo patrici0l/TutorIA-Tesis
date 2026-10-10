@@ -1,0 +1,241 @@
+<p class="eyebrow">MATERIALES DEL CURSO</p>
+<h1>Documentos con fundamento.</h1>
+<p class="lead">Reúne los materiales docentes que servirán como fuentes de aprendizaje.</p>
+@if (!canManage()) {
+  <div class="panel">
+    <h2>Espacio docente</h2>
+    <p>
+      La carga y gestión de materiales requiere permisos de docente. Tu cuenta de estudiante
+      utilizará los recursos de aprendizaje en las próximas etapas.
+    </p>
+  </div>
+} @else {
+  @if (error()) {
+    <p class="notice error" role="alert">{{ error() }}</p>
+  }
+  @if (success()) {
+    <p class="notice success" role="status">{{ success() }}</p>
+  }
+  <section class="panel" aria-labelledby="upload-title">
+    <h2 id="upload-title">Añadir un documento</h2>
+    <p>PDF, DOCX o TXT · Hasta 10 MiB · Materiales propios o con autorización de uso.</p>
+    <form (ngSubmit)="upload(fileInput)">
+      <label for="document-title">Título</label>
+      <input
+        id="document-title"
+        name="title"
+        [(ngModel)]="title"
+        maxlength="160"
+        required
+        [disabled]="locked()"
+        placeholder="Ej. Introducción a las derivadas"
+      />
+      <label for="document-file">Archivo del curso</label>
+      <input
+        #fileInput
+        id="document-file"
+        type="file"
+        accept=".pdf,.docx,.txt"
+        (change)="choose($event)"
+        [disabled]="locked()"
+        aria-describedby="file-help"
+      />
+      <p id="file-help">
+        El servidor validará el contenido y lo guardará de forma privada. Después podrás extraer su
+        texto desde los detalles.
+      </p>
+      <button type="submit" [disabled]="locked() || !file() || !title.trim()">
+        {{ busy() ? 'Guardando…' : 'Guardar documento' }}
+      </button>
+    </form>
+  </section>
+  <section class="panel" aria-labelledby="library-title" [attr.aria-busy]="loading()">
+    <div class="heading">
+      <h2 id="library-title">
+        Mis documentos <span>{{ total() }}</span>
+      </h2>
+      <button class="secondary" (click)="load()" [disabled]="loading() || locked()">
+        Actualizar
+      </button>
+    </div>
+    @if (loading()) {
+      <p role="status">Cargando documentos…</p>
+    } @else if (documents().length === 0) {
+      <p>Aún no tienes documentos. Añade tu primer material del curso.</p>
+    } @else {
+      <ul class="document-list">
+        @for (document of documents(); track document.id) {
+          <li>
+            <div>
+              <h3>{{ document.title }}</h3>
+              <p class="filename">{{ document.filename }} · {{ size(document.size_bytes) }}</p>
+              <span class="badge">{{ processingLabel(document) }}</span>
+            </div>
+            <div class="actions">
+              <button
+                class="secondary"
+                (click)="view(document)"
+                [disabled]="busy()"
+                [attr.aria-label]="'Ver detalles de ' + document.title"
+              >
+                Detalles</button
+              ><button
+                class="danger"
+                (click)="pendingDelete.set(document)"
+                [disabled]="
+                  locked() ||
+                  (document.processing_status === 'processing' && !canRetryProcessing(document))
+                "
+                [attr.aria-label]="'Eliminar ' + document.title"
+              >
+                Eliminar
+              </button>
+            </div>
+          </li>
+        }
+      </ul>
+      <div class="pagination">
+        <button
+          class="secondary"
+          (click)="load(offset() - 20)"
+          [disabled]="offset() === 0 || locked()"
+        >
+          Anterior</button
+        ><span>{{ offset() + 1 }}–{{ offset() + documents().length }} de {{ total() }}</span
+        ><button
+          class="secondary"
+          (click)="load(offset() + 20)"
+          [disabled]="offset() + documents().length >= total() || locked()"
+        >
+          Siguiente
+        </button>
+      </div>
+    }
+  </section>
+  @if (detailLoading()) {
+    <p role="status">Cargando detalles…</p>
+  }
+  @if (selected(); as document) {
+    <section
+      class="panel details"
+      aria-labelledby="detail-title"
+      [attr.aria-busy]="processingId() === document.id"
+    >
+      <div class="heading">
+        <h2 id="detail-title">{{ document.title }}</h2>
+        <button class="secondary" (click)="closeDetails()">Cerrar detalles</button>
+      </div>
+      <dl>
+        <dt>Archivo</dt>
+        <dd>{{ document.filename }}</dd>
+        <dt>Formato</dt>
+        <dd>{{ document.mime_type }}</dd>
+        <dt>Tamaño</dt>
+        <dd>{{ size(document.size_bytes) }}</dd>
+        <dt>Fecha de carga</dt>
+        <dd>{{ document.created_at | date: 'dd/MM/yyyy HH:mm' }}</dd>
+        <dt>Estado</dt>
+        <dd>{{ processingLabel(document) }}</dd>
+        @if (document.processed_at) {
+          <dt>Texto procesado</dt>
+          <dd>{{ document.processed_at | date: 'dd/MM/yyyy HH:mm' }}</dd>
+        }
+      </dl>
+      @if (document.processing_status !== 'processed') {
+        <div class="processing">
+          <p>
+            Extrae el texto y divídelo en fragmentos con referencias a sus páginas o párrafos. Esta
+            etapa prepara el material; después, crea su índice vectorial para buscar fuentes.
+          </p>
+          @if (document.processing_status === 'failed') {
+            <p>{{ processingError(document) }}</p>
+          }
+          <button
+            (click)="process()"
+            [disabled]="
+              locked() ||
+              (document.processing_status === 'processing' && !canRetryProcessing(document))
+            "
+          >
+            {{
+              processingId() === document.id
+                ? 'Procesando…'
+                : document.processing_status === 'failed' || canRetryProcessing(document)
+                  ? 'Reintentar procesamiento'
+                  : document.processing_status === 'processing'
+                    ? 'Procesamiento en curso'
+                    : 'Procesar documento'
+            }}
+          </button>
+          @if (document.processing_status === 'processing' && processingId() !== document.id) {
+            <p>
+              Si el proceso se interrumpió, actualiza su estado tras dos minutos para reintentarlo.
+            </p>
+            <button class="secondary" (click)="view(document)">Actualizar estado</button>
+          }
+        </div>
+      } @else {
+        <div class="processing" [attr.aria-busy]="indexingId() === document.id">
+          <h3>{{ indexLabel(document) }}</h3>
+          <p>
+            El modelo multilingüe local transforma los fragmentos en vectores sin enviar el material
+            fuera de tu equipo. Puedes consultar tus fuentes desde Buscar fuentes en la navegación
+            superior.
+          </p>
+          @if (document.index_status === 'failed') {
+            <p>{{ indexError(document) }}</p>
+          }
+          @if (document.index_status !== 'indexed') {
+            <button
+              (click)="index()"
+              [disabled]="
+                locked() || (document.index_status === 'indexing' && !canRetryIndex(document))
+              "
+            >
+              {{
+                indexingId() === document.id
+                  ? 'Indexando…'
+                  : document.index_status === 'indexing' && !canRetryIndex(document)
+                    ? 'Indexación en curso'
+                    : document.index_status === 'failed' || canRetryIndex(document)
+                      ? 'Reintentar indexación'
+                      : 'Preparar índice vectorial'
+              }}
+            </button>
+            @if (document.index_status === 'indexing' && indexingId() !== document.id) {
+              <p>
+                Si el proceso se interrumpió, actualiza su estado tras cinco minutos para
+                reintentarlo.
+              </p>
+              <button class="secondary" (click)="view(document)">Actualizar estado</button>
+            }
+          } @else {
+            <p>
+              {{ document.embedding_model }} · {{ document.indexed_at | date: 'dd/MM/yyyy HH:mm' }}
+            </p>
+            <button class="secondary" (click)="index(true)" [disabled]="locked()">
+              Reconstruir índice
+            </button>
+          }
+        </div>
+        <app-document-chunks [documentId]="document.id" />
+      }
+    </section>
+  }
+  @if (pendingDelete(); as document) {
+    <section class="panel deletion" role="alert" aria-labelledby="delete-title">
+      <h2 id="delete-title">Eliminar «{{ document.title }}»</h2>
+      <p>
+        El material se retirará de tu biblioteca y se eliminará su archivo. Esta acción no se puede
+        deshacer desde la interfaz.
+      </p>
+      <div class="actions">
+        <button class="danger" (click)="remove()" [disabled]="locked()">
+          {{ busy() ? 'Eliminando…' : 'Confirmar eliminación' }}</button
+        ><button class="secondary" (click)="pendingDelete.set(null)" [disabled]="locked()">
+          Cancelar
+        </button>
+      </div>
+    </section>
+  }
+}

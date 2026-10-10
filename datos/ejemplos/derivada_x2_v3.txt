@@ -1,0 +1,12 @@
+Material sintético TutorIA para revisión de personalización v3.
+Tema: Derivadas. Única función estudiada: f(x)=x², con x real.
+La derivada f'(x) mide la tasa de cambio instantánea de f respecto de x.
+Para h distinto de cero, el cociente de cambio es [f(x+h)-f(x)]/h.
+Como (x+h)²=x²+2xh+h², el cociente es (2xh+h²)/h=2x+h.
+Al tomar el límite cuando h tiende a cero, se obtiene f'(x)=2x.
+No se sustituye h=0 antes de simplificar: la división por cero no está definida.
+En un punto x=a, la pendiente de la tangente es f'(a)=2a.
+La pendiente es negativa si a<0, cero si a=0 y positiva si a>0.
+Una pendiente cero en a=0 no significa que f sea constante en todo su dominio.
+Todos estos enunciados corresponden a f(x)=x². No se estudian otras funciones ni la regla general de la potencia.
+Texto creado para una prueba técnica; no constituye material institucional ni validación pedagógica.

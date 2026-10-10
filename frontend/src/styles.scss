@@ -1,11 +1,22 @@
 @use './app/compartido/animaciones/motion';
+:root {
+  --navy: #002d62;
+  --blue: #0065b0;
+  --blue-dark: #07508e;
+  --gold: #f5b51b;
+  --surface: #f3f7fb;
+  --blue-soft: #e8f1fa;
+  --ink: #27384b;
+  --muted: #526477;
+  --border: #d7e2ed;
+}
 * {
   box-sizing: border-box;
 }
 body {
   margin: 0;
-  background: #f7f8f2;
-  color: #20352c;
+  background: var(--surface);
+  color: var(--ink);
   font-family: 'Segoe UI', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -14,9 +25,9 @@ input {
   font: inherit;
 }
 :focus-visible {
-  outline: 3px solid #458c69;
+  outline: 3px solid var(--blue);
   outline-offset: 4px;
 }
 ::selection {
-  background: #d6e9bc;
+  background: var(--blue-soft);
 }

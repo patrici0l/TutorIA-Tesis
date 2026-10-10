@@ -1,0 +1,139 @@
+<header>
+  <p class="eyebrow">TUTORÍA · TRAZABILIDAD</p>
+  <div class="heading">
+    <div>
+      <h1>Tus métricas de generación</h1>
+      <p>Una mirada a tus recursos y a los datos que quedaron registrados.</p>
+    </div>
+    @if (allowed()) {
+      <button type="button" (click)="load()" [disabled]="busy()">Actualizar métricas</button>
+    }
+  </div>
+</header>
+@if (!allowed()) {
+  <p class="notice">Esta vista requiere permisos de docente.</p>
+} @else {
+  @if (busy()) {
+    <p role="status">Consultando tus registros…</p>
+  }
+  @if (error()) {
+    <p role="alert" class="notice">{{ error() }}</p>
+  }
+  @if (summary(); as data) {
+    <p class="scope">
+      Solo tus registros · Todo el historial · Consulta:
+      {{ data.observed_at | date: 'dd/MM/yyyy HH:mm:ss' }}
+    </p>
+    @if (data.total_records === 0) {
+      <p class="notice">
+        Aún no tienes preparaciones guardadas. Puedes comenzar en
+        <a routerLink="/recursos">Preparar recursos</a>.
+      </p>
+    }
+    <section class="states" aria-label="Estados de tus recursos">
+      <article>
+        <span>Preparaciones guardadas</span><strong>{{ data.total_records | number }}</strong
+        ><small>Incluye todos los estados</small>
+      </article>
+      <article>
+        <span>Por enviar</span><strong>{{ data.prepared | number }}</strong
+        ><small>Preparadas, sin resultado</small>
+      </article>
+      <article>
+        <span>En proceso</span><strong>{{ data.generating | number }}</strong
+        ><small>Estado guardado al consultar</small>
+      </article>
+      <article class="success">
+        <span>Generadas</span><strong>{{ data.succeeded | number }}</strong
+        ><small>Formato y citas validados</small>
+      </article>
+      <article>
+        <span>Con fallo</span><strong>{{ data.failed | number }}</strong
+        ><small>Consulta el detalle en tu historial</small>
+      </article>
+    </section>
+    <div class="details">
+      <section class="panel" aria-labelledby="tokens-title">
+        <h2 id="tokens-title">Consumo registrado</h2>
+        <p class="muted">
+          Se suman únicamente los valores reportados. Los datos ausentes se conservan como
+          desconocidos.
+        </p>
+        <dl>
+          @for (metric of tokenLabels; track metric.key) {
+            <div>
+              <dt>{{ metric.label }}</dt>
+              <dd>
+                <strong>{{
+                  data[metric.key].known_sum === null
+                    ? 'Sin datos'
+                    : (data[metric.key].known_sum | number)
+                }}</strong>
+                <small
+                  >{{ data[metric.key].known_records }} trazas con dato ·
+                  {{ data[metric.key].unknown_records }} sin dato</small
+                >
+              </dd>
+            </div>
+          }
+        </dl>
+        <p class="footnote">
+          El total reportado puede incluir otros tipos de tokens; no se calcula sumando entrada y
+          salida.
+        </p>
+      </section>
+      <section class="panel" aria-labelledby="latency-title">
+        <h2 id="latency-title">Tiempo de respuesta</h2>
+        <p class="muted">
+          Latencia del proveedor registrada; no incluye todo el recorrido de la aplicación.
+        </p>
+        <dl>
+          <div>
+            <dt>Promedio conocido</dt>
+            <dd>
+              <strong>{{
+                data.latency.known_average_ms === null
+                  ? 'Sin datos'
+                  : (data.latency.known_average_ms | number: '1.0-2') + ' ms'
+              }}</strong>
+            </dd>
+          </div>
+          <div>
+            <dt>Mínimo / máximo</dt>
+            <dd>
+              {{
+                data.latency.known_min_ms === null
+                  ? 'Sin datos'
+                  : data.latency.known_min_ms + ' / ' + data.latency.known_max_ms + ' ms'
+              }}
+            </dd>
+          </div>
+        </dl>
+        <p class="footnote">
+          {{ data.latency.known_records }} trazas con dato · {{ data.latency.unknown_records }} sin
+          dato. Los fallos sin tiempo registrado no entran en el promedio.
+        </p>
+      </section>
+    </div>
+    <section class="panel audit" aria-labelledby="coverage-title">
+      <h2 id="coverage-title">Cómo leer estos datos</h2>
+      <p>
+        <strong>{{ data.execution_records }} trazas de ejecución</strong> ·
+        {{ data.reserved_attempts }} con fecha de reserva persistente. Las trazas antiguas pueden no
+        tener esa fecha; estos conteos no certifican llamadas recibidas por el proveedor.
+      </p>
+      <p>
+        <strong>Costo estimado:</strong> {{ data.cost_known_records }} trazas con estimación ·
+        {{ data.cost_unknown_records }} sin estimación. Esta vista no verifica facturación ni
+        calcula importes.
+      </p>
+      <p>
+        Un recurso generado superó las comprobaciones de estructura y citas. La corrección
+        matemática y la calidad pedagógica requieren revisión docente.
+      </p>
+      <a routerLink="/recursos"
+        >Revisar mis recursos y sus fuentes <span aria-hidden="true">→</span></a
+      >
+    </section>
+  }
+}

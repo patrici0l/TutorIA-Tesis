@@ -1,0 +1,56 @@
+{
+  "protocol_sha256": "48be7fc1d89f61c4946043f545d91bc1623df34d856c2841edf3ff569857aae6",
+  "quota": {
+    "checked_at": "2026-10-10 15:42:05.501420+00:00",
+    "reserved_today": 3,
+    "active": 0
+  },
+  "safe_active_configuration": {
+    "auth_mode": "mock",
+    "auth_mock_user": "teacher",
+    "llm_enabled": true,
+    "llm_free_tier_confirmed": true,
+    "llm_model": "gemini-3.1-flash-lite",
+    "llm_daily_request_limit": 5,
+    "llm_max_input_chars": 12000,
+    "llm_max_output_tokens": 512,
+    "llm_timeout_seconds": 30
+  },
+  "cases": [
+    {
+      "level": "low",
+      "id": "b989369e-0b18-487c-9ac3-c39fe4f8ed2d",
+      "status": "prepared",
+      "has_reservation": false,
+      "prompt_matches_preflight": true,
+      "prompt_version_matches": true,
+      "sources_match_preflight": false,
+      "adaptation_matches_preflight": true
+    },
+    {
+      "level": "medium",
+      "id": "0987537d-1448-4b06-8cfb-e01f3c8ec04a",
+      "status": "prepared",
+      "has_reservation": false,
+      "prompt_matches_preflight": true,
+      "prompt_version_matches": true,
+      "sources_match_preflight": false,
+      "adaptation_matches_preflight": true
+    },
+    {
+      "level": "high",
+      "id": "e2f5b13b-af24-4c14-9166-82ac742889cd",
+      "status": "prepared",
+      "has_reservation": false,
+      "prompt_matches_preflight": true,
+      "prompt_version_matches": true,
+      "sources_match_preflight": false,
+      "adaptation_matches_preflight": true
+    }
+  ],
+  "source_documents_available": true,
+  "preparation_integrity_passed": false,
+  "enough_quota_for_three": false,
+  "execution_started": false,
+  "reason": "Insufficient quota for the complete three-case protocol. No configuration changes or generation requests."
+}

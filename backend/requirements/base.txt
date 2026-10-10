@@ -1,11 +1,17 @@
-# Dependencias resueltas; actualizar junto con pyproject.toml y pruebas.
+# Dependencias fijadas para el entorno verificado.
 alembic==1.20.0
 annotated-doc==0.0.5
 annotated-types==0.8.0
 anyio==4.15.1
+certifi==2026.7.22
 click==8.5.0
+defusedxml==0.7.1
+dnspython==2.8.0
+email-validator==2.3.0
 fastapi==0.142.2
 h11==0.16.0
+httpcore==1.0.9
+httpx==0.28.1
 idna==3.20
 Mako==1.4.3
 MarkupSafe==3.0.4
@@ -22,3 +28,18 @@ typing-inspection==0.4.4
 typing_extensions==4.16.0
 tzdata==2026.5
 uvicorn==0.54.0
+python-multipart==0.0.32
+pypdf==6.19.0
+onnxruntime==1.30.0
+tokenizers==0.23.2
+pgvector==0.5.0
+numpy==2.5.3
+flatbuffers==25.12.19
+packaging==26.3
+protobuf==7.36.2
+filelock==4.0.12
+fsspec==2026.9.0
+hf-xet==1.6.0
+huggingface-hub==1.33.0
+pyyaml==6.0.3
+tqdm==4.70.1

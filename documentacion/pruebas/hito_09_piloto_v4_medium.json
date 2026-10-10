@@ -1,0 +1,164 @@
+{
+  "preparation": {
+    "id": "78efd789-7465-4865-b7e8-4489c7186963",
+    "status": "prepared",
+    "topic": "Derivadas",
+    "learning_objective": "Explicar la derivada de f(x)=x² como tasa de cambio instantánea, justificando f'(x)=2x con la fuente; usar únicamente esta función, sin añadir otras funciones ni ejercicios.",
+    "resource_type": "EXPLANATION",
+    "difficulty": "intermediate",
+    "question_count": null,
+    "sources": [
+      {
+        "id": "25136e79-2641-45c7-938b-a295cc3a54e5",
+        "position": 0,
+        "source_kind": "paragraph",
+        "source_index": 1,
+        "char_start": 0,
+        "char_end": 318,
+        "text": "TutorIA-Lucero: material sintético de prueba\nTema: derivada de una función polinómica\nObjetivo: reconocer la tasa de cambio instantánea.\nEjemplo: si f(x) = x^2, su derivada es f'(x) = 2x.\nEjercicio: determina la derivada de g(x) = 3x^2 + 2x.\nEste texto se creó exclusivamente para comprobar carga y gestión del corpus.",
+        "document_id": "84ed0928-238d-46ec-9de2-8f704249ddc3",
+        "document_title": "Derivadas · Material sintético de prueba",
+        "filename": "derivadas_sinteticas.txt",
+        "document_sha256": "8a281568815d0381a75a66fe4004806aa424a520cb8f6b145eeda104e5f08789",
+        "source_sha256": "6a88d828d463dd478ed9927fc3c2aedd190b91ebd0387e88156d70f08d3f34c1",
+        "processing_version": "text-v1",
+        "similarity": 0.9101924896240234,
+        "citation_id": "S1"
+      },
+      {
+        "id": "7dfe36e9-1a1c-4bd3-87e0-904b2fb839be",
+        "position": 0,
+        "source_kind": "paragraph",
+        "source_index": 1,
+        "char_start": 0,
+        "char_end": 882,
+        "text": "Material sintético TutorIA para revisión de personalización v3.\nTema: Derivadas. Única función estudiada: f(x)=x², con x real.\nLa derivada f'(x) mide la tasa de cambio instantánea de f respecto de x.\nPara h distinto de cero, el cociente de cambio es [f(x+h)-f(x)]/h.\nComo (x+h)²=x²+2xh+h², el cociente es (2xh+h²)/h=2x+h.\nAl tomar el límite cuando h tiende a cero, se obtiene f'(x)=2x.\nNo se sustituye h=0 antes de simplificar: la división por cero no está definida.\nEn un punto x=a, la pendiente de la tangente es f'(a)=2a.\nLa pendiente es negativa si a<0, cero si a=0 y positiva si a>0.\nUna pendiente cero en a=0 no significa que f sea constante en todo su dominio.\nTodos estos enunciados corresponden a f(x)=x². No se estudian otras funciones ni la regla general de la potencia.\nTexto creado para una prueba técnica; no constituye material institucional ni validación pedagógica.",
+        "document_id": "5b0e79d5-5989-453a-b1f3-a3946873f19a",
+        "document_title": "Derivada de x²: fundamentos sintéticos para piloto v3",
+        "filename": "derivada_x2_v3.txt",
+        "document_sha256": "37a34e9d007229e53253f0b553e89132b9e595c5d55b8e6baa1a95151db50bba",
+        "source_sha256": "8fb6557cdb7e85acdf3fab38a336159697e926865b08283b9176a6cd02519f19",
+        "processing_version": "text-v1",
+        "similarity": 0.909554660320282,
+        "citation_id": "S2"
+      }
+    ],
+    "adaptation": {
+      "policy_version": "profile-adaptation-v2",
+      "profile": {
+        "student_id": "SYN-V4-MEDIUM-001",
+        "topic": "Derivadas",
+        "performance": 42.0,
+        "attempts": 4,
+        "frequent_errors": [
+          "cociente_incremental"
+        ],
+        "mastery_level": "medium",
+        "recommended_support": "reinforcement",
+        "resolution_time_seconds": 120.0,
+        "progress_trend": "improving",
+        "data_kind": "synthetic",
+        "id": "62b3f3bb-8938-4c0d-921e-fb1c4523c748",
+        "created_at": "2026-10-10T01:43:00.565891Z",
+        "schema_version": "performance-profile-v1"
+      },
+      "requested_difficulty": "basic",
+      "effective_difficulty": "intermediate",
+      "guidance": "Prioriza una guía concentrada: resume las transiciones esenciales y explica la decisión que evita el error informado, sin repetir todas las definiciones básicas. Para EXPLANATION, combina operaciones rutinarias en pasos coherentes y destaca por qué funciona el procedimiento. Usa el ejemplo disponible, sin añadir otro ejercicio ni casos numéricos que las fuentes no desarrollan. Concentra el apoyo en los errores informados del tema; no generalices dificultades.",
+      "reason": "Dominio medio informado: dificultad intermedia y práctica guiada. Foco localizado en las etiquetas de error informadas, sin inferir su gravedad.",
+      "focus_errors": [
+        "cociente_incremental"
+      ],
+      "suggested_resources": [
+        "EXERCISE",
+        "QUIZ",
+        "EXPLANATION"
+      ]
+    }
+  },
+  "status": "succeeded",
+  "created_at": "2026-10-10T01:43:03.690627Z",
+  "completed_at": "2026-10-10T01:44:48.469570Z",
+  "resource": {
+    "resource_type": "EXPLANATION",
+    "title": "La tasa de cambio instantánea de f(x) = x²",
+    "summary": {
+      "text": "La derivada f'(x) representa la tasa de cambio instantánea. Para f(x) = x², esta se obtiene analizando el comportamiento del cociente incremental cuando el incremento h tiende a cero.",
+      "citations": [
+        "S2"
+      ]
+    },
+    "steps": [
+      {
+        "text": "Definir el cociente incremental para h distinto de cero: [f(x+h) - f(x)] / h.",
+        "citations": [
+          "S2"
+        ]
+      },
+      {
+        "text": "Desarrollar la expresión para f(x) = x²: como (x+h)² = x² + 2xh + h², al restar f(x) = x² obtenemos (2xh + h²) / h.",
+        "citations": [
+          "S2"
+        ]
+      },
+      {
+        "text": "Simplificar la expresión dividiendo por h, resultando en 2x + h.",
+        "citations": [
+          "S2"
+        ]
+      },
+      {
+        "text": "Calcular el límite cuando h tiende a cero. Es crucial no sustituir h=0 antes de simplificar, ya que la división por cero no está definida.",
+        "citations": [
+          "S2"
+        ]
+      }
+    ],
+    "worked_example": {
+      "text": "Al aplicar el límite cuando h tiende a cero a la expresión simplificada 2x + h, obtenemos f'(x) = 2x. Este resultado indica la tasa de cambio instantánea de la función f(x) = x² en cualquier punto x.",
+      "citations": [
+        "S1",
+        "S2"
+      ]
+    }
+  },
+  "message": null,
+  "audit": {
+    "generation_started_at": "2026-10-10T01:44:28.777856Z",
+    "provider": "gemini",
+    "requested_model": "gemini-3.1-flash-lite",
+    "model_version": "gemini-3.1-flash-lite",
+    "prompt_version": "educational-rag-profile-v4",
+    "prompt_sha256": "e4b6f4a7f64c0e506938f8f3cc498b8bb7bb2778e18ce14760444cf51f736296",
+    "usage": {
+      "input_tokens": 2029,
+      "output_tokens": 447,
+      "reasoning_tokens": null,
+      "cached_input_tokens": null,
+      "total_tokens": 2476
+    },
+    "latency_ms": 19667,
+    "estimated_cost": "0E-8",
+    "cost_basis": {
+      "version": "confirmed-free-tier-v1",
+      "currency": "USD",
+      "basis": "operator_confirmed_free_tier",
+      "provider": "gemini",
+      "requested_model": "gemini-3.1-flash-lite",
+      "input_per_million": "0",
+      "output_per_million": "0"
+    },
+    "error_code": null,
+    "retrieval": {
+      "method": "exact_cosine",
+      "query_version": "calculo-alias-v1",
+      "embedding_model": "intfloat/multilingual-e5-small",
+      "embedding_revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+      "embedding_version": "e5-onnx-v1",
+      "top_k": 3,
+      "min_similarity": 0.0,
+      "available_chunks": 2,
+      "elapsed_ms": 3106
+    }
+  }
+}

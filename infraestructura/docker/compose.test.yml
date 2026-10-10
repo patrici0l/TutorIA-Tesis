@@ -10,6 +10,11 @@ services:
       DB_USER: ${DB_USER:-tutoria}
       DB_PASSWORD: ${DB_PASSWORD:?Configura .env}
       RUN_DB_TESTS: "1"
+      AUTH_MODE: mock
+      EMBEDDING_MODEL_PATH: /app/models/e5-small
+      RUN_MODEL_TESTS: "1"
+    volumes:
+      - embedding_data:/app/models/e5-small:ro
     depends_on:
       backend:
         condition: service_healthy
