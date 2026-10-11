@@ -21,6 +21,9 @@ Una muestra por nivel sirve para viabilidad técnica, no para estabilidad ni apr
 
 ## Condiciones de ejecución
 
+Comprobación reutilizable de solo lectura: [preflight](hito_09_preflight_reproducible.md).
+No sustituye las reservas de API ni autoriza reintentos de casos ya enviados.
+
 1. Leer manifiesto y verificar su SHA contra el preflight. Comprobar tres cupos disponibles,
    ausencia de generación activa, nivel gratuito confirmado y demás valores fijados.
 2. Preparar por API autenticada, reutilizando perfiles/documentos v4. Guardar IDs y detalles

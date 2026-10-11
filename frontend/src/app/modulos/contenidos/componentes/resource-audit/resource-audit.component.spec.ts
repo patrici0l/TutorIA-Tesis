@@ -71,6 +71,36 @@ describe('Auditoría de recursos', () => {
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('details')).toBeNull();
   });
+  it('muestra los límites guardados de una ejecución fallida, separados del consumo', () => {
+    TestBed.configureTestingModule({ imports: [ResourceAuditComponent] });
+    const fixture = TestBed.createComponent(ResourceAuditComponent);
+    fixture.componentRef.setInput('detail', {
+      ...detail,
+      audit: {
+        ...detail.audit!,
+        execution_configuration: {
+          version: 'generation-config-v1',
+          max_input_chars: 12000,
+          max_output_tokens: 1024,
+          timeout_seconds: 30,
+        },
+      },
+    });
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('1024 tokens');
+    expect(fixture.nativeElement.textContent).toContain('12000 caracteres');
+    expect(fixture.nativeElement.textContent).toContain('30 s');
+    expect(fixture.nativeElement.textContent).toContain('No son el consumo real');
+  });
+  it('identifica límites ausentes sin atribuir a históricos un valor por defecto', () => {
+    TestBed.configureTestingModule({ imports: [ResourceAuditComponent] });
+    const fixture = TestBed.createComponent(ResourceAuditComponent);
+    fixture.componentRef.setInput('detail', detail);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Límites de ejecución no registrados');
+    expect(fixture.nativeElement.textContent).not.toContain('1024 tokens');
+    expect(fixture.nativeElement.textContent).not.toContain('512 tokens');
+  });
   it('distingue cero condicionado de un valor antiguo sin moneda', () => {
     TestBed.configureTestingModule({ imports: [ResourceAuditComponent] });
     const fixture = TestBed.createComponent(ResourceAuditComponent);

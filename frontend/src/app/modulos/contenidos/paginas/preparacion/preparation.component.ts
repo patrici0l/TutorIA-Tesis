@@ -6,6 +6,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ResourceViewComponent } from '../../componentes/resource-view/resource-view.component';
 import { ResourceHistoryComponent } from '../../componentes/resource-history/resource-history.component';
 import { ResourceAuditComponent } from '../../componentes/resource-audit/resource-audit.component';
+import { ResourceExportComponent } from '../../componentes/resource-export/resource-export.component';
 import { HistoryDetail } from '../../modelos/history.model';
 import { AuthService } from '../../../../nucleo/servicios/auth.service';
 import {
@@ -27,6 +28,7 @@ import { ProfilePage, ProfileSummary } from '../../../perfiles/modelos/profile.m
     ResourceViewComponent,
     ResourceHistoryComponent,
     ResourceAuditComponent,
+    ResourceExportComponent,
   ],
   templateUrl: './preparation.component.html',
   styleUrl: './preparation.component.scss',

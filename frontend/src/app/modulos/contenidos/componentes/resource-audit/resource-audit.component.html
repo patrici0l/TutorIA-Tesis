@@ -72,6 +72,24 @@
       flujo y esta vista no verifica facturación.
     </p>
     <h3>Preparación reproducible</h3>
+    @if (audit.execution_configuration; as configuration) {
+      <dl>
+        <dt>Límite de entrada</dt>
+        <dd>{{ configuration.max_input_chars }} caracteres</dd>
+        <dt>Límite de salida</dt>
+        <dd>{{ configuration.max_output_tokens }} tokens</dd>
+        <dt>Timeout HTTP configurado</dt>
+        <dd>{{ configuration.timeout_seconds }} s</dd>
+        <dt>Versión de configuración</dt>
+        <dd>{{ configuration.version }}</dd>
+      </dl>
+      <p class="help">
+        Límites conservados al reservar esta ejecución. No son el consumo real ni prueban recepción
+        por el proveedor. No registran valores implícitos de temperatura o semilla.
+      </p>
+    } @else {
+      <p class="help">Límites de ejecución no registrados para este recurso.</p>
+    }
     <dl>
       <dt>Versión del prompt</dt>
       <dd>{{ audit.prompt_version }}</dd>

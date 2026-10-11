@@ -68,6 +68,12 @@ En **Mis recursos**, dentro de `/recursos`, recupera preparaciones y resultados 
 fuentes originales. Abre **Ver trazabilidad de este recurso** para fechas, modelo,
 versiones, tokens, latencia, costo condicionado y código de fallo. Consultar no genera de nuevo.
 
+Pulsa **Descargar recurso y trazabilidad · JSON** para conservar el registro abierto en
+las descargas del navegador. Incluye contenido disponible, fuentes, perfil asociado y
+auditoría; también permite guardar un fallo. No consume IA. Conserva el estado consultado:
+si estaba en proceso, vuelve a abrirlo para descargar su resultado posterior. El archivo
+contiene los textos de tus materiales y no reemplaza un respaldo de la plataforma.
+
 `/metricas` resume tus propias ejecuciones, sus estados y cobertura de mediciones.
 **Desconocido** no significa cero. Tokens totales son los reportados, no una suma inferida.
 La latencia del proveedor no incluye todo el recorrido de la aplicación. Un costo de cero

@@ -17,6 +17,7 @@ La lista paginada permanece ligera; audit solo aparece en detalle.
 | latency_ms | Latencia registrada del proveedor, nullable |
 | estimated_cost | Decimal nullable; cero condicionado a la base gratuita guardada y uso de entrada/salida conocido |
 | cost_basis | Nullable; versión, moneda, proveedor/modelo y tarifa asumida del nivel gratuito confirmado por el operador |
+| execution_configuration | Nullable; límites configurados al reservar: version, max_input_chars, max_output_tokens, timeout_seconds |
 | error_code | Solo códigos de error controlados; desconocidos se omiten como null |
 | retrieval | method, query_version, embedding_model/revision/version, top_k, min_similarity, available_chunks, elapsed_ms |
 
@@ -48,3 +49,21 @@ Desde la corrección del 10 de octubre, fallos llm_incomplete por MAX_TOKENS pue
 uso y latencia conocidos. Contadores ausentes/inválidos son null y el recurso sigue null.
 El costo mantiene su condición de base gratuita y entrada/salida conocidas; no se altera
 el historial anterior. No se expone texto truncado ni respuesta cruda del proveedor.
+
+Desde 0011, la ruta de generación guarda `execution_configuration` en la misma transacción
+que la reserva, antes de llamar al proveedor. `generation-config-v1` contiene solo tres
+límites enteros: entrada en caracteres, salida en tokens y timeout HTTP en segundos.
+Se conserva en éxito, salida inválida, truncamiento, timeout o interrupción. El historial
+devuelve esos valores guardados, aunque cambie posteriormente la configuración del proceso.
+La interfaz los muestra separados del consumo medido.
+
+No es prueba de recepción del proveedor ni duración total máxima del flujo: HTTPX aplica
+su timeout a operaciones HTTP. Temperatura, semilla y defaults del proveedor no se
+reconstruyen. No incluye claves, URLs privadas ni .env. El cliente no puede elegir estos
+valores en POST generate; su cuerpo sigue vacío.
+
+La migración no rellena registros anteriores. Preparaciones no enviadas, históricos y
+coordinador interno legado sin esta reserva conservan null; Angular indica límites no
+registrados, sin atribuirles 512/1024 por defecto. No modifica snapshots de prompts,
+adaptaciones, fuentes, uso o resultados de los pilotos guardados.
+Ver [evidencia](../pruebas/hito_10_configuracion_ejecucion.md).

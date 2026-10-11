@@ -7,6 +7,7 @@ from pydantic import BaseModel, ConfigDict
 from app.configuracion.settings import Settings
 from app.modulos.contenidos.cost_schemas import CostBasis
 from app.modulos.contenidos.errors import ContentError
+from app.modulos.contenidos.execution_schemas import ExecutionConfiguration
 from app.modulos.contenidos.repositorios.generation_claim_repository import (
     GenerationClaimRepository,
 )
@@ -52,7 +53,16 @@ class GeneratePreparationService:
             else None
         )
         request = self.claim.claim(
-            identifier, owner, target, self.settings.llm_daily_request_limit, cost_basis=cost_basis
+            identifier,
+            owner,
+            target,
+            self.settings.llm_daily_request_limit,
+            cost_basis=cost_basis,
+            execution_configuration=ExecutionConfiguration(
+                max_input_chars=self.settings.llm_max_input_chars,
+                max_output_tokens=self.settings.llm_max_output_tokens,
+                timeout_seconds=self.settings.llm_timeout_seconds,
+            ),
         )
         try:
             result = provider.generate(request)

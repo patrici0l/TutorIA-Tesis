@@ -26,7 +26,11 @@ def test_generation_route_roles_csrf_and_safe_response(document_app):
     assert response.status_code == 200 and response.headers["Cache-Control"] == "no-store"
     assert set(response.json()) == {"id", "status", "message", "resource"}
     service.generate.assert_called_once_with(identifier, owner.id)
-    assert client.post(url, json={"model": "unauthorized"}, headers=HEADERS).status_code == 422
+    for body in (
+        {"model": "unauthorized"},
+        {"execution_configuration": {"max_output_tokens": 4096}},
+    ):
+        assert client.post(url, json=body, headers=HEADERS).status_code == 422
     assert client.post(url, content=b"x" * 17000, headers=HEADERS).status_code == 413
     owner.rol = "student"
     assert client.post(url, headers=HEADERS).status_code == 403

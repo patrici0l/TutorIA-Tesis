@@ -7,6 +7,8 @@
 **/.env.*
 !**/.env.example
 secretos_locales
+seguimiento_privado
+respaldos_locales
 documentacion
 datos
 **/__pycache__

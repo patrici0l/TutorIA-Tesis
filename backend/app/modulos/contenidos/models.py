@@ -13,6 +13,10 @@ class ContentGeneration(Base):
     __tablename__ = "generaciones_contenido"
     __table_args__ = (
         CheckConstraint(
+            "execution_configuration IS NULL OR jsonb_typeof(execution_configuration) = 'object'",
+            name="ck_generaciones_execution_configuration",
+        ),
+        CheckConstraint(
             "cost_basis IS NULL OR jsonb_typeof(cost_basis) = 'object'",
             name="ck_generaciones_cost_basis",
         ),
@@ -57,6 +61,7 @@ class ContentGeneration(Base):
     latency_ms: Mapped[int | None]
     estimated_cost: Mapped[Decimal | None] = mapped_column(Numeric(18, 8))
     cost_basis: Mapped[dict | None] = mapped_column(JSONB(none_as_null=True))
+    execution_configuration: Mapped[dict | None] = mapped_column(JSONB(none_as_null=True))
     resource: Mapped[dict | None] = mapped_column(JSONB(none_as_null=True))
     error_code: Mapped[str | None] = mapped_column(String(40))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

@@ -6,6 +6,7 @@ from sqlalchemy import func, select, text, update
 from sqlalchemy.orm import Session
 
 from app.modulos.contenidos.cost_schemas import CostBasis
+from app.modulos.contenidos.execution_schemas import ExecutionConfiguration
 from app.modulos.contenidos.models import ContentGeneration
 from app.modulos.documentos.models import Document
 from app.modulos.proveedores_ia.schemas import GenerationRequest, GenerationTarget
@@ -22,6 +23,7 @@ class GenerationClaimRepository:
         target: GenerationTarget,
         daily_limit: int,
         cost_basis: CostBasis | None = None,
+        execution_configuration: ExecutionConfiguration | None = None,
     ):
         try:
             self.db.execute(text("SELECT pg_advisory_xact_lock(739117)"))
@@ -94,6 +96,9 @@ class GenerationClaimRepository:
             record.provider = target.provider
             record.requested_model = target.requested_model
             record.cost_basis = cost_basis.model_dump(mode="json") if cost_basis else None
+            record.execution_configuration = (
+                execution_configuration.model_dump(mode="json") if execution_configuration else None
+            )
             self.db.commit()
             return payload
         except Exception:

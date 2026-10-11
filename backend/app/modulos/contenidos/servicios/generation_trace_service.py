@@ -2,22 +2,12 @@ from typing import get_args
 from uuid import UUID
 
 from app.modulos.contenidos.cost_schemas import CostBasis
-from app.modulos.contenidos.errors import ContentError
+from app.modulos.contenidos.errors import CONTENT_ERRORS, ContentError
 from app.modulos.contenidos.repositorios.generation_repository import GenerationRepository
 from app.modulos.contenidos.schemas import ContentRequest
 from app.modulos.contenidos.servicios.resource_validation_service import ResourceValidationService
 from app.modulos.proveedores_ia.errors import ErrorCode
 from app.modulos.proveedores_ia.schemas import FailureMetadata, GenerationResult
-
-CONTENT_ERRORS = {
-    "content_target_mismatch",
-    "content_wrong_resource",
-    "content_quiz_count",
-    "content_invalid_citations",
-    "content_invalid_output",
-    "content_insufficient_sources",
-    "generation_interrupted",
-}
 
 
 class GenerationTraceService:

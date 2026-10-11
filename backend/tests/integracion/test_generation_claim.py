@@ -6,6 +6,7 @@ from sqlalchemy import update
 
 from app.modulos.contenidos.cost_schemas import CostBasis
 from app.modulos.contenidos.errors import ContentError
+from app.modulos.contenidos.execution_schemas import ExecutionConfiguration
 from app.modulos.contenidos.models import ContentGeneration
 from app.modulos.contenidos.repositorios.generation_claim_repository import (
     GenerationClaimRepository,
@@ -162,6 +163,9 @@ def test_incomplete_provider_metadata_reaches_private_history(
         llm_default_provider="gemini",
         llm_model=TARGET.requested_model,
         llm_daily_request_limit=5,
+        llm_max_input_chars=12000,
+        llm_max_output_tokens=1024,
+        llm_timeout_seconds=30,
     )
     result = GeneratePreparationService(
         GenerationClaimRepository(db),
@@ -174,3 +178,116 @@ def test_incomplete_provider_metadata_reaches_private_history(
     assert detail.audit.usage == metadata.usage and detail.audit.latency_ms == 7
     assert detail.audit.error_code == "llm_incomplete"
     assert detail.audit.estimated_cost == (None if output_tokens is None else 0)
+    assert detail.audit.execution_configuration.max_output_tokens == 1024
+
+
+@pytest.mark.parametrize("outcome", ["valid", "invalid", "timeout"])
+def test_execution_limits_persist_before_network_and_remain_after_terminal_state(
+    claim_database, outcome
+):
+    db, repository, owners = claim_database
+    identifier = preparation(db, repository, owners[0])
+    configuration = ExecutionConfiguration(
+        max_input_chars=12000, max_output_tokens=512, timeout_seconds=30
+    )
+    claim = GenerationClaimRepository(db)
+    claim.claim(identifier, owners[0], TARGET, 5, execution_configuration=configuration)
+    db.expire_all()
+    assert not db.in_transaction()
+    assert (
+        db.get(ContentGeneration, identifier).execution_configuration == configuration.model_dump()
+    )
+    trace = GenerationTraceService(repository, ResourceValidationService())
+    if outcome == "timeout":
+        trace.fail(identifier, owners[0], "llm_timeout")
+    elif outcome == "invalid":
+        with pytest.raises(ContentError):
+            trace.finish(identifier, owners[0], response().model_copy(update={"text": "invalid"}))
+    else:
+        trace.finish(identifier, owners[0], response())
+    different_limits = configuration.model_copy(update={"max_output_tokens": 1024})
+    with pytest.raises(HTTPException) as error:
+        claim.claim(identifier, owners[0], TARGET, 5, execution_configuration=different_limits)
+    assert error.value.status_code == 409
+    detail = HistoryService(HistoryRepository(db)).detail(identifier, owners[0])
+    assert detail.audit.execution_configuration == configuration
+    with pytest.raises(HTTPException):
+        HistoryService(HistoryRepository(db)).detail(identifier, owners[1])
+
+
+def test_rejected_claim_does_not_attach_execution_limits(claim_database):
+    db, repository, owners = claim_database
+    identifier = preparation(db, repository, owners[0])
+    configuration = ExecutionConfiguration(
+        max_input_chars=12000, max_output_tokens=1024, timeout_seconds=30
+    )
+    with pytest.raises(HTTPException):
+        GenerationClaimRepository(db).claim(
+            identifier, owners[1], TARGET, 5, execution_configuration=configuration
+        )
+    detail = HistoryService(HistoryRepository(db)).detail(identifier, owners[0])
+    assert detail.audit.execution_configuration is None
+    assert detail.status == "prepared" and detail.audit.generation_started_at is None
+
+
+def test_saved_limits_match_gemini_payload_and_not_later_settings(claim_database, monkeypatch):
+    import json
+
+    import httpx
+    from pydantic import SecretStr
+
+    from app.configuracion.settings import Settings
+    from app.modulos.contenidos.servicios.generate_preparation_service import (
+        GeneratePreparationService,
+    )
+    from app.modulos.proveedores_ia.gemini.gemini_provider import GeminiProvider
+    from app.modulos.proveedores_ia.servicios.request_limiter import RequestLimiter
+
+    db, repository, owners = claim_database
+    identifier = preparation(db, repository, owners[0])
+    settings = Settings(
+        _env_file=None,
+        llm_enabled=True,
+        llm_free_tier_confirmed=True,
+        llm_model=TARGET.requested_model,
+        gemini_api_key=SecretStr("fictitious-integration-key"),
+        llm_max_input_chars=12000,
+        llm_max_output_tokens=1024,
+        llm_timeout_seconds=30,
+    )
+    sent = []
+
+    def respond(http_request):
+        sent.append(json.loads(http_request.content))
+        return httpx.Response(
+            200,
+            json={
+                "candidates": [
+                    {"finishReason": "STOP", "content": {"parts": [{"text": response().text}]}}
+                ],
+                "usageMetadata": {"promptTokenCount": 20, "candidatesTokenCount": 10},
+            },
+        )
+
+    provider = GeminiProvider(
+        settings, transport=httpx.MockTransport(respond), limiter=RequestLimiter()
+    )
+    monkeypatch.setattr(
+        "app.modulos.contenidos.servicios.generate_preparation_service.create_provider",
+        lambda _: provider,
+    )
+    result = GeneratePreparationService(
+        GenerationClaimRepository(db),
+        GenerationTraceService(repository, ResourceValidationService()),
+        settings,
+    ).generate(identifier, owners[0])
+    assert result.status == "succeeded" and len(sent) == 1
+    settings.llm_max_output_tokens = 512
+    db.expire_all()
+    configuration = (
+        HistoryService(HistoryRepository(db))
+        .detail(identifier, owners[0])
+        .audit.execution_configuration
+    )
+    assert configuration.max_output_tokens == sent[0]["generationConfig"]["maxOutputTokens"] == 1024
+    assert configuration.max_input_chars == 12000 and configuration.timeout_seconds == 30

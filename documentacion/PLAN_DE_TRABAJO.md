@@ -4,6 +4,52 @@ Fuente rectora: Plan_Implementacion_TutorIA-Lucero.docx, entregado por el autor 
 
 ## Bloque actual
 
+10 de octubre, evaluación preparatoria sin proveedor: [registro de revisión humana](pruebas/hito_11_revision_humana.md)
+offline implementado, plantilla v4 generada con decisiones pendientes y hashes originales.
+41 pruebas enfocadas aprobadas. Se valida cobertura/evidencia del registro, no corrección
+de sus conclusiones ni identidad del revisor. No cierra hito9/benchmark ni inventa notas.
+Próximo activo: matriz experimental A/B/C sobre evidencia guardada y requisitos pendientes.
+
+Instrucción vigente del autor, 10 de octubre: continuar el plan dejando Gemini/piloto
+salida1024 pendientes. No condicionar las tareas independientes a cuota ni revisar cupo
+en cada continuación. No se modifica el límite ni se abandona/reintenta un experimento.
+
+Completada [descarga del historial](pruebas/hito_10_exportacion_historial.md) desde Angular:
+JSON del detalle autorizado con contenido/fuentes/perfil/auditoría, incluso fallos.
+18 pruebas enfocadas y build aprobados, frontend desplegado healthy. Sin IA/backend/DB.
+Avance de trazabilidad y revisión del MVP; no cierra evaluación pedagógica ni benchmark.
+Próximo: evaluación de resultados guardados y matriz experimental sin nuevas inferencias,
+seguida de tareas de endurecimiento/documentación que puedan completarse localmente.
+
+10 de octubre: [revisión del código desplegado](pruebas/hito_09_revision_codigo_previa.md)
+del flujo de límites/reserva/proveedor/historial, sin hallazgos nuevos en ese alcance.
+127 fuentes/configuraciones backend coinciden con workspace; hashes/imagen registrados
+porque existen cambios sin commit. Sin inferencias ni suites repetidas por documentación.
+Piloto salida1024 sigue pendiente de tres cupos y comprobación renovada.
+
+10 de octubre: [comprobación previa reproducible](pruebas/hito_09_preflight_reproducible.md)
+de cuota, configuración e integridad de los tres casos salida1024, sin consumir IA.
+15 pruebas enfocadas y consulta real verificadas. Tres casos íntegros; faltan tres cupos
+libres y activación temporal1024 antes del envío. No adelanta ni cierra el benchmark.
+
+10 de octubre, preparación de revisión reproducible: [pilotos con fallos](pruebas/hito_09_revision_terminal.md)
+procesables offline sin excluir intentos, con cobertura de consumo y límites registrados.
+Aplicado al v4 original: un éxito/dos fallos, seis bloques, semántica pendiente. 58 pruebas
+enfocadas aprobadas y backend saludable. Sin Gemini; salida1024 sigue pendiente de cupo.
+Tarea de soporte de evaluación, sin declarar benchmark ni aprobación pedagógica.
+
+10 de octubre, avance de trazabilidad: [límites por ejecución](pruebas/hito_10_configuracion_ejecucion.md)
+persistidos al reservar mediante 0011, visibles en auditoría; históricos sin backfill.
+66 pruebas backend y cinco Angular enfocadas aprobadas, builds/despliegue saludables.
+Cupo 3/5 y cero activas; sin Gemini ni cambios de límites. Mantener protocolo salida1024
+y evaluación humana pendientes. Esta mejora de etapas 12–13 no cierra el benchmark.
+
+10 de octubre, avance operativo auxiliar sin Gemini: [manual técnico](manuales/manual_tecnico_local.md)
+y scripts de respaldo/validación aislada implementados. Copia real de DB/documentos y
+restauración temporal comprobadas; aplicación recuperada, secretos/pesos fuera de copia.
+Ver [evidencia y límites](pruebas/respaldo_local_20261010.md). No cierra etapa 15/hito 12;
+evaluación y protocolo salida1024 mantienen su orden y pendientes.
+
 10 de octubre, revisión sin inferencias: [paquete v4 y cotejo técnico](pruebas/hito_09_revision_v4.md)
 conservan dos fallos y un éxito, seis bloques citados y decisiones humanas pendientes.
 Verificados los tres IDs salida1024 sin reserva y su integridad respecto al preflight/v4.

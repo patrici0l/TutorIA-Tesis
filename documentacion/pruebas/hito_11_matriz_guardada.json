@@ -1,0 +1,321 @@
+{
+  "matrix_version": "saved-synthetic-trials-v1",
+  "recorded_local_date": "2026-10-10",
+  "timezone": "America/Guayaquil",
+  "scope": "exploratory_personalization_only",
+  "formal_benchmark_status": "not_executed",
+  "trials": [
+    {
+      "trial": "v2",
+      "inputs": [
+        {
+          "file": "hito_09_comparacion_completa.json",
+          "sha256": "bf76ae165a9b172144784d42398ce153eb3bb60f5dba09fb21c2bf97aa8eff8e"
+        }
+      ],
+      "review_report": {
+        "file": "hito_09_revision_offline.json",
+        "sha256": "90c514b903f26fa89e1ff42c201dbe776c98bbac9d13cbcb892d298a63e15ee3"
+      },
+      "previously_recorded_input_hashes": [
+        "0e35a0d41e26964a161ce9737e47dc677167b1026a84f2ec18de2aabf0f57564"
+      ],
+      "previously_recorded_bytes_match": false,
+      "current_input_with_crlf_sha256": "0e35a0d41e26964a161ce9737e47dc677167b1026a84f2ec18de2aabf0f57564",
+      "recomputed_report_fields_match": true,
+      "cases": [
+        {
+          "id": "c00981b5-8f00-4e76-87fe-c4384ab11d47",
+          "level": "low",
+          "status": "succeeded",
+          "provider": "gemini",
+          "requested_model": "gemini-3.1-flash-lite",
+          "prompt_version": "educational-rag-profile-v2",
+          "policy_version": "profile-adaptation-v1",
+          "generation_started_at": "2026-10-08T23:12:00.014684+00:00",
+          "usage": {
+            "input_tokens": 1161,
+            "total_tokens": 1542,
+            "output_tokens": 381,
+            "reasoning_tokens": null,
+            "cached_input_tokens": null
+          },
+          "latency_ms": 1951,
+          "estimated_cost": null,
+          "source_count": 1,
+          "execution_configuration": null
+        },
+        {
+          "id": "39f18cd0-5529-4e25-a025-81f098d56033",
+          "level": "medium",
+          "status": "succeeded",
+          "provider": "gemini",
+          "requested_model": "gemini-3.1-flash-lite",
+          "prompt_version": "educational-rag-profile-v2",
+          "policy_version": "profile-adaptation-v1",
+          "generation_started_at": "2026-10-08T23:13:24.999215+00:00",
+          "usage": {
+            "input_tokens": 1154,
+            "total_tokens": 1493,
+            "output_tokens": 339,
+            "reasoning_tokens": null,
+            "cached_input_tokens": null
+          },
+          "latency_ms": 1999,
+          "estimated_cost": null,
+          "source_count": 1,
+          "execution_configuration": null
+        },
+        {
+          "id": "32960f76-5d6d-43b7-9e9b-8d552c9970ed",
+          "level": "high",
+          "status": "succeeded",
+          "provider": "gemini",
+          "requested_model": "gemini-3.1-flash-lite",
+          "prompt_version": "educational-rag-profile-v2",
+          "policy_version": "profile-adaptation-v1",
+          "generation_started_at": "2026-10-09T09:08:15.637445+00:00",
+          "usage": {
+            "input_tokens": 1156,
+            "total_tokens": 1542,
+            "output_tokens": 386,
+            "reasoning_tokens": null,
+            "cached_input_tokens": null
+          },
+          "latency_ms": 18901,
+          "estimated_cost": null,
+          "source_count": 1,
+          "execution_configuration": null
+        }
+      ],
+      "mechanical_checks": {
+        "same_request_except_difficulty": true,
+        "same_profile_except_level_and_identity": true,
+        "same_sources_snapshot": true,
+        "same_provider_model_prompt_policy": true
+      },
+      "generation_start_span_seconds": 35775.622761,
+      "attempts": 3,
+      "succeeded": 3,
+      "failed": 0,
+      "total_tokens_known_cases": 3,
+      "known_total_tokens_subtotal": 4577,
+      "batch_total_tokens": 4577,
+      "latency_known_cases": 3,
+      "cost_estimate_known_cases": 0,
+      "execution_configuration_known_cases": 0,
+      "human_review_status": "pending"
+    },
+    {
+      "trial": "v3",
+      "inputs": [
+        {
+          "file": "hito_09_piloto_v3_completo.json",
+          "sha256": "212a3ac0f407b73a1543942b6b8045f21ae49d3198acb1a525730bff89bb490d"
+        }
+      ],
+      "review_report": {
+        "file": "hito_09_revision_offline_v3.json",
+        "sha256": "87e796d2299f32ed7cb0c5fab839e40706b4f66da7d20e73cd8c2416883d4a99"
+      },
+      "previously_recorded_input_hashes": [
+        "212a3ac0f407b73a1543942b6b8045f21ae49d3198acb1a525730bff89bb490d"
+      ],
+      "previously_recorded_bytes_match": true,
+      "current_input_with_crlf_sha256": "80404721e8114ffe67c913ccc860103099bd4e388cbc323f711b26438871e52e",
+      "recomputed_report_fields_match": true,
+      "cases": [
+        {
+          "id": "5afd899a-f8b5-4239-9898-3534470e6daa",
+          "level": "low",
+          "status": "succeeded",
+          "provider": "gemini",
+          "requested_model": "gemini-3.1-flash-lite",
+          "prompt_version": "educational-rag-profile-v3",
+          "policy_version": "profile-adaptation-v1",
+          "generation_started_at": "2026-10-09T10:13:20.384599Z",
+          "usage": {
+            "input_tokens": 1980,
+            "output_tokens": 486,
+            "reasoning_tokens": null,
+            "cached_input_tokens": null,
+            "total_tokens": 2466
+          },
+          "latency_ms": 2643,
+          "estimated_cost": null,
+          "source_count": 2,
+          "execution_configuration": null
+        },
+        {
+          "id": "44d136b6-fc09-4490-aeae-5eb2f1ddbd62",
+          "level": "medium",
+          "status": "succeeded",
+          "provider": "gemini",
+          "requested_model": "gemini-3.1-flash-lite",
+          "prompt_version": "educational-rag-profile-v3",
+          "policy_version": "profile-adaptation-v1",
+          "generation_started_at": "2026-10-09T14:26:30.387859Z",
+          "usage": {
+            "input_tokens": 1973,
+            "output_tokens": 455,
+            "reasoning_tokens": null,
+            "cached_input_tokens": null,
+            "total_tokens": 2428
+          },
+          "latency_ms": 15589,
+          "estimated_cost": null,
+          "source_count": 2,
+          "execution_configuration": null
+        },
+        {
+          "id": "15227b88-690b-4a1b-9765-967d1bb2c9fc",
+          "level": "high",
+          "status": "succeeded",
+          "provider": "gemini",
+          "requested_model": "gemini-3.1-flash-lite",
+          "prompt_version": "educational-rag-profile-v3",
+          "policy_version": "profile-adaptation-v1",
+          "generation_started_at": "2026-10-09T14:27:34.453597Z",
+          "usage": {
+            "input_tokens": 1975,
+            "output_tokens": 496,
+            "reasoning_tokens": null,
+            "cached_input_tokens": null,
+            "total_tokens": 2471
+          },
+          "latency_ms": 1988,
+          "estimated_cost": null,
+          "source_count": 2,
+          "execution_configuration": null
+        }
+      ],
+      "mechanical_checks": {
+        "same_request_except_difficulty": true,
+        "same_profile_except_level_and_identity": true,
+        "same_sources_snapshot": true,
+        "same_provider_model_prompt_policy": true
+      },
+      "generation_start_span_seconds": 15254.068998,
+      "attempts": 3,
+      "succeeded": 3,
+      "failed": 0,
+      "total_tokens_known_cases": 3,
+      "known_total_tokens_subtotal": 7365,
+      "batch_total_tokens": 7365,
+      "latency_known_cases": 3,
+      "cost_estimate_known_cases": 0,
+      "execution_configuration_known_cases": 0,
+      "human_review_status": "pending"
+    },
+    {
+      "trial": "v4",
+      "inputs": [
+        {
+          "file": "hito_09_piloto_v4_low.json",
+          "sha256": "178ad22d2215bbf407141ed30786abbaa1e598e0d87a7ba78aa686cc9a99f875"
+        },
+        {
+          "file": "hito_09_piloto_v4_medium.json",
+          "sha256": "9e2966ea43e094be36bacca4c1e979c0f4bd7c9dda9f9d53e3c9edae8facab80"
+        },
+        {
+          "file": "hito_09_piloto_v4_high.json",
+          "sha256": "8a20bee867f418d60c98630d420b8eebd6b36a386c86e5acb32250a67c5efeca"
+        }
+      ],
+      "review_report": {
+        "file": "hito_09_revision_terminal_v4.json",
+        "sha256": "b44bc65eb2e35e07d8b5d4ecc4366723e44738728b96783922de0997296cae74"
+      },
+      "previously_recorded_input_hashes": [
+        "178ad22d2215bbf407141ed30786abbaa1e598e0d87a7ba78aa686cc9a99f875",
+        "9e2966ea43e094be36bacca4c1e979c0f4bd7c9dda9f9d53e3c9edae8facab80",
+        "8a20bee867f418d60c98630d420b8eebd6b36a386c86e5acb32250a67c5efeca"
+      ],
+      "previously_recorded_bytes_match": true,
+      "recomputed_report_fields_match": true,
+      "cases": [
+        {
+          "id": "c3ab007f-b3ba-472e-a805-39312ec0a29e",
+          "level": "low",
+          "status": "failed",
+          "provider": "gemini",
+          "requested_model": "gemini-3.1-flash-lite",
+          "prompt_version": "educational-rag-profile-v4",
+          "policy_version": "profile-adaptation-v2",
+          "generation_started_at": "2026-10-10T01:43:20.289264+00:00",
+          "usage": null,
+          "latency_ms": null,
+          "estimated_cost": null,
+          "execution_configuration": null,
+          "error_code": "llm_incomplete",
+          "source_count": 2
+        },
+        {
+          "id": "78efd789-7465-4865-b7e8-4489c7186963",
+          "level": "medium",
+          "status": "succeeded",
+          "provider": "gemini",
+          "requested_model": "gemini-3.1-flash-lite",
+          "prompt_version": "educational-rag-profile-v4",
+          "policy_version": "profile-adaptation-v2",
+          "generation_started_at": "2026-10-10T01:44:28.777856+00:00",
+          "usage": {
+            "input_tokens": 2029,
+            "output_tokens": 447,
+            "reasoning_tokens": null,
+            "cached_input_tokens": null,
+            "total_tokens": 2476
+          },
+          "latency_ms": 19667,
+          "estimated_cost": "0E-8",
+          "execution_configuration": null,
+          "error_code": null,
+          "source_count": 2
+        },
+        {
+          "id": "d04edfe3-4860-4e3b-b0e0-92e5cb49997c",
+          "level": "high",
+          "status": "failed",
+          "provider": "gemini",
+          "requested_model": "gemini-3.1-flash-lite",
+          "prompt_version": "educational-rag-profile-v4",
+          "policy_version": "profile-adaptation-v2",
+          "generation_started_at": "2026-10-10T01:45:29.175312+00:00",
+          "usage": null,
+          "latency_ms": null,
+          "estimated_cost": null,
+          "execution_configuration": null,
+          "error_code": "llm_incomplete",
+          "source_count": 2
+        }
+      ],
+      "mechanical_checks": {
+        "same_request_except_difficulty": true,
+        "same_profile_except_level_and_identity": true,
+        "same_sources_snapshot": true,
+        "same_requested_provider_model_prompt_policy": true
+      },
+      "generation_start_span_seconds": 128.886048,
+      "attempts": 3,
+      "succeeded": 1,
+      "failed": 2,
+      "total_tokens_known_cases": 1,
+      "known_total_tokens_subtotal": 2476,
+      "batch_total_tokens": null,
+      "latency_known_cases": 1,
+      "cost_estimate_known_cases": 1,
+      "execution_configuration_known_cases": 0,
+      "human_review_status": "pending"
+    }
+  ],
+  "limitations": [
+    "Inventario limitado a v2/v3/v4; no representa todo el historial ni todos los intentos del proyecto.",
+    "Una observación por nivel y versión; no demuestra estabilidad ni mejora del aprendizaje.",
+    "Cambios de corpus/prompt/política y separación temporal impiden atribución causal entre versiones.",
+    "Límites históricos ausentes del registro por caso; consultar protocolos sin reconstruir datos.",
+    "Tokens parciales son subtotales; null no es cero. Fallos permanecen en el denominador.",
+    "Contrato y pertenencia de citas no certifican fidelidad semántica ni aprobación pedagógica.",
+    "No se ejecutaron LLM directo, otros proveedores ni la segunda asignatura."
+  ]
+}

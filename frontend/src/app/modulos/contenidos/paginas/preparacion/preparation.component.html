@@ -279,6 +279,7 @@
           <code>{{ prepared.id }}</code>
         </details>
         @if (historyDetail(); as detail) {
+          <app-resource-export [detail]="detail" />
           <app-resource-audit [detail]="detail" />
         } @else {
           <p>Para consultar la trazabilidad guardada, abre este recurso desde Mis recursos.</p>

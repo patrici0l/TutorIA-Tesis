@@ -64,6 +64,7 @@ class HistoryRepository:
                     ContentGeneration.latency_ms,
                     ContentGeneration.estimated_cost,
                     ContentGeneration.cost_basis,
+                    ContentGeneration.execution_configuration,
                     ContentGeneration.error_code,
                     ContentGeneration.retrieval_snapshot,
                 ).where(ContentGeneration.id == identifier, ContentGeneration.owner_id == owner)

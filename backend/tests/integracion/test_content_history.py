@@ -97,6 +97,7 @@ def test_history_audit_preserves_reported_zero_partial_usage_and_safe_errors(tra
     assert detail.audit.usage.input_tokens == 0
     assert detail.audit.usage.total_tokens is None
     assert detail.audit.latency_ms == 0 and detail.audit.estimated_cost is None
+    assert detail.audit.execution_configuration is None  # No inferir límites históricos.
     assert detail.audit.generation_started_at is None  # Traza inicial, sin reserva persistente.
     failed = writer.prepare(owners[0], prepared)
     assert writer.finish(failed, owners[0], status="failed", error_code="private-unknown-error")

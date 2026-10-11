@@ -1,5 +1,12 @@
 # Modelo de datos y evolución
 
+Estado comprobado el 10 de octubre de 2026: once migraciones hasta 0011_execution_configuration,
+ocho tablas públicas y pgvector 0.8.2. Los apartados por migración describen su evolución;
+las referencias a funciones futuras de esas etapas no sustituyen el estado actual:
+adaptación, historial, métricas privadas y costo gratuito condicionado ya están disponibles.
+Evaluación académica y tarifas generales siguen pendientes. Para operación/respaldo,
+ver el [manual técnico local](../manuales/manual_tecnico_local.md).
+
 La migración 0001 habilita pgvector. La migración 0002 crea usuarios institucionales, sesiones y solicitudes de acceso. La 0003 crea documentos, la 0004 incorpora extracción trazable y fragmentos, la 0005 añade embeddings e índice HNSW, la 0006 prepara trazabilidad de contenidos, la 0007 reserva inicios de generación y la 0008 incorpora perfiles sintéticos. Las ocho están aplicadas en PostgreSQL local; se conservan inmutables las migraciones anteriores.
 
 `usuarios`: id, institutional_email único, institutional_id opcional único, nombre, apellido, rol (student/teacher/admin), activo, created_at y last_login. No existe password ni password_hash.
@@ -23,6 +30,16 @@ Entidades exigidas por la sección 10: usuarios, roles, documentos, fragmentos_d
 Relaciones conceptuales propuestas para validar: usuarios asociados a roles; documentos con fragmentos; perfiles asociados a generaciones; generaciones vinculadas a fragmentos mediante fuentes_generacion, a proveedor/modelo, a métricas y a evaluaciones. Cardinalidades, política de eliminación, propiedad de documentos y retención se decidirán al implementar sus casos de uso.
 
 Antes de crear una tabla se documentarán los campos, restricciones, índices, permisos y pruebas. Las migraciones se guardan en `backend/alembic/versions` y se ejecutan con Alembic. No se permite crear tablas desde el arranque de FastAPI con `create_all`.
+
+Desde 0010: `generaciones_contenido.cost_basis` JSONB nullable, restringido a objeto.
+Conserva la base de estimación antes de inferir; registros anteriores siguen null sin
+backfill. La base confirmed-free-tier-v1 permite importe condicionado 0 USD cuando se
+conocen entrada y salida. Consumo incompleto no se considera cero ni factura verificada.
+Las reservas siguen en generaciones_contenido: no purgar trazas para restablecer cupo.
+
+Desde 0011: execution_configuration JSONB nullable, restringido a objeto. Conserva límites
+de entrada/salida/timeout del proceso al reservar por la API. Históricos permanecen null;
+sin secretos ni reconstrucción a partir de Settings actuales. Ver contrato de auditoría.
 
 `documentos`: UUID, owner_id con FK a usuarios, filename, title, mime_type, size_bytes (1..10 MiB), sha256, status (uploaded/deleted), created_at y deleted_at. Índice por propietario; listas y detalles excluyen eliminados. Los bytes se guardan en almacenamiento privado identificado por el UUID, separado de PostgreSQL. La eliminación conserva metadatos mínimos y retira el archivo y los fragmentos.
 

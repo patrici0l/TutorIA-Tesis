@@ -6,6 +6,7 @@ import { provideRouter } from '@angular/router';
 import { AuthService } from '../../../../nucleo/servicios/auth.service';
 import { PreparationComponent } from './preparation.component';
 import { PreparationResponse } from '../../modelos/preparation.model';
+import { ResourceExportService } from '../../servicios/resource-export.service';
 
 describe('Preparación docente', () => {
   const user = signal({ rol: 'teacher' });
@@ -75,6 +76,32 @@ describe('Preparación docente', () => {
     http = TestBed.inject(HttpTestingController);
   });
   afterEach(() => http.verify());
+  it('ofrece descarga solo al abrir historial y no hace solicitudes al descargar', () => {
+    const exportFile = vi
+      .spyOn(TestBed.inject(ResourceExportService), 'download')
+      .mockImplementation(() => {});
+    const fixture = setup();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('app-resource-export')).toBeNull();
+    const detail = {
+      preparation: response,
+      status: 'failed' as const,
+      created_at: '2026-10-10T00:00:00Z',
+      completed_at: '2026-10-10T00:01:00Z',
+      resource: null,
+      message: 'Fallo conservado',
+      audit: null,
+    };
+    fixture.componentInstance.restore(detail);
+    fixture.detectChanges();
+    fixture.nativeElement.querySelector('app-resource-export button').click();
+    expect(exportFile).toHaveBeenCalledExactlyOnceWith(detail);
+    http.expectNone(() => true);
+    fixture.componentInstance.clearResult();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('app-resource-export')).toBeNull();
+    exportFile.mockRestore();
+  });
   function setup() {
     const fixture = TestBed.createComponent(PreparationComponent);
     fixture.componentInstance.topic = 'Derivadas';

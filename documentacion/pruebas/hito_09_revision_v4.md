@@ -93,3 +93,7 @@ revalidados; seis bloques extraídos y hashes de entrada conservados. Consultas 
 solo lectura para cuota e integridad, sin consultar identidades ni secretos. No se
 repitieron suites completas por cambios únicamente documentales. Revisión humana y
 ejecución salida1024 siguen pendientes.
+
+Continuación: [herramienta de revisión terminal](hito_09_revision_terminal.md) aplicada
+a las tres exportaciones originales, sin modificar este paquete ni las observaciones
+asistidas. Conserva el resultado incompleto y ausencia de límites históricos registrados.

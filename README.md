@@ -7,6 +7,8 @@ Están implementados la base Angular → FastAPI → PostgreSQL/pgvector y el ac
 ## Ejecutar en Windows con Docker
 
 Para recorrer la demostración: [guía docente del MVP](documentacion/manuales/guia_docente_mvp.md).
+Para operar servicios, consultar la DB y respaldar/verificar datos:
+[manual técnico local](documentacion/manuales/manual_tecnico_local.md).
 
 La pantalla `/perfiles` permite registrar, listar y consultar observaciones ficticias privadas de rendimiento, sin consumir Gemini. En `/recursos` puedes elegir un perfil propio del mismo tema para ajustar dificultad y apoyo, revisar el motivo y conservar la decisión en el historial. Consulta el [contrato de perfiles](documentacion/api/perfiles.md), la [personalización](documentacion/api/personalizacion.md) y sus evidencias de [hito 8](documentacion/pruebas/hito_08_perfiles.md) y [hito 9](documentacion/pruebas/hito_09_personalizacion.md).
 
@@ -47,6 +49,15 @@ consulta facturación. Ver [contrato](documentacion/api/metricas.md) y
 Al abrir Mis recursos en `/recursos`, “Ver trazabilidad de este recurso” muestra el modelo,
 versiones, consumo y fechas conservados, incluidos fallos y datos desconocidos, sin IA.
 Ver [contrato de auditoría](documentacion/api/auditoria_recursos.md).
+
+Desde un registro abierto de Mis recursos, **Descargar recurso y trazabilidad · JSON**
+guarda el contenido disponible, fuentes, perfil asociado y auditoría consultada, incluidos
+fallos y datos desconocidos. La descarga es local y no hace llamadas de generación.
+Ver [alcance y verificación](documentacion/pruebas/hito_10_exportacion_historial.md).
+
+Las nuevas generaciones por API también conservan límites de entrada, salida y timeout
+al reservar. La trazabilidad muestra esos valores aunque cambie después la configuración;
+históricos sin registro siguen desconocidos. No consume IA al consultarlos.
 
 Nuevas ejecuciones conservan la base versionada del nivel gratuito confirmado localmente.
 El costo se muestra como estimación condicionada en USD con uso de entrada/salida conocido;
@@ -122,6 +133,12 @@ Una preparación se envía una sola vez. La interfaz muestra carga, citas y erro
 La [revisión offline](documentacion/pruebas/hito_09_revision_offline.md) organiza evidencia
 sintética guardada para cotejar afirmaciones, objetivos y fuentes sin nuevas inferencias.
 Sus comprobaciones mecánicas no asignan puntuaciones pedagógicas.
+La [revisión de pilotos completos](documentacion/pruebas/hito_09_revision_terminal.md)
+admite también fallos y compara límites guardados sin excluir intentos ni consumir IA.
+
+El [registro de revisión humana](documentacion/pruebas/hito_11_revision_humana.md) prepara
+una plantilla vinculada a los historiales y valida decisiones con evidencia en un archivo
+separado. Conserva fallos y pendientes; no asigna notas ni aprobación automática.
 
 ## Reglas de trabajo
 

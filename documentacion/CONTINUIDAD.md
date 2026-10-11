@@ -1,5 +1,171 @@
 # Continuidad de TutorIA-Lucero
 
+## Estado vigente — 10 de octubre, registro de evaluación humana
+
+Continuación autorizada sin depender de Gemini; no consultar cuota. human_review CLI
+prepare/apply revalida historiales terminales mediante trial_review, crea plantilla y
+guarda revisión separada vinculada por SHA. Exige evidencia y revisor/fecha declarados;
+rechaza contexto/IDs/hashes alterados, alias ajenos, decisiones sin recurso y sobrescritura.
+Preserva fallos/controles desconocidos. Identidad declarada no autenticada; validar archivo
+no aprueba calidad ni genera notas. Estados pending_human/partial/available_content_reviewed.
+
+41 pruebas offline enfocadas aprobadas0.45s; Ruff/formato limpios. Plantilla v4 pública
+hito_11_revision_humana_v4_plantilla.json creada, validada pendiente en archivo privado:
+0 decisiones,5 dimensiones/6 bloques disponibles medium; low/high fallidos preservados.
+No revisión humana real ni cambios de DB/configuración/IA. Evidencia hito_11_revision_humana.md.
+
+Backend reconstruido/CLI help comprobada en contenedor. PostgreSQL observado inactivo
+durante comprobación provocó503; iniciado con volumen existente, sin causa atribuida.
+Frontend reanudado, check-health aprobado,21 generaciones y huella previa conservadas.
+No migraciones. El manifiesto de código anterior es histórico: nueva imagen incluye módulo.
+
+Rama feature/resource-preparation; cero commits automáticos. Bloque listo para revisión
+y commit humano: `feat: valida revisiones humanas de resultados guardados`.
+Conservar otros bloques separados. Próximo activo: matriz experimental A/B/C con evidencia
+guardada y requisitos pendientes, luego endurecimiento local; Gemini sigue aplazado.
+
+## Estado vigente — 10 de octubre, avance sin depender de Gemini
+
+El autor ordenó explícitamente saltar lo de Gemini y continuar el plan. Piloto salida1024
+queda pendiente; no revisar quota en cada turno ni bloquear tareas independientes.
+No interpretar como aumento de límites, reemplazo de proveedor o cierre del experimento.
+
+Descarga del historial implementada en Angular con ResourceExportService/componente
+separado y botón al restaurar un registro. Exporta HistoryDetail ya autorizado en JSON
+UTF-8, sin HTTP/IA, conserva cero/null/fallos/snapshots. UUID en nombre, enlace temporal
+retirado y URL revocada; error recuperable. No descarga automática ni nuevo endpoint.
+No exporta prompt crudo/respuesta original FEEDBACK/secretos ni sustituye backup completo.
+
+18 pruebas enfocadas Docker sin red aprobadas1.24s, build306.23kB inicial/preparación37.98kB.
+Primer test FileReader quedó bloqueado por reloj ficticio general; acotado a timeout y
+corregido. Frontend reconstruido/desplegado; servicios healthy, check-health correcto,
+21 registros y huella original conservados. Sin backend/migraciones/configuración/Gemini.
+Prueba del clic DOM simulada, sin afirmar descarga manual real. Evidencia:
+pruebas/hito_10_exportacion_historial.md. README/guía docente/plan actualizados.
+
+Rama feature/resource-preparation; cero commits automáticos. Bloque listo para revisión
+y commit humano: `feat: descarga recursos del historial con trazabilidad`.
+Conservar bloques anteriores separados. Próximo activo: evaluación de resultados
+guardados/matriz experimental sin inferencias y tareas locales de endurecimiento/cierre.
+Evaluación humana, benchmark real y piloto siguen pendientes; no declarar tesis terminada.
+
+## Estado vigente — 10 de octubre, revisión del código desplegado
+
+Continuación autorizada. Preflight17:25 UTC: tres casos íntegros, 3/5 usadas, cero activas;
+512/teacher intactos. Piloto pendiente de tres cupos y configuración temporal1024.
+Revisión técnica del flujo reserva/límites/proveedor/historial sin hallazgos nuevos en
+ese alcance. No certifica calidad pedagógica ni inferencia real con1024.
+
+127 archivos de fuentes/configuración backend comparados workspace/contenedor idénticos.
+ManifiestoSHA66591b104e15043970db4fc3a0c41d43fb68aff145209f2fb6d63f5c85c70c15,
+imagen sha256:197c7b1de4e7615a48c00c343f0a9d7286b3ecbe107b0c794719137478ae82b5.
+HEAD7dcc36d4d780a7ace4247d8a577366a299c85bd9 verificado; cambios pendientes humanos
+obligan conservar hashes/imagen además del commit. Evidencia/notas en
+pruebas/hito_09_revision_codigo_previa.md y su JSON. No repite suites anteriores sin
+cambio de lógica. No Gemini, cambios de configuración, migraciones ni datos.
+
+Rama feature/resource-preparation. Cero commits automáticos. Bloque documental listo
+para revisión/commit humano: `docs: registra revision e identidad del backend previo al piloto`.
+Conservar separados los bloques anteriores. Próximo principal: cupo suficiente, renovar
+preflight e identificación del código si cambia, temporal1024, tres envíos por API según
+protocolo sin reintentos, restaurar512/selector previo y revisar resultados.
+
+## Estado vigente — 10 de octubre, preflight reproducible
+
+Continuación del plan autorizada. check-pilot-readiness.py consulta configuración segura
+del contenedor, quota UTC y seis casos/documentos en transacción READ ONLY/REPEATABLE
+READ. SHA de manifiesto e IDs fijados; comparación canónica de instructions+prompt,
+adaptación/fuentes/hashes/propiedad. Informe sin contenidos/secretos ni inferencias.
+No reserva cuota ni valida sesión; API permanece autoridad al enviar. Sin cambios de DB.
+
+Informe final 17:13 UTC /12:13 Guayaquil: tres casos íntegros sin reserva; 3/5 usadas,
+cero activas/recientes. Pendientes cupo de tres y límite temporal1024; actual512/teacher
+preservados. Renovación a las19:00 locales10, requiere nueva comprobación. Primera salida
+de desarrollo con SHA solo prompt produjo falsos negativos; corregida con hash canónico,
+archivos conservados y explicación en pruebas/hito_09_preflight_reproducible.md.
+
+15 pruebas enfocadas aprobadas; Ruff/formato limpios, check-health aprobado, 21 registros
+con huella previa conservada. Sin suites repetidas de API/Angular ni Gemini/migraciones.
+Rama feature/resource-preparation; cero commits automáticos. Bloque pendiente de revisión
+y commit humano: `feat: verifica condiciones del piloto sin consumir IA`.
+Conservar bloques anteriores sin mezclar. Próximo principal: piloto salida1024 con cupo,
+configuración y revisión del código/evidencias; luego evaluación humana y benchmark.
+
+## Estado vigente — 10 de octubre, revisión terminal reproducible
+
+Nueva continuación autorizada. Consulta 17:01 UTC (12:01 Guayaquil): 3/5 reservas,
+cero activas; lote salida1024 aún pendiente. trial_review implementado para tres
+historiales terminales low/medium/high, incluidos fallos. Lee archivos, no DB/Settings/
+proveedores; no admite FEEDBACK sin la respuesta privada necesaria. Herramienta anterior
+de tres éxitos conservada. Códigos seguros compartidos movidos a contenidos/errors.py.
+
+Reporte hito_09_revision_terminal_v4.json generado con los tres archivos originales:
+hashes cotejados, un éxito/dos llm_incomplete, seis bloques, 2476 subtotal conocido,
+total del lote desconocido. Configuración histórica sin registro (0/3), comparabilidad
+incompleta, decisiones humanas null. No altera paquete asistido ni fuentes/manifiesto.
+CLI no sobrescribe entrada/destino y revalidación reproduce exactamente el informe.
+
+58 pruebas backend enfocadas en Docker/PostgreSQL aprobadas en 1.00 s; Ruff/formato
+limpios. Backend reconstruido, servicios healthy y check-health aprobado; 21 registros
+de generaciones conservan huella de campos previos. Cero IA/migraciones/cambios Angular.
+No repetir suites frontend por herramienta offline. Evidencia: pruebas/hito_09_revision_terminal.md.
+
+Rama feature/resource-preparation. Bloque listo para revisión/commit humano:
+`feat: revisa pilotos completos con fallos y limites desconocidos`.
+Cero commits automáticos; los bloques anteriores de respaldo y límites siguen pendientes,
+conservarlos para revisión separada. Próximo: salida1024 según protocolo con cuota e
+integridad/configuración verificadas, luego revisión de resultados y evaluación humana.
+
+## Estado vigente — 10 de octubre, límites persistidos por ejecución
+
+Continuación del plan autorizada. Cupo comprobado: 3/5 UTC 10, cero activas; no ejecutar
+lote salida1024 con solo dos libres. Avance en trazabilidad de etapas 12–13: nueva
+execution_configuration generation-config-v1 (entrada/salida/timeout) guardada con la
+reserva por API, antes de proveedor; historial/UI leen snapshot, nunca Settings actuales.
+0011_execution_configuration aplicada; 21 filas previas conservadas sin backfill ni
+alteraciones de campos originales (huella de control idéntica antes/después y al cierre).
+Preparaciones pendientes siguen null hasta envío. Coordinador interno legado sigue null.
+
+66 pruebas backend enfocadas aprobadas en 1.93 s, con adaptador real/MockTransport y
+confirmación de límite enviado versus persistido y cambio posterior de Settings. Ruff
+limpio. Cinco Angular aprobadas en Docker sin red en 1.98 s; intento Windows no ejecutó
+pruebas por timeout de worker. Builds local/Docker aprobadas (306.23 kB inicial, 35.91 kB
+preparación); servicios healthy. Lectura HTTP real con mock del low salida1024: prepared,
+sin reserva y configuración null; sesión cerrada. Cero Gemini y configuración activa intacta.
+Evidencia: pruebas/hito_10_configuracion_ejecucion.md. Contrato/modelo DB/README actualizados.
+
+Contexto Docker excluye respaldos_locales/seguimiento_privado. Cambios del bloque previo
+de respaldo/manual técnico siguen pendientes de commit humano; no mezclarlos ni descartarlos.
+Bloque nuevo listo para revisión/commit: `feat: conserva limites configurados por ejecucion`.
+Rama feature/resource-preparation, cero commits automáticos. No cierra evaluación académica.
+Próximo: ejecutar protocolo salida1024 con nueva verificación de cuota/configuración/
+integridad y registrar revisión de código usada, sin cambiar el manifiesto/prompts.
+
+## Avance auxiliar — 10 de octubre, respaldo comprobado y manual técnico
+
+Commit humano previo 7dcc36d verificado (revisión v4/integridad salida1024). Sin commits
+automáticos. Añadidos backup-local.ps1 y verify-local-backup.ps1, exclusión Git de
+respaldos_locales, manual técnico de servicios/DB/recuperación y evidencia de operación.
+Modelo de DB aclara estado 0010 sin cambiar esquema. README enlaza el manual.
+
+Respaldo real DB+documentos creado con aplicación pausada y PostgreSQL activo; cero
+generaciones activas antes de pausa. Dump binario por docker cp; archivos y hashes
+guardados solo en carpeta privada excluida. Restauración de DB en contenedor sin red,
+puertos ni volúmenes del proyecto: ocho tablas, pgvector 0.8.2, migración 0010_cost_basis,
+2 documentos/2 fragmentos/21 generaciones/9 perfiles/2 usuarios; conteos activos iguales
+al cotejo posterior. Dos documentos del archivo con hashes individuales correctos.
+Contenedor temporal retirado y aplicación reanudada healthy; check-health pasó.
+
+Pruebas proporcionales: parser PowerShell para ambos scripts, rechazo de respaldo con
+servicios activos, rechazo de fixture corrupta antes de restauración, copia/restauración
+reales, exclusión Git, enlaces locales y diff. No suites completas ni llamadas Gemini.
+La recuperación real en otro equipo/producción, copias externas y políticas de retención
+siguen pendientes. Tarea auxiliar de operación; no cierra hito 12 ni evaluación académica.
+
+Bloque listo para revisión/commit humano: `feat: agrega respaldo local verificado y manual tecnico`.
+Rama feature/resource-preparation. Próximo paso principal preservado: protocolo salida1024
+con nueva comprobación de cupo/configuración/integridad; revisión humana y benchmark pendientes.
+
 ## Estado vigente — 10 de octubre, revisión v4 y disponibilidad salida1024
 
 Continuación autorizada por el autor. Cuota comprobada a 15:42 UTC (10:42 Guayaquil):

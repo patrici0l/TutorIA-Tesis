@@ -1,0 +1,29 @@
+:host {
+  display: block;
+}
+
+.export {
+  margin-block: 1rem;
+  button {
+    padding: 12px 16px;
+    border: 1px solid var(--blue-dark);
+    border-radius: 6px;
+    background: var(--blue-dark);
+    color: white;
+    font: inherit;
+    cursor: pointer;
+    &:hover {
+      background: var(--navy);
+    }
+    &:focus-visible {
+      outline: 3px solid var(--gold);
+      outline-offset: 3px;
+    }
+  }
+  p {
+    margin-block: 0.5rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+}

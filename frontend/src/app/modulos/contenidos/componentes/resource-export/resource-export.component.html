@@ -1,0 +1,10 @@
+<div class="export">
+  <button type="button" (click)="download()">Descargar recurso y trazabilidad · JSON</button>
+  <p>
+    Incluye el estado consultado, contenido disponible, fuentes y perfil asociado. No genera
+    contenido nuevo. El archivo conserva el material de tus documentos.
+  </p>
+  @if (message()) {
+    <p [attr.role]="failed() ? 'alert' : 'status'">{{ message() }}</p>
+  }
+</div>

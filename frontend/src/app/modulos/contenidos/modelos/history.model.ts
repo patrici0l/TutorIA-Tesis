@@ -47,6 +47,12 @@ export interface GenerationAudit {
   } | null;
   latency_ms: number | null;
   estimated_cost: string | null;
+  execution_configuration?: {
+    version: 'generation-config-v1';
+    max_input_chars: number;
+    max_output_tokens: number;
+    timeout_seconds: number;
+  } | null;
   cost_basis?: {
     version: 'confirmed-free-tier-v1';
     currency: 'USD';
