@@ -1,5 +1,42 @@
 # Continuidad de TutorIA-Lucero
 
+## Estado vigente — 11 de octubre, registro de respuestas de pares
+
+paired_review CLI implementado: valida manifiesto y vínculos por modo/prompt/modelo,
+conserva cada intento como recurso válido, abstención, salida inválida o fallo de proveedor.
+Lotes declaran procedencia sintética/proveedor; no autentica llamadas ni exhaustividad.
+Fuentes comunes y bloques para revisión pendiente; citas vacías directas aceptadas.
+Resumen por brazo con cobertura de tokens y total null cuando falta información.
+111 pruebas locales aprobadas en 0,99 s; Ruff limpio; CLI probada sin sobrescritura.
+Sin IA/DB/configuración/despliegue, solo fixtures. Ver
+[evidencia y uso](pruebas/hito_11_registro_pares.md).
+
+Rama feature/resource-preparation; preservados pendientes del bloque de preparación anterior.
+Nuevo bloque revisable: paired_review, pruebas y documentación. Commit humano sugerido:
+`feat: registra respuestas experimentales por modo sin inferencia`. Sin commits automáticos.
+Próximo: contrato de revisión humana de pares con evidencia; después adaptadores restantes.
+Gemini fuera del avance activo; benchmark y aprobaciones académicas continúan pendientes.
+
+## Estado vigente — 10 de octubre, pares A offline
+
+Implementado paired_preparation CLI prepare/validate con instrucciones comunes, perfil
+experimental sintético medium/dificultad intermedia y controles compartidos. Política nueva
+experiment-a-medium-v1; no equivalencia con perfiles/pilotos anteriores. Versiones propias
+por brazo; contexto/citas/abstención/esquema diferentes y declarados. Snapshot aportado,
+sin búsqueda ni autenticación de documentos; manifiesto reproducible y reconstrucción
+para validar integridad interna, sin firma/autenticación de procedencia.
+
+94 pruebas enfocadas aprobadas en 0,65 s; Ruff/formato limpios; CLI prepare/validate
+comprobadas con entrada/manifiesto sintéticos versionados. Sin IA/DB/UI/config/despliegue.
+[Evidencia y comandos](pruebas/hito_11_pares_offline.md). Orden/repeticiones/presupuesto/
+aprobación y resultados pendientes, no inventados. Gemini continúa fuera del avance activo.
+
+Rama feature/resource-preparation, sin commits automáticos. Revisar módulo, pruebas,
+ejemplo JSON y documentación; commit humano sugerido:
+`feat: prepara pares experimentales directo y RAG offline`.
+Próximo: registro/revisión offline de respuestas por brazo contra manifiesto, con fallos
+y abstenciones, sin exigir HistoryDetail RAG al modo directo. Benchmark sigue pendiente.
+
 ## Estado vigente — 10 de octubre, preparación directa interna
 
 Implementados direct_schemas, PrepareDirectContentService y DirectResourceValidationService.

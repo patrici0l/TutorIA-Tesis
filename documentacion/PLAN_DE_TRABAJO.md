@@ -4,6 +4,18 @@ Fuente rectora: Plan_Implementacion_TutorIA-Lucero.docx, entregado por el autor 
 
 ## Bloque actual
 
+11 de octubre: [registro de respuestas de pares](pruebas/hito_11_registro_pares.md)
+implementado offline: vínculo a manifiesto/prompt/modelo, validación por modo, conservación
+de fallos/abstenciones y cobertura de uso. 111 pruebas enfocadas aprobadas; sin IA ni
+despliegue. Revisión humana efectiva pendiente; próximo contrato de veredictos de pares,
+seguido de adaptadores restantes. No se declara ejecución ni cierre del benchmark.
+
+10 de octubre: [pares A offline](pruebas/hito_11_pares_offline.md) implementados, con CLI
+prepare/validate, manifiesto reproducible y guía experimental medium compartida. 94 pruebas
+locales aprobadas; ejemplo sintético preparado/validado, sin IA/DB/despliegue. Contexto,
+citas y abstención siguen siendo diferencias explícitas. Próximo: registro/revisión offline
+de respuestas de ambos brazos, con fallos y abstenciones. Benchmark no ejecutado.
+
 10 de octubre: [preparación directa interna](pruebas/hito_11_preparacion_directa.md)
 implementada para cuatro recursos, dificultad manual, modo/versionado/hash y citas vacías
 obligatorias. 74 pruebas locales aprobadas con regresión RAG; sin IA, API nueva ni despliegue.

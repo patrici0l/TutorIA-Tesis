@@ -41,6 +41,14 @@ docker compose stop
 
 ## Desarrollo y pruebas
 
+El [registro offline de respuestas experimentales](documentacion/pruebas/hito_11_registro_pares.md)
+valida resultados directo/RAG contra su manifiesto, conserva fallos y abstenciones y
+prepara contenido para revisión humana, sin ejecutar IA.
+
+La [preparación de pares directo/RAG](documentacion/pruebas/hito_11_pares_offline.md)
+crea y valida manifiestos offline con controles compartidos y prompts trazables.
+Incluye un ejemplo sintético; no ejecuta IA ni representa resultados del benchmark.
+
 El modo directo tiene [preparación y validación internas](documentacion/pruebas/hito_11_preparacion_directa.md)
 para los cuatro recursos, sin recuperar fuentes ni invocar IA. Está probado localmente;
 la interfaz conserva el flujo RAG y la comparación experimental sigue pendiente.
