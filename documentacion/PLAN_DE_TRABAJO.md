@@ -4,6 +4,12 @@ Fuente rectora: Plan_Implementacion_TutorIA-Lucero.docx, entregado por el autor 
 
 ## Bloque actual
 
+10 de octubre: [preparación directa interna](pruebas/hito_11_preparacion_directa.md)
+implementada para cuatro recursos, dificultad manual, modo/versionado/hash y citas vacías
+obligatorias. 74 pruebas locales aprobadas con regresión RAG; sin IA, API nueva ni despliegue.
+Próximo activo: preparación offline de pares A y controles compartidos, resolviendo la
+adaptación comparable antes de ejecutar el experimento. No cierra benchmark ni revisión humana.
+
 10 de octubre: [matriz A/B/C](pruebas/hito_11_matriz_experimental.md) propuesta y JSON con
 ocho evidencias/capacidades SHA verificadas. A necesita modo directo, B dispone de pilotos
 exploratorios separados con revisión pendiente, C necesita otros adaptadores. Modelos,

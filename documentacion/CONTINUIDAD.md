@@ -1,5 +1,23 @@
 # Continuidad de TutorIA-Lucero
 
+## Estado vigente — 10 de octubre, preparación directa interna
+
+Implementados direct_schemas, PrepareDirectContentService y DirectResourceValidationService.
+Cuatro recursos, dificultad manual, mode=direct, educational-direct-v1, hash canónico;
+citas obligatorias vacías. Sin dependencia de búsqueda, DB, configuración ni proveedores.
+Abstención interna unable_to_answer; validación estructural sin aprobación matemática.
+No se alteraron contratos/prompts RAG ni se integró el modo directo en API/UI/historial.
+74 pruebas locales aprobadas en 0,32 s con regresión RAG; Ruff/formato verificados.
+Código local, sin reconstrucción/despliegue ni inferencias. Detalles y reproducción:
+[evidencia](pruebas/hito_11_preparacion_directa.md).
+
+Rama feature/resource-preparation. Cambios de este bloque: tres módulos internos, pruebas,
+README/plan/continuidad/evidencia. Pendiente de revisión y commit humano:
+`feat: prepara y valida recursos directos sin recuperacion`. Cero commits automáticos.
+Próximo activo: preparador offline de pares A con controles compartidos/manifiesto;
+resolver adaptación comparable con perfil antes de atribuir equivalencia experimental.
+Gemini/piloto aplazados por el autor; no consultar cuota para continuar este trabajo.
+
 ## Estado vigente — 10 de octubre, matriz de evaluación A/B/C
 
 Continuación autorizada sin proveedor/cuota. Matriz experimental MD/JSON propuesta,

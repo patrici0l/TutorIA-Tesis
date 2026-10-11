@@ -41,6 +41,10 @@ docker compose stop
 
 ## Desarrollo y pruebas
 
+El modo directo tiene [preparación y validación internas](documentacion/pruebas/hito_11_preparacion_directa.md)
+para los cuatro recursos, sin recuperar fuentes ni invocar IA. Está probado localmente;
+la interfaz conserva el flujo RAG y la comparación experimental sigue pendiente.
+
 La pantalla `/metricas` permite a docentes/admin consultar sus estados de generación,
 tokens y latencia registrados, con cobertura conocida/desconocida. No consume Gemini ni
 consulta facturación. Ver [contrato](documentacion/api/metricas.md) y
