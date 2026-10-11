@@ -4,6 +4,13 @@ Fuente rectora: Plan_Implementacion_TutorIA-Lucero.docx, entregado por el autor 
 
 ## Bloque actual
 
+10 de octubre: [matriz A/B/C](pruebas/hito_11_matriz_experimental.md) propuesta y JSON con
+ocho evidencias/capacidades SHA verificadas. A necesita modo directo, B dispone de pilotos
+exploratorios separados con revisión pendiente, C necesita otros adaptadores. Modelos,
+repeticiones/rúbrica/presupuesto de benchmark sin fijar; no se ejecutaron nuevas llamadas.
+Próximo activo: preparación directa interna con contrato/modo explícitos y pruebas locales,
+sin exponer envío ni declarar comparación completada. Gemini continúa fuera del avance activo.
+
 10 de octubre, evaluación preparatoria sin proveedor: [registro de revisión humana](pruebas/hito_11_revision_humana.md)
 offline implementado, plantilla v4 generada con decisiones pendientes y hashes originales.
 41 pruebas enfocadas aprobadas. Se valida cobertura/evidencia del registro, no corrección

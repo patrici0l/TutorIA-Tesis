@@ -1,5 +1,22 @@
 # Continuidad de TutorIA-Lucero
 
+## Estado vigente — 10 de octubre, matriz de evaluación A/B/C
+
+Continuación autorizada sin proveedor/cuota. Matriz experimental MD/JSON propuesta,
+sección26 del plan, ocho hashes de evidencias/capacidades locales registrados y cotejados.
+A: directo vsRAG sin pares reales; preparación actual siempre recupera fuentes, falta
+contrato/modo directo sin citas fabricadas. B: v3 tres recursos/7365 tokens conocidos,
+v4 un éxito/dos fallos/2476 subtotal, total desconocido; no mezclar políticas/prompts.
+C: fábrica solo Gemini, OpenAI/Claude sin adaptadores. D condicional, segunda materia null.
+Modelos/repeticiones/rúbrica/presupuesto/revisores/orden pendientes, no aprobación inferida.
+
+Documentación/evidencia actualizadas; sin IA, DB, migraciones, configuración o suites por
+documentación. Matriz no cierra benchmark ni revisión humana. Rama feature/resource-preparation,
+cero commits automáticos. Bloque listo para revisión/commit humano:
+`docs: define matriz experimental y evidencia disponible`. Preservar bloques previos.
+Próximo activo: preparación directa interna con contrato/modo y pruebas locales, sin
+endpoint de envío/llamadas ni citas falsas. Gemini/piloto continúan aplazados por el autor.
+
 ## Estado vigente — 10 de octubre, registro de evaluación humana
 
 Continuación autorizada sin depender de Gemini; no consultar cuota. human_review CLI

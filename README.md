@@ -140,6 +140,10 @@ El [registro de revisión humana](documentacion/pruebas/hito_11_revision_humana.
 una plantilla vinculada a los historiales y valida decisiones con evidencia en un archivo
 separado. Conserva fallos y pendientes; no asigna notas ni aprobación automática.
 
+La [matriz experimental A/B/C](documentacion/pruebas/hito_11_matriz_experimental.md)
+identifica controles, pilotos disponibles y componentes pendientes del benchmark.
+Es un diseño propuesto; las comparaciones reales y aprobación académica siguen pendientes.
+
 ## Reglas de trabajo
 
 Carpetas de dominio en español sin tildes; clases, métodos, servicios y endpoints en inglés. Interfaz en español. HTML, SCSS, TS y pruebas en archivos separados. Toda modificación del esquema usa Alembic. Ninguna clave de proveedor llega al navegador.
