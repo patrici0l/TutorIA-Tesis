@@ -34,6 +34,8 @@ class GeminiProvider(LLMProvider):
         # También se comprueba si se instancia el adaptador sin la fábrica.
         if not self.settings.llm_enabled:
             raise ProviderError("llm_disabled")
+        if self.settings.llm_default_provider != "gemini":
+            raise ProviderError("llm_not_configured")
         try:
             self.settings.validate_llm()
         except ValueError:

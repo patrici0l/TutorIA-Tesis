@@ -44,7 +44,12 @@ class CasLoginService:
         return destination, state
 
     def validate_callback(self, state: str, browser_state: str | None, ticket: str | None):
-        if not browser_state or not secrets.compare_digest(state, browser_state):
+        if (
+            not browser_state
+            or not state.isascii()
+            or not browser_state.isascii()
+            or not secrets.compare_digest(state, browser_state)
+        ):
             raise HTTPException(400, "El intento de acceso no es válido.")
         attempt = self.repository.consume_attempt(digest_token(state))
         self.repository.commit()

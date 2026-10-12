@@ -1,26 +1,79 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
-import { ActivatedRoute, convertToParamMap } from '@angular/router';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 import { LoginComponent } from './login.component';
 
-describe('Acceso institucional', () => {
+describe('Acceso según configuración del servidor', () => {
   async function render(error = false) {
     await TestBed.configureTestingModule({
       imports: [LoginComponent],
-      providers: [provideHttpClient(), {provide: ActivatedRoute, useValue: {snapshot: {queryParamMap: convertToParamMap(error ? {error: 'access_denied'} : {})}}}],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([]),
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              queryParamMap: convertToParamMap(error ? { error: 'access_denied' } : {}),
+            },
+          },
+        },
+      ],
     }).compileComponents();
     const fixture = TestBed.createComponent(LoginComponent);
-    await fixture.whenStable();
-    return fixture.nativeElement as HTMLElement;
+    fixture.detectChanges();
+    return { fixture, http: TestBed.inject(HttpTestingController) };
   }
-  it('ofrece solo el acceso al backend, sin correo ni contraseña', async () => {
-    const element = await render();
-    expect(element.querySelectorAll('input').length).toBe(0);
-    expect(element.querySelector('a')?.getAttribute('href')).toBe('/api/v1/auth/login');
-    expect(element.textContent).toContain('Iniciar sesión con cuenta UPS');
+  afterEach(() => TestBed.inject(HttpTestingController).verify());
+
+  it.each(['mock', 'cas'])(
+    'muestra el acceso correcto sin campos de credenciales: %s',
+    async (mode) => {
+      const { fixture, http } = await render();
+      http.expectOne('/api/v1/auth/me').flush({}, { status: 401, statusText: 'Unauthorized' });
+      http.expectOne('/api/v1/auth/config').flush({ auth_mode: mode });
+      fixture.detectChanges();
+      const element = fixture.nativeElement as HTMLElement;
+      expect(element.querySelectorAll('input').length).toBe(0);
+      expect(element.querySelector('a')?.getAttribute('href')).toBe('/api/v1/auth/login');
+      expect(element.textContent).toContain(
+        mode === 'mock' ? 'Entrar a la demostración' : 'Iniciar sesión con cuenta UPS',
+      );
+      if (mode === 'mock') expect(element.textContent).toContain('no se conecta a la UPS');
+    },
+  );
+
+  it('restaura la sesión al abrir login directamente', async () => {
+    const { fixture, http } = await render();
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+    http.expectOne('/api/v1/auth/me').flush({ auth_mode: 'mock', user: { nombre: 'Docente' } });
+    expect(navigate).toHaveBeenCalledWith('/inicio');
+    http.expectNone('/api/v1/auth/config');
+    fixture.destroy();
   });
-  it('muestra un error seguro cuando falla el callback', async () => {
-    const element = await render(true);
-    expect(element.querySelector('[role="alert"]')?.textContent).toContain('No se pudo completar el acceso');
+
+  it('permite recuperar un fallo de conexión sin enviar al callback', async () => {
+    const { fixture, http } = await render();
+    http.expectOne('/api/v1/auth/me').flush({}, { status: 503, statusText: 'Unavailable' });
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('a')).toBeNull();
+    fixture.nativeElement.querySelector('button').click();
+    http.expectOne('/api/v1/auth/me').flush({}, { status: 401, statusText: 'Unauthorized' });
+    http.expectOne('/api/v1/auth/config').flush({ auth_mode: 'mock' });
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('a')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeNull();
+  });
+
+  it('conserva el aviso de callback y muestra fallo de configuración', async () => {
+    const { fixture, http } = await render(true);
+    http.expectOne('/api/v1/auth/me').flush({}, { status: 401, statusText: 'Unauthorized' });
+    http.expectOne('/api/v1/auth/config').flush({}, { status: 503, statusText: 'Unavailable' });
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('No se pudo completar el acceso');
+    expect(fixture.nativeElement.querySelector('a')).toBeNull();
+    expect(fixture.nativeElement.querySelector('button')).not.toBeNull();
   });
 });

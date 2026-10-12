@@ -5,7 +5,12 @@ from fastapi.responses import RedirectResponse
 
 from app.configuracion.settings import get_settings
 from app.modulos.autenticacion.repositorios.usuario_repository import UserRepository
-from app.modulos.autenticacion.schemas import ErrorResponse, SessionResponse, UserResponse
+from app.modulos.autenticacion.schemas import (
+    AuthConfiguration,
+    ErrorResponse,
+    SessionResponse,
+    UserResponse,
+)
 from app.modulos.autenticacion.servicios.cas_login_service import CasLoginService
 from app.modulos.autenticacion.servicios.cas_validation_service import (
     CasValidationError,
@@ -66,6 +71,12 @@ def login(repository: Repository, browser_state: StateCookie = None):
         path="/api/v1/auth",
     )
     return response
+
+
+@router.get("/config", response_model=AuthConfiguration)
+def configuration():
+    """Modo público de acceso; no publica usuario, claves ni parámetros institucionales."""
+    return AuthConfiguration(auth_mode=get_settings().auth_mode)
 
 
 @router.get("/callback", status_code=303, response_class=RedirectResponse)

@@ -4,6 +4,23 @@ Fuente rectora: Plan_Implementacion_TutorIA-Lucero.docx, entregado por el autor 
 
 ## Bloque actual
 
+11 de octubre: [revisión del acceso local](pruebas/hito_12_revision_login.md) solicitada por
+el autor, corregida y desplegada: validaciones backend, modo mock explícito, recuperación
+de sesión y DNS dinámico Nginx. 47 pruebas backend y 13 Angular aprobadas, login/logout
+y rutas protegidas comprobados en navegador. No cierra hito12 ni evaluación académica.
+Retomar recorrido experimental con proveedores simulados; sin nuevas llamadas IA.
+
+11 de octubre: [OpenAI/Claude](pruebas/hito_11_adaptadores_openai_claude.md) implementados
+en fábrica/contrato interno, con 107 pruebas simuladas/config/API aprobadas. Envío API
+no-Gemini bloqueado hasta política de autorización; sin llamadas reales ni despliegue.
+Próximo: recorrido experimental completo con transporte simulado y controles del manifiesto.
+Comparación real, modelos/presupuesto y evaluación académica siguen pendientes.
+
+11 de octubre: [revisión humana de pares](pruebas/hito_11_revision_humana_pares.md)
+implementada mediante CLI prepare/apply con evidencia y contexto vinculado. 81 pruebas
+enfocadas aprobadas; sin IA ni juicios humanos reales. Siguiente bloque técnico:
+adaptadores OpenAI/Claude con transporte simulado. Benchmark/evaluación real pendientes.
+
 11 de octubre: [registro de respuestas de pares](pruebas/hito_11_registro_pares.md)
 implementado offline: vínculo a manifiesto/prompt/modelo, validación por modo, conservación
 de fallos/abstenciones y cobertura de uso. 111 pruebas enfocadas aprobadas; sin IA ni

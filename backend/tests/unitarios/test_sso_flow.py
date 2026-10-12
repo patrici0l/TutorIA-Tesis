@@ -14,6 +14,7 @@ from app.main import create_app
 from app.modulos.autenticacion.models import AuthSession, LoginAttempt
 from app.modulos.autenticacion.router import get_cas_validator
 from app.modulos.autenticacion.schemas import InstitutionalIdentity
+from app.modulos.autenticacion.servicios.cas_login_service import CasLoginService
 from app.modulos.autenticacion.servicios.cas_validation_service import CasValidationError
 from app.modulos.usuarios.models import User
 
@@ -117,6 +118,27 @@ def test_expired_attempt_rejected(auth_app):
         db.scalar(select(LoginAttempt)).expires_at = datetime.now(UTC) - timedelta(minutes=1)
         db.commit()
     assert "access_denied" in client.get(start.headers["location"]).headers["location"]
+
+
+def test_non_ascii_callback_state_returns_safe_denial(auth_app):
+    client, engine, _ = auth_app
+    client.get("/api/v1/auth/login")
+    result = client.get("/api/v1/auth/callback", params={"state": "é" * 32})
+    assert result.status_code == 303
+    assert result.headers["location"].endswith("/login?error=access_denied")
+    assert result.headers["cache-control"] == "no-store"
+    assert client.cookies.get("tutoria_login_state") is None
+    with Session(engine) as db:
+        assert db.scalar(select(AuthSession)) is None
+
+
+def test_non_ascii_browser_state_is_rejected_before_repository_access():
+    from fastapi import HTTPException
+
+    service = CasLoginService(None, get_settings(), None)
+    with pytest.raises(HTTPException) as error:
+        service.validate_callback("a" * 32, "é" * 32, None)
+    assert error.value.status_code == 400
 
 
 @pytest.mark.parametrize("condition", ["expired", "disabled", "wrong_mode"])

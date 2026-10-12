@@ -31,5 +31,9 @@ class SessionResponse(BaseModel):
     auth_mode: Literal["mock", "cas"]
 
 
+class AuthConfiguration(BaseModel):
+    auth_mode: Literal["mock", "cas"]
+
+
 class ErrorResponse(BaseModel):
     detail: str

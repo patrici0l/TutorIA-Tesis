@@ -36,6 +36,11 @@ class GeneratePreparationService:
         self.claim, self.trace, self.settings = claim, trace, settings
 
     def generate(self, identifier: UUID, owner: UUID):
+        # La autorización gratuita existente es específica de Gemini, no de otros proveedores.
+        if self.settings.llm_default_provider != "gemini":
+            raise HTTPException(
+                503, "Este proveedor aún no está habilitado para envíos desde la API."
+            )
         if not self.settings.llm_enabled or not self.settings.llm_free_tier_confirmed:
             raise HTTPException(503, "La generación gratuita aún no está habilitada.")
         try:

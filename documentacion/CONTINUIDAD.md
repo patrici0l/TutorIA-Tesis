@@ -1,5 +1,55 @@
 # Continuidad de TutorIA-Lucero
 
+## Estado vigente — 11 de octubre, acceso local revisado y desplegado
+
+Corregidos state Unicode/500, puertos inválidos y colisión CAS ticket/state. Nuevo auth/config
+público solo modo; login distingue mock/CAS, restaura sesión existente y permite reintento
+ante conexión fallida. Nginx resuelve backend dinámicamente. 47 pruebas backend y 13 Angular
+aprobadas; builds y despliegue healthy. Navegador verificó entrada docente, restauración,
+logout y protección de /documentos. DB: 21 generaciones, migración0011, sin IA ni secretos
+modificados. [Evidencia](pruebas/hito_12_revision_login.md).
+
+Rama feature/resource-preparation; cambios anteriores conservados y desplegados, sin commits
+automáticos. Nuevo bloque para revisión/commit: auth/config/login/validaciones/Nginx/tests/docs.
+Mensaje sugerido: `fix: corrige acceso local y configuracion de autenticacion`.
+Próximo del plan: recorrido experimental manifiesto→proveedor simulado→registro; autorización
+real de proveedores y evaluación académica siguen pendientes, Gemini continúa aplazado.
+
+## Estado vigente — 11 de octubre, adaptadores OpenAI/Claude
+
+Implementados adaptadores REST Responses/Messages, transporte común acotado sin retry,
+fábrica y claves SecretStr/plantilla vacía/Compose. Gemini conserva contrato y valida que
+el proveedor seleccionado coincida. GeneratePreparationService bloquea no-Gemini antes
+de proveedor/reserva: autorización gratuita existente no se transfiere a otros servicios.
+107 pruebas enfocadas aprobadas en 1,65 s (incluye Gemini/config/API); Ruff limpio,
+advertencia Starlette/HTTPX conocida. Sin IA real, claves nuevas ni .env modificado.
+Docker detenido: no se construyó/desplegó. Instalado pgvector==0.5.0 en .venv según
+requirements existente para ejecutar la ruta API; sin cambios de dependencias declaradas.
+[Evidencia, límites y fuentes oficiales](pruebas/hito_11_adaptadores_openai_claude.md).
+
+Preservados cambios pendientes de paired_assessment del bloque anterior. Nuevo bloque:
+adaptadores/transporte/fábrica/Settings, bloqueo API, .env.example/Compose, tests y docs.
+Rama feature/resource-preparation; sin commits automáticos. Commit sugerido:
+`feat: implementa adaptadores OpenAI y Claude con pruebas simuladas`.
+Próximo: recorrido experimental manifiesto→proveedor simulado→registro; autorización real,
+presupuesto/modelos y benchmark quedan pendientes. Gemini continúa fuera del avance activo.
+
+## Estado vigente — 11 de octubre, revisión humana de pares
+
+Commit humano b3b0e68 verificado; árbol limpio al iniciar. Implementado paired_assessment
+CLI prepare/apply: plantilla pendiente ligada al reporte reconstruido desde manifiesto/lote,
+contexto inmutable y juicios con evidencia, revisor/fecha. Referencias de revisión comunes
+para ambos modos, sin exigir citas generadas al directo. Fallos/abstenciones conservados
+y no calificables semánticamente. Cobertura pending/partial/available_content_reviewed,
+sin atribuir calidad aprobada, identidad autenticada ni benchmark completo.
+81 pruebas enfocadas aprobadas en 2,08 s; Ruff limpio. Sin IA/DB/config/despliegue.
+[Uso y evidencia](pruebas/hito_11_revision_humana_pares.md).
+
+Rama feature/resource-preparation. Nuevo módulo, pruebas y documentación pendientes
+de revisión/commit humano: `feat: valida revisiones humanas de pares experimentales`.
+No se ejecutó git commit. Próximo activo: adaptadores OpenAI/Claude con transporte simulado;
+sin credenciales ni llamadas reales hasta concretar su uso. Gemini sigue aplazado.
+
 ## Estado vigente — 11 de octubre, registro de respuestas de pares
 
 paired_review CLI implementado: valida manifiesto y vínculos por modo/prompt/modelo,

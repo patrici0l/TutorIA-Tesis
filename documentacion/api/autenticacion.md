@@ -4,6 +4,7 @@ Todas las rutas utilizan /api/v1/auth. Los errores no contienen tickets ni cooki
 
 | Método y ruta | Comportamiento |
 |---|---|
+| GET /config | Público, devuelve únicamente auth_mode (mock/cas), sin identidad ni secretos y con no-store |
 | GET /login | 302 al proveedor configurado o al callback mock; cookie temporal de state |
 | GET /callback | Comprueba state/cookie, consume el intento, valida CAS y aprovisiona usuario; 303 al inicio y cookie de sesión |
 | GET /me | 200 con user y auth_mode; 401 sin sesión, con sesión vencida o usuario inactivo |

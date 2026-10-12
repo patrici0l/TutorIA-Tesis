@@ -1,23 +1,41 @@
 <section class="auth-card fade-in">
   <p class="eyebrow">UNIVERSIDAD POLITÉCNICA SALESIANA</p>
   <h1>Bienvenido a TutorIA</h1>
-  <p>Accede con tu cuenta institucional para continuar en tu espacio de aprendizaje.</p>
+  @if (loginMode() === 'mock') {
+    <p>
+      Estás en la demostración local. Accede con el usuario ficticio configurado para probar
+      TutorIA.
+    </p>
+  } @else if (loginMode() === 'cas') {
+    <p>Accede con tu cuenta institucional para continuar en tu espacio de aprendizaje.</p>
+  }
   @if (denied) {
     <p class="error" role="alert">
       No se pudo completar el acceso. El intento pudo vencer o tu cuenta no tiene acceso habilitado.
       Inténtalo nuevamente.
     </p>
   }
-  @if (auth.unavailable()) {
+  @if (failed()) {
     <p class="error" role="alert">
-      No se pudo comprobar la sesión. Revisa la conexión e intenta acceder nuevamente.
+      No se pudo comprobar el acceso. Revisa que los servicios estén disponibles e inténtalo
+      nuevamente.
+    </p>
+    <button class="login-button" type="button" (click)="load()">Reintentar conexión</button>
+  }
+  @if (loading()) {
+    <p role="status">Comprobando acceso…</p>
+  } @else if (loginMode()) {
+    <a class="login-button" href="/api/v1/auth/login">
+      {{ loginMode() === 'mock' ? 'Entrar a la demostración' : 'Iniciar sesión con cuenta UPS' }}
+      <span aria-hidden="true">↗</span>
+    </a>
+    <p class="privacy">
+      @if (loginMode() === 'mock') {
+        No necesitas correo ni contraseña. Este acceso no se conecta a la UPS.
+      } @else {
+        Tu contraseña institucional se ingresa únicamente en el portal de la UPS. TutorIA no la
+        solicita ni la almacena.
+      }
     </p>
   }
-  <a class="login-button" href="/api/v1/auth/login"
-    >Iniciar sesión con cuenta UPS <span aria-hidden="true">↗</span></a
-  >
-  <p class="privacy">
-    Tu contraseña institucional se ingresa únicamente en el portal de la UPS. TutorIA no la solicita
-    ni la almacena.
-  </p>
 </section>

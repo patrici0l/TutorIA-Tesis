@@ -1,16 +1,16 @@
 # Guía docente del MVP local
 
-Versión de trabajo del 10 de octubre de 2026. Describe funciones implementadas; pendiente
+Versión de trabajo del 11 de octubre de 2026. Describe funciones implementadas; pendiente
 de validación de usabilidad con el autor. No certifica calidad pedagógica ni cierra el proyecto.
 
 ## Acceso y alcance
 
-Con el entorno iniciado, abre http://localhost:4200/login y pulsa **Iniciar sesión con
-cuenta UPS**. En esta etapa el acceso es una simulación local: no conecta con la universidad
+Con el entorno iniciado, abre http://localhost:4200/login y pulsa **Entrar a la
+demostración**. En esta etapa el acceso es una simulación local: no conecta con la universidad
 ni requiere una contraseña real. Usa únicamente materiales y perfiles ficticios de prueba.
 
 Documentos, búsqueda, perfiles, generación y métricas son espacios de docente/admin sobre
-sus datos propios. Si aparece **Espacio docente**, la sesión corresponde a estudiante:
+sus datos propios. Si has entrado como estudiante,
 el responsable local debe seleccionar la identidad docente de demostración y debes cerrar
 sesión y volver a entrar. No hay un botón para que el estudiante eleve sus permisos.
 La preparación técnica del entorno está en el [README](../../README.md).

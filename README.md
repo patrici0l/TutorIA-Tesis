@@ -29,7 +29,7 @@ docker compose up -d --build --wait
 - Swagger: http://localhost:8000/api/v1/docs
 - OpenAPI: http://localhost:8000/api/v1/openapi.json
 
-Abrir `/login` y pulsar “Iniciar sesión con cuenta UPS”. En `AUTH_MODE=mock` el backend crea una sesión ficticia y muestra el aviso de demostración. La pantalla de inicio debe indicar API, base de datos y motor vectorial disponibles. HTTP 503 significa que la API está viva, pero PostgreSQL o pgvector no están disponibles. PostgreSQL no publica puertos hacia el equipo; API e interfaz se exponen solamente en loopback.
+Abrir `/login` y pulsar “Entrar a la demostración” en `AUTH_MODE=mock`: el backend crea una sesión ficticia, sin correo ni contraseña. “Iniciar sesión con cuenta UPS” corresponde únicamente al modo CAS, cuya conexión institucional sigue pendiente. La pantalla de inicio debe indicar API, base de datos y motor vectorial disponibles. HTTP 503 significa que la API está viva, pero PostgreSQL o pgvector no están disponibles. PostgreSQL no publica puertos hacia el equipo; API e interfaz se exponen solamente en loopback.
 
 ```powershell
 docker compose ps
@@ -40,6 +40,14 @@ docker compose stop
 `stop` conserva el volumen de datos. No eliminar volúmenes para resolver un problema de conexión. Cambiar `DB_PASSWORD` después de crear el volumen no cambia automáticamente la contraseña almacenada en PostgreSQL.
 
 ## Desarrollo y pruebas
+
+Los [adaptadores OpenAI y Claude](documentacion/pruebas/hito_11_adaptadores_openai_claude.md)
+están implementados y probados con transporte simulado. Su envío desde API/UI permanece
+bloqueado hasta definir autorización y presupuesto; no se comprobaron con credenciales reales.
+
+La [revisión humana de pares](documentacion/pruebas/hito_11_revision_humana_pares.md)
+crea plantillas y valida valoraciones declaradas con evidencia contra los originales.
+No genera evaluaciones ni certifica automáticamente su calidad.
 
 El [registro offline de respuestas experimentales](documentacion/pruebas/hito_11_registro_pares.md)
 valida resultados directo/RAG contra su manifiesto, conserva fallos y abstenciones y

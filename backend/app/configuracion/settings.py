@@ -30,6 +30,8 @@ class Settings(BaseSettings):
     llm_default_provider: Literal["gemini", "openai", "claude"] = "gemini"
     llm_model: str = ""
     gemini_api_key: SecretStr = Field(default=SecretStr(""), repr=False)
+    openai_api_key: SecretStr = Field(default=SecretStr(""), repr=False)
+    anthropic_api_key: SecretStr = Field(default=SecretStr(""), repr=False)
     llm_timeout_seconds: int = Field(default=30, ge=5, le=60)
     llm_max_input_chars: int = Field(default=12000, ge=1000, le=24000)
     llm_max_output_tokens: int = Field(default=1024, ge=128, le=4096)
@@ -76,6 +78,12 @@ class Settings(BaseSettings):
             urls += [self.cas_login_url, self.cas_validate_url]
         for url in urls:
             parsed = urlsplit(url)
+            try:
+                port = parsed.port
+            except ValueError:
+                raise ValueError("Configura un puerto de autenticación válido") from None
+            if port == 0:
+                raise ValueError("Configura un puerto de autenticación entre 1 y 65535")
             if (
                 not parsed.hostname
                 or parsed.username
@@ -97,6 +105,8 @@ class Settings(BaseSettings):
                 raise ValueError("El modo mock solo permite redirecciones a loopback")
         if self.cas_service_parameter == self.cas_ticket_parameter:
             raise ValueError("Los parámetros service y ticket deben ser distintos")
+        if self.cas_ticket_parameter == "state":
+            raise ValueError("El parámetro CAS ticket no puede usar el nombre reservado state")
         for name in [self.cas_service_parameter, self.cas_ticket_parameter]:
             if not name.replace("_", "").isalnum():
                 raise ValueError("Nombre de parámetro CAS no válido")
@@ -109,12 +119,14 @@ class Settings(BaseSettings):
 
         if not self.llm_enabled:
             return
-        if self.llm_default_provider != "gemini":
-            raise ValueError("El primer adaptador disponible es Gemini")
         validate_model(self.llm_model)
-        key = self.gemini_api_key.get_secret_value()
+        key = {
+            "gemini": self.gemini_api_key,
+            "openai": self.openai_api_key,
+            "claude": self.anthropic_api_key,
+        }[self.llm_default_provider].get_secret_value()
         if not key or key != key.strip() or any(ord(char) < 33 or ord(char) > 126 for char in key):
-            raise ValueError("Configura GEMINI_API_KEY exclusivamente en el backend")
+            raise ValueError("Configura la clave del proveedor exclusivamente en el backend")
 
     def allowed_domains(self) -> list[str]:
         return [

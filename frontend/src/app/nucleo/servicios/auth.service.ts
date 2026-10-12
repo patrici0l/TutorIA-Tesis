@@ -15,6 +15,9 @@ export class AuthService {
     this.currentUser.set(null);
     this.mode.set(null);
   }
+  configuration() {
+    return this.http.get<{ auth_mode: 'mock' | 'cas' }>('/api/v1/auth/config');
+  }
   check(): Observable<SessionResponse> {
     return this.http.get<SessionResponse>('/api/v1/auth/me').pipe(
       tap((session) => {
