@@ -48,6 +48,38 @@ def mock_login(client):
     return start, result
 
 
+def test_demo_profiles_are_distinct_and_callback_cannot_change_role(auth_app):
+    client, _, _ = auth_app
+    ids = []
+    for role in ("student", "teacher"):
+        start = client.get("/api/v1/auth/login", params={"demo_profile": role})
+        assert start.status_code == 302
+        other = "teacher" if role == "student" else "student"
+        callback = start.headers["location"].replace(
+            "demo_profile=" + role, "demo_profile=" + other
+        )
+        assert client.get(callback).status_code == 303
+        user = client.get("/api/v1/auth/me").json()["user"]
+        assert user["rol"] == role
+        assert user["institutional_email"].endswith("@example.org")
+        ids.append(user["id"])
+    assert ids[0] != ids[1]
+    assert client.get("/api/v1/auth/login?demo_profile=admin").status_code == 422
+
+
+def test_cas_cannot_select_demo_profile():
+    from unittest.mock import Mock
+
+    from fastapi import HTTPException
+
+    settings = Mock(auth_mode="cas", app_env="development")
+    repository = Mock()
+    with pytest.raises(HTTPException) as error:
+        CasLoginService(repository, settings, Mock()).start(demo_profile="teacher")
+    assert error.value.status_code == 400
+    repository.add.assert_not_called()
+
+
 def test_mock_flow_cookie_provisioning_and_logout(auth_app):
     client, engine, _ = auth_app
     assert client.get("/api/v1/auth/me").status_code == 401

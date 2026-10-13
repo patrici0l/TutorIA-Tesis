@@ -46,6 +46,23 @@ p {
 .privacy {
   font-size: 12px;
 }
+.profile-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px;
+  margin-top: 18px;
+}
+.profile-card h2 {
+  margin: 0;
+  font-size: 21px;
+}
+.profile-card .login-button {
+  margin: 16px 0 0;
+}
+.domain {
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
 .error {
   color: #a23922;
 }

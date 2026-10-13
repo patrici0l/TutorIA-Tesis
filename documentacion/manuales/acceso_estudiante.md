@@ -2,6 +2,10 @@
 
 ## Demostración local disponible
 
+Acceso recomendado: abre http://localhost:4200/login y elige **Probar como estudiante** o **Probar como profesor**. Cierra tu sesión anterior si ya estabas dentro. No necesitas ejecutar un script para alternar. Los dominios mostrados describen los perfiles previstos, no validan identidad. Ambos perfiles son cuentas ficticias compartidas.
+
+### Selección predeterminada por consola (opcional)
+
 Desde la raíz del repositorio, con Docker y la aplicación local preparados:
 
 ```powershell
@@ -9,7 +13,7 @@ Desde la raíz del repositorio, con Docker y la aplicación local preparados:
 ```
 
 Cierra tu sesión en TutorIA y vuelve a entrar por http://localhost:4200/login.
-Pulsa «Entrar a la demostración». La identidad ficticia será
+Pulsa «Probar como estudiante». La identidad ficticia será
 estudiante.demo@example.org y verás el inicio estudiantil con acceso a práctica.
 No necesitas contraseña ni una cuenta de la UPS. Las prácticas de la identidad
 docente permanecen separadas de las del estudiante.

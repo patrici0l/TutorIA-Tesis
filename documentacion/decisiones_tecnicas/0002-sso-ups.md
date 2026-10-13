@@ -40,3 +40,6 @@ Antes de habilitar CAS real necesitamos:
 6. Política de cierre global/single logout, si se exige después del cierre local de TutorIA.
 
 No se realizaron solicitudes a endpoints de la UPS. Los tests CAS usan direcciones reservadas example.org y transporte simulado.
+
+## Actualización del 13 de octubre
+Por solicitud del autor, login permite elegir student/teacher solo en development/mock. Son dos identidades ficticias fijas; no acepta correos ni admin. El perfil se fija en el intento persistido y se ignora cualquier selección enviada en callback. CAS rechaza la selección. Se conservan sesiones HttpOnly y roles locales existentes. Los dominios mostrados son orientativos hasta validar CAS con TI.

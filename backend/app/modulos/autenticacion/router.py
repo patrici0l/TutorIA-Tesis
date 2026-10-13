@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, Cookie, Depends, HTTPException, Query, Request, Response
 from fastapi.responses import RedirectResponse
@@ -56,10 +56,16 @@ def clear_state_cookie(response: Response):
 
 
 @router.get("/login", status_code=302, response_class=RedirectResponse)
-def login(repository: Repository, browser_state: StateCookie = None):
+def login(
+    repository: Repository,
+    browser_state: StateCookie = None,
+    demo_profile: Literal["student", "teacher"] | None = None,
+):
     """Inicia acceso institucional o simulación local; no recibe credenciales."""
     settings = get_settings()
-    url, state = CasLoginService(repository, settings, get_cas_validator()).start(browser_state)
+    url, state = CasLoginService(repository, settings, get_cas_validator()).start(
+        browser_state, demo_profile
+    )
     response = RedirectResponse(url, status_code=302)
     response.set_cookie(
         STATE_COOKIE,

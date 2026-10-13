@@ -1,6 +1,6 @@
 import secrets
 from datetime import UTC, datetime, timedelta
-from urllib.parse import urlencode
+from urllib.parse import parse_qs, urlencode, urlsplit
 
 from fastapi import HTTPException
 
@@ -18,13 +18,26 @@ class CasLoginService:
     ):
         self.repository, self.settings, self.validator = repository, settings, validator
 
-    def start(self, previous_state: str | None = None) -> tuple[str, str]:
+    def start(
+        self, previous_state: str | None = None, demo_profile: str | None = None
+    ) -> tuple[str, str]:
         self.settings.validate_auth()
+        if demo_profile is not None and (
+            self.settings.auth_mode != "mock"
+            or self.settings.app_env != "development"
+            or demo_profile not in ("student", "teacher")
+        ):
+            raise HTTPException(
+                400, "La selección de perfil solo está disponible en la demostración local."
+            )
         self.repository.purge_expired()
         if previous_state:
             self.repository.consume_attempt(digest_token(previous_state))
         state = secrets.token_urlsafe(32)
-        service_url = self.settings.auth_callback_url + "?" + urlencode({"state": state})
+        parameters = {"state": state}
+        if self.settings.auth_mode == "mock":
+            parameters["demo_profile"] = demo_profile or self.settings.auth_mock_user
+        service_url = self.settings.auth_callback_url + "?" + urlencode(parameters)
         self.repository.add(
             LoginAttempt(
                 digest=digest_token(state),
@@ -62,7 +75,13 @@ class CasLoginService:
         if self.settings.auth_mode == "cas":
             return self.validator.validate(ticket or "", attempt.service_url)
         # Nunca se acepta una identidad suministrada por Angular.
-        teacher = self.settings.auth_mock_user == "teacher"
+        # El perfil se lee del intento guardado, nunca del query del callback.
+        profile = parse_qs(urlsplit(attempt.service_url).query).get(
+            "demo_profile", [self.settings.auth_mock_user]
+        )[0]
+        if profile not in ("student", "teacher"):
+            raise HTTPException(400, "Perfil de demostración no válido.")
+        teacher = profile == "teacher"
         return InstitutionalIdentity(
             institutional_email="docente.demo@example.org"
             if teacher

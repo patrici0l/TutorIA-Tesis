@@ -3,8 +3,8 @@
   <h1>Bienvenido a TutorIA</h1>
   @if (loginMode() === 'mock') {
     <p>
-      Estás en la demostración local. Accede con el usuario ficticio configurado para probar
-      TutorIA.
+      Elige el espacio que quieres probar. Cada perfil usa una cuenta ficticia compartida y conserva
+      sus propios datos de demostración.
     </p>
   } @else if (loginMode() === 'cas') {
     <p>Accede con tu cuenta institucional para continuar en tu espacio de aprendizaje.</p>
@@ -25,13 +25,32 @@
   @if (loading()) {
     <p role="status">Comprobando acceso…</p>
   } @else if (loginMode()) {
-    <a class="login-button" href="/api/v1/auth/login">
-      {{ loginMode() === 'mock' ? 'Entrar a la demostración' : 'Iniciar sesión con cuenta UPS' }}
-      <span aria-hidden="true">↗</span>
-    </a>
+    @if (loginMode() === 'mock') {
+      <div class="profile-card">
+        <h2>Estudiante</h2>
+        <p>Practica ejercicios, revisa explicaciones y consulta tus intentos.</p>
+        <p class="domain">Dominio institucional previsto: <strong>&#64;est.ups.edu.ec</strong></p>
+        <a class="login-button" href="/api/v1/auth/login?demo_profile=student"
+          >Probar como estudiante <span aria-hidden="true">↗</span></a
+        >
+      </div>
+      <div class="profile-card">
+        <h2>Profesor</h2>
+        <p>Organiza documentos, busca fuentes y prepara actividades.</p>
+        <p class="domain">Dominio institucional previsto: <strong>&#64;ups.edu.ec</strong></p>
+        <a class="login-button" href="/api/v1/auth/login?demo_profile=teacher"
+          >Probar como profesor <span aria-hidden="true">↗</span></a
+        >
+      </div>
+    } @else {
+      <a class="login-button" href="/api/v1/auth/login"
+        >Iniciar sesión con cuenta UPS <span aria-hidden="true">↗</span></a
+      >
+    }
     <p class="privacy">
       @if (loginMode() === 'mock') {
-        No necesitas correo ni contraseña. Este acceso no se conecta a la UPS.
+        No necesitas correo ni contraseña. Este acceso no se conecta a la UPS. Los dominios indican
+        los perfiles previstos; todavía no verificamos cuentas institucionales.
       } @else {
         Tu contraseña institucional se ingresa únicamente en el portal de la UPS. TutorIA no la
         solicita ni la almacena.

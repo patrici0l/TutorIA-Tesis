@@ -764,3 +764,19 @@ Sin conexión UPS, sin Gemini ni cambios de esquema. Rama feature/resource-prepa
 Pendiente commit humano: script, complemento Compose y documentación; mensaje sugerido:
 feat: facilita acceso local de demostracion como estudiante.
 Siguiente: banco ampliado y asignaciones; acceso CAS real depende de parámetros autorizados.
+
+## 13 de octubre — Selección de perfiles de demostración desde login
+
+Solicitud del autor: distinguir estudiante est.ups.edu.ec y profesor ups.edu.ec sin CAS.
+Login muestra ambos perfiles y dominios previstos, pero conserva identidades ficticias
+example.org y sus datos separados. Selector permitido únicamente en development/mock;
+CAS lo rechaza y admin no es válido. Perfil fijado en service_url del intento persistido,
+no leído del query del callback; no cambia roles locales existentes. Sin migración.
+34 pruebas backend y 5 Angular aprobadas; prueba de alteración de callback incluida.
+Nueva decisión reemplaza la selección exclusiva del perfil mock por configuración backend:
+el navegador elige entre dos perfiles ficticios predefinidos, nunca envía correo o identidad.
+Pendiente commit humano del acceso, pruebas y documentación. Mensaje sugerido:
+feat: permite elegir perfiles de demostracion en el acceso.
+Rama feature/resource-preparation. CAS real y cuentas individuales siguen pendientes.
+
+Cierre: imágenes construidas y frontend/backend/PostgreSQL saludables. Ruff aprobado tras ordenar imports del test. Sin revisión visual en navegador en este bloque.

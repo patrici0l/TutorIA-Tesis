@@ -37,11 +37,21 @@ describe('Acceso según configuración del servidor', () => {
       fixture.detectChanges();
       const element = fixture.nativeElement as HTMLElement;
       expect(element.querySelectorAll('input').length).toBe(0);
-      expect(element.querySelector('a')?.getAttribute('href')).toBe('/api/v1/auth/login');
+      expect(element.querySelector('a')?.getAttribute('href')).toBe(
+        mode === 'mock' ? '/api/v1/auth/login?demo_profile=student' : '/api/v1/auth/login',
+      );
       expect(element.textContent).toContain(
-        mode === 'mock' ? 'Entrar a la demostración' : 'Iniciar sesión con cuenta UPS',
+        mode === 'mock' ? 'Probar como estudiante' : 'Iniciar sesión con cuenta UPS',
       );
       if (mode === 'mock') expect(element.textContent).toContain('no se conecta a la UPS');
+      expect(element.querySelectorAll('a').length).toBe(mode === 'mock' ? 2 : 1);
+      if (mode === 'mock') {
+        expect(element.querySelectorAll('a')[1].getAttribute('href')).toBe(
+          '/api/v1/auth/login?demo_profile=teacher',
+        );
+        expect(element.textContent).toContain('@est.ups.edu.ec');
+        expect(element.textContent).toContain('@ups.edu.ec');
+      }
     },
   );
 
