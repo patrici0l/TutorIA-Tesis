@@ -36,7 +36,7 @@ export class NavigationComponent {
       return [
         {
           path: '/login',
-          label: 'Acceso UPS',
+          label: 'Entrar',
           description: 'Entra a tu espacio de aprendizaje',
           icon: 'access',
         },
@@ -49,6 +49,14 @@ export class NavigationComponent {
         icon: 'home',
       },
     ];
+    if (user.rol === 'student') {
+      links.push({
+        path: '/practica',
+        label: 'Practicar',
+        description: 'Resuelve ejercicios y revisa sus explicaciones',
+        icon: 'document',
+      });
+    }
     if (user.rol === 'teacher' || user.rol === 'admin') {
       links.push({
         path: '/metricas',
@@ -59,7 +67,7 @@ export class NavigationComponent {
       links.push({
         path: '/perfiles',
         label: 'Perfiles',
-        description: 'Revisa observaciones sintéticas de rendimiento',
+        description: 'Organiza el apoyo para cada perfil de aprendizaje',
         icon: 'document',
       });
       links.push({

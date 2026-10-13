@@ -20,6 +20,7 @@ class UploadLimitMiddleware:
                 "/api/v1/rag/search",
                 "/api/v1/content/prepare",
                 "/api/v1/profiles",
+                "/api/v1/practice/attempts",
             }
         ):
             return await self.app(scope, receive, send)

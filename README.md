@@ -6,6 +6,10 @@ Están implementados la base Angular → FastAPI → PostgreSQL/pgvector y el ac
 
 ## Ejecutar en Windows con Docker
 
+La [práctica estudiantil](documentacion/api/practica.md) en `/practica` permite resolver
+tres ejercicios de derivadas, guardar el resultado y consultar el historial privado.
+El servidor calcula los aciertos; no consume IA ni constituye una nota institucional.
+
 Para recorrer la demostración: [guía docente del MVP](documentacion/manuales/guia_docente_mvp.md).
 Para operar servicios, consultar la DB y respaldar/verificar datos:
 [manual técnico local](documentacion/manuales/manual_tecnico_local.md).
@@ -40,6 +44,10 @@ docker compose stop
 `stop` conserva el volumen de datos. No eliminar volúmenes para resolver un problema de conexión. Cambiar `DB_PASSWORD` después de crear el volumen no cambia automáticamente la contraseña almacenada en PostgreSQL.
 
 ## Desarrollo y pruebas
+
+El [recorrido experimental simulado](documentacion/pruebas/hito_11_simulacion_pares.md)
+conecta manifiesto, adaptadores OpenAI/Claude, registro y plantilla de revisión humana
+en una CLI reproducible, sin red ni claves reales. Incluye entradas sintéticas de ejemplo.
 
 Los [adaptadores OpenAI y Claude](documentacion/pruebas/hito_11_adaptadores_openai_claude.md)
 están implementados y probados con transporte simulado. Su envío desde API/UI permanece

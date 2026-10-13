@@ -1,0 +1,158 @@
+<a routerLink="/inicio">← Volver al inicio</a>
+<header>
+  <p class="eyebrow">CÁLCULO DIFERENCIAL</p>
+  <h1>Practica las derivadas</h1>
+  <p>Lee, elige y revisa la explicación. Puedes usar una pista antes de responder.</p>
+</header>
+@if (complete()) {
+  <section class="panel" aria-labelledby="result-title">
+    <p class="eyebrow">PRÁCTICA COMPLETADA</p>
+    <h2 id="result-title">{{ score() }} de {{ questions.length }} respuestas correctas</h2>
+    <p>
+      {{
+        score() === questions.length
+          ? 'Aplicaste correctamente las reglas de esta práctica.'
+          : 'Revisa los conceptos que necesitas reforzar y vuelve a intentarlo cuando quieras.'
+      }}
+    </p>
+    <ul>
+      @for (item of questions; track $index) {
+        <li>
+          <strong>{{ item.topic }}</strong> ·
+          {{ answers()[$index] === item.correctOption ? 'Respuesta correcta' : 'Para repasar' }}
+          <p>{{ item.explanation }}</p>
+        </li>
+      }
+    </ul>
+    @if (saved(); as result) {
+      <p role="status">
+        Resultado guardado: {{ result.score }} de {{ questions.length }} aciertos. Puedes
+        consultarlo en tu historial.
+      </p>
+    } @else {
+      <p>
+        Guarda este resultado para conservarlo en tu historial. Si vuelves a practicar sin
+        guardarlo, perderás este intento.
+      </p>
+      <button type="button" (click)="saveResult()" [disabled]="saving()">
+        {{ saving() ? 'Guardando…' : 'Guardar resultado' }}
+      </button>
+    }
+    @if (saveError()) {
+      <p role="alert">{{ saveError() }}</p>
+    }
+    <button type="button" class="secondary" (click)="restart()" [disabled]="saving()">
+      Volver a practicar
+    </button>
+  </section>
+} @else {
+  <section class="panel" aria-labelledby="question-title">
+    <div class="progress">
+      <span>Pregunta {{ index() + 1 }} de {{ questions.length }}</span
+      ><span>{{ question().topic }}</span>
+    </div>
+    <progress
+      [value]="answers().length"
+      [max]="questions.length"
+      aria-label="Preguntas completadas"
+    ></progress>
+    <h2 id="question-title" aria-live="polite">{{ question().statement }}</h2>
+    <fieldset [disabled]="submitted()">
+      <legend>Selecciona una respuesta</legend>
+      @for (option of question().options; track $index) {
+        <label [class.selected]="selected() === $index"
+          ><input
+            type="radio"
+            name="answer"
+            [value]="$index"
+            [checked]="selected() === $index"
+            (change)="choose($index)"
+          />{{ option }}</label
+        >
+      }
+    </fieldset>
+    @if (!submitted()) {
+      <div class="buttons">
+        <button type="button" [disabled]="selected() === null" (click)="check()">
+          Comprobar respuesta</button
+        ><button
+          class="secondary"
+          type="button"
+          (click)="hintVisible.set(!hintVisible())"
+          [attr.aria-expanded]="hintVisible()"
+          aria-controls="practice-hint"
+        >
+          {{ hintVisible() ? 'Ocultar pista' : 'Ver una pista' }}
+        </button>
+      </div>
+      @if (hintVisible()) {
+        <p id="practice-hint" class="hint">{{ question().hint }}</p>
+      }
+    }
+    @if (submitted()) {
+      <div class="feedback" [class.correct]="correct()" role="status">
+        <h3>{{ correct() ? '¡Correcto!' : 'Revisemos el procedimiento' }}</h3>
+        <p>{{ question().feedback[selected()!] }}</p>
+        <p>{{ question().explanation }}</p>
+      </div>
+      <button type="button" (click)="next()">
+        {{ index() === questions.length - 1 ? 'Ver mi resultado' : 'Siguiente pregunta' }}
+      </button>
+    }
+  </section>
+}
+<p class="session-note">
+  Práctica introductoria con ejercicios fijos. No cuenta como una nota. Al terminar puedes guardar
+  el resultado en tu cuenta; las respuestas sin guardar se pierden al salir.
+</p>
+<section class="panel history" aria-labelledby="history-title" [attr.aria-busy]="historyLoading()">
+  <h2 id="history-title">Mi progreso</h2>
+  <p>
+    Resultados guardados de esta práctica. Repetirla ayuda a repasar; estos aciertos no certifican
+    dominio del tema.
+  </p>
+  <button type="button" class="secondary" (click)="loadHistory()" [disabled]="historyLoading()">
+    {{ historyLoading() ? 'Cargando…' : 'Actualizar historial' }}
+  </button>
+  @if (historyError()) {
+    <p role="alert">
+      No pudimos cargar tu historial. Pulsa «Actualizar historial» para reintentarlo.
+    </p>
+  }
+  @if (history(); as page) {
+    <p>
+      Intentos guardados: {{ page.total }} · Mejor resultado:
+      {{ page.best_score === null ? 'Sin resultados' : page.best_score + ' de 3' }}
+    </p>
+    <ol>
+      @for (attempt of page.items; track attempt.id) {
+        <li>
+          <strong>{{ attempt.score }} de 3 aciertos</strong> ·
+          {{ attempt.created_at | date: 'dd/MM/yyyy HH:mm' }}
+        </li>
+      } @empty {
+        <li>
+          Todavía no tienes resultados guardados. Completa la práctica y guarda tu primer intento.
+        </li>
+      }
+    </ol>
+    @if (page.total > page.limit) {
+      <div class="buttons">
+        <button
+          type="button"
+          (click)="loadHistory(page.offset - page.limit)"
+          [disabled]="historyLoading() || page.offset === 0"
+        >
+          Más recientes
+        </button>
+        <button
+          type="button"
+          (click)="loadHistory(page.offset + page.limit)"
+          [disabled]="historyLoading() || page.offset + page.limit >= page.total"
+        >
+          Anteriores
+        </button>
+      </div>
+    }
+  }
+</section>

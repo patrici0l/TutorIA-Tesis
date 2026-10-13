@@ -1,5 +1,80 @@
 # Continuidad de TutorIA-Lucero
 
+## Estado vigente — 12 de octubre, intentos de práctica persistentes
+
+Implementados guardado explícito al completar `/practica` e historial paginado propio,
+total y mejor resultado. Backend calcula aciertos del banco derivadas-v1; no admite
+score/propietario del cliente. Migración0012 crea intentos_practica; reintentos idénticos
+no duplican y cambios del mismo ID responden409. [Contrato y pruebas](api/practica.md).
+
+13 unitarias locales aprobadas; Docker/PostgreSQL 13 aprobadas/1 omitida (concordancia
+Angular comprobada localmente), 13 Angular enfocadas. Ruff limpio. Prueba DB revierte
+datos sintéticos, migración aplicada conservando esquema anterior. Sin IA ni secretos.
+Guía personal regenerada: 162 clases y 270 métodos, checks DOM aprobados, permanece ignorada. Frontend/backend/DB saludables; Alembic0012 head. Flujo navegador guardado y recarga aprobado: un intento ficticio 3/3 permanece en la cuenta docente de demostración.
+
+Pendiente commit humano: backend estudiantes/migración0012/registro API/límite de cuerpo,
+servicio y pantalla Angular/pruebas/documentación. Mensaje:
+`feat: guarda intentos de practica y muestra progreso privado`.
+Cambios anteriores pendientes conservados; rama feature/resource-preparation.
+Siguiente: ampliar actividades y vínculo docente-estudiante; no declarar seguimiento
+académico ni personalización de estos ejercicios fijos.
+
+## Estado vigente — 12 de octubre, ampliación de guía privada por clase
+
+El autor pidió explicar todas las clases para comprender el código. Ampliada únicamente
+la guía privada: `guia_personal/clases.html`, enlazada desde index.html, con 155 clases y
+259 métodos/constructores, propósito, ubicación, herencia, campos/dependencias, entradas,
+retornos, errores y lectura estática de instrucciones con código. Incluye clases de tests.
+Cobertura cotejada contra AST Python e inventario TypeScript: 155/155, sin omisiones.
+Checks DOM locales aprobados: filtros, campos, pasos, expandir/contraer y ausencia de
+dependencias remotas. Sin prueba visual del HTML ni ejecución de las ramas documentadas.
+
+Se conserva el plan estudiantil: siguiente bloque funcional, intentos y progreso persistente
+con acceso por estudiante y corrección en servidor. Este bloque no implementa persistencia.
+Sin cambios de aplicación, DB, secretos, inferencias ni despliegue. Cambios anteriores sin
+commit preservados; rama feature/resource-preparation. La guía permanece excluida de Git
+y Docker; no forzar su incorporación. Revisar/commitear solo seguimiento público de este
+bloque con `docs: registra ampliacion de guia privada de clases` si se separa del anterior.
+
+## Estado vigente — 11 de octubre, interfaz y primera práctica estudiantil
+
+El autor priorizó ejercicios con retroalimentación y solicitó una guía privada del código.
+Inicio renovado por rol: acciones docentes y entrada a práctica para estudiantes; retirados
+hitos/diagnósticos técnicos de la portada y mensajes repetidos sobre consumo en consultas.
+Nueva ruta autenticada `/practica`: tres ejercicios fijos de derivadas, pistas, feedback
+por alternativa, resumen y reinicio. No usa IA ni guarda progreso; docente puede revisarla.
+
+14 pruebas Angular enfocadas aprobadas; después del ajuste de progreso, las tres de práctica
+volvieron a pasar. Build producción correcto y frontend desplegado. Navegador comprobó
+retroalimentación de error con sesión docente; variante de inicio estudiante verificada
+en pruebas, sin cambiar la identidad configurada. No se modificaron backend, DB ni secretos.
+
+Guía privada en `guia_personal/index.html`, excluida de Git y Docker: arquitectura, operación,
+roles, DB, rutas, catálogo de código propio y símbolos. Verificación DOM local de búsqueda,
+selección, vínculos/líneas y ausencia de dependencias remotas; sin render visual del HTML.
+No copiar sus contenidos al repositorio. Scripts privados permiten regenerarla.
+
+Pendiente de commit humano: interfaz/estudiantes, pruebas, exclusiones y seguimiento.
+Mensaje: `feat: mejora inicio por rol y agrega practica estudiantil con feedback`.
+Los cambios del bloque experimental anterior siguen pendientes y se conservaron.
+Próximo según prioridad del autor: diseño de intentos/progreso persistente y vínculo con
+actividades docentes. No confundir esta práctica fija con personalización o notas reales.
+
+## Estado vigente — 11 de octubre, recorrido experimental simulado
+
+Commit humano anterior verificado: `78b761b`; árbol limpio al comenzar. Rama
+`feature/resource-preparation`. Implementada CLI de simulación de pares con transporte
+HTTP ficticio OpenAI/Claude, controles del manifiesto, registro y plantilla humana.
+Sin lectura de configuración local ni red real; fallos/abstenciones conservados y
+latencias desconocidas. [Evidencia y uso](pruebas/hito_11_simulacion_pares.md).
+
+143 pruebas enfocadas aprobadas, Ruff limpio y ejemplo CLI ejecutado; sin despliegue,
+DB ni Gemini. Pendiente de commit humano: módulo, 24 pruebas nuevas, ejemplos y docs.
+Mensaje: `feat: conecta recorrido experimental con proveedores simulados`.
+Próximo bloque técnico: consolidación de resultados offline para comparación con cobertura
+y fallos explícitos. Benchmark real y revisión académica requieren diseño/modelos/corpus/
+repeticiones/presupuesto y evaluaciones efectivas; no declararlos completados.
+
 ## Estado vigente — 11 de octubre, acceso local revisado y desplegado
 
 Corregidos state Unicode/500, puertos inválidos y colisión CAS ticket/state. Nuevo auth/config

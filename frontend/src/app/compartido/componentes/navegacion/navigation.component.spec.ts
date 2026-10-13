@@ -58,7 +58,10 @@ describe('Navegación superior', () => {
     expect(fixture.componentInstance.items().map((item) => item.path)).toContain('/metricas');
     user.set({ rol: 'student' });
     await fixture.whenStable();
-    expect(fixture.componentInstance.items().map((item) => item.path)).toEqual(['/inicio']);
+    expect(fixture.componentInstance.items().map((item) => item.path)).toEqual([
+      '/inicio',
+      '/practica',
+    ]);
     user.set(null);
     await fixture.whenStable();
     expect(fixture.componentInstance.items().map((item) => item.path)).toEqual(['/login']);

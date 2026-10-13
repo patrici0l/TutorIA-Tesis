@@ -3,6 +3,15 @@ import { authGuard } from './nucleo/guardias/auth.guard';
 
 export const routes: Routes = [
   {
+    path: 'practica',
+    title: 'Practicar derivadas | TutorIA',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./modulos/estudiantes/paginas/practica/practice.component').then(
+        (m) => m.PracticeComponent,
+      ),
+  },
+  {
     path: 'metricas',
     title: 'Métricas de generación | TutorIA',
     canActivate: [authGuard],
@@ -39,7 +48,7 @@ export const routes: Routes = [
   { path: '', redirectTo: 'inicio', pathMatch: 'full' },
   {
     path: 'login',
-    title: 'Acceso UPS | TutorIA',
+    title: 'Entrar | TutorIA',
     loadComponent: () =>
       import('./modulos/autenticacion/paginas/login/login.component').then((m) => m.LoginComponent),
   },

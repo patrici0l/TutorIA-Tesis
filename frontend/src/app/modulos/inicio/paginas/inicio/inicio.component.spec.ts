@@ -1,18 +1,38 @@
+import { signal } from '@angular/core';
+import { provideRouter } from '@angular/router';
+import { AuthService } from '../../../../nucleo/servicios/auth.service';
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { InicioComponent } from './inicio.component';
 
 describe('InicioComponent', () => {
+  const user = signal({ rol: 'teacher' });
   let http: HttpTestingController;
   beforeEach(async () => {
+    user.set({ rol: 'teacher' });
     await TestBed.configureTestingModule({
       imports: [InicioComponent],
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([]),
+        { provide: AuthService, useValue: { user } },
+      ],
     }).compileComponents();
     http = TestBed.inject(HttpTestingController);
   });
   afterEach(() => http.verify());
+
+  it('ofrece práctica al estudiante sin mostrar diagnósticos técnicos', async () => {
+    user.set({ rol: 'student' });
+    const fixture = TestBed.createComponent(InicioComponent);
+    await fixture.whenStable();
+    http.expectNone('/api/v1/health');
+    expect(fixture.nativeElement.querySelector('a[href="/practica"]')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('a[href="/documentos"]')).toBeNull();
+    expect(fixture.nativeElement.textContent).not.toContain('Hito 01');
+  });
 
   it('muestra carga y los servicios disponibles', async () => {
     const fixture = TestBed.createComponent(InicioComponent);
@@ -22,8 +42,8 @@ describe('InicioComponent', () => {
       .expectOne('/api/v1/health')
       .flush({ status: 'ok', api: 'ok', database: 'ok', pgvector: 'ok', version: '0.1.0' });
     await fixture.whenStable();
-    expect(fixture.nativeElement.textContent).toContain('Conexión verificada');
-    expect(fixture.nativeElement.querySelectorAll('.available').length).toBe(3);
+    expect(fixture.nativeElement.textContent).toContain('Todo listo para trabajar');
+    expect(fixture.nativeElement.querySelector('a[href="/documentos"]')).toBeTruthy();
   });
 
   it('distingue una API disponible de una base de datos caída', async () => {
@@ -40,8 +60,8 @@ describe('InicioComponent', () => {
       { status: 503, statusText: 'Unavailable' },
     );
     await fixture.whenStable();
-    expect(fixture.nativeElement.textContent).toContain('hay servicios pendientes');
-    expect(fixture.nativeElement.querySelectorAll('.available').length).toBe(1);
+    expect(fixture.nativeElement.textContent).toContain('Algunas funciones no están disponibles');
+    expect(fixture.componentInstance.health()?.api).toBe('ok');
   });
 
   it('permite reintentar después de un fallo de red', async () => {
@@ -55,7 +75,7 @@ describe('InicioComponent', () => {
       .expectOne('/api/v1/health')
       .flush({ status: 'ok', api: 'ok', database: 'ok', pgvector: 'ok', version: '0.1.0' });
     await fixture.whenStable();
-    expect(fixture.nativeElement.textContent).toContain('Conexión verificada');
+    expect(fixture.nativeElement.textContent).toContain('Todo listo para trabajar');
   });
 
   it('rechaza respuestas que no cumplen el contrato', async () => {

@@ -1,104 +1,78 @@
 <section class="intro fade-in">
-  <p class="eyebrow">TU ESPACIO DE APRENDIZAJE</p>
-  <h1>El conocimiento es el punto de partida.</h1>
+  <p class="eyebrow">{{ student() ? 'TU ESPACIO DE ESTUDIO' : 'TU ESPACIO DOCENTE' }}</p>
+  <h1>{{ student() ? 'Un paso más para entender las derivadas.' : '¿Qué vas a preparar hoy?' }}</h1>
   <p class="lead">
-    Un espacio para transformar materiales del curso en recursos de aprendizaje personalizados y
-    respaldados por sus fuentes.
+    {{
+      student()
+        ? 'Practica a tu ritmo y descubre por qué funciona cada respuesta.'
+        : 'Organiza tus materiales, encuentra fuentes y prepara actividades para tu clase.'
+    }}
   </p>
 </section>
-<section
-  class="connection-panel fade-in"
-  aria-labelledby="connection-title"
-  [attr.aria-busy]="loading()"
->
-  <div class="panel-heading">
+@if (student()) {
+  <section class="study-card" aria-labelledby="study-title">
     <div>
-      <p class="eyebrow">PRIMER PASO</p>
-      <h2 id="connection-title">Estado del entorno</h2>
+      <p class="eyebrow">CÁLCULO DIFERENCIAL · PRÁCTICA INICIAL</p>
+      <h2 id="study-title">Pon a prueba lo que sabes</h2>
+      <p>
+        Tres preguntas sobre la regla de la potencia, la suma y la pendiente. Recibirás una
+        explicación después de cada respuesta.
+      </p>
+      <a class="primary" routerLink="/practica"
+        >Empezar a practicar <span aria-hidden="true">↗</span></a
+      >
     </div>
-    <span class="phase">Hito 01 · Base técnica</span>
+    <aside>
+      <strong>Sin presión</strong>
+      <p>
+        Esta práctica es voluntaria y no cuenta como una nota. Al terminar, guarda tu resultado para
+        consultar tu progreso cuando vuelvas.
+      </p>
+    </aside>
+  </section>
+} @else {
+  <section class="actions" aria-label="Herramientas docentes">
+    <a routerLink="/documentos"
+      ><span>01 · MATERIALES</span>
+      <h2>Organiza tu biblioteca</h2>
+      <p>Sube documentos y prepara sus fuentes para utilizarlas en tus recursos.</p>
+      <b>Abrir documentos ↗</b></a
+    >
+    <a routerLink="/recursos"
+      ><span>02 · ACTIVIDADES</span>
+      <h2>Prepara un recurso</h2>
+      <p>Elige el objetivo, la dificultad y el tipo de actividad para tu clase.</p>
+      <b>Preparar recursos ↗</b></a
+    >
+    <a routerLink="/perfiles"
+      ><span>03 · ACOMPAÑAMIENTO</span>
+      <h2>Ajusta el apoyo</h2>
+      <p>Organiza perfiles de prueba para adaptar la dificultad y las orientaciones.</p>
+      <b>Ver perfiles ↗</b></a
+    >
+  </section>
+  <div class="quick-links">
+    <a routerLink="/busqueda">Buscar en mis fuentes</a
+    ><a routerLink="/metricas">Consultar mis resultados</a
+    ><a routerLink="/practica">Ver práctica del estudiante</a>
   </div>
-  <div class="status-message" aria-live="polite" role="status">
-    @if (loading()) {
-      <span class="status-dot pending"></span>
-      <p>Comprobando la conexión del sistema…</p>
-    } @else if (error()) {
-      <span class="status-dot error"></span>
-      <p>No se pudo conectar con la API. Comprueba el entorno e inténtalo nuevamente.</p>
-    } @else if (health()?.status === 'ok') {
-      <span class="status-dot"></span>
-      <p>Conexión verificada. La base técnica está disponible.</p>
-    } @else {
-      <span class="status-dot error"></span>
-      <p>La API responde, pero hay servicios pendientes de conexión.</p>
-    }
-  </div>
-  <div class="services">
-    <article>
-      <span class="service-number">01</span>
-      <h3>API</h3>
-      <p>Servicios de la plataforma</p>
-      <strong [class.available]="health()?.api === 'ok'">{{
-        loading() ? 'Comprobando…' : health()?.api === 'ok' ? 'Disponible' : 'Sin conexión'
-      }}</strong>
-    </article>
-    <article>
-      <span class="service-number">02</span>
-      <h3>Base de datos</h3>
-      <p>Persistencia de información</p>
-      <strong [class.available]="health()?.database === 'ok'">{{
-        loading() ? 'Comprobando…' : health()?.database === 'ok' ? 'Disponible' : 'No disponible'
-      }}</strong>
-    </article>
-    <article>
-      <span class="service-number">03</span>
-      <h3>Motor vectorial</h3>
-      <p>Base para la búsqueda semántica</p>
-      <strong [class.available]="health()?.pgvector === 'ok'">{{
-        loading() ? 'Comprobando…' : health()?.pgvector === 'ok' ? 'Disponible' : 'No disponible'
-      }}</strong>
-    </article>
-  </div>
-  <div class="panel-footer">
-    <span>{{
-      checkedAt() ? 'Última comprobación · ' + checkedAt() : 'Verificando servicios locales'
-    }}</span
-    ><button type="button" (click)="refresh()" [disabled]="loading()">
-      {{ loading() ? 'Comprobando…' : 'Comprobar conexión' }} <span aria-hidden="true">↗</span>
+  <section class="connection-panel" aria-label="Disponibilidad" [attr.aria-busy]="loading()">
+    <p role="status" aria-live="polite">
+      @if (loading()) {
+        Comprobando la conexión…
+      } @else if (error()) {
+        No se pudo conectar. Inténtalo de nuevo en unos momentos.
+      } @else if (health()?.status === 'ok') {
+        Todo listo para trabajar.
+      } @else {
+        Algunas funciones no están disponibles. Vuelve a comprobar la conexión.
+      }
+    </p>
+    <button type="button" (click)="refresh()" [disabled]="loading()">
+      {{ loading() ? 'Comprobando…' : 'Comprobar conexión' }}
     </button>
-  </div>
-</section>
-<section class="next-section" aria-labelledby="next-title">
-  <div>
-    <p class="eyebrow">DESARROLLO PASO A PASO</p>
-    <h2 id="next-title">Una base sólida para lo que viene.</h2>
-  </div>
-  <p>
-    El acceso de demostración, la biblioteca docente y la búsqueda de fuentes ya están disponibles.
-    Puedes recuperar fragmentos de tus materiales indexados antes de preparar recursos de
-    aprendizaje.
-  </p>
-</section>
-<ol class="roadmap">
-  <li>
-    <span>01</span>
-    <div>
-      <h3>Base técnica</h3>
-      <p>Completada</p>
-    </div>
-  </li>
-  <li>
-    <span>02</span>
-    <div>
-      <h3>Acceso institucional</h3>
-      <p>Demostración disponible</p>
-    </div>
-  </li>
-  <li>
-    <span>03</span>
-    <div>
-      <h3>Documentos del curso</h3>
-      <p>Gestión docente disponible</p>
-    </div>
-  </li>
-</ol>
+    @if (checkedAt()) {
+      <small>Última comprobación: {{ checkedAt() }}</small>
+    }
+  </section>
+}

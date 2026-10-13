@@ -1,4 +1,6 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../../nucleo/servicios/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HealthService } from '../../../../nucleo/servicios/health.service';
@@ -6,10 +8,13 @@ import { HealthResponse, isHealthResponse } from '../../../../nucleo/modelos/hea
 
 @Component({
   selector: 'app-inicio',
+  imports: [RouterLink],
   templateUrl: './inicio.component.html',
   styleUrl: './inicio.component.scss',
 })
 export class InicioComponent implements OnInit {
+  private readonly auth = inject(AuthService);
+  readonly student = computed(() => this.auth.user()?.rol === 'student');
   private readonly healthService = inject(HealthService);
   private readonly destroyRef = inject(DestroyRef);
   readonly loading = signal(false);
@@ -18,7 +23,7 @@ export class InicioComponent implements OnInit {
   readonly checkedAt = signal('');
 
   ngOnInit() {
-    this.refresh();
+    if (!this.student()) this.refresh();
   }
 
   refresh() {

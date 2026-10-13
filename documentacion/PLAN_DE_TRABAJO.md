@@ -4,6 +4,31 @@ Fuente rectora: Plan_Implementacion_TutorIA-Lucero.docx, entregado por el autor 
 
 ## Bloque actual
 
+12 de octubre: [práctica persistente](api/practica.md) implementada con corrección backend,
+guardado idempotente, historial propio y mejor resultado. Migración0012; 13 unitarias
+locales, 13 pruebas Docker/PostgreSQL aprobadas (una comprobación Angular omitida en ese
+contenedor y pasada localmente) y 13 Angular. No equivale a evaluación institucional;
+asignaciones, banco ampliado y personalización estudiantil continúan pendientes.
+
+12 de octubre: atendida ampliación de guía personal por clase (155 clases, 259 operaciones),
+con cobertura estática completa y pruebas de interacción del HTML. Artefacto privado,
+excluido de Git/Docker; no se copia aquí. Siguiente desarrollo mantiene la prioridad
+estudiantil: persistencia de intentos y progreso, corrección backend y autorización propia.
+No implementado todavía; esta entrega corresponde a comprensión/documentación del código.
+
+11 de octubre, prioridad del autor: interfaz y ejercicios con retroalimentación para estudiantes.
+Inicio por rol y `/practica` implementados con tres actividades fijas, pistas y resumen local;
+mensajes internos retirados de la portada. 14 pruebas Angular aprobadas y build/despliegue
+frontend correcto; feedback comprobado en navegador. Progreso persistente, asignaciones
+docentes y personalización estudiantil siguen pendientes. Guía del código creada únicamente
+en carpeta privada excluida de Git/Docker, sin duplicarla en documentación pública.
+
+11 de octubre: [recorrido experimental simulado](pruebas/hito_11_simulacion_pares.md)
+conecta manifiesto → adaptador OpenAI/Claude → registro → plantilla humana, sin IA real.
+143 pruebas enfocadas aprobadas; ejemplo CLI ejecutado, sin despliegue ni DB. Commit
+anterior `78b761b` confirmado. Próximo: consolidación offline comparativa con cobertura y
+fallos; diseño aprobado, mediciones reales y revisión humana siguen pendientes.
+
 11 de octubre: [revisión del acceso local](pruebas/hito_12_revision_login.md) solicitada por
 el autor, corregida y desplegada: validaciones backend, modo mock explícito, recuperación
 de sesión y DNS dinámico Nginx. 47 pruebas backend y 13 Angular aprobadas, login/logout

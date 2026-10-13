@@ -1,0 +1,113 @@
+import { of, Subject, throwError } from 'rxjs';
+import { PracticeService, PracticeResult } from '../../servicios/practice.service';
+import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { PracticeComponent } from './practice.component';
+
+describe('Práctica del estudiante', () => {
+  const service = { progress: vi.fn(), save: vi.fn() };
+  beforeEach(async () => {
+    service.progress
+      .mockReset()
+      .mockReturnValue(of({ items: [], total: 0, best_score: null, offset: 0, limit: 10 }));
+    service.save.mockReset();
+    await TestBed.configureTestingModule({
+      imports: [PracticeComponent],
+      providers: [provideRouter([]), { provide: PracticeService, useValue: service }],
+    }).compileComponents();
+  });
+  it('requiere respuesta y permite consultar una pista', async () => {
+    const fixture = TestBed.createComponent(PracticeComponent);
+    await fixture.whenStable();
+    const component = fixture.componentInstance;
+    component.check();
+    component.next();
+    expect(component.index()).toBe(0);
+    expect(component.answers()).toEqual([]);
+    expect(fixture.nativeElement.querySelector('.buttons button').disabled).toBe(true);
+    fixture.nativeElement.querySelector('.secondary').click();
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelector('.hint').textContent).toContain('exponente');
+  });
+  it('muestra retroalimentación del error y evita modificar un intento comprobado', async () => {
+    const fixture = TestBed.createComponent(PracticeComponent);
+    await fixture.whenStable();
+    const radio = fixture.nativeElement.querySelectorAll('input')[1] as HTMLInputElement;
+    radio.click();
+    await fixture.whenStable();
+    fixture.nativeElement.querySelector('.buttons button').click();
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelector('.feedback').textContent).toContain(
+      'falta multiplicar por 3',
+    );
+    fixture.componentInstance.choose(0);
+    fixture.componentInstance.check();
+    expect(fixture.componentInstance.answers()).toEqual([1]);
+    expect(fixture.componentInstance.score()).toBe(0);
+    expect(fixture.nativeElement.querySelector('progress').value).toBe(1);
+  });
+  it('completa una sesión, resume aciertos y reinicia sin conservar respuestas', async () => {
+    const fixture = TestBed.createComponent(PracticeComponent);
+    const component = fixture.componentInstance;
+    for (const answer of [0, 0, 3]) {
+      component.choose(answer);
+      component.check();
+      component.next();
+    }
+    await fixture.whenStable();
+    expect(component.complete()).toBe(true);
+    expect(component.score()).toBe(2);
+    expect(fixture.nativeElement.textContent).toContain('2 de 3');
+    expect(fixture.nativeElement.textContent).toContain('Para repasar');
+    fixture.nativeElement.querySelector('button.secondary').click();
+    await fixture.whenStable();
+    expect(component.answers()).toEqual([]);
+    expect(component.complete()).toBe(false);
+    expect(component.selected()).toBeNull();
+    expect(fixture.nativeElement.querySelectorAll('input:checked').length).toBe(0);
+  });
+
+  it('reintenta guardado con el mismo identificador y bloquea duplicados y reinicio durante envío', async () => {
+    const fixture = TestBed.createComponent(PracticeComponent);
+    const c = fixture.componentInstance;
+    for (const answer of [0, 2, 3]) {
+      c.choose(answer);
+      c.check();
+      c.next();
+    }
+    service.save.mockReturnValueOnce(throwError(() => new Error('network')));
+    c.saveResult();
+    expect(c.saveError()).toContain('No pudimos confirmar');
+    const id = service.save.mock.calls[0][0];
+    const pending = new Subject<PracticeResult>();
+    service.save.mockReturnValue(pending);
+    c.saveResult();
+    c.saveResult();
+    c.restart();
+    expect(service.save).toHaveBeenCalledTimes(2);
+    expect(service.save.mock.calls[1][0]).toBe(id);
+    expect(c.complete()).toBe(true);
+    pending.next({
+      id,
+      version: 'derivadas-v1',
+      answers: [0, 2, 3],
+      score: 3,
+      created_at: '2026-10-12T12:00:00Z',
+    });
+    pending.complete();
+    expect(c.saved()?.score).toBe(3);
+    c.saveResult();
+    expect(service.save).toHaveBeenCalledTimes(2);
+    c.restart();
+    expect(c.saved()).toBeNull();
+  });
+  it('informa fallo al consultar historial sin impedir practicar', async () => {
+    service.progress.mockReturnValue(throwError(() => new Error('offline')));
+    const fixture = TestBed.createComponent(PracticeComponent);
+    await fixture.whenStable();
+    expect(fixture.nativeElement.textContent).toContain('No pudimos cargar tu historial');
+    fixture.componentInstance.choose(0);
+    fixture.componentInstance.check();
+    expect(fixture.componentInstance.correct()).toBe(true);
+  });
+});
