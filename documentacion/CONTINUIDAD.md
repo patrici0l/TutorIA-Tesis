@@ -751,3 +751,16 @@ Guía privada regenerada con el comportamiento nuevo. Commit previo verificado: 
 Rama feature/resource-preparation. Pendiente commit humano de componente, HTML, estilos,
 pruebas y seguimiento: feat: permite revisar respuestas de practicas guardadas.
 Continúan pendientes banco ampliado y asignaciones docente-estudiante. Sin uso de Gemini.
+
+## 13 de octubre — Acceso estudiantil de demostración
+
+Agregados select-demo-role.ps1 y compose.demo.yml: selección student/teacher en servidor,
+validación development/mock sin imprimir configuración sensible, recreación del backend
+y espera de salud. No modifica .env ni sesiones existentes; selección compartida por instancia.
+Ejecutado student y verificado mode=mock/demo=student; backend saludable. 18 pruebas de
+configuración y validación CAS aprobadas; advertencia preexistente Starlette/httpx.
+Manual acceso_estudiante documenta cierre/reingreso, reversión docente y requisitos CAS.
+Sin conexión UPS, sin Gemini ni cambios de esquema. Rama feature/resource-preparation.
+Pendiente commit humano: script, complemento Compose y documentación; mensaje sugerido:
+feat: facilita acceso local de demostracion como estudiante.
+Siguiente: banco ampliado y asignaciones; acceso CAS real depende de parámetros autorizados.

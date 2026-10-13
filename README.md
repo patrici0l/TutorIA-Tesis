@@ -203,3 +203,5 @@ El repositorio se inicia localmente; la publicación en GitHub requiere elegir l
 - [Evidencia del primer bloque](documentacion/pruebas/hito_01.md)
 
 La licencia de distribución del código propio queda pendiente de decisión del autor y de las condiciones institucionales. No se ha concedido una licencia abierta automáticamente.
+
+Para entrar como estudiante en la demostración local: [acceso estudiantil](documentacion/manuales/acceso_estudiante.md).

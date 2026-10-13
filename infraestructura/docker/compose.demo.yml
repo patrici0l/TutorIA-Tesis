@@ -1,0 +1,5 @@
+# Solo se usa mediante select-demo-role.ps1; no modifica la configuración base.
+services:
+  backend:
+    environment:
+      AUTH_MOCK_USER: ${TUTORIA_DEMO_ROLE:?Selecciona student o teacher con el script de demostracion}
