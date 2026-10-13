@@ -129,6 +129,18 @@
         <li>
           <strong>{{ attempt.score }} de 3 aciertos</strong> ·
           {{ attempt.created_at | date: 'dd/MM/yyyy HH:mm' }}
+          <button
+            type="button"
+            class="secondary review-button"
+            (click)="reviewing.set(reviewing()?.id === attempt.id ? null : attempt)"
+            [attr.aria-expanded]="reviewing()?.id === attempt.id"
+            aria-controls="attempt-review"
+            [attr.aria-label]="
+              'Revisar intento del ' + (attempt.created_at | date: 'dd/MM/yyyy HH:mm')
+            "
+          >
+            {{ reviewing()?.id === attempt.id ? 'Ocultar revisión' : 'Revisar respuestas' }}
+          </button>
         </li>
       } @empty {
         <li>
@@ -156,3 +168,43 @@
     }
   }
 </section>
+@if (reviewing(); as attempt) {
+  <section class="panel history" id="attempt-review" aria-labelledby="review-title">
+    <p class="eyebrow">INTENTO GUARDADO · {{ attempt.created_at | date: 'dd/MM/yyyy HH:mm' }}</p>
+    <h2 id="review-title">Revisa tus respuestas</h2>
+    <p>Resultado guardado: {{ attempt.score }} de {{ attempt.answers.length }} aciertos.</p>
+    @if (reviewAvailable()) {
+      @if (reviewTopics().length) {
+        <p><strong>Conceptos para reforzar:</strong> {{ reviewTopics().join(', ') }}.</p>
+      } @else {
+        <p>Respondiste correctamente estos ejercicios. Repasa el procedimiento de cada uno.</p>
+      }
+      <ol class="review-list">
+        @for (item of questions; track $index) {
+          <li>
+            <h3>{{ item.topic }}</h3>
+            <p>{{ item.statement }}</p>
+            <p><strong>Tu respuesta:</strong> {{ item.options[attempt.answers[$index]] }}</p>
+            <div class="feedback" [class.correct]="attempt.answers[$index] === item.correctOption">
+              <strong>{{
+                attempt.answers[$index] === item.correctOption
+                  ? 'Respuesta correcta'
+                  : 'Para repasar'
+              }}</strong>
+              <p>{{ item.feedback[attempt.answers[$index]] }}</p>
+              <p><strong>Respuesta correcta:</strong> {{ item.options[item.correctOption] }}</p>
+              <p>{{ item.explanation }}</p>
+            </div>
+          </li>
+        }
+      </ol>
+    } @else {
+      <p>
+        No está disponible el detalle de los ejercicios de este intento. Su resultado guardado se
+        conserva.
+      </p>
+    }
+    <p class="session-note">Esta revisión no modifica tu práctica actual ni crea otro intento.</p>
+    <button type="button" class="secondary" (click)="reviewing.set(null)">Cerrar revisión</button>
+  </section>
+}

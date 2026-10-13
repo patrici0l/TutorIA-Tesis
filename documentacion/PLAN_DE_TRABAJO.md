@@ -4,6 +4,8 @@ Fuente rectora: Plan_Implementacion_TutorIA-Lucero.docx, entregado por el autor 
 
 ## Bloque actual
 
+13 de octubre: revisión de respuestas históricas implementada, con feedback y temas por reforzar; 9 pruebas Angular aprobadas. Banco ampliado y asignaciones continúan pendientes.
+
 12 de octubre: [práctica persistente](api/practica.md) implementada con corrección backend,
 guardado idempotente, historial propio y mejor resultado. Migración0012; 13 unitarias
 locales, 13 pruebas Docker/PostgreSQL aprobadas (una comprobación Angular omitida en ese

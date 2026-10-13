@@ -1,5 +1,20 @@
 # Continuidad de TutorIA-Lucero
 
+## 12 de octubre — Explorador privado del código
+
+Creado HTML privado estilo editor en guia_personal/explorador.html: árbol de carpetas,
+pestañas, búsqueda por contenido/símbolos, código numerado y explicación junto al archivo.
+Incluye 305 archivos y 869 estructuras del inventario; campos, parámetros, herencia,
+llamadas y pasos extraídos enlazan con el código. Prueba DOM recorrió todos los archivos
+ y estructuras, búsqueda y enlaces a líneas: aprobada. No se realizó revisión visual
+ del HTML en navegador. Lectura estática orientativa, sin secretos ni dependencias copiadas.
+Enlaces incorporados en ambas guías anteriores; carpeta ignorada por Git/Docker.
+Sin cambios de aplicación, DB ni despliegue. Rama feature/resource-preparation.
+Pendiente commit humano solo del seguimiento público de este bloque; cambios previos
+conservados. Mensaje sugerido: docs: registra explorador privado del proyecto.
+Próximo trabajo funcional: ampliar actividades y vínculo docente-estudiante.
+
+
 ## Estado vigente — 12 de octubre, intentos de práctica persistentes
 
 Implementados guardado explícito al completar `/practica` e historial paginado propio,
@@ -713,3 +728,26 @@ ni borrado de datos. No se repitieron suites: comprobación operativa de salud y
 Mock activo student; Gemini habilitado. La validación pedagógica, lote salida1024 y
 benchmark conservan sus pendientes y protocolos. Rama feature/resource-preparation.
 Registro documental pendiente de revisión/commit humano; no se ejecutó git commit.
+
+## 12 de octubre — Mejora didáctica del explorador privado
+
+Ampliado el explorador con recorrido de aprendizaje, explicación por responsabilidad,
+conceptos presentes en cada archivo/operación, claves de configuración y referencias
+textuales a estructuras (no equivalen a dependencias resueltas). Añadidos expandir/contraer
+carpetas, apertura de ancestros y modo de explicación amplia. Mantiene 305 archivos y
+869 estructuras; recorrido DOM completo aprobado. Revisión visual del HTML pendiente.
+Sin cambios de aplicación ni datos. Rama feature/resource-preparation; guía ignorada.
+Pendiente commit humano del seguimiento público: docs: registra mejora didactica de guia.
+Siguiente: ampliar actividades estudiantiles y vínculo docente-estudiante.
+
+## 13 de octubre — Revisión de respuestas guardadas
+
+Historial de práctica ampliado con revisión de cada intento: respuesta elegida, correcta,
+feedback por alternativa y conceptos para reforzar. Abrir/cerrar la revisión no modifica
+la práctica actual ni guarda nuevos intentos. Versión desconocida, longitud incorrecta o
+índice inválido conservan el resumen sin interpretar las respuestas con el banco actual.
+Nueve pruebas Angular aprobadas; construcción Docker correcta. Sin cambios de API o DB.
+Guía privada regenerada con el comportamiento nuevo. Commit previo verificado: 40cd907.
+Rama feature/resource-preparation. Pendiente commit humano de componente, HTML, estilos,
+pruebas y seguimiento: feat: permite revisar respuestas de practicas guardadas.
+Continúan pendientes banco ampliado y asignaciones docente-estudiante. Sin uso de Gemini.

@@ -5,6 +5,7 @@ import {
   PracticeProgress,
   PracticeResult,
   PracticeService,
+  PRACTICE_VERSION,
 } from '../../servicios/practice.service';
 import { RouterLink } from '@angular/router';
 import { PRACTICE_QUESTIONS } from '../../modelos/practice-question';
@@ -25,6 +26,26 @@ export class PracticeComponent implements OnInit {
   readonly historyLoading = signal(false);
   readonly historyError = signal(false);
   readonly history = signal<PracticeProgress | null>(null);
+  readonly reviewing = signal<PracticeResult | null>(null);
+  readonly reviewAvailable = computed(() => {
+    const attempt = this.reviewing();
+    return (
+      !!attempt &&
+      attempt.version === PRACTICE_VERSION &&
+      attempt.answers.length === this.questions.length &&
+      attempt.answers.every(
+        (answer, i) =>
+          Number.isInteger(answer) && answer >= 0 && answer < this.questions[i].options.length,
+      )
+    );
+  });
+  readonly reviewTopics = computed(() =>
+    this.reviewAvailable()
+      ? this.questions
+          .filter((item, i) => this.reviewing()!.answers[i] !== item.correctOption)
+          .map((item) => item.topic)
+      : [],
+  );
   readonly questions = PRACTICE_QUESTIONS;
   readonly index = signal(0);
   readonly selected = signal<number | null>(null);

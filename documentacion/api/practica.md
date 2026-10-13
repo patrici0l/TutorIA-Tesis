@@ -54,3 +54,5 @@ reintento con mismo UUID, bloqueo de duplicados y fallo de historial sin bloquea
 Ruff limpio; builds backend/frontend realizados. Advertencia Starlette/HTTPX preexistente.
 
 Verificación final: frontend/backend/PostgreSQL saludables y Alembic en 0012 (head). En navegador se completó la práctica, se guardó un intento ficticio de 3/3 y se confirmó su persistencia al recargar con la cuenta Docente Demostración. Ese registro permanece en la DB local. Guía: 162 clases y 270 métodos, comprobaciones DOM aprobadas; sin revisión visual del HTML privado.
+
+El historial permite revisar respuestas guardadas y su retroalimentación, con temas por reforzar. Se interpreta únicamente derivadas-v1 y alternativas válidas. La revisión no altera el ejercicio en curso. Verificado con 9 pruebas Angular del módulo (13 de octubre de 2026).

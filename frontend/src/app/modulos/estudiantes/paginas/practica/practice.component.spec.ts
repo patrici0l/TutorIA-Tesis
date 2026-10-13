@@ -110,4 +110,52 @@ describe('Práctica del estudiante', () => {
     fixture.componentInstance.check();
     expect(fixture.componentInstance.correct()).toBe(true);
   });
+  it('revisa un intento guardado sin perder la práctica en curso ni guardar otro', async () => {
+    const attempt: PracticeResult = {
+      id: 'history-1',
+      version: 'derivadas-v1',
+      answers: [1, 2, 3],
+      score: 2,
+      created_at: '2026-10-13T12:00:00Z',
+    };
+    service.progress.mockReturnValue(
+      of({ items: [attempt], total: 1, best_score: 2, offset: 0, limit: 10 }),
+    );
+    const fixture = TestBed.createComponent(PracticeComponent);
+    await fixture.whenStable();
+    const c = fixture.componentInstance;
+    c.choose(2);
+    fixture.nativeElement.querySelector('.review-button').click();
+    await fixture.whenStable();
+    const review = fixture.nativeElement.querySelector('#attempt-review');
+    expect(review.textContent).toContain('falta multiplicar por 3');
+    expect(review.textContent).toContain('Conceptos para reforzar: Regla de la potencia');
+    expect(review.querySelectorAll('.feedback.correct').length).toBe(2);
+    expect(c.selected()).toBe(2);
+    expect(c.answers()).toEqual([]);
+    expect(service.save).not.toHaveBeenCalled();
+    review.querySelector('button').click();
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelector('#attempt-review')).toBeNull();
+    expect(c.selected()).toBe(2);
+  });
+  it.each([
+    ['derivadas-v2', [0, 2, 3]],
+    ['derivadas-v1', [0, 2]],
+    ['derivadas-v1', [0, 2, 9]],
+  ])('no interpreta respuestas incompatibles: %s %s', async (version, answers) => {
+    const fixture = TestBed.createComponent(PracticeComponent);
+    fixture.componentInstance.reviewing.set({
+      id: 'old',
+      version: version as string,
+      answers: answers as number[],
+      score: 2,
+      created_at: '2026-10-13T12:00:00Z',
+    });
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelector('#attempt-review').textContent).toContain(
+      'No está disponible el detalle',
+    );
+    expect(fixture.nativeElement.querySelector('.review-list')).toBeNull();
+  });
 });
