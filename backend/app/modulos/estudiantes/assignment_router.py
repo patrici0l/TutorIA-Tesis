@@ -9,6 +9,7 @@ from app.modulos.estudiantes.assignment_repository import AssignmentRepository
 from app.modulos.estudiantes.assignment_schemas import (
     AssignmentPage,
     AssignmentResult,
+    AssignmentStatusChange,
     AssignmentSubmission,
 )
 from app.modulos.estudiantes.assignment_service import AssignmentService
@@ -44,3 +45,17 @@ def page(
 @router.get("/{identifier}", response_model=AssignmentResult)
 def detail(identifier: UUID, user: CurrentUser, service: Service):
     return service.detail(user, identifier)
+
+
+@router.post(
+    "/{identifier}/status",
+    response_model=AssignmentResult,
+    dependencies=[Depends(require_client_header)],
+)
+def change_status(
+    identifier: UUID,
+    change: AssignmentStatusChange,
+    user: CurrentUser,
+    service: Service,
+):
+    return service.change_status(user, identifier, change)

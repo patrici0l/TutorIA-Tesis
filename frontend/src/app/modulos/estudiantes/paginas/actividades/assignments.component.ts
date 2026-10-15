@@ -5,6 +5,9 @@ import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../../../nucleo/servicios/auth.service';
 import {
+  Assignment,
+  AssignmentStatus,
+  ASSIGNMENT_STATUS_LABELS,
   AssignmentPage,
   AssignmentService,
   AssignmentSubmission,
@@ -29,6 +32,11 @@ export class AssignmentsComponent implements OnInit {
   readonly error = signal('');
   readonly formError = signal('');
   readonly success = signal('');
+  readonly statusLabels = ASSIGNMENT_STATUS_LABELS;
+  readonly pendingChange = signal<{ item: Assignment; status: AssignmentStatus } | null>(null);
+  readonly changing = signal(false);
+  readonly statusError = signal('');
+  readonly statusSuccess = signal('');
   title = '';
   email = '';
   instructions = '';
@@ -41,7 +49,8 @@ export class AssignmentsComponent implements OnInit {
     return this.banks.find((b) => b.version === version)?.title ?? 'Práctica anterior';
   }
   load(offset = 0) {
-    if (this.loading()) return;
+    if (this.loading() || this.changing() || this.saving()) return;
+    this.pendingChange.set(null);
     this.loading.set(true);
     this.error.set('');
     this.service
@@ -59,7 +68,7 @@ export class AssignmentsComponent implements OnInit {
       });
   }
   create() {
-    if (!this.teacher() || this.saving()) return;
+    if (!this.teacher() || this.saving() || this.changing() || this.loading()) return;
     const data = {
       student_email: this.email.trim().toLowerCase(),
       title: this.title.trim(),
@@ -96,6 +105,46 @@ export class AssignmentsComponent implements OnInit {
             typeof error.error?.detail === 'string'
               ? error.error.detail
               : 'No pudimos confirmar la asignación. Reintenta sin cambiar los datos para evitar duplicados.',
+          );
+        },
+      });
+  }
+  requestStatus(item: Assignment, status: AssignmentStatus) {
+    if (!this.teacher() || this.changing() || this.saving() || this.loading()) return;
+    this.statusError.set('');
+    this.statusSuccess.set('');
+    this.pendingChange.set({ item, status });
+  }
+  confirmStatus() {
+    const change = this.pendingChange();
+    if (!change || !this.teacher() || this.changing() || this.saving() || this.loading()) return;
+    this.changing.set(true);
+    this.statusError.set('');
+    this.service
+      .changeStatus(change.item, change.status)
+      .pipe(takeUntilDestroyed(this.destroy))
+      .subscribe({
+        next: (updated) => {
+          this.page.update((page) =>
+            page
+              ? {
+                  ...page,
+                  items: page.items.map((item) => (item.id === updated.id ? updated : item)),
+                }
+              : page,
+          );
+          this.changing.set(false);
+          this.pendingChange.set(null);
+          this.statusSuccess.set(
+            `Actividad «${updated.title}»: ${this.statusLabels[updated.status].toLowerCase()}.`,
+          );
+        },
+        error: (error) => {
+          this.changing.set(false);
+          this.statusError.set(
+            typeof error.error?.detail === 'string'
+              ? error.error.detail
+              : 'No pudimos confirmar el cambio. Puedes reintentarlo o actualizar el listado.',
           );
         },
       });

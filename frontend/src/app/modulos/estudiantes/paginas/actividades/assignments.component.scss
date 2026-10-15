@@ -72,3 +72,23 @@ a {
   gap: 12px;
   flex-wrap: wrap;
 }
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.badge.inactive {
+  background: #f1eee9;
+  color: #564938;
+}
+.secondary {
+  background: white;
+  color: var(--blue-dark);
+  border: 1px solid var(--border);
+}
+.confirmation {
+  margin-top: 18px;
+  padding: 16px;
+  background: var(--blue-soft);
+  border-radius: 8px;
+}

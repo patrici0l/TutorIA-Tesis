@@ -818,3 +818,34 @@ feat: amplia bancos y permite asignar practicas con seguimiento docente.
 Contrato y recorrido: documentacion/api/asignaciones.md. Próximo bloque sugerido:
 gestión del ciclo de actividad (cancelación/cierre) y mejora del seguimiento estudiantil.
 Grupos, vencimientos, cuentas individuales verificadas y evaluación académica pendientes.
+
+## 15 de octubre — Cierre, cancelación y reactivación de actividades
+
+Commit anterior verificado: 3517a20. Repositorio limpio al inicio; rama
+feature/resource-preparation. Implementados open/closed/cancelled y fecha del último cambio,
+con migración 0014 aplicada. El docente propietario confirma el cambio en la tarjeta; el
+estudiante ve el estado y conserva acceso al resumen/historial. Nuevos intentos cerrados o
+cancelados se rechazan; reintentos exactos ya guardados siguen disponibles. La práctica libre
+no cambia. Control de estado esperado evita sobrescribir un estado distinto desde un listado
+desactualizado; no hay historial completo de transiciones. Bloqueo de fila coordina guardado
+y cambio de estado. No modifica ni elimina resultados anteriores.
+
+Pruebas: 18 backend/PostgreSQL aprobadas y una omitida (concordancia Angular, pasada en las
+14 unitarias locales). Incluye permisos, CSRF, límites, idempotencia, reapertura y bloqueo
+con dos conexiones PostgreSQL. 16 Angular aprobadas en Docker. El intento de ejecutar Angular
+en Windows falló al iniciar workers de Vitest por timeout, sin ejecutar casos; el mismo conjunto
+pasó en contenedor. Ruff y git diff --check correctos. Build de producción exitoso,
+frontend/backend/PostgreSQL saludables; alembic current confirma 0014_assignment_status.
+Revisión visual no realizada: control de navegador/computer-use no disponible en esta sesión.
+Guía privada regenerada: 325 archivos, 172 clases, 299 operaciones; sigue excluida de Git.
+Sin llamadas IA, conexión UPS ni cambios de acceso. Datos aleatorios de pruebas retirados;
+la actividad de demostración anterior conserva sus resultados.
+
+Para repetir Angular sin depender del entorno Windows:
+docker build --target build -t tutoria-frontend-tests:local -f frontend/Dockerfile .
+docker run --rm --network none tutoria-frontend-tests:local npm test -- --watch=false --include='src/app/modulos/estudiantes/**/*.spec.ts'
+
+Pendiente revisión y commit humano de migración, API, interfaz, pruebas y docs:
+feat: permite cerrar cancelar y reactivar actividades.
+Siguiente: seguimiento por bloque/tema y filtros de actividades. Continúan pendientes grupos,
+vencimientos, cuentas personales verificadas y evaluación académica.

@@ -5,14 +5,31 @@
   @if (auth.user()?.rol === 'student') {
     <header>
       <h1>{{ item.title }}</h1>
+      <p>Estado: {{ statusLabels[item.status] }}</p>
       <p>{{ item.instructions }}</p>
-      <p>
-        Al guardar este intento, el profesor que asignó la actividad podrá consultar el número de
-        intentos y el mejor resultado.
-      </p>
+      @if (item.status === 'open') {
+        <p>
+          Al guardar este intento, el profesor que asignó la actividad podrá consultar el número de
+          intentos y el mejor resultado.
+        </p>
+      }
     </header>
-    @for (entry of [item]; track entry.id) {
-      <app-practice [assignment]="entry" />
+    @if (item.status === 'open') {
+      @for (entry of [item]; track entry.id) {
+        <app-practice [assignment]="entry" />
+      }
+    } @else {
+      <p role="status">
+        Esta actividad está {{ statusLabels[item.status].toLowerCase() }} y no admite nuevos
+        intentos. Tus resultados guardados se conservan.
+      </p>
+      <p>
+        Intentos guardados: {{ item.attempts }} · Mejor resultado:
+        {{ item.best_score === null ? 'Sin resultados' : item.best_score + ' de 3' }}
+      </p>
+      <a routerLink="/practica" fragment="history-title"
+        >Revisar mi historial y continuar con la práctica libre →</a
+      >
     }
   } @else {
     <p>Entra con la cuenta del estudiante para resolver la actividad.</p>

@@ -20,6 +20,7 @@ class PracticeAssignment(Base):
     __tablename__ = "asignaciones_practica"
     __table_args__ = (
         UniqueConstraint("id", "student_id", "version", name="uq_assignment_student_version"),
+        CheckConstraint("status IN ('open', 'closed', 'cancelled')", name="ck_assignment_status"),
     )
     id: Mapped[UUID] = mapped_column(primary_key=True)
     teacher_id: Mapped[UUID] = mapped_column(ForeignKey("usuarios.id"), index=True)
@@ -27,6 +28,8 @@ class PracticeAssignment(Base):
     version: Mapped[str] = mapped_column(String(40))
     title: Mapped[str] = mapped_column(String(120))
     instructions: Mapped[str] = mapped_column(String(2000))
+    status: Mapped[str] = mapped_column(String(12), server_default="open")
+    status_changed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 

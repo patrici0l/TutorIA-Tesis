@@ -2,7 +2,11 @@ import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, of, switchMap, tap } from 'rxjs';
-import { Assignment, AssignmentService } from '../../servicios/assignment.service';
+import {
+  Assignment,
+  AssignmentService,
+  ASSIGNMENT_STATUS_LABELS,
+} from '../../servicios/assignment.service';
 import { PracticeComponent } from '../practica/practice.component';
 import { PRACTICE_BANKS } from '../../modelos/practice-bank';
 import { AuthService } from '../../../../nucleo/servicios/auth.service';
@@ -20,6 +24,7 @@ export class AssignmentPracticeComponent implements OnInit {
   readonly auth = inject(AuthService);
   readonly assignment = signal<Assignment | null>(null);
   readonly loading = signal(true);
+  readonly statusLabels = ASSIGNMENT_STATUS_LABELS;
   ngOnInit() {
     this.route.paramMap
       .pipe(

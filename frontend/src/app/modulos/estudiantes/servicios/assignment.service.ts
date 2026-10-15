@@ -1,6 +1,13 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
+export type AssignmentStatus = 'open' | 'closed' | 'cancelled';
+export const ASSIGNMENT_STATUS_LABELS: Record<AssignmentStatus, string> = {
+  open: 'Abierta',
+  closed: 'Cerrada',
+  cancelled: 'Cancelada',
+};
+
 export interface Assignment {
   id: string;
   version: string;
@@ -8,6 +15,8 @@ export interface Assignment {
   instructions: string;
   student_email: string;
   created_at: string;
+  status: AssignmentStatus;
+  status_changed_at: string | null;
   attempts: number;
   best_score: number | null;
 }
@@ -37,5 +46,11 @@ export class AssignmentService {
   }
   create(body: AssignmentSubmission) {
     return this.http.post<Assignment>('/api/v1/practice/assignments', body);
+  }
+  changeStatus(item: Assignment, status: AssignmentStatus) {
+    return this.http.post<Assignment>(
+      '/api/v1/practice/assignments/' + encodeURIComponent(item.id) + '/status',
+      { status, expected_status: item.status },
+    );
   }
 }

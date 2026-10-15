@@ -25,10 +25,15 @@ class PracticeRepository:
 
     def assignment(self, owner, identifier):
         return self.db.scalar(
-            select(PracticeAssignment).where(
-                PracticeAssignment.id == identifier, PracticeAssignment.student_id == owner
-            )
+            select(PracticeAssignment)
+            .where(PracticeAssignment.id == identifier, PracticeAssignment.student_id == owner)
+            # Serializa el guardado con el cierre/reactivación docente hasta commit.
+            .with_for_update()
+            .execution_options(populate_existing=True)
         )
+
+    def attempt(self, owner, identifier):
+        return self.db.get(PracticeAttempt, (owner, identifier))
 
     def page(self, owner, offset, limit):
         query = select(PracticeAttempt).where(PracticeAttempt.owner_id == owner)

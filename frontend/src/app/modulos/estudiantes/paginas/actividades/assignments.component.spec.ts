@@ -8,11 +8,12 @@ import { AssignmentsComponent } from './assignments.component';
 
 describe('Actividades asignadas', () => {
   const user = signal({ rol: 'teacher' });
-  const service = { list: vi.fn(), create: vi.fn() };
+  const service = { list: vi.fn(), create: vi.fn(), changeStatus: vi.fn() };
   beforeEach(async () => {
     user.set({ rol: 'teacher' });
     service.list.mockReset().mockReturnValue(of({ items: [], total: 0, offset: 0, limit: 10 }));
     service.create.mockReset();
+    service.changeStatus.mockReset();
     await TestBed.configureTestingModule({
       imports: [AssignmentsComponent],
       providers: [
@@ -29,6 +30,7 @@ describe('Actividades asignadas', () => {
         items: [
           {
             id: 'abc',
+            status: 'open',
             title: 'Reglas',
             version: 'reglas-v1',
             attempts: 0,
@@ -66,5 +68,61 @@ describe('Actividades asignadas', () => {
     pending.next({} as Assignment);
     pending.complete();
     expect(c.success()).toContain('Actividad asignada');
+  });
+  it('confirma antes de cerrar, permite reintentar y conserva resultados', async () => {
+    const item: Assignment = {
+      id: 'abc',
+      title: 'Reglas',
+      version: 'reglas-v1',
+      instructions: '',
+      student_email: 'estudiante.demo@example.org',
+      created_at: '2026-10-15T12:00:00Z',
+      status: 'open',
+      status_changed_at: null,
+      attempts: 1,
+      best_score: 3,
+    };
+    service.list.mockReturnValue(of({ items: [item], total: 1, offset: 0, limit: 10 }));
+    const f = TestBed.createComponent(AssignmentsComponent);
+    await f.whenStable();
+    const c = f.componentInstance;
+    const button = (label: string) =>
+      Array.from(f.nativeElement.querySelectorAll('button') as NodeListOf<HTMLButtonElement>).find(
+        (b) => b.textContent?.trim() === label,
+      )!;
+    button('Cerrar actividad').click();
+    await f.whenStable();
+    expect(service.changeStatus).not.toHaveBeenCalled();
+    expect(f.nativeElement.textContent).toContain('Los resultados guardados se conservan');
+    service.changeStatus.mockReturnValueOnce(
+      throwError(() => ({
+        error: { detail: 'El estado cambió. Actualiza las actividades antes de continuar.' },
+      })),
+    );
+    button('Confirmar cambio').click();
+    await f.whenStable();
+    expect(f.nativeElement.querySelector('[role=alert]').textContent).toContain('El estado cambió');
+    expect(c.page()!.items[0].status).toBe('open');
+    const pending = new Subject<Assignment>();
+    service.changeStatus.mockReturnValue(pending);
+    button('Confirmar cambio').click();
+    c.confirmStatus();
+    expect(service.changeStatus).toHaveBeenCalledTimes(2);
+    pending.next({ ...item, status: 'closed', status_changed_at: '2026-10-15T13:00:00Z' });
+    pending.complete();
+    await f.whenStable();
+    expect(c.page()!.items[0].best_score).toBe(3);
+    expect(button('Reactivar actividad')).toBeDefined();
+    expect(f.nativeElement.textContent).toContain('Cerrada');
+    expect(c.pendingChange()).toBeNull();
+    user.set({ rol: 'student' });
+    c.requestStatus(c.page()!.items[0], 'open');
+    c.confirmStatus();
+    await f.whenStable();
+    expect(service.changeStatus).toHaveBeenCalledTimes(2);
+    expect(button('Reactivar actividad')).toBeUndefined();
+    expect(f.nativeElement.querySelector('a[href="/actividades/abc"]').textContent).toContain(
+      'Ver actividad y resultados',
+    );
   });
 });

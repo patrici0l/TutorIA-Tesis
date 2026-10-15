@@ -6,6 +6,28 @@ import { PracticeComponent } from './practice.component';
 
 describe('Práctica del estudiante', () => {
   const service = { progress: vi.fn(), save: vi.fn() };
+  it('explica el cierre durante una práctica sin perder las respuestas del alumno', async () => {
+    const f = TestBed.createComponent(PracticeComponent);
+    f.componentRef.setInput('assignment', { id: 'assigned', version: 'reglas-v1', status: 'open' });
+    await f.whenStable();
+    const c = f.componentInstance;
+    for (const answer of [1, 0, 2]) {
+      c.choose(answer);
+      c.check();
+      c.next();
+    }
+    service.save.mockReturnValue(
+      throwError(() => ({
+        status: 409,
+        error: { detail: 'La actividad está cerrada o cancelada y no admite nuevos intentos.' },
+      })),
+    );
+    c.saveResult();
+    await f.whenStable();
+    expect(f.nativeElement.textContent).toContain('no admite nuevos intentos');
+    expect(c.answers()).toEqual([1, 0, 2]);
+    expect(c.saved()).toBeNull();
+  });
   it('fija el bloque asignado y envía la actividad al guardar', async () => {
     const f = TestBed.createComponent(PracticeComponent);
     f.componentRef.setInput('assignment', { id: 'assigned', version: 'reglas-v1' });

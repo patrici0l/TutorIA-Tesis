@@ -14,6 +14,20 @@ class PracticeService:
                 raise HTTPException(404, "Actividad no disponible.")
             if assignment.version != submission.version:
                 raise HTTPException(409, "El bloque no corresponde a esta actividad.")
+            if assignment.status != "open":
+                existing = self.repository.attempt(owner, submission.id)
+                if (
+                    existing is not None
+                    and existing.version == submission.version
+                    and existing.answers == submission.answers
+                    and existing.assignment_id == submission.assignment_id
+                ):
+                    return existing
+                raise HTTPException(
+                    409,
+                    "La actividad está cerrada o cancelada y no admite nuevos intentos. "
+                    "Tus resultados guardados se conservan. Puedes continuar en la práctica libre.",
+                )
         score = sum(
             a == b for a, b in zip(submission.answers, ANSWER_KEYS[submission.version], strict=True)
         )

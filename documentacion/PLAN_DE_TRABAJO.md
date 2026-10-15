@@ -4,6 +4,13 @@ Fuente rectora: Plan_Implementacion_TutorIA-Lucero.docx, entregado por el autor 
 
 ## Bloque actual
 
+15 de octubre, estado vigente: cierre, cancelación y reactivación de actividades implementados.
+Los estados se muestran por rol; nuevas entregas bloqueadas tras cierre sin perder resultados.
+Migración 0014 aplicada. 18 pruebas backend/PostgreSQL y 16 Angular en Docker aprobadas;
+14 unitarias locales aprobadas. Guía privada regenerada. Revisión visual pendiente por
+indisponibilidad del control de navegador. Próximo: seguimiento estudiantil por bloque/tema
+y filtros de actividades. No cierra cuentas individuales, grupos ni evaluación académica.
+
 14 de octubre, estado vigente: [asignaciones docente-estudiante](api/asignaciones.md) implementadas y verificadas de extremo a extremo en navegador. El profesor asigna un banco, el estudiante guarda y el docente ve intentos/mejor resultado; práctica libre privada. Migración 0013 aplicada; 24 pruebas Angular y 15 backend/PostgreSQL aprobadas (una comprobación omitida en contenedor y pasada localmente). Guía privada actualizada. Próximo: ciclo de actividad y seguimiento estudiantil. Sin grupos, vencimientos, cuentas institucionales reales ni cierre académico. Las entradas siguientes conservan el historial del avance.
 
 14 de octubre: banco ampliado a seis ejercicios en dos bloques versionados, con selector, guardado y revisión compatible. 14 pruebas backend locales, 10 Angular y 14 Docker/PostgreSQL aprobadas (una comprobación omitida en Docker y verificada localmente). Próximo: asignaciones docente-estudiante.

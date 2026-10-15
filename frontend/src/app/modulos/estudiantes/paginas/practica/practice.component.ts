@@ -122,10 +122,12 @@ export class PracticeComponent implements OnInit {
           this.saving.set(false);
           this.loadHistory();
         },
-        error: () => {
+        error: (error) => {
           this.saving.set(false);
           this.saveError.set(
-            'No pudimos confirmar el guardado. Vuelve a intentarlo antes de salir; no se duplicará este intento.',
+            error.status === 409 && typeof error.error?.detail === 'string'
+              ? error.error.detail
+              : 'No pudimos confirmar el guardado. Vuelve a intentarlo antes de salir; no se duplicará este intento.',
           );
         },
       });

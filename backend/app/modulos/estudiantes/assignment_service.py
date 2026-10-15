@@ -38,6 +38,20 @@ class AssignmentService:
             raise HTTPException(404, "Actividad no disponible.")
         return row
 
+    def change_status(self, user, identifier, change):
+        if user.rol not in ("teacher", "admin"):
+            raise HTTPException(403, "Solo un docente puede cambiar el estado de una actividad.")
+        row = self.repository.lock_owned(user.id, identifier)
+        if row is None:
+            raise HTTPException(404, "Actividad no disponible.")
+        # Repetir un cambio ya aplicado es seguro; una pantalla desactualizada no lo sobrescribe.
+        if row.status != change.status and row.status != change.expected_status:
+            raise HTTPException(
+                409, "El estado cambió. Actualiza las actividades antes de continuar."
+            )
+        self.repository.change_status(row, change.status)
+        return self.detail(user, identifier)
+
     def page(self, user, offset, limit):
         rows, total = self.repository.page(user, offset, limit)
         return AssignmentPage(items=rows, total=total, offset=offset, limit=limit)

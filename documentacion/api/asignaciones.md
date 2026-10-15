@@ -1,6 +1,6 @@
 # Actividades asignadas
 
-Primera versión local, 14 de octubre de 2026. Un profesor asigna un banco fijo de tres
+Actualizado el 15 de octubre de 2026. Un profesor asigna un banco fijo de tres
 preguntas a una cuenta de estudiante activa. Se mantiene el alcance de demostración:
 no importa matrículas universitarias, no consume IA y no emite calificaciones oficiales.
 
@@ -39,11 +39,42 @@ Las identidades mock son compartidas; esta entrega no crea cuentas personales.
 Migración 0013 crea asignaciones_practica y añade assignment_id nullable a intentos_practica.
 Los registros anteriores quedan como práctica libre. Una clave foránea compuesta
 comprueba en PostgreSQL asignación + alumno + versión. El puntaje lo calcula el servidor.
-No existe actualización ni eliminación de asignaciones en esta versión.
+La migración 0014 añade status (open/closed/cancelled) y status_changed_at nullable.
+Las asignaciones anteriores empiezan abiertas; las respuestas guardadas no se modifican.
+No existe eliminación ni edición de título, destinatario o banco en esta versión.
+
+## Cerrar, cancelar y reactivar
+
+Desde Actividades, el docente elige la acción y confirma sus efectos en la tarjeta.
+
+| Estado | Significado | Nuevos intentos |
+| --- | --- | --- |
+| Abierta (open) | Disponible para resolver o repetir | Permitidos |
+| Cerrada (closed) | Finalizada la recepción de entregas | Bloqueados |
+| Cancelada (cancelled) | Retirada por el docente | Bloqueados |
+
+Cerrar o cancelar conserva la actividad, los intentos y el mejor resultado. **Reactivar**
+vuelve a permitir entregas. El alumno puede consultar el resumen de una actividad cerrada
+o cancelada, abrir su historial y continuar con la práctica libre. No hay cambios en vivo:
+el listado se actualiza al cargar/actualizar; si el profesor cierra mientras el alumno resuelve,
+el guardado informa del cierre y conserva las respuestas en pantalla mientras no salga.
+
+`POST /api/v1/practice/assignments/{id}/status` recibe `status` y `expected_status`,
+ambos en open/closed/cancelled. Exige sesión teacher/admin, propiedad y X-TutorIA-Client;
+campos extra rechazados y cuerpo máximo 16 KiB. Un alumno obtiene 403; otra cuenta docente,
+404. Si el estado actual difiere del esperado y del solicitado, responde 409 y exige actualizar.
+Repetir el estado ya aplicado devuelve el registro sin cambiar la fecha. Este control compara
+el estado actual, no conserva un registro histórico completo de transiciones.
+
+Los listados/detalles incluyen estado y fecha del último cambio. Cierre y guardado adquieren
+el mismo bloqueo de fila en PostgreSQL hasta terminar la transacción: si el cierre se aplica
+primero no entra el intento; si el guardado termina primero se conserva ese resultado.
+Un reintento exacto de un resultado ya guardado se recupera incluso después del cierre;
+un nuevo UUID o respuestas diferentes se rechazan. Reintentar la creación tampoco reactiva.
 
 ## Límites y próximos pasos
 
-Sin grupos, vencimientos, entrega única, edición, cancelación o avisos externos.
-El alumno puede repetir una actividad; se muestra su mejor puntuación entre esos intentos.
+Sin grupos, vencimientos, entrega única, edición del contenido o avisos externos.
+El alumno puede repetir una actividad abierta; se muestra su mejor puntuación entre esos intentos.
 Asignar una práctica no demuestra una relación académica institucional. Para un despliegue
 real se requieren cuentas verificadas, relación docente/grupo y política de acceso aprobada.

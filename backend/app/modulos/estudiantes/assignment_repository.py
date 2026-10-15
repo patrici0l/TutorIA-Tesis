@@ -36,6 +36,20 @@ class AssignmentRepository:
             else PracticeAssignment.teacher_id == user.id
         )
 
+    def lock_owned(self, teacher, identifier):
+        return self.db.scalar(
+            select(PracticeAssignment)
+            .where(PracticeAssignment.id == identifier, PracticeAssignment.teacher_id == teacher)
+            .with_for_update()
+            .execution_options(populate_existing=True)
+        )
+
+    def change_status(self, row, status):
+        if row.status != status:
+            row.status = status
+            row.status_changed_at = func.now()
+        self.db.commit()
+
     def query(self, user):
         attempts = (
             select(func.count())
@@ -54,6 +68,8 @@ class AssignmentRepository:
                 PracticeAssignment.title,
                 PracticeAssignment.instructions,
                 PracticeAssignment.created_at,
+                PracticeAssignment.status,
+                PracticeAssignment.status_changed_at,
                 User.institutional_email.label("student_email"),
                 attempts.label("attempts"),
                 best.label("best_score"),

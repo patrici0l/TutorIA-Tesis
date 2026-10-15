@@ -14,7 +14,7 @@
       El estudiante debe haber iniciado sesión antes. En la demostración usa
       estudiante.demo&#64;example.org.
     </p>
-    <fieldset [disabled]="saving() || loading()">
+    <fieldset [disabled]="saving() || loading() || changing()">
       <label>Título <input name="title" [(ngModel)]="title" required maxlength="120" /></label>
       <label
         >Correo de la cuenta del estudiante
@@ -47,15 +47,18 @@
     }
   </form>
 }
-<button type="button" (click)="load()" [disabled]="loading() || saving()">
+<button type="button" (click)="load()" [disabled]="loading() || saving() || changing()">
   {{ loading() ? 'Cargando…' : 'Actualizar actividades' }}
 </button>
 @if (error()) {
   <p role="alert">{{ error() }}</p>
 }
+@if (statusSuccess()) {
+  <p role="status">{{ statusSuccess() }}</p>
+}
 @if (page(); as results) {
   <p>
-    {{ results.total }} actividades ·
+    {{ results.total }} {{ results.total === 1 ? 'actividad' : 'actividades' }} ·
     {{
       teacher()
         ? 'Los resultados incluyen solo los intentos vinculados a cada asignación.'
@@ -64,21 +67,98 @@
   </p>
   @for (item of results.items; track item.id) {
     <article class="panel">
-      <span class="badge">{{ item.attempts ? 'Con resultados' : 'Pendiente' }}</span>
+      <div class="badges">
+        <span class="badge" [class.inactive]="item.status !== 'open'">{{
+          statusLabels[item.status]
+        }}</span>
+        <span class="badge">{{ item.attempts ? 'Con resultados' : 'Sin entregas' }}</span>
+      </div>
       <h2>{{ item.title }}</h2>
       <p>{{ bankTitle(item.version) }} · {{ item.created_at | date: 'dd/MM/yyyy' }}</p>
       @if (teacher()) {
         <p>Estudiante: {{ item.student_email }}</p>
       }
       <p class="instructions">{{ item.instructions }}</p>
+      @if (item.status_changed_at) {
+        <p>Último cambio de estado: {{ item.status_changed_at | date: 'dd/MM/yyyy HH:mm' }}</p>
+      }
       <p>
         Intentos guardados: {{ item.attempts }} · Mejor resultado:
         {{ item.best_score === null ? 'Sin resultados' : item.best_score + ' de 3' }}
       </p>
       @if (!teacher()) {
         <a [routerLink]="['/actividades', item.id]"
-          >{{ item.attempts ? 'Volver a practicar' : 'Resolver actividad' }} →</a
+          >{{
+            item.status !== 'open'
+              ? 'Ver actividad y resultados'
+              : item.attempts
+                ? 'Volver a practicar'
+                : 'Resolver actividad'
+          }}
+          →</a
         >
+      } @else {
+        <div class="buttons">
+          @if (item.status === 'open') {
+            <button
+              type="button"
+              (click)="requestStatus(item, 'closed')"
+              [disabled]="changing() || saving() || loading()"
+            >
+              Cerrar actividad
+            </button>
+          } @else {
+            <button
+              type="button"
+              (click)="requestStatus(item, 'open')"
+              [disabled]="changing() || saving() || loading()"
+            >
+              Reactivar actividad
+            </button>
+          }
+          @if (item.status !== 'cancelled') {
+            <button
+              type="button"
+              class="secondary"
+              (click)="requestStatus(item, 'cancelled')"
+              [disabled]="changing() || saving() || loading()"
+            >
+              Cancelar actividad
+            </button>
+          }
+        </div>
+        @if (pendingChange(); as change) {
+          @if (change.item.id === item.id) {
+            <section class="confirmation" aria-label="Confirmar cambio de estado">
+              <p>
+                {{
+                  change.status === 'open'
+                    ? 'El estudiante podrá guardar nuevos intentos.'
+                    : change.status === 'closed'
+                      ? 'Se detendrán las entregas de esta actividad.'
+                      : 'La actividad quedará marcada como cancelada y no recibirá nuevas entregas.'
+                }}
+                Los resultados guardados se conservan. Puedes cambiar el estado después.
+              </p>
+              <div class="buttons">
+                <button type="button" (click)="confirmStatus()" [disabled]="changing()">
+                  {{ changing() ? 'Guardando…' : 'Confirmar cambio' }}
+                </button>
+                <button
+                  type="button"
+                  class="secondary"
+                  (click)="pendingChange.set(null)"
+                  [disabled]="changing()"
+                >
+                  Volver
+                </button>
+              </div>
+              @if (statusError()) {
+                <p role="alert">{{ statusError() }}</p>
+              }
+            </section>
+          }
+        }
       }
     </article>
   } @empty {
@@ -95,13 +175,15 @@
     <div class="buttons">
       <button
         (click)="load(results.offset - results.limit)"
-        [disabled]="loading() || saving() || results.offset === 0"
+        [disabled]="loading() || saving() || changing() || results.offset === 0"
       >
         Más recientes
       </button>
       <button
         (click)="load(results.offset + results.limit)"
-        [disabled]="loading() || saving() || results.offset + results.limit >= results.total"
+        [disabled]="
+          loading() || saving() || changing() || results.offset + results.limit >= results.total
+        "
       >
         Anteriores
       </button>

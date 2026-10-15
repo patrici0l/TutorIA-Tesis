@@ -4,6 +4,14 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
+AssignmentStatus = Literal["open", "closed", "cancelled"]
+
+
+class AssignmentStatusChange(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    status: AssignmentStatus
+    expected_status: AssignmentStatus
+
 
 class AssignmentSubmission(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
@@ -21,6 +29,8 @@ class AssignmentResult(BaseModel):
     instructions: str
     student_email: str
     created_at: datetime
+    status: AssignmentStatus
+    status_changed_at: datetime | None
     attempts: int
     best_score: int | None
 

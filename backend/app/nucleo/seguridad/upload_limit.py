@@ -12,8 +12,12 @@ class UploadLimitMiddleware:
         generation = scope.get("path", "").startswith("/api/v1/content/") and scope.get(
             "path", ""
         ).endswith("/generate")
+        assignment_status = scope.get("path", "").startswith(
+            "/api/v1/practice/assignments/"
+        ) and scope.get("path", "").endswith("/status")
         if scope["type"] != "http" or (
             not generation
+            and not assignment_status
             and scope["path"]
             not in {
                 "/api/v1/documents/upload",
