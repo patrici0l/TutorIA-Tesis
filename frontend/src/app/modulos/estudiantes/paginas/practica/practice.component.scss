@@ -1,3 +1,5 @@
+@use '../../../../compartido/estilos/workspace' as workspace;
+
 :host {
   display: block;
   max-width: 850px;
@@ -29,19 +31,7 @@ a {
 header {
   margin: 32px 0;
 }
-h1 {
-  font-size: clamp(30px, 4vw, 42px);
-  letter-spacing: -1px;
-  margin: 10px 0;
-}
-.eyebrow {
-  color: var(--blue-dark);
-  font-size: 11px;
-  letter-spacing: 1.4px;
-  font-weight: 700;
-}
 p {
-  line-height: 1.8;
   color: var(--muted);
 }
 .panel {
@@ -63,10 +53,6 @@ progress {
   height: 7px;
   margin: 16px 0;
   accent-color: var(--blue);
-}
-h2 {
-  font-size: 25px;
-  line-height: 1.5;
 }
 fieldset {
   border: 0;
@@ -95,6 +81,117 @@ input {
   accent-color: var(--blue);
   width: 18px;
   height: 18px;
+  flex: 0 0 18px;
+}
+@include workspace.readable-page;
+.result-list {
+  list-style: none;
+  margin: 24px 0;
+  padding: 0;
+}
+.result-list li + li {
+  border-top: 1px solid var(--border);
+}
+.result-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 16px;
+  flex-wrap: wrap;
+}
+.result-row span {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+.result-list p {
+  margin: 8px 0 0;
+}
+.result-actions {
+  margin-top: 16px;
+}
+.save-note,
+.save-error {
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: var(--blue-soft);
+}
+.save-error {
+  background: #fff2f2;
+  color: #942c30;
+}
+.history-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.history-heading h2 {
+  margin: 0 0 8px;
+}
+.history-heading p {
+  margin: 0;
+}
+.history-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  padding: 20px 0 0;
+  margin: 16px 0 0;
+  border-top: 1px solid var(--border);
+}
+.history-summary dt {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+.history-summary dd {
+  font-size: 1.3rem;
+  font-weight: 650;
+  margin: 6px 0 0;
+}
+.attempt-list {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 0;
+}
+.attempt-list > li {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.attempt-info {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+.attempt-info h3 {
+  font-size: 1rem;
+  margin: 0 0 6px;
+}
+.attempt-info time {
+  color: var(--muted);
+  font-size: 0.8125rem;
+  display: block;
+}
+.attempt-info a {
+  display: inline-flex;
+  margin-top: 8px;
+  font-size: 0.875rem;
+}
+.attempt-result {
+  min-width: 0;
+}
+.attempt-result strong {
+  font-size: 0.9375rem;
+}
+.review-list > li {
+  padding: 22px 0;
+}
+label span {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .buttons {
   display: flex;

@@ -849,3 +849,27 @@ Pendiente revisión y commit humano de migración, API, interfaz, pruebas y docs
 feat: permite cerrar cancelar y reactivar actividades.
 Siguiente: seguimiento por bloque/tema y filtros de actividades. Continúan pendientes grupos,
 vencimientos, cuentas personales verificadas y evaluación académica.
+
+## 15 de octubre — Textos y estructura visual
+
+Solicitud del autor: mejorar textos desordenados y distribución general. Commit anterior
+verificado 67fb536; árbol limpio al iniciar, rama feature/resource-preparation.
+Cambios de presentación en login, inicio, actividades, práctica, documentos, búsqueda,
+preparación, perfiles y métricas. Base SCSS compartida para títulos, lectura y paneles;
+controles globales con ancho limitado, ajuste de palabras largas y acciones que envuelven.
+Actividades separa formulario/listado en escritorio y los apila en ventanas estrechas;
+tarjetas distinguen estado, indicaciones, destinatario, fechas y resultados. El correo demo
+solo aparece en modo mock. Inicio incorpora acceso destacado a las actividades.
+Práctica asignada elimina segundo h1/enlace de inicio; historial separa banco, fecha,
+aciertos y revisión. Acceso ofrece dos tarjetas adaptables. Textos docentes más directos,
+sin anuncios obsoletos de funciones futuras. Permisos, API y DB sin cambios.
+
+Validación: build de producción sin advertencias de tamaño; 92 pruebas Angular aprobadas
+en Docker (21 archivos). Se ajustó únicamente el doble AuthService del test de actividades
+para incluir mode. Revisión visual pendiente: Computer Use se detuvo al no poder verificar
+la URL de Chrome; no se continuó por otra vía. No se declara comprobación visual móvil.
+Frontend local actualizado y saludable; backend/PostgreSQL saludables. Guía privada
+regenerada: 326 archivos, 172 clases y 299 operaciones; exclusión Git verificada.
+Sin llamadas IA ni conexión UPS. Próximo funcional: progreso por tema y filtros de actividades.
+Pendiente commit humano de HTML/SCSS, ajuste del test y seguimiento:
+style: mejora textos y distribucion de las pantallas.

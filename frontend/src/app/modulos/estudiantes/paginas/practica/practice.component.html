@@ -1,9 +1,11 @@
-<a routerLink="/inicio">← Volver al inicio</a>
-<header>
-  <p class="eyebrow">CÁLCULO DIFERENCIAL</p>
-  <h1>Practica las derivadas</h1>
-  <p>Lee, elige y revisa la explicación. Puedes usar una pista antes de responder.</p>
-</header>
+@if (!assignment) {
+  <a class="back-link" routerLink="/inicio">← Volver al inicio</a>
+  <header class="page-heading">
+    <p class="eyebrow">CÁLCULO DIFERENCIAL</p>
+    <h1>Practica las derivadas</h1>
+    <p>Lee, elige y revisa la explicación. Puedes usar una pista antes de responder.</p>
+  </header>
+}
 @if (!assignment) {
   <section class="panel" aria-labelledby="bank-title">
     <h2 id="bank-title">Elige una práctica</h2>
@@ -39,35 +41,40 @@
           : 'Revisa los conceptos que necesitas reforzar y vuelve a intentarlo cuando quieras.'
       }}
     </p>
-    <ul>
+    <ul class="result-list">
       @for (item of questions; track $index) {
         <li>
-          <strong>{{ item.topic }}</strong> ·
-          {{ answers()[$index] === item.correctOption ? 'Respuesta correcta' : 'Para repasar' }}
+          <div class="result-row">
+            <strong>{{ item.topic }}</strong>
+            <span>{{
+              answers()[$index] === item.correctOption ? 'Respuesta correcta' : 'Para repasar'
+            }}</span>
+          </div>
           <p>{{ item.explanation }}</p>
         </li>
       }
     </ul>
     @if (saved(); as result) {
-      <p role="status">
+      <p class="save-note" role="status">
         Resultado guardado: {{ result.score }} de {{ questions.length }} aciertos. Puedes
         consultarlo en tu historial.
       </p>
     } @else {
-      <p>
-        Guarda este resultado para conservarlo en tu historial. Si vuelves a practicar sin
-        guardarlo, perderás este intento.
-      </p>
-      <button type="button" (click)="saveResult()" [disabled]="saving()">
-        {{ saving() ? 'Guardando…' : 'Guardar resultado' }}
+      <p class="save-note">Guarda el resultado antes de empezar otro intento o salir.</p>
+    }
+    <div class="buttons result-actions">
+      @if (!saved()) {
+        <button type="button" (click)="saveResult()" [disabled]="saving()">
+          {{ saving() ? 'Guardando…' : 'Guardar resultado' }}
+        </button>
+      }
+      <button type="button" class="secondary" (click)="restart()" [disabled]="saving()">
+        Volver a practicar
       </button>
-    }
+    </div>
     @if (saveError()) {
-      <p role="alert">{{ saveError() }}</p>
+      <p class="save-error" role="alert">{{ saveError() }}</p>
     }
-    <button type="button" class="secondary" (click)="restart()" [disabled]="saving()">
-      Volver a practicar
-    </button>
   </section>
 } @else {
   <section class="panel" aria-labelledby="question-title">
@@ -91,7 +98,7 @@
             [value]="$index"
             [checked]="selected() === $index"
             (change)="choose($index)"
-          />{{ option }}</label
+          /><span>{{ option }}</span></label
         >
       }
     </fieldset>
@@ -126,49 +133,62 @@
   </section>
 }
 <p class="session-note">
-  Práctica introductoria con ejercicios fijos. No cuenta como una nota. Al terminar puedes guardar
-  el resultado en tu cuenta; las respuestas sin guardar se pierden al salir.
+  Práctica de repaso, sin calificación oficial. Guarda tus respuestas al terminar para conservarlas.
 </p>
 <section class="panel history" aria-labelledby="history-title" [attr.aria-busy]="historyLoading()">
-  <h2 id="history-title">Mi progreso</h2>
-  <p>
-    Resultados guardados de ambos bloques. Repetirlos ayuda a repasar; estos aciertos no certifican
-    dominio del tema.
-  </p>
-  <button type="button" class="secondary" (click)="loadHistory()" [disabled]="historyLoading()">
-    {{ historyLoading() ? 'Cargando…' : 'Actualizar historial' }}
-  </button>
+  <div class="history-heading">
+    <div>
+      <h2 id="history-title">Mi historial de práctica</h2>
+      <p>Consulta tus intentos y vuelve a revisar las explicaciones.</p>
+    </div>
+    <button type="button" class="secondary" (click)="loadHistory()" [disabled]="historyLoading()">
+      {{ historyLoading() ? 'Cargando…' : 'Actualizar historial' }}
+    </button>
+  </div>
   @if (historyError()) {
     <p role="alert">
       No pudimos cargar tu historial. Pulsa «Actualizar historial» para reintentarlo.
     </p>
   }
   @if (history(); as page) {
-    <p>
-      Intentos guardados: {{ page.total }} · Mayor número de aciertos entre ambos bloques:
-      {{ page.best_score === null ? 'Sin resultados' : page.best_score + ' de 3' }}
-    </p>
-    <ol>
+    <dl class="history-summary">
+      <div>
+        <dt>Intentos guardados</dt>
+        <dd>{{ page.total }}</dd>
+      </div>
+      <div>
+        <dt>Mejor resultado entre los bloques</dt>
+        <dd>{{ page.best_score === null ? 'Sin resultados' : page.best_score + ' de 3' }}</dd>
+      </div>
+    </dl>
+    <p class="session-note">Este resumen reúne ambos bloques; no mide el dominio de un tema.</p>
+    <ol class="attempt-list">
       @for (attempt of page.items; track attempt.id) {
         <li>
-          <p>{{ bankTitle(attempt.version) }}</p>
-          @if (attempt.assignment_id) {
-            <a [routerLink]="['/actividades', attempt.assignment_id]">Ver actividad asignada</a>
-          }
-          <strong>{{ attempt.score }} de 3 aciertos</strong> ·
-          {{ attempt.created_at | date: 'dd/MM/yyyy HH:mm' }}
-          <button
-            type="button"
-            class="secondary review-button"
-            (click)="reviewing.set(reviewing()?.id === attempt.id ? null : attempt)"
-            [attr.aria-expanded]="reviewing()?.id === attempt.id"
-            aria-controls="attempt-review"
-            [attr.aria-label]="
-              'Revisar intento del ' + (attempt.created_at | date: 'dd/MM/yyyy HH:mm')
-            "
-          >
-            {{ reviewing()?.id === attempt.id ? 'Ocultar revisión' : 'Revisar respuestas' }}
-          </button>
+          <div class="attempt-info">
+            <h3>{{ bankTitle(attempt.version) }}</h3>
+            <time [attr.datetime]="attempt.created_at">{{
+              attempt.created_at | date: 'dd/MM/yyyy HH:mm'
+            }}</time>
+            @if (attempt.assignment_id) {
+              <a [routerLink]="['/actividades', attempt.assignment_id]">Ver actividad asignada</a>
+            }
+          </div>
+          <div class="attempt-result">
+            <strong>{{ attempt.score }} de 3 aciertos</strong>
+            <button
+              type="button"
+              class="secondary review-button"
+              (click)="reviewing.set(reviewing()?.id === attempt.id ? null : attempt)"
+              [attr.aria-expanded]="reviewing()?.id === attempt.id"
+              aria-controls="attempt-review"
+              [attr.aria-label]="
+                'Revisar intento del ' + (attempt.created_at | date: 'dd/MM/yyyy HH:mm')
+              "
+            >
+              {{ reviewing()?.id === attempt.id ? 'Ocultar revisión' : 'Revisar respuestas' }}
+            </button>
+          </div>
         </li>
       } @empty {
         <li>

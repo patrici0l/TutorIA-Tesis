@@ -1,3 +1,5 @@
+@use '../../../../compartido/estilos/workspace' as workspace;
+
 :host {
   display: block;
 }
@@ -151,4 +153,16 @@ a {
   button {
     transition: none;
   }
+}
+
+@include workspace.readable-page;
+.page-heading.metrics-heading {
+  max-width: none;
+}
+.states article span {
+  min-height: 2.8em;
+}
+.states article small {
+  font-size: 0.8125rem;
+  line-height: 1.5;
 }

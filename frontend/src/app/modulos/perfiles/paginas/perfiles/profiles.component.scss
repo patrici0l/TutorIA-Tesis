@@ -1,3 +1,5 @@
+@use '../../../../compartido/estilos/workspace' as workspace;
+
 :host {
   display: block;
 }
@@ -23,7 +25,7 @@ p {
 }
 .workspace {
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
   gap: 1.5rem;
   margin-top: 2rem;
   align-items: start;
@@ -58,7 +60,7 @@ textarea {
 }
 .options {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0 1rem;
 }
 .help {
@@ -163,3 +165,5 @@ code {
     transition: none;
   }
 }
+
+@include workspace.readable-page;

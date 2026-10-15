@@ -1,11 +1,8 @@
 <section class="auth-card fade-in">
-  <p class="eyebrow">UNIVERSIDAD POLITÉCNICA SALESIANA</p>
+  <p class="eyebrow">TU ESPACIO DE APRENDIZAJE</p>
   <h1>Bienvenido a TutorIA</h1>
   @if (loginMode() === 'mock') {
-    <p>
-      Elige el espacio que quieres probar. Cada perfil usa una cuenta ficticia compartida y conserva
-      sus propios datos de demostración.
-    </p>
+    <p>Elige un perfil para explorar TutorIA. Cada uno utiliza una cuenta de prueba compartida.</p>
   } @else if (loginMode() === 'cas') {
     <p>Accede con tu cuenta institucional para continuar en tu espacio de aprendizaje.</p>
   }
@@ -26,21 +23,23 @@
     <p role="status">Comprobando acceso…</p>
   } @else if (loginMode()) {
     @if (loginMode() === 'mock') {
-      <div class="profile-card">
-        <h2>Estudiante</h2>
-        <p>Practica ejercicios, revisa explicaciones y consulta tus intentos.</p>
-        <p class="domain">Dominio institucional previsto: <strong>&#64;est.ups.edu.ec</strong></p>
-        <a class="login-button" href="/api/v1/auth/login?demo_profile=student"
-          >Probar como estudiante <span aria-hidden="true">↗</span></a
-        >
-      </div>
-      <div class="profile-card">
-        <h2>Profesor</h2>
-        <p>Organiza documentos, busca fuentes y prepara actividades.</p>
-        <p class="domain">Dominio institucional previsto: <strong>&#64;ups.edu.ec</strong></p>
-        <a class="login-button" href="/api/v1/auth/login?demo_profile=teacher"
-          >Probar como profesor <span aria-hidden="true">↗</span></a
-        >
+      <div class="profile-grid">
+        <div class="profile-card">
+          <h2>Estudiante</h2>
+          <p>Practica ejercicios, revisa explicaciones y consulta tus intentos.</p>
+          <p class="domain"><span>Dominio previsto</span><strong>&#64;est.ups.edu.ec</strong></p>
+          <a class="login-button" href="/api/v1/auth/login?demo_profile=student"
+            >Probar como estudiante <span aria-hidden="true">↗</span></a
+          >
+        </div>
+        <div class="profile-card">
+          <h2>Profesor</h2>
+          <p>Organiza documentos, busca fuentes y prepara actividades.</p>
+          <p class="domain"><span>Dominio previsto</span><strong>&#64;ups.edu.ec</strong></p>
+          <a class="login-button" href="/api/v1/auth/login?demo_profile=teacher"
+            >Probar como profesor <span aria-hidden="true">↗</span></a
+          >
+        </div>
       </div>
     } @else {
       <a class="login-button" href="/api/v1/auth/login"
@@ -49,8 +48,8 @@
     }
     <p class="privacy">
       @if (loginMode() === 'mock') {
-        No necesitas correo ni contraseña. Este acceso no se conecta a la UPS. Los dominios indican
-        los perfiles previstos; todavía no verificamos cuentas institucionales.
+        No necesitas correo ni contraseña. Este acceso no se conecta a la UPS; los dominios se
+        muestran como referencia para la futura conexión institucional.
       } @else {
         Tu contraseña institucional se ingresa únicamente en el portal de la UPS. TutorIA no la
         solicita ni la almacena.

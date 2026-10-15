@@ -1,3 +1,5 @@
+@use '../../../../compartido/estilos/workspace' as workspace;
+
 :host {
   display: block;
 }
@@ -200,5 +202,39 @@ button:focus-visible {
   }
   dd {
     margin-bottom: 10px;
+  }
+}
+
+@include workspace.readable-page;
+.document-list .actions {
+  flex: 0 0 auto;
+  align-self: center;
+}
+.document-list li > div:first-child {
+  flex: 1 1 auto;
+}
+.document-list h3 {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.badge {
+  display: inline-block;
+  font-size: 0.75rem;
+}
+.processing {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.processing h3,
+.processing p {
+  flex-basis: 100%;
+}
+.processing button + button {
+  margin-left: 0;
+}
+@media (max-width: 700px) {
+  .document-list .actions {
+    align-self: flex-start;
   }
 }

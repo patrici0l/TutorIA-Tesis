@@ -1,12 +1,16 @@
-<p class="eyebrow">MATERIALES DEL CURSO</p>
-<h1>Documentos con fundamento.</h1>
-<p class="lead">Reúne los materiales docentes que servirán como fuentes de aprendizaje.</p>
+<header class="page-heading">
+  <p class="eyebrow">MATERIALES DEL CURSO</p>
+  <h1>Mis documentos</h1>
+  <p class="lead">
+    Organiza tus materiales y prepara sus fuentes para crear recursos de aprendizaje.
+  </p>
+</header>
 @if (!canManage()) {
   <div class="panel">
     <h2>Espacio docente</h2>
     <p>
-      La carga y gestión de materiales requiere permisos de docente. Tu cuenta de estudiante
-      utilizará los recursos de aprendizaje en las próximas etapas.
+      La biblioteca de documentos está disponible para docentes. Como estudiante, puedes consultar
+      tus actividades o continuar con la práctica desde el menú principal.
     </p>
   </div>
 } @else {
@@ -41,8 +45,8 @@
         aria-describedby="file-help"
       />
       <p id="file-help">
-        El servidor validará el contenido y lo guardará de forma privada. Después podrás extraer su
-        texto desde los detalles.
+        Tu documento será privado. Después de guardarlo, abre sus detalles para extraer el texto y
+        prepararlo para la búsqueda.
       </p>
       <button type="submit" [disabled]="locked() || !file() || !title.trim()">
         {{ busy() ? 'Guardando…' : 'Guardar documento' }}

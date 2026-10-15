@@ -1,16 +1,18 @@
-<a routerLink="/actividades">← Volver a mis actividades</a>
+<a class="back-link" routerLink="/actividades">← Volver a mis actividades</a>
 @if (loading()) {
   <p role="status">Cargando actividad…</p>
 } @else if (assignment(); as item) {
   @if (auth.user()?.rol === 'student') {
-    <header>
+    <header class="page-heading">
+      <p class="eyebrow">ACTIVIDAD ASIGNADA · {{ statusLabels[item.status] }}</p>
       <h1>{{ item.title }}</h1>
-      <p>Estado: {{ statusLabels[item.status] }}</p>
-      <p>{{ item.instructions }}</p>
+      @if (item.instructions) {
+        <p class="instructions">{{ item.instructions }}</p>
+      }
       @if (item.status === 'open') {
-        <p>
-          Al guardar este intento, el profesor que asignó la actividad podrá consultar el número de
-          intentos y el mejor resultado.
+        <p class="sharing-note">
+          Al guardar, compartirás tus intentos y tu mejor resultado con el profesor que asignó la
+          actividad.
         </p>
       }
     </header>
@@ -19,17 +21,20 @@
         <app-practice [assignment]="entry" />
       }
     } @else {
-      <p role="status">
-        Esta actividad está {{ statusLabels[item.status].toLowerCase() }} y no admite nuevos
-        intentos. Tus resultados guardados se conservan.
-      </p>
-      <p>
-        Intentos guardados: {{ item.attempts }} · Mejor resultado:
-        {{ item.best_score === null ? 'Sin resultados' : item.best_score + ' de 3' }}
-      </p>
-      <a routerLink="/practica" fragment="history-title"
-        >Revisar mi historial y continuar con la práctica libre →</a
-      >
+      <section class="panel closed-summary">
+        <h2>Resumen de la actividad</h2>
+        <p role="status">
+          Esta actividad está {{ statusLabels[item.status].toLowerCase() }} y no admite nuevos
+          intentos. Tus resultados guardados se conservan.
+        </p>
+        <p>
+          Intentos guardados: {{ item.attempts }} · Mejor resultado:
+          {{ item.best_score === null ? 'Sin resultados' : item.best_score + ' de 3' }}
+        </p>
+        <a routerLink="/practica" fragment="history-title"
+          >Revisar mi historial y continuar con la práctica libre →</a
+        >
+      </section>
     }
   } @else {
     <p>Entra con la cuenta del estudiante para resolver la actividad.</p>

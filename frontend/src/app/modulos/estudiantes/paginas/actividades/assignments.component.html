@@ -1,192 +1,263 @@
-<a routerLink="/inicio">← Volver al inicio</a>
-<h1>{{ teacher() ? 'Actividades asignadas' : 'Mis actividades' }}</h1>
-<p>
-  {{
-    teacher()
-      ? 'Asigna una práctica y consulta los resultados de esa actividad.'
-      : 'Aquí están las prácticas que tu profesor te ha asignado.'
-  }}
-</p>
-@if (teacher()) {
-  <form (ngSubmit)="create()" class="panel">
-    <h2>Asignar una práctica</h2>
-    <p>
-      El estudiante debe haber iniciado sesión antes. En la demostración usa
-      estudiante.demo&#64;example.org.
-    </p>
-    <fieldset [disabled]="saving() || loading() || changing()">
-      <label>Título <input name="title" [(ngModel)]="title" required maxlength="120" /></label>
-      <label
-        >Correo de la cuenta del estudiante
-        <input name="email" type="email" [(ngModel)]="email" required maxlength="254"
-      /></label>
-      <label
-        >Bloque
-        <select name="version" [(ngModel)]="version">
-          @for (bank of banks; track bank.version) {
-            <option [value]="bank.version">{{ bank.title }}</option>
-          }
-        </select></label
-      >
-      <label
-        >Instrucciones (opcional)
-        <textarea
-          name="instructions"
-          [(ngModel)]="instructions"
-          maxlength="2000"
-          rows="3"
-        ></textarea>
-      </label>
-      <button type="submit">{{ saving() ? 'Asignando…' : 'Asignar actividad' }}</button>
-    </fieldset>
-    @if (formError()) {
-      <p role="alert">{{ formError() }}</p>
-    }
-    @if (success()) {
-      <p role="status">{{ success() }}</p>
-    }
-  </form>
-}
-<button type="button" (click)="load()" [disabled]="loading() || saving() || changing()">
-  {{ loading() ? 'Cargando…' : 'Actualizar actividades' }}
-</button>
-@if (error()) {
-  <p role="alert">{{ error() }}</p>
-}
-@if (statusSuccess()) {
-  <p role="status">{{ statusSuccess() }}</p>
-}
-@if (page(); as results) {
+<a class="back-link" routerLink="/inicio">← Volver al inicio</a>
+<header class="page-heading">
+  <p class="eyebrow">{{ teacher() ? 'ACOMPAÑAMIENTO DOCENTE' : 'TU ESPACIO DE ESTUDIO' }}</p>
+  <h1>{{ teacher() ? 'Actividades asignadas' : 'Mis actividades' }}</h1>
   <p>
-    {{ results.total }} {{ results.total === 1 ? 'actividad' : 'actividades' }} ·
     {{
       teacher()
-        ? 'Los resultados incluyen solo los intentos vinculados a cada asignación.'
-        : 'Al guardar, compartirás el resultado de esta actividad con el profesor que la asignó.'
+        ? 'Asigna una práctica, revisa los resultados y gestiona las entregas.'
+        : 'Consulta lo que te ha asignado tu profesor y continúa a tu ritmo.'
     }}
   </p>
-  @for (item of results.items; track item.id) {
-    <article class="panel">
-      <div class="badges">
-        <span class="badge" [class.inactive]="item.status !== 'open'">{{
-          statusLabels[item.status]
-        }}</span>
-        <span class="badge">{{ item.attempts ? 'Con resultados' : 'Sin entregas' }}</span>
-      </div>
-      <h2>{{ item.title }}</h2>
-      <p>{{ bankTitle(item.version) }} · {{ item.created_at | date: 'dd/MM/yyyy' }}</p>
-      @if (teacher()) {
-        <p>Estudiante: {{ item.student_email }}</p>
-      }
-      <p class="instructions">{{ item.instructions }}</p>
-      @if (item.status_changed_at) {
-        <p>Último cambio de estado: {{ item.status_changed_at | date: 'dd/MM/yyyy HH:mm' }}</p>
-      }
-      <p>
-        Intentos guardados: {{ item.attempts }} · Mejor resultado:
-        {{ item.best_score === null ? 'Sin resultados' : item.best_score + ' de 3' }}
-      </p>
-      @if (!teacher()) {
-        <a [routerLink]="['/actividades', item.id]"
-          >{{
-            item.status !== 'open'
-              ? 'Ver actividad y resultados'
-              : item.attempts
-                ? 'Volver a practicar'
-                : 'Resolver actividad'
-          }}
-          →</a
+</header>
+<div class="assignment-layout" [class.with-form]="teacher()">
+  @if (teacher()) {
+    <form (ngSubmit)="create()" class="panel assignment-form">
+      <h2>Asignar una práctica</h2>
+      <p class="help">Elige un bloque de tres ejercicios para un estudiante.</p>
+      <fieldset [disabled]="saving() || loading() || changing()">
+        <label
+          >Título
+          <input
+            name="title"
+            [(ngModel)]="title"
+            required
+            maxlength="120"
+            placeholder="Ej. Repaso de reglas de derivación"
+        /></label>
+        <label
+          >Correo del estudiante
+          <input
+            name="email"
+            type="email"
+            [(ngModel)]="email"
+            required
+            maxlength="254"
+            aria-describedby="student-email-help"
+        /></label>
+        <p id="student-email-help" class="help">
+          La cuenta debe haber iniciado sesión antes.
+          @if (auth.mode() === 'mock') {
+            <span class="demo-email"
+              >Cuenta de prueba: <strong>estudiante.demo&#64;example.org</strong></span
+            >
+          }
+        </p>
+        <label
+          >Bloque de ejercicios
+          <select name="version" [(ngModel)]="version">
+            @for (bank of banks; track bank.version) {
+              <option [value]="bank.version">{{ bank.title }}</option>
+            }
+          </select></label
         >
-      } @else {
-        <div class="buttons">
-          @if (item.status === 'open') {
-            <button
-              type="button"
-              (click)="requestStatus(item, 'closed')"
-              [disabled]="changing() || saving() || loading()"
+        <label
+          >Instrucciones (opcional)
+          <textarea
+            name="instructions"
+            [(ngModel)]="instructions"
+            maxlength="2000"
+            rows="3"
+          ></textarea>
+        </label>
+        <button type="submit">{{ saving() ? 'Asignando…' : 'Asignar actividad' }}</button>
+      </fieldset>
+      @if (formError()) {
+        <p class="message error" role="alert">{{ formError() }}</p>
+      }
+      @if (success()) {
+        <p class="message" role="status">{{ success() }}</p>
+      }
+    </form>
+  }
+  <section
+    class="assignment-list"
+    aria-labelledby="activity-list-title"
+    [attr.aria-busy]="loading()"
+  >
+    <div class="list-heading">
+      <div>
+        <h2 id="activity-list-title">
+          {{ teacher() ? 'Seguimiento de actividades' : 'Tus actividades' }}
+        </h2>
+        @if (page(); as results) {
+          <p class="help">
+            {{ results.total }} {{ results.total === 1 ? 'actividad' : 'actividades' }}
+          </p>
+        }
+      </div>
+      <button
+        type="button"
+        class="secondary"
+        (click)="load()"
+        [disabled]="loading() || saving() || changing()"
+      >
+        {{ loading() ? 'Cargando…' : 'Actualizar actividades' }}
+      </button>
+    </div>
+    @if (error()) {
+      <p class="message error" role="alert">{{ error() }}</p>
+    }
+    @if (statusSuccess()) {
+      <p class="message" role="status">{{ statusSuccess() }}</p>
+    }
+    @if (page(); as results) {
+      <p class="help scope-note">
+        {{
+          teacher()
+            ? 'Cada tarjeta reúne los resultados guardados de esa actividad.'
+            : 'Tu profesor podrá ver los intentos y el mejor resultado que guardes en cada actividad.'
+        }}
+      </p>
+      @for (item of results.items; track item.id) {
+        <article class="panel activity-card">
+          <div class="badges">
+            <span class="badge" [class.inactive]="item.status !== 'open'">{{
+              statusLabels[item.status]
+            }}</span>
+            <span class="badge">{{ item.attempts ? 'Con resultados' : 'Sin entregas' }}</span>
+          </div>
+          <h3>{{ item.title }}</h3>
+          <p class="bank-name">{{ bankTitle(item.version) }}</p>
+          <p class="help">Asignada el {{ item.created_at | date: 'dd/MM/yyyy' }}</p>
+          @if (teacher()) {
+            <p class="recipient">
+              <span>Estudiante</span><strong>{{ item.student_email }}</strong>
+            </p>
+          }
+          @if (item.instructions) {
+            <div class="instructions">
+              <h4>Indicaciones</h4>
+              <p>{{ item.instructions }}</p>
+            </div>
+          }
+          @if (item.status_changed_at) {
+            <p class="help">
+              Estado actualizado el {{ item.status_changed_at | date: 'dd/MM/yyyy HH:mm' }}
+            </p>
+          }
+          <dl class="result-summary">
+            <div>
+              <dt>Intentos guardados</dt>
+              <dd>{{ item.attempts }}</dd>
+            </div>
+            <div>
+              <dt>Mejor resultado</dt>
+              <dd>{{ item.best_score === null ? 'Sin resultados' : item.best_score + ' de 3' }}</dd>
+            </div>
+          </dl>
+          @if (!teacher()) {
+            <a class="activity-link" [routerLink]="['/actividades', item.id]"
+              >{{
+                item.status !== 'open'
+                  ? 'Ver actividad y resultados'
+                  : item.attempts
+                    ? 'Volver a practicar'
+                    : 'Resolver actividad'
+              }}
+              →</a
             >
-              Cerrar actividad
-            </button>
           } @else {
-            <button
-              type="button"
-              (click)="requestStatus(item, 'open')"
-              [disabled]="changing() || saving() || loading()"
-            >
-              Reactivar actividad
-            </button>
-          }
-          @if (item.status !== 'cancelled') {
-            <button
-              type="button"
-              class="secondary"
-              (click)="requestStatus(item, 'cancelled')"
-              [disabled]="changing() || saving() || loading()"
-            >
-              Cancelar actividad
-            </button>
-          }
-        </div>
-        @if (pendingChange(); as change) {
-          @if (change.item.id === item.id) {
-            <section class="confirmation" aria-label="Confirmar cambio de estado">
-              <p>
-                {{
-                  change.status === 'open'
-                    ? 'El estudiante podrá guardar nuevos intentos.'
-                    : change.status === 'closed'
-                      ? 'Se detendrán las entregas de esta actividad.'
-                      : 'La actividad quedará marcada como cancelada y no recibirá nuevas entregas.'
-                }}
-                Los resultados guardados se conservan. Puedes cambiar el estado después.
-              </p>
-              <div class="buttons">
-                <button type="button" (click)="confirmStatus()" [disabled]="changing()">
-                  {{ changing() ? 'Guardando…' : 'Confirmar cambio' }}
+            <div class="buttons">
+              @if (item.status === 'open') {
+                <button
+                  type="button"
+                  (click)="requestStatus(item, 'closed')"
+                  [disabled]="changing() || saving() || loading()"
+                >
+                  Cerrar actividad
                 </button>
+              } @else {
+                <button
+                  type="button"
+                  (click)="requestStatus(item, 'open')"
+                  [disabled]="changing() || saving() || loading()"
+                >
+                  Reactivar actividad
+                </button>
+              }
+              @if (item.status !== 'cancelled') {
                 <button
                   type="button"
                   class="secondary"
-                  (click)="pendingChange.set(null)"
-                  [disabled]="changing()"
+                  (click)="requestStatus(item, 'cancelled')"
+                  [disabled]="changing() || saving() || loading()"
                 >
-                  Volver
+                  Cancelar actividad
                 </button>
-              </div>
-              @if (statusError()) {
-                <p role="alert">{{ statusError() }}</p>
               }
-            </section>
+            </div>
+            @if (pendingChange(); as change) {
+              @if (change.item.id === item.id) {
+                <section class="confirmation" aria-label="Confirmar cambio de estado">
+                  <p>
+                    {{
+                      change.status === 'open'
+                        ? 'El estudiante podrá guardar nuevos intentos.'
+                        : change.status === 'closed'
+                          ? 'Se detendrán las entregas de esta actividad.'
+                          : 'La actividad quedará marcada como cancelada y no recibirá nuevas entregas.'
+                    }}
+                  </p>
+                  <p class="help">
+                    Los resultados guardados se conservan. Puedes cambiar el estado después.
+                  </p>
+                  <div class="buttons">
+                    <button type="button" (click)="confirmStatus()" [disabled]="changing()">
+                      {{ changing() ? 'Guardando…' : 'Confirmar cambio' }}
+                    </button>
+                    <button
+                      type="button"
+                      class="secondary"
+                      (click)="pendingChange.set(null)"
+                      [disabled]="changing()"
+                    >
+                      Volver
+                    </button>
+                  </div>
+                  @if (statusError()) {
+                    <p role="alert">{{ statusError() }}</p>
+                  }
+                </section>
+              }
+            }
           }
-        }
+        </article>
+      } @empty {
+        <div class="panel empty-state">
+          <h3>
+            {{ teacher() ? 'Tu primera actividad empieza aquí' : 'Todavía no hay actividades' }}
+          </h3>
+          <p>
+            {{
+              teacher()
+                ? 'Completa el formulario para asignar una práctica y ver aquí sus resultados.'
+                : 'Cuando tu profesor te asigne una práctica, aparecerá aquí.'
+            }}
+          </p>
+          <a class="activity-link" routerLink="/practica"
+            >{{ teacher() ? 'Explorar los ejercicios' : 'Ir a la práctica libre' }} →</a
+          >
+        </div>
       }
-    </article>
-  } @empty {
-    <p class="panel">
-      {{
-        teacher()
-          ? 'Todavía no has asignado actividades.'
-          : 'Todavía no tienes actividades asignadas. Puedes continuar con la práctica libre.'
-      }}
-      <a routerLink="/practica">Ir a practicar</a>
-    </p>
-  }
-  @if (results.total > results.limit) {
-    <div class="buttons">
-      <button
-        (click)="load(results.offset - results.limit)"
-        [disabled]="loading() || saving() || changing() || results.offset === 0"
-      >
-        Más recientes
-      </button>
-      <button
-        (click)="load(results.offset + results.limit)"
-        [disabled]="
-          loading() || saving() || changing() || results.offset + results.limit >= results.total
-        "
-      >
-        Anteriores
-      </button>
-    </div>
-  }
-}
+      @if (results.total > results.limit) {
+        <div class="buttons">
+          <button
+            (click)="load(results.offset - results.limit)"
+            [disabled]="loading() || saving() || changing() || results.offset === 0"
+          >
+            Más recientes
+          </button>
+          <button
+            (click)="load(results.offset + results.limit)"
+            [disabled]="
+              loading() || saving() || changing() || results.offset + results.limit >= results.total
+            "
+          >
+            Anteriores
+          </button>
+        </div>
+      }
+    }
+  </section>
+</div>

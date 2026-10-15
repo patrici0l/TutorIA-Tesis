@@ -19,10 +19,30 @@ body {
   color: var(--ink);
   font-family: 'Segoe UI', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
 }
 button,
-input {
+input,
+select,
+textarea {
   font: inherit;
+}
+button,
+a,
+label {
+  -webkit-tap-highlight-color: transparent;
+}
+img,
+svg {
+  max-width: 100%;
+}
+[id] {
+  scroll-margin-top: 180px;
+}
+@media (max-width: 600px) {
+  [id] {
+    scroll-margin-top: 155px;
+  }
 }
 :focus-visible {
   outline: 3px solid var(--blue);
@@ -30,4 +50,67 @@ input {
 }
 ::selection {
   background: var(--blue-soft);
+}
+
+// Controles y límites compartidos; evita duplicarlos en cada pantalla.
+main {
+  input,
+  select,
+  textarea {
+    min-width: 0;
+    max-width: 100%;
+  }
+  fieldset {
+    min-width: 0;
+  }
+  textarea {
+    resize: vertical;
+  }
+  label,
+  legend {
+    line-height: 1.5;
+  }
+  button {
+    min-height: 44px;
+    max-width: 100%;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+  }
+  a {
+    text-underline-offset: 0.2em;
+    overflow-wrap: anywhere;
+  }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-bottom: 12px;
+    font-size: 0.875rem;
+  }
+  .buttons,
+  .actions,
+  .heading,
+  .pagination {
+    flex-wrap: wrap;
+  }
+  .heading > *,
+  .options > *,
+  .workspace > * {
+    min-width: 0;
+  }
+  dd,
+  dt,
+  summary,
+  code {
+    overflow-wrap: anywhere;
+  }
+  summary {
+    line-height: 1.6;
+    padding-block: 6px;
+  }
+  @media (max-width: 600px) {
+    .buttons > button {
+      flex: 1 1 160px;
+    }
+  }
 }

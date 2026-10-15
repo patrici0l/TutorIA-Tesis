@@ -2,23 +2,22 @@
   <section class="panel">
     <h1>Espacio docente</h1>
     <p>
-      La búsqueda está disponible para docentes sobre sus materiales propios. La asignación de
-      fuentes a estudiantes se incorporará más adelante.
+      Esta búsqueda permite a los docentes consultar sus propios materiales. Puedes volver al inicio
+      para ver las opciones de tu cuenta.
     </p>
     <a routerLink="/inicio">Volver al inicio</a>
   </section>
 } @else {
-  <header class="intro">
+  <header class="intro page-heading">
     <p class="eyebrow">EXPLORA TUS FUENTES</p>
-    <h1>Encuentra el fundamento.</h1>
+    <h1>Buscar en mis fuentes</h1>
     <p>
-      Busca por significado entre tus materiales indexados de Cálculo Diferencial. Revisa la fuente
-      antes de usarla.
+      Encuentra fragmentos relacionados con tu pregunta en los documentos preparados para búsqueda.
     </p>
   </header>
   <section class="panel" aria-labelledby="search-title">
     <div class="heading">
-      <h2 id="search-title">Una pregunta, sus fuentes</h2>
+      <h2 id="search-title">¿Qué necesitas consultar?</h2>
       <a routerLink="/documentos">Gestionar materiales ↗</a>
     </div>
     <form (ngSubmit)="search()" #searchForm="ngForm">
@@ -35,8 +34,7 @@
         aria-describedby="search-help"
       ></textarea>
       <p id="search-help">
-        Hasta 1000 caracteres. Solo se consultan documentos propios con un índice compatible y
-        listo.
+        Hasta 1000 caracteres. Se consultan únicamente tus documentos listos para búsqueda.
       </p>
       <div class="options">
         <div>
@@ -68,10 +66,7 @@
           />
         </div>
       </div>
-      <p>
-        La similitud ordena cercanía temática; no mide certeza ni corrección. El filtro es
-        orientativo.
-      </p>
+      <p>La similitud indica relación con tu pregunta. Revisa cada fuente antes de usarla.</p>
       <button type="submit" [disabled]="loading() || searchForm.invalid || !query.trim()">
         {{ loading() ? 'Buscando en tus fuentes…' : 'Buscar fuentes' }}
         <span aria-hidden="true">↗</span>

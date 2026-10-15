@@ -18,7 +18,7 @@ describe('Actividades asignadas', () => {
       imports: [AssignmentsComponent],
       providers: [
         provideRouter([]),
-        { provide: AuthService, useValue: { user } },
+        { provide: AuthService, useValue: { user, mode: signal('mock') } },
         { provide: AssignmentService, useValue: service },
       ],
     }).compileComponents();

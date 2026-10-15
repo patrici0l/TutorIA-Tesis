@@ -4,16 +4,14 @@
     <p>Los perfiles de prueba son privados para docentes.</p>
   </section>
 } @else {
-  <header>
+  <header class="page-heading">
     <p class="eyebrow">COMPRENDER PARA ACOMPAÑAR</p>
     <h1>Perfiles de aprendizaje</h1>
-    <p>
-      Registra una observación ficticia y úsala para preparar recursos con apoyo adaptado.
-    </p>
+    <p>Registra una observación ficticia y úsala para preparar recursos con apoyo adaptado.</p>
   </header>
   <p class="notice">
-    Usa únicamente datos de prueba. No ingreses nombres, correos, matrículas ni notas de
-    estudiantes reales.
+    Usa únicamente datos de prueba. No ingreses nombres, correos, matrículas ni notas de estudiantes
+    reales.
   </p>
   <div class="workspace">
     <section class="panel" aria-labelledby="profile-form-title">
@@ -120,9 +118,7 @@
             ><input type="checkbox" name="confirmed" [(ngModel)]="confirmed" required />Confirmo que
             son datos ficticios</label
           >
-          <button type="submit" [disabled]="form.invalid || !confirmed">
-            Guardar perfil ↗
-          </button>
+          <button type="submit" [disabled]="form.invalid || !confirmed">Guardar perfil ↗</button>
         </fieldset>
       </form>
     </section>

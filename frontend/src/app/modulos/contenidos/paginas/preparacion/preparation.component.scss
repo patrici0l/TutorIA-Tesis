@@ -1,3 +1,5 @@
+@use '../../../../compartido/estilos/workspace' as workspace;
+
 :host {
   display: block;
 }
@@ -211,3 +213,5 @@ p {
     transition: none;
   }
 }
+
+@include workspace.readable-page;

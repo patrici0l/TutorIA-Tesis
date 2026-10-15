@@ -1,4 +1,4 @@
-<section class="intro fade-in">
+<section class="intro page-heading fade-in">
   <p class="eyebrow">{{ student() ? 'TU ESPACIO DE ESTUDIO' : 'TU ESPACIO DOCENTE' }}</p>
   <h1>{{ student() ? 'Un paso más para entender las derivadas.' : '¿Qué vas a preparar hoy?' }}</h1>
   <p class="lead">
@@ -9,14 +9,27 @@
     }}
   </p>
 </section>
-<p>
-  <a routerLink="/actividades"
-    >{{
-      student() ? 'Ver mis actividades asignadas' : 'Asignar prácticas y consultar resultados'
-    }}
-    →</a
+<a class="assignment-shortcut" routerLink="/actividades">
+  <div>
+    <span class="eyebrow">{{
+      student() ? 'ACTIVIDADES DE TU PROFESOR' : 'PRÁCTICAS ASIGNADAS'
+    }}</span>
+    <h2>
+      {{ student() ? 'Continúa con tus actividades' : 'Acompaña el avance de tus estudiantes' }}
+    </h2>
+    <p>
+      {{
+        student()
+          ? 'Abre una actividad, revisa sus indicaciones y guarda tu resultado.'
+          : 'Asigna ejercicios y consulta las entregas desde un mismo lugar.'
+      }}
+    </p>
+  </div>
+  <span class="shortcut-action"
+    >{{ student() ? 'Ver mis actividades' : 'Gestionar actividades' }}
+    <span aria-hidden="true">→</span></span
   >
-</p>
+</a>
 @if (student()) {
   <section class="study-card" aria-labelledby="study-title">
     <div>
@@ -47,7 +60,7 @@
       <b>Abrir documentos ↗</b></a
     >
     <a routerLink="/recursos"
-      ><span>02 · ACTIVIDADES</span>
+      ><span>02 · RECURSOS</span>
       <h2>Prepara un recurso</h2>
       <p>Elige el objetivo, la dificultad y el tipo de actividad para tu clase.</p>
       <b>Preparar recursos ↗</b></a
@@ -61,7 +74,7 @@
   </section>
   <div class="quick-links">
     <a routerLink="/busqueda">Buscar en mis fuentes</a
-    ><a routerLink="/metricas">Consultar mis resultados</a
+    ><a routerLink="/metricas">Ver métricas de recursos</a
     ><a routerLink="/practica">Ver práctica del estudiante</a>
   </div>
   <section class="connection-panel" aria-label="Disponibilidad" [attr.aria-busy]="loading()">

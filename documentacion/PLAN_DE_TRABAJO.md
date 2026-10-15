@@ -4,6 +4,14 @@ Fuente rectora: Plan_Implementacion_TutorIA-Lucero.docx, entregado por el autor 
 
 ## Bloque actual
 
+15 de octubre, prioridad del autor: revisión de textos y distribución de la interfaz.
+Actividades con formulario/listado separados, resumen de resultados y acciones agrupadas;
+práctica asignada con un solo título principal, historial organizado por intento y acceso
+por perfiles en tarjetas. Tipografía compartida y ajustes adaptables en las pantallas docentes.
+92 pruebas Angular aprobadas y build sin advertencias de tamaño. Revisión visual pendiente:
+el control de aplicaciones detuvo la sesión al no poder verificar la URL de Chrome.
+Se mantiene como próximo bloque funcional el seguimiento por tema y los filtros de actividades.
+
 15 de octubre, estado vigente: cierre, cancelación y reactivación de actividades implementados.
 Los estados se muestran por rol; nuevas entregas bloqueadas tras cierre sin perder resultados.
 Migración 0014 aplicada. 18 pruebas backend/PostgreSQL y 16 Angular en Docker aprobadas;

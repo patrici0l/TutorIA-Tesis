@@ -1,3 +1,5 @@
+@use '../../../../compartido/estilos/workspace' as workspace;
+
 .eyebrow {
   color: var(--blue-dark);
   font-size: 11px;
@@ -19,7 +21,7 @@ h1 {
 }
 .actions {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
 }
 .actions a,
@@ -99,8 +101,56 @@ button:disabled {
 }
 .study-card {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
   gap: 32px;
+}
+@include workspace.readable-page;
+.assignment-shortcut {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 28px;
+  margin-bottom: 24px;
+  background: var(--blue-soft);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  text-decoration: none;
+}
+.assignment-shortcut > div {
+  min-width: 0;
+}
+.assignment-shortcut h2 {
+  margin: 8px 0;
+}
+.assignment-shortcut p {
+  margin: 0;
+  color: var(--muted);
+}
+.shortcut-action {
+  flex-shrink: 0;
+  font-size: 0.875rem;
+  font-weight: 650;
+}
+.assignment-shortcut:hover {
+  border-color: var(--blue);
+}
+.study-card p,
+.actions p {
+  font-size: 0.9375rem;
+  line-height: 1.65;
+}
+@media (max-width: 760px) {
+  .assignment-shortcut {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+    padding: 22px;
+  }
+  .actions a,
+  .study-card {
+    padding: 22px;
+  }
 }
 .study-card aside {
   border-left: 1px solid var(--border);
