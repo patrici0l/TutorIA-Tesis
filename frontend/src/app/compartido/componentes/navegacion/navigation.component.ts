@@ -43,6 +43,12 @@ export class NavigationComponent {
       ];
     const links = [
       {
+        path: '/actividades',
+        label: 'Actividades',
+        description: 'Asignaciones y resultados de prácticas',
+        icon: 'document',
+      },
+      {
         path: '/inicio',
         label: 'Inicio',
         description: 'Tu espacio de aprendizaje, de un vistazo',

@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 export interface PracticeResult {
+  assignment_id?: string | null;
   id: string;
   version: string;
   answers: number[];
@@ -20,10 +21,11 @@ export const PRACTICE_VERSION = 'derivadas-v1';
 @Injectable({ providedIn: 'root' })
 export class PracticeService {
   private readonly http = inject(HttpClient);
-  save(id: string, answers: number[]) {
+  save(id: string, answers: number[], version = PRACTICE_VERSION, assignment_id?: string) {
     return this.http.post<PracticeResult>('/api/v1/practice/attempts', {
       id,
-      version: PRACTICE_VERSION,
+      version,
+      assignment_id: assignment_id ?? null,
       answers,
     });
   }

@@ -1,7 +1,7 @@
 from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import insert
 
-from app.modulos.estudiantes.models import PracticeAttempt
+from app.modulos.estudiantes.models import PracticeAssignment, PracticeAttempt
 
 
 class PracticeRepository:
@@ -22,6 +22,13 @@ class PracticeRepository:
         # Un reintento idéntico devuelve el original; nunca modifica respuestas previas.
         self.db.commit()
         return row
+
+    def assignment(self, owner, identifier):
+        return self.db.scalar(
+            select(PracticeAssignment).where(
+                PracticeAssignment.id == identifier, PracticeAssignment.student_id == owner
+            )
+        )
 
     def page(self, owner, offset, limit):
         query = select(PracticeAttempt).where(PracticeAttempt.owner_id == owner)

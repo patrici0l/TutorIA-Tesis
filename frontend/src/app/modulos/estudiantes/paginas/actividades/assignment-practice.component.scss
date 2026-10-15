@@ -1,0 +1,22 @@
+:host {
+  display: block;
+  max-width: 850px;
+  margin: auto;
+}
+header {
+  padding: 24px;
+  background: var(--blue-soft);
+  border-radius: 14px;
+  margin: 20px 0;
+}
+p {
+  white-space: pre-wrap;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+h1 {
+  overflow-wrap: anywhere;
+}
+a {
+  color: var(--blue-dark);
+}

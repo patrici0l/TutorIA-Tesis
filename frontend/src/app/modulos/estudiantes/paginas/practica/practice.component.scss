@@ -6,6 +6,13 @@
 .history {
   margin-top: 32px;
 }
+.panel + .panel {
+  margin-top: 24px;
+}
+button[aria-pressed='true'] {
+  background: var(--blue-soft);
+  border-width: 2px;
+}
 .review-button {
   display: block;
   margin-top: 10px;

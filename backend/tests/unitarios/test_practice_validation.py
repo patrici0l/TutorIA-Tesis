@@ -11,7 +11,7 @@ from pydantic import ValidationError
 
 from app.main import create_app
 from app.modulos.estudiantes.router import get_practice_service
-from app.modulos.estudiantes.schemas import CORRECT_OPTIONS, PracticeSubmission
+from app.modulos.estudiantes.schemas import ANSWER_KEYS, CORRECT_OPTIONS, PracticeSubmission
 from app.modulos.estudiantes.service import PracticeService
 from app.nucleo.dependencias.auth import get_current_user
 
@@ -57,6 +57,21 @@ def test_bank_version_and_answer_key_match_frontend():
     )
     service = source.parent.parent / "servicios/practice.service.ts"
     assert "PRACTICE_VERSION = 'derivadas-v1'" in service.read_text(encoding="utf-8")
+    rules = source.with_name("practice-rules.ts").read_text(encoding="utf-8")
+    assert tuple(map(int, re.findall(r"correctOption:\s*(\d+)", rules))) == ANSWER_KEYS["reglas-v1"]
+
+
+def test_rules_score_and_cross_version_conflict():
+    repo = Mock()
+    submission = PracticeSubmission(id=uuid4(), version="reglas-v1", answers=[1, 0, 2])
+    repo.save.return_value = SimpleNamespace(version=submission.version, answers=submission.answers)
+    owner = uuid4()
+    PracticeService(repo).save(owner, submission)
+    repo.save.assert_called_once_with(owner, submission, 3)
+    repo.save.return_value.version = "derivadas-v1"
+    with pytest.raises(HTTPException) as error:
+        PracticeService(repo).save(owner, submission)
+    assert error.value.status_code == 409
 
 
 def test_api_requires_session_and_client_header_and_limits_body():

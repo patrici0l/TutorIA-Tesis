@@ -7,8 +7,9 @@ Están implementados la base Angular → FastAPI → PostgreSQL/pgvector y el ac
 ## Ejecutar en Windows con Docker
 
 La [práctica estudiantil](documentacion/api/practica.md) en `/practica` permite resolver
-tres ejercicios de derivadas, guardar el resultado y consultar el historial privado.
+dos bloques de tres ejercicios de derivadas, guardar el resultado y consultar el historial privado.
 El servidor calcula los aciertos; no consume IA ni constituye una nota institucional.
+En /actividades, el docente puede [asignar un bloque y consultar sus resultados](documentacion/api/asignaciones.md). El alumno ve sus actividades y resuelve el banco asignado.
 
 Para recorrer la demostración: [guía docente del MVP](documentacion/manuales/guia_docente_mvp.md).
 Para operar servicios, consultar la DB y respaldar/verificar datos:

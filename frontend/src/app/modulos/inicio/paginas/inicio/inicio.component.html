@@ -9,13 +9,21 @@
     }}
   </p>
 </section>
+<p>
+  <a routerLink="/actividades"
+    >{{
+      student() ? 'Ver mis actividades asignadas' : 'Asignar prácticas y consultar resultados'
+    }}
+    →</a
+  >
+</p>
 @if (student()) {
   <section class="study-card" aria-labelledby="study-title">
     <div>
       <p class="eyebrow">CÁLCULO DIFERENCIAL · PRÁCTICA INICIAL</p>
       <h2 id="study-title">Pon a prueba lo que sabes</h2>
       <p>
-        Tres preguntas sobre la regla de la potencia, la suma y la pendiente. Recibirás una
+        Dos bloques de tres preguntas sobre fundamentos y reglas de derivación. Recibirás una
         explicación después de cada respuesta.
       </p>
       <a class="primary" routerLink="/practica"

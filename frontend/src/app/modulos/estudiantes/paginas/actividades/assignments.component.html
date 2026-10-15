@@ -1,0 +1,110 @@
+<a routerLink="/inicio">← Volver al inicio</a>
+<h1>{{ teacher() ? 'Actividades asignadas' : 'Mis actividades' }}</h1>
+<p>
+  {{
+    teacher()
+      ? 'Asigna una práctica y consulta los resultados de esa actividad.'
+      : 'Aquí están las prácticas que tu profesor te ha asignado.'
+  }}
+</p>
+@if (teacher()) {
+  <form (ngSubmit)="create()" class="panel">
+    <h2>Asignar una práctica</h2>
+    <p>
+      El estudiante debe haber iniciado sesión antes. En la demostración usa
+      estudiante.demo&#64;example.org.
+    </p>
+    <fieldset [disabled]="saving() || loading()">
+      <label>Título <input name="title" [(ngModel)]="title" required maxlength="120" /></label>
+      <label
+        >Correo de la cuenta del estudiante
+        <input name="email" type="email" [(ngModel)]="email" required maxlength="254"
+      /></label>
+      <label
+        >Bloque
+        <select name="version" [(ngModel)]="version">
+          @for (bank of banks; track bank.version) {
+            <option [value]="bank.version">{{ bank.title }}</option>
+          }
+        </select></label
+      >
+      <label
+        >Instrucciones (opcional)
+        <textarea
+          name="instructions"
+          [(ngModel)]="instructions"
+          maxlength="2000"
+          rows="3"
+        ></textarea>
+      </label>
+      <button type="submit">{{ saving() ? 'Asignando…' : 'Asignar actividad' }}</button>
+    </fieldset>
+    @if (formError()) {
+      <p role="alert">{{ formError() }}</p>
+    }
+    @if (success()) {
+      <p role="status">{{ success() }}</p>
+    }
+  </form>
+}
+<button type="button" (click)="load()" [disabled]="loading() || saving()">
+  {{ loading() ? 'Cargando…' : 'Actualizar actividades' }}
+</button>
+@if (error()) {
+  <p role="alert">{{ error() }}</p>
+}
+@if (page(); as results) {
+  <p>
+    {{ results.total }} actividades ·
+    {{
+      teacher()
+        ? 'Los resultados incluyen solo los intentos vinculados a cada asignación.'
+        : 'Al guardar, compartirás el resultado de esta actividad con el profesor que la asignó.'
+    }}
+  </p>
+  @for (item of results.items; track item.id) {
+    <article class="panel">
+      <span class="badge">{{ item.attempts ? 'Con resultados' : 'Pendiente' }}</span>
+      <h2>{{ item.title }}</h2>
+      <p>{{ bankTitle(item.version) }} · {{ item.created_at | date: 'dd/MM/yyyy' }}</p>
+      @if (teacher()) {
+        <p>Estudiante: {{ item.student_email }}</p>
+      }
+      <p class="instructions">{{ item.instructions }}</p>
+      <p>
+        Intentos guardados: {{ item.attempts }} · Mejor resultado:
+        {{ item.best_score === null ? 'Sin resultados' : item.best_score + ' de 3' }}
+      </p>
+      @if (!teacher()) {
+        <a [routerLink]="['/actividades', item.id]"
+          >{{ item.attempts ? 'Volver a practicar' : 'Resolver actividad' }} →</a
+        >
+      }
+    </article>
+  } @empty {
+    <p class="panel">
+      {{
+        teacher()
+          ? 'Todavía no has asignado actividades.'
+          : 'Todavía no tienes actividades asignadas. Puedes continuar con la práctica libre.'
+      }}
+      <a routerLink="/practica">Ir a practicar</a>
+    </p>
+  }
+  @if (results.total > results.limit) {
+    <div class="buttons">
+      <button
+        (click)="load(results.offset - results.limit)"
+        [disabled]="loading() || saving() || results.offset === 0"
+      >
+        Más recientes
+      </button>
+      <button
+        (click)="load(results.offset + results.limit)"
+        [disabled]="loading() || saving() || results.offset + results.limit >= results.total"
+      >
+        Anteriores
+      </button>
+    </div>
+  }
+}

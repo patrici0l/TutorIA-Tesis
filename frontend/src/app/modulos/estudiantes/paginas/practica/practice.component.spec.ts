@@ -6,6 +6,65 @@ import { PracticeComponent } from './practice.component';
 
 describe('Práctica del estudiante', () => {
   const service = { progress: vi.fn(), save: vi.fn() };
+  it('fija el bloque asignado y envía la actividad al guardar', async () => {
+    const f = TestBed.createComponent(PracticeComponent);
+    f.componentRef.setInput('assignment', { id: 'assigned', version: 'reglas-v1' });
+    await f.whenStable();
+    const c = f.componentInstance;
+    c.selectBank('derivadas-v1');
+    expect(c.version()).toBe('reglas-v1');
+    expect(f.nativeElement.querySelector('#bank-title')).toBeNull();
+    for (const answer of [1, 0, 2]) {
+      c.choose(answer);
+      c.check();
+      c.next();
+    }
+    service.save.mockReturnValue(of({ score: 3 }));
+    c.saveResult();
+    expect(service.save.mock.calls[0].slice(1)).toEqual([[1, 0, 2], 'reglas-v1', 'assigned']);
+  });
+  it('cambia de bloque antes de responder, guarda su versión y revisa el banco original', async () => {
+    const fixture = TestBed.createComponent(PracticeComponent);
+    await fixture.whenStable();
+    const c = fixture.componentInstance;
+    c.selectBank('reglas-v1');
+    c.choose(1);
+    c.selectBank('derivadas-v1');
+    expect(c.version()).toBe('reglas-v1');
+    c.check();
+    c.next();
+    for (const answer of [0, 2]) {
+      c.choose(answer);
+      c.check();
+      c.next();
+    }
+    expect(c.score()).toBe(3);
+    service.save.mockReturnValue(
+      of({
+        id: 'rules',
+        version: 'reglas-v1',
+        answers: [1, 0, 2],
+        score: 3,
+        created_at: '2026-10-14T12:00:00Z',
+      }),
+    );
+    c.saveResult();
+    expect(service.save.mock.calls[0][2]).toBe('reglas-v1');
+    c.reviewing.set({
+      id: 'old',
+      version: 'derivadas-v1',
+      answers: [0, 2, 3],
+      score: 3,
+      created_at: '2026-10-13T12:00:00Z',
+    });
+    await fixture.whenStable();
+    const review = fixture.nativeElement.querySelector('#attempt-review');
+    expect(review.textContent).toContain('Regla de la potencia');
+    expect(review.textContent).not.toContain('Regla de la cadena');
+    c.restart();
+    c.selectBank('derivadas-v1');
+    expect(c.questions[0].topic).toBe('Regla de la potencia');
+  });
   beforeEach(async () => {
     service.progress
       .mockReset()
@@ -24,8 +83,13 @@ describe('Práctica del estudiante', () => {
     component.next();
     expect(component.index()).toBe(0);
     expect(component.answers()).toEqual([]);
-    expect(fixture.nativeElement.querySelector('.buttons button').disabled).toBe(true);
-    fixture.nativeElement.querySelector('.secondary').click();
+    expect(
+      fixture.nativeElement.querySelector('section[aria-labelledby=question-title] .buttons button')
+        .disabled,
+    ).toBe(true);
+    fixture.nativeElement
+      .querySelector('section[aria-labelledby=question-title] .secondary')
+      .click();
     await fixture.whenStable();
     expect(fixture.nativeElement.querySelector('.hint').textContent).toContain('exponente');
   });
@@ -35,7 +99,9 @@ describe('Práctica del estudiante', () => {
     const radio = fixture.nativeElement.querySelectorAll('input')[1] as HTMLInputElement;
     radio.click();
     await fixture.whenStable();
-    fixture.nativeElement.querySelector('.buttons button').click();
+    fixture.nativeElement
+      .querySelector('section[aria-labelledby=question-title] .buttons button')
+      .click();
     await fixture.whenStable();
     expect(fixture.nativeElement.querySelector('.feedback').textContent).toContain(
       'falta multiplicar por 3',
@@ -59,7 +125,9 @@ describe('Práctica del estudiante', () => {
     expect(component.score()).toBe(2);
     expect(fixture.nativeElement.textContent).toContain('2 de 3');
     expect(fixture.nativeElement.textContent).toContain('Para repasar');
-    fixture.nativeElement.querySelector('button.secondary').click();
+    fixture.nativeElement
+      .querySelector('section[aria-labelledby=result-title] button.secondary')
+      .click();
     await fixture.whenStable();
     expect(component.answers()).toEqual([]);
     expect(component.complete()).toBe(false);

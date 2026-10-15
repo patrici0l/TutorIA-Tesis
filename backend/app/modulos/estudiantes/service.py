@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 
-from app.modulos.estudiantes.schemas import CORRECT_OPTIONS, PracticeProgress
+from app.modulos.estudiantes.schemas import ANSWER_KEYS, PracticeProgress
 
 
 class PracticeService:
@@ -8,9 +8,21 @@ class PracticeService:
         self.repository = repository
 
     def save(self, owner, submission):
-        score = sum(a == b for a, b in zip(submission.answers, CORRECT_OPTIONS, strict=True))
+        if submission.assignment_id is not None:
+            assignment = self.repository.assignment(owner, submission.assignment_id)
+            if assignment is None:
+                raise HTTPException(404, "Actividad no disponible.")
+            if assignment.version != submission.version:
+                raise HTTPException(409, "El bloque no corresponde a esta actividad.")
+        score = sum(
+            a == b for a, b in zip(submission.answers, ANSWER_KEYS[submission.version], strict=True)
+        )
         row = self.repository.save(owner, submission, score)
-        if row.version != submission.version or row.answers != submission.answers:
+        if (
+            row.version != submission.version
+            or row.answers != submission.answers
+            or getattr(row, "assignment_id", None) != submission.assignment_id
+        ):
             raise HTTPException(409, "Este intento ya se guardó con otras respuestas.")
         return row
 

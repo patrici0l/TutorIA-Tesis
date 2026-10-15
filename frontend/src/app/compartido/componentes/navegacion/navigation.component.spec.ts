@@ -59,6 +59,7 @@ describe('Navegación superior', () => {
     user.set({ rol: 'student' });
     await fixture.whenStable();
     expect(fixture.componentInstance.items().map((item) => item.path)).toEqual([
+      '/actividades',
       '/inicio',
       '/practica',
     ]);

@@ -51,3 +51,9 @@ def test_private_durable_idempotent_practice_history(trace_database):
             == 200
         )
         assert client.get("/api/v1/practice/attempts").json()["total"] == 1
+        rules = {"id": str(uuid4()), "version": "reglas-v1", "answers": [1, 0, 2]}
+        result = client.post("/api/v1/practice/attempts", json=rules, headers=headers)
+        assert result.status_code == 200 and result.json()["score"] == 3
+        db.expire_all()
+        history = client.get("/api/v1/practice/attempts").json()
+        assert {item["version"] for item in history["items"]} == {"derivadas-v1", "reglas-v1"}

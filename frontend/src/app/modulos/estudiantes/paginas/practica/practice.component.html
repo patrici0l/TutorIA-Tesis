@@ -4,6 +4,30 @@
   <h1>Practica las derivadas</h1>
   <p>Lee, elige y revisa la explicación. Puedes usar una pista antes de responder.</p>
 </header>
+@if (!assignment) {
+  <section class="panel" aria-labelledby="bank-title">
+    <h2 id="bank-title">Elige una práctica</h2>
+    <div class="buttons">
+      @for (bank of banks; track bank.version) {
+        <button
+          type="button"
+          class="secondary"
+          [attr.aria-pressed]="version() === bank.version"
+          [disabled]="saving() || selected() !== null || answers().length > 0"
+          (click)="selectBank(bank.version)"
+        >
+          {{ bank.title }}
+        </button>
+      }
+    </div>
+    <p>
+      Práctica actual: <strong>{{ bankTitle(version()) }}</strong> · 3 ejercicios.
+    </p>
+    @if (!complete() && (selected() !== null || answers().length > 0)) {
+      <p>Termina esta práctica para cambiar de bloque sin perder tus respuestas.</p>
+    }
+  </section>
+}
 @if (complete()) {
   <section class="panel" aria-labelledby="result-title">
     <p class="eyebrow">PRÁCTICA COMPLETADA</p>
@@ -108,7 +132,7 @@
 <section class="panel history" aria-labelledby="history-title" [attr.aria-busy]="historyLoading()">
   <h2 id="history-title">Mi progreso</h2>
   <p>
-    Resultados guardados de esta práctica. Repetirla ayuda a repasar; estos aciertos no certifican
+    Resultados guardados de ambos bloques. Repetirlos ayuda a repasar; estos aciertos no certifican
     dominio del tema.
   </p>
   <button type="button" class="secondary" (click)="loadHistory()" [disabled]="historyLoading()">
@@ -121,12 +145,16 @@
   }
   @if (history(); as page) {
     <p>
-      Intentos guardados: {{ page.total }} · Mejor resultado:
+      Intentos guardados: {{ page.total }} · Mayor número de aciertos entre ambos bloques:
       {{ page.best_score === null ? 'Sin resultados' : page.best_score + ' de 3' }}
     </p>
     <ol>
       @for (attempt of page.items; track attempt.id) {
         <li>
+          <p>{{ bankTitle(attempt.version) }}</p>
+          @if (attempt.assignment_id) {
+            <a [routerLink]="['/actividades', attempt.assignment_id]">Ver actividad asignada</a>
+          }
           <strong>{{ attempt.score }} de 3 aciertos</strong> ·
           {{ attempt.created_at | date: 'dd/MM/yyyy HH:mm' }}
           <button
@@ -172,6 +200,7 @@
   <section class="panel history" id="attempt-review" aria-labelledby="review-title">
     <p class="eyebrow">INTENTO GUARDADO · {{ attempt.created_at | date: 'dd/MM/yyyy HH:mm' }}</p>
     <h2 id="review-title">Revisa tus respuestas</h2>
+    <p>{{ bankTitle(attempt.version) }}</p>
     <p>Resultado guardado: {{ attempt.score }} de {{ attempt.answers.length }} aciertos.</p>
     @if (reviewAvailable()) {
       @if (reviewTopics().length) {
@@ -180,7 +209,7 @@
         <p>Respondiste correctamente estos ejercicios. Repasa el procedimiento de cada uno.</p>
       }
       <ol class="review-list">
-        @for (item of questions; track $index) {
+        @for (item of reviewBank()!.questions; track $index) {
           <li>
             <h3>{{ item.topic }}</h3>
             <p>{{ item.statement }}</p>

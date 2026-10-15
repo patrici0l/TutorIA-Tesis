@@ -1,0 +1,22 @@
+<a routerLink="/actividades">← Volver a mis actividades</a>
+@if (loading()) {
+  <p role="status">Cargando actividad…</p>
+} @else if (assignment(); as item) {
+  @if (auth.user()?.rol === 'student') {
+    <header>
+      <h1>{{ item.title }}</h1>
+      <p>{{ item.instructions }}</p>
+      <p>
+        Al guardar este intento, el profesor que asignó la actividad podrá consultar el número de
+        intentos y el mejor resultado.
+      </p>
+    </header>
+    @for (entry of [item]; track entry.id) {
+      <app-practice [assignment]="entry" />
+    }
+  } @else {
+    <p>Entra con la cuenta del estudiante para resolver la actividad.</p>
+  }
+} @else {
+  <p role="alert">La actividad no está disponible. Regresa al listado y vuelve a intentarlo.</p>
+}

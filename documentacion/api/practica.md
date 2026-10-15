@@ -1,6 +1,6 @@
 # Práctica introductoria e historial privado
 
-12 de octubre de 2026. `/practica` conserva tres ejercicios fijos de derivadas con
+Actualizado el 14 de octubre de 2026. `/practica` conserva dos bloques de tres ejercicios fijos de derivadas con
 feedback inmediato en Angular. Al completar la actividad, **Guardar resultado** envía
 las respuestas al backend, que calcula los aciertos y guarda el intento en PostgreSQL.
 No consume IA ni representa una calificación institucional.
@@ -8,10 +8,10 @@ No consume IA ni representa una calificación institucional.
 ## Contrato
 
 - `POST /api/v1/practice/attempts`: sesión activa y cabecera `X-TutorIA-Client: web`.
-  Recibe `id` UUID, `version: derivadas-v1` y `answers`, exactamente tres enteros 0…3.
+  Recibe `id` UUID, `version: derivadas-v1 | reglas-v1` y `answers`, exactamente tres enteros 0…3.
   No admite `score`, `owner_id` ni campos adicionales. Respuesta 200, tanto al crear
   como al repetir el mismo intento sin cambios.
-- El backend usa la clave versionada `(0, 2, 3)`. La prueba local compara esta clave
+- El backend usa las claves versionadas derivadas-v1 `(0, 2, 3)` y reglas-v1 `(1, 0, 2)`. La prueba local compara esta clave
   con el banco Angular; cambiar el banco requiere revisar la versión y el contrato.
 - `GET /api/v1/practice/attempts?offset=0&limit=10`: devuelve `items`, `total`,
   `best_score`, `offset`, `limit`. Límite 1…20, desplazamiento 0…100000.
@@ -55,4 +55,14 @@ Ruff limpio; builds backend/frontend realizados. Advertencia Starlette/HTTPX pre
 
 Verificación final: frontend/backend/PostgreSQL saludables y Alembic en 0012 (head). En navegador se completó la práctica, se guardó un intento ficticio de 3/3 y se confirmó su persistencia al recargar con la cuenta Docente Demostración. Ese registro permanece en la DB local. Guía: 162 clases y 270 métodos, comprobaciones DOM aprobadas; sin revisión visual del HTML privado.
 
-El historial permite revisar respuestas guardadas y su retroalimentación, con temas por reforzar. Se interpreta únicamente derivadas-v1 y alternativas válidas. La revisión no altera el ejercicio en curso. Verificado con 9 pruebas Angular del módulo (13 de octubre de 2026).
+El historial permite revisar respuestas guardadas y su retroalimentación, con temas por reforzar. Se interpreta derivadas-v1 y reglas-v1 y alternativas válidas. La revisión no altera el ejercicio en curso. Verificado con 9 pruebas Angular del módulo (13 de octubre de 2026).
+
+El selector ofrece fundamentos y cadena/producto/cociente. Se bloquea al seleccionar una respuesta; al finalizar, guardar y pulsar Volver a practicar permite cambiar de bloque. El historial identifica cada banco y su revisión conserva las preguntas originales. best_score es el máximo de aciertos entre ambos bloques (todos de tres preguntas), no una comparación de dificultad ni dominio. No se modifican intentos anteriores ni el esquema de DB.
+
+## Vinculación a actividades (migración 0013)
+
+El POST admite además `assignment_id` opcional y nullable; la respuesta lo incluye.
+Si está presente, exige destinatario y banco correctos. Reintentar el mismo ID con otra
+asignación (o convertirlo en libre) responde 409. La migración 0013 añade esta vinculación;
+los intentos anteriores conservan valor null. El docente ve solo el agregado de sus
+actividades, nunca el historial libre. Ver [contrato de asignaciones](asignaciones.md).

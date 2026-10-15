@@ -780,3 +780,41 @@ feat: permite elegir perfiles de demostracion en el acceso.
 Rama feature/resource-preparation. CAS real y cuentas individuales siguen pendientes.
 
 Cierre: imágenes construidas y frontend/backend/PostgreSQL saludables. Ruff aprobado tras ordenar imports del test. Sin revisión visual en navegador en este bloque.
+
+## 14 de octubre — Segundo banco de prácticas
+
+Implementados dos bloques de tres ejercicios: fundamentos (derivadas-v1) y cadena,
+producto/cociente (reglas-v1). Selector previo a responder; guarda versión con UUID nuevo
+tras reiniciar. Corrección backend según clave versionada; historial etiqueta el banco y
+revisión usa preguntas originales aunque esté seleccionado otro bloque. Sin migración.
+Mayor número de aciertos global entre ambos bloques no representa dominio ni dificultad.
+14 pruebas locales backend aprobadas; 10 Angular; Docker/PostgreSQL 14 aprobadas y 1 omitida
+(concordancia Angular ya verificada localmente). Ruff limpio y build Docker aprobado.
+Servicios desplegados saludables. Sin revisión visual en navegador en este bloque.
+Guía privada regenerada: 309 archivos, 162 clases, 272 operaciones. Sin IA ni conexión UPS.
+Rama feature/resource-preparation. Pendiente commit humano de banco, corrección, interfaz,
+pruebas y docs: feat: amplia practicas con cadena producto y cociente.
+Siguiente: asignaciones del docente al estudiante y seguimiento por actividad.
+
+## 14 de octubre — Asignaciones y seguimiento docente
+
+Implementadas actividades de banco fijo: el docente asigna título, bloque e instrucciones
+al correo exacto de una cuenta student activa; el estudiante resuelve y guarda un intento
+vinculado. El docente ve cantidad de intentos y mejor resultado de sus asignaciones.
+Los intentos libres permanecen privados. API con autorización por propietario, reintentos
+idempotentes y límite de cuerpo; migración 0013 valida alumno/banco mediante FK compuesta.
+
+Validación: 24 pruebas Angular aprobadas; 15 backend/PostgreSQL aprobadas y una omitida
+(concordancia del banco, verificada localmente entre las 14 pruebas unitarias aprobadas).
+Ruff y construcción Docker correctos. Migración aplicada y servicios saludables.
+Recorrido real de navegador con cuentas ficticias: asignar reglas-v1, resolver tres preguntas,
+guardar 3/3 y volver como docente; muestra un intento y mejor resultado 3/3.
+La actividad de demostración permanece en la DB local. Sin llamadas IA ni conexión UPS.
+Guía privada regenerada: 324 archivos, 171 clases y 292 operaciones; permanece ignorada.
+
+Rama feature/resource-preparation. Pendiente revisión y commit humano del banco ampliado,
+asignaciones, migración, interfaz, pruebas y documentación. Mensaje sugerido:
+feat: amplia bancos y permite asignar practicas con seguimiento docente.
+Contrato y recorrido: documentacion/api/asignaciones.md. Próximo bloque sugerido:
+gestión del ciclo de actividad (cancelación/cierre) y mejora del seguimiento estudiantil.
+Grupos, vencimientos, cuentas individuales verificadas y evaluación académica pendientes.

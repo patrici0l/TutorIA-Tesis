@@ -1,4 +1,5 @@
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, Input, OnInit, signal } from '@angular/core';
+import { Assignment } from '../../servicios/assignment.service';
 import { DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -8,7 +9,7 @@ import {
   PRACTICE_VERSION,
 } from '../../servicios/practice.service';
 import { RouterLink } from '@angular/router';
-import { PRACTICE_QUESTIONS } from '../../modelos/practice-question';
+import { PRACTICE_BANKS } from '../../modelos/practice-bank';
 
 @Component({
   selector: 'app-practice',
@@ -17,6 +18,7 @@ import { PRACTICE_QUESTIONS } from '../../modelos/practice-question';
   styleUrl: './practice.component.scss',
 })
 export class PracticeComponent implements OnInit {
+  @Input() assignment: Assignment | null = null;
   private readonly service = inject(PracticeService);
   private readonly destroyRef = inject(DestroyRef);
   private attemptId = crypto.randomUUID();
@@ -27,26 +29,50 @@ export class PracticeComponent implements OnInit {
   readonly historyError = signal(false);
   readonly history = signal<PracticeProgress | null>(null);
   readonly reviewing = signal<PracticeResult | null>(null);
+  readonly banks = PRACTICE_BANKS;
+  readonly version = signal(PRACTICE_VERSION);
+  readonly reviewBank = computed(() =>
+    this.banks.find((bank) => bank.version === this.reviewing()?.version),
+  );
+  get questions() {
+    return this.banks.find((bank) => bank.version === this.version())!.questions;
+  }
+  bankTitle(version: string) {
+    return this.banks.find((bank) => bank.version === version)?.title ?? 'Práctica anterior';
+  }
+  selectBank(version: string) {
+    if (
+      this.assignment ||
+      this.saving() ||
+      this.selected() !== null ||
+      this.answers().length ||
+      !this.banks.some((bank) => bank.version === version)
+    )
+      return;
+    this.restart();
+    this.version.set(version);
+  }
   readonly reviewAvailable = computed(() => {
     const attempt = this.reviewing();
     return (
       !!attempt &&
-      attempt.version === PRACTICE_VERSION &&
-      attempt.answers.length === this.questions.length &&
+      !!this.reviewBank() &&
+      attempt.answers.length === this.reviewBank()!.questions.length &&
       attempt.answers.every(
         (answer, i) =>
-          Number.isInteger(answer) && answer >= 0 && answer < this.questions[i].options.length,
+          Number.isInteger(answer) &&
+          answer >= 0 &&
+          answer < this.reviewBank()!.questions[i].options.length,
       )
     );
   });
   readonly reviewTopics = computed(() =>
     this.reviewAvailable()
-      ? this.questions
-          .filter((item, i) => this.reviewing()!.answers[i] !== item.correctOption)
+      ? this.reviewBank()!
+          .questions.filter((item, i) => this.reviewing()!.answers[i] !== item.correctOption)
           .map((item) => item.topic)
       : [],
   );
-  readonly questions = PRACTICE_QUESTIONS;
   readonly index = signal(0);
   readonly selected = signal<number | null>(null);
   readonly submitted = signal(false);
@@ -60,6 +86,7 @@ export class PracticeComponent implements OnInit {
   );
 
   ngOnInit() {
+    if (this.assignment) this.version.set(this.assignment.version);
     this.loadHistory();
   }
 
@@ -87,7 +114,7 @@ export class PracticeComponent implements OnInit {
     this.saving.set(true);
     this.saveError.set('');
     this.service
-      .save(this.attemptId, this.answers())
+      .save(this.attemptId, this.answers(), this.version(), this.assignment?.id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (result) => {
