@@ -1,5 +1,70 @@
 # Continuidad de TutorIA-Lucero
 
+## 24 de octubre — generación, asignación y mensajes
+
+Solicitud del autor: corregir recursos de integrales y su asignación; limpiar avisos de
+prueba y mostrar disponibilidad, con ajustes básicos de interfaz. Rama
+`feature/resource-preparation`; cambios anteriores de demo remota conservados.
+
+Causas comprobadas: el quiz de integrales terminó en `llm_incomplete` con máximo de
+512 tokens y 508 tokens de salida; Gemini usa ese código para `MAX_TOKENS`. Además,
+la asignación solo aceptaba bancos fijos de derivadas y no tenía vínculo con recursos.
+
+Implementado: migración 0015 con resource_id nullable y FK/check; asignación de recursos
+propios succeeded como material de estudio con fuentes/soluciones, sin calificación;
+se mantienen los bancos autocorregidos. El detalle del alumno no expone prompts,
+perfiles, consumo ni historial privado. Preparar → generar → asignar conectado por enlace.
+Avisos de demostración/cuenta de prueba retirados; confirmaciones y errores conservados.
+Personalización opcional plegable y pasos visibles. Cupo diario compartido con solicitudes
+restantes, porcentaje consumido, reinicio y máximo de salida; actualización tras generar.
+No inventa tokens restantes del proveedor ni porcentaje de una generación en curso.
+Rechazos previos de cupo/configuración permiten reintentar la misma preparación.
+
+Configuración: máximo de salida predeterminado 4096 (dentro del rango existente) y ajuste
+puntual de esa variable en .env local; cupo 5/día y timeout 30 s conservados. No se
+imprime ni versiona .env. Históricos guardan sus límites originales.
+
+Pruebas finales: 97 Angular y 91 backend/PostgreSQL aprobadas; una omitida en contenedor
+por fuentes Angular ausentes, comprobada localmente (14/14). Build y Ruff correctos.
+
+Prueba real local por HTTP: mismo quiz de integrales de cinco preguntas generado,
+validado y persistido; 1789 tokens entrada, 637 salida, total 2426. Asignado y abierto
+con sesión estudiante, contenido/fuentes iguales; CSRF, permisos, idempotencia y logout
+comprobados. Cupo real pasó de 4 a 3 restantes de 5 (una nueva llamada Gemini).
+Migración aplicada y servicios reconstruidos/actualizados sin borrar datos.
+
+Limitaciones: material generado compartido para consulta, sin evaluación dinámica ni
+seguimiento de lectura; saldo del proveedor no disponible. Navegador verificó login,
+inicio y recursos sin el banner; después Work deshabilitó el uso del navegador y no
+se pudo cerrar revisión visual del último ajuste. Ver evidencia y comandos en
+pruebas/revision_integrales_asignaciones.md. Pendiente revisión y commit humano;
+no se ejecutó git commit. Alcance sugerido: generación/cupo, asignación de recursos,
+interfaz, migración y pruebas/documentación de este bloque. Mensaje sugerido:
+`fix: corrige generacion y asignacion de recursos y muestra cupo disponible`.
+
+## 23 de octubre — demo pública sin correos
+
+Instrucción vigente del autor: cualquiera con el enlace puede entrar por los botones
+Profesor/Estudiante, sin correo ni PIN. Reemplaza la propuesta anterior protegida por
+correo. Scripts de inicio y cierre ajustados; enlace actual guardado únicamente en
+secretos_locales/demo-remota/enlace.txt. Manual y decisión SSO actualizados.
+
+Verificación real: túnel HTTPS público creado; salud, login de ambos roles, sesiones,
+CSRF (rechazo sin cabecera), logout y rechazo tras logout comprobados por HTTP remoto.
+Navegador: pantalla de acceso sin correo y botón Profesor condujo al espacio docente;
+recarga en Documentos conservó sesión. Cierre real del túnel y restauración del login
+local comprobados. Se vuelve a iniciar para entregar enlace activo al autor.
+Las 58 pruebas backend del bloque previo se conservan; no se modificó el backend en
+este ajuste de scripts y documentación. Sin nuevas llamadas IA ni cambios de límites.
+
+Limitaciones: equipo encendido/sin suspensión, dominio temporal, perfiles y datos
+compartidos por rol, cualquier visitante puede usar las funciones de ambos perfiles.
+No se habilita CAS ni cuentas institucionales; no equivale a evaluación académica.
+Rama feature/resource-preparation. Pendiente revisión y commit humano de configuración,
+pruebas, scripts y documentación de demo. Mensaje sugerido:
+`feat: habilita demo publica temporal con perfiles de prueba`.
+Próximo: compartir enlace con profesor y recoger observaciones; cerrar al terminar.
+
 ## 12 de octubre — Explorador privado del código
 
 Creado HTML privado estilo editor en guia_personal/explorador.html: árbol de carpetas,

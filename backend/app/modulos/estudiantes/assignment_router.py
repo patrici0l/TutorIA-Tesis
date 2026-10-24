@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.base_datos.session import get_session
 from app.modulos.estudiantes.assignment_repository import AssignmentRepository
 from app.modulos.estudiantes.assignment_schemas import (
+    AssignmentDetail,
     AssignmentPage,
     AssignmentResult,
     AssignmentStatusChange,
@@ -42,7 +43,7 @@ def page(
     return service.page(user, offset, limit)
 
 
-@router.get("/{identifier}", response_model=AssignmentResult)
+@router.get("/{identifier}", response_model=AssignmentDetail)
 def detail(identifier: UUID, user: CurrentUser, service: Service):
     return service.detail(user, identifier)
 

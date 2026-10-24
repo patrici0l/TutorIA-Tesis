@@ -7,9 +7,22 @@ import {
   GenerationResponse,
 } from '../modelos/preparation.model';
 
+export interface GenerationQuota {
+  enabled: boolean;
+  daily_limit: number;
+  used: number;
+  remaining: number;
+  resets_at: string;
+  max_output_tokens: number;
+  timeout_seconds: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class PreparationService {
   private readonly http = inject(HttpClient);
+  quota() {
+    return this.http.get<GenerationQuota>('/api/v1/content/quota');
+  }
   history(offset = 0) {
     return this.http.get<HistoryPage>('/api/v1/content/history', { params: { offset, limit: 10 } });
   }

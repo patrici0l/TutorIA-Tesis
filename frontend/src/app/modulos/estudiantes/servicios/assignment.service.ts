@@ -1,5 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import {
+  EducationalResource,
+  PreparationResponse,
+} from '../../contenidos/modelos/preparation.model';
 
 export type AssignmentStatus = 'open' | 'closed' | 'cancelled';
 export const ASSIGNMENT_STATUS_LABELS: Record<AssignmentStatus, string> = {
@@ -19,6 +23,9 @@ export interface Assignment {
   status_changed_at: string | null;
   attempts: number;
   best_score: number | null;
+  resource_id?: string | null;
+  resource?: EducationalResource | null;
+  sources?: PreparationResponse['sources'];
 }
 export interface AssignmentPage {
   items: Assignment[];
@@ -27,6 +34,7 @@ export interface AssignmentPage {
   limit: number;
 }
 export interface AssignmentSubmission {
+  resource_id?: string;
   id: string;
   student_email: string;
   version: string;

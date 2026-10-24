@@ -48,6 +48,36 @@ def mock_login(client):
     return start, result
 
 
+def test_remote_demo_https_login_session_csrf_and_logout(auth_app, monkeypatch):
+    client, _, _ = auth_app
+    origin = "https://tutor-demo.trycloudflare.com"
+    for key, value in {
+        "AUTH_DEMO_PUBLIC_ORIGIN": origin,
+        "AUTH_COOKIE_SECURE": "true",
+        "AUTH_CALLBACK_URL": origin + "/api/v1/auth/callback",
+        "AUTH_FRONTEND_URL": origin + "/inicio",
+        "AUTH_LOGIN_URL": origin + "/login",
+    }.items():
+        monkeypatch.setenv(key, value)
+    get_settings.cache_clear()
+    client.base_url = origin
+    start = client.get("/api/v1/auth/login?demo_profile=teacher")
+    assert start.status_code == 302
+    assert start.headers["location"].startswith(origin + "/api/v1/auth/callback?")
+    assert "Secure" in start.headers["set-cookie"]
+    callback = client.get(start.headers["location"])
+    assert callback.status_code == 303
+    assert callback.headers["location"] == origin + "/inicio"
+    cookie = callback.headers.get_list("set-cookie")[-1]
+    assert "Secure" in cookie and "HttpOnly" in cookie and "SameSite=lax" in cookie
+    assert client.get("/api/v1/auth/me").json()["user"]["rol"] == "teacher"
+    assert client.post("/api/v1/auth/logout").status_code == 403
+    assert client.post(
+        "/api/v1/auth/logout", headers={"X-TutorIA-Client": "web"}
+    ).status_code == 204
+    assert client.get("/api/v1/auth/me").status_code == 401
+
+
 def test_demo_profiles_are_distinct_and_callback_cannot_change_role(auth_app):
     client, _, _ = auth_app
     ids = []

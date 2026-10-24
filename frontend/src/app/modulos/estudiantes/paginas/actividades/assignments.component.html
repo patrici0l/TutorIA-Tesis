@@ -13,9 +13,26 @@
 <div class="assignment-layout" [class.with-form]="teacher()">
   @if (teacher()) {
     <form (ngSubmit)="create()" class="panel assignment-form">
-      <h2>Asignar una práctica</h2>
-      <p class="help">Elige un bloque de tres ejercicios para un estudiante.</p>
-      <fieldset [disabled]="saving() || loading() || changing()">
+      <h2>Asignar una actividad</h2>
+      <p class="help">
+        Elige un bloque de ejercicios o
+        <a routerLink="/recursos">abre un recurso generado para asignarlo</a>.
+      </p>
+      @if (resourceLoading()) {
+        <p role="status">Cargando recurso…</p>
+      }
+      @if (resourceError()) {
+        <p role="alert">{{ resourceError() }}</p>
+      }
+      @if (selectedResource(); as detail) {
+        <p>
+          Material de estudio: <strong>{{ detail.resource?.title }}</strong
+          >. Se comparte con sus fuentes y soluciones, sin calificación automática.
+        </p>
+      }
+      <fieldset
+        [disabled]="saving() || loading() || changing() || resourceLoading() || !!resourceError()"
+      >
         <label
           >Título
           <input
@@ -39,13 +56,16 @@
           La cuenta debe haber iniciado sesión antes.
           @if (auth.mode() === 'mock') {
             <span class="demo-email"
-              >Cuenta de prueba: <strong>estudiante.demo&#64;example.org</strong></span
+              >Correo disponible: <strong>estudiante.demo&#64;example.org</strong></span
             >
           }
         </p>
         <label
-          >Bloque de ejercicios
+          >Contenido de la actividad
           <select name="version" [(ngModel)]="version">
+            @if (selectedResource()) {
+              <option value="resource-v1">Recurso generado · material de estudio</option>
+            }
             @for (bank of banks; track bank.version) {
               <option [value]="bank.version">{{ bank.title }}</option>
             }
@@ -105,8 +125,8 @@
       <p class="help scope-note">
         {{
           teacher()
-            ? 'Cada tarjeta reúne los resultados guardados de esa actividad.'
-            : 'Tu profesor podrá ver los intentos y el mejor resultado que guardes en cada actividad.'
+            ? 'Consulta el material asignado o los resultados de cada práctica.'
+            : 'Abre tus materiales de estudio o resuelve las prácticas asignadas.'
         }}
       </p>
       @for (item of results.items; track item.id) {
@@ -115,7 +135,13 @@
             <span class="badge" [class.inactive]="item.status !== 'open'">{{
               statusLabels[item.status]
             }}</span>
-            <span class="badge">{{ item.attempts ? 'Con resultados' : 'Sin entregas' }}</span>
+            <span class="badge">{{
+              item.resource_id
+                ? 'Material de estudio'
+                : item.attempts
+                  ? 'Con resultados'
+                  : 'Sin entregas'
+            }}</span>
           </div>
           <h3>{{ item.title }}</h3>
           <p class="bank-name">{{ bankTitle(item.version) }}</p>
@@ -136,24 +162,30 @@
               Estado actualizado el {{ item.status_changed_at | date: 'dd/MM/yyyy HH:mm' }}
             </p>
           }
-          <dl class="result-summary">
-            <div>
-              <dt>Intentos guardados</dt>
-              <dd>{{ item.attempts }}</dd>
-            </div>
-            <div>
-              <dt>Mejor resultado</dt>
-              <dd>{{ item.best_score === null ? 'Sin resultados' : item.best_score + ' de 3' }}</dd>
-            </div>
-          </dl>
+          @if (!item.resource_id) {
+            <dl class="result-summary">
+              <div>
+                <dt>Intentos guardados</dt>
+                <dd>{{ item.attempts }}</dd>
+              </div>
+              <div>
+                <dt>Mejor resultado</dt>
+                <dd>
+                  {{ item.best_score === null ? 'Sin resultados' : item.best_score + ' de 3' }}
+                </dd>
+              </div>
+            </dl>
+          }
           @if (!teacher()) {
             <a class="activity-link" [routerLink]="['/actividades', item.id]"
               >{{
-                item.status !== 'open'
-                  ? 'Ver actividad y resultados'
-                  : item.attempts
-                    ? 'Volver a practicar'
-                    : 'Resolver actividad'
+                item.resource_id
+                  ? 'Ver recurso'
+                  : item.status !== 'open'
+                    ? 'Ver actividad y resultados'
+                    : item.attempts
+                      ? 'Volver a practicar'
+                      : 'Resolver actividad'
               }}
               →</a
             >
@@ -192,11 +224,13 @@
                 <section class="confirmation" aria-label="Confirmar cambio de estado">
                   <p>
                     {{
-                      change.status === 'open'
-                        ? 'El estudiante podrá guardar nuevos intentos.'
-                        : change.status === 'closed'
-                          ? 'Se detendrán las entregas de esta actividad.'
-                          : 'La actividad quedará marcada como cancelada y no recibirá nuevas entregas.'
+                      change.item.resource_id
+                        ? 'Se actualizará el estado de la actividad; el material seguirá disponible para consulta.'
+                        : change.status === 'open'
+                          ? 'El estudiante podrá guardar nuevos intentos.'
+                          : change.status === 'closed'
+                            ? 'Se detendrán las entregas de esta actividad.'
+                            : 'La actividad quedará marcada como cancelada y no recibirá nuevas entregas.'
                     }}
                   </p>
                   <p class="help">

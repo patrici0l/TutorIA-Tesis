@@ -1,7 +1,7 @@
 # Actividades asignadas
 
-Actualizado el 15 de octubre de 2026. Un profesor asigna un banco fijo de tres
-preguntas a una cuenta de estudiante activa. Se mantiene el alcance de demostración:
+Actualizado el 24 de octubre de 2026. Un profesor asigna un banco fijo de tres
+preguntas o un recurso propio generado correctamente a una cuenta de estudiante activa. Se mantiene el alcance de demostración:
 no importa matrículas universitarias, no consume IA y no emite calificaciones oficiales.
 
 ## Recorrido
@@ -78,3 +78,22 @@ Sin grupos, vencimientos, entrega única, edición del contenido o avisos extern
 El alumno puede repetir una actividad abierta; se muestra su mejor puntuación entre esos intentos.
 Asignar una práctica no demuestra una relación académica institucional. Para un despliegue
 real se requieren cuentas verificadas, relación docente/grupo y política de acceso aprobada.
+
+## Recursos generados (24 de octubre)
+
+Desde Preparar recursos, genera o abre un resultado correcto en Mis recursos y pulsa
+Asignar este recurso. El formulario conserva el vínculo y propone su título. El correo
+del destinatario debe pertenecer a una cuenta estudiante activa que haya iniciado sesión.
+
+POST recibe version `resource-v1` y resource_id UUID además de los campos comunes.
+El servidor verifica propietario y estado succeeded antes de persistir. Recurso ajeno,
+inexistente o aún sin resultado: 404. resource-v1 sin resource_id, o banco fijo con
+resource_id: 422. Otro contenido para un UUID ya utilizado: 409.
+
+La migración 0015 añade resource_id nullable, clave foránea a generaciones_contenido y
+check de coherencia con version. Conserva todas las asignaciones e intentos anteriores.
+El listado incluye resource_id; el detalle autorizado añade resource y sources. Nunca
+expone prompt, respuesta del estudiante del request, adaptation_snapshot ni auditoría.
+Los materiales contienen las soluciones del recurso, por lo que son material de estudio;
+no admiten intentos ni registran calificaciones o lectura. Cerrar/cancelar cambia el estado
+y conserva el material para consulta, como las respuestas históricas de bancos fijos.

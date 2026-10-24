@@ -8,12 +8,13 @@ import {
   ASSIGNMENT_STATUS_LABELS,
 } from '../../servicios/assignment.service';
 import { PracticeComponent } from '../practica/practice.component';
+import { ResourceViewComponent } from '../../../contenidos/componentes/resource-view/resource-view.component';
 import { PRACTICE_BANKS } from '../../modelos/practice-bank';
 import { AuthService } from '../../../../nucleo/servicios/auth.service';
 
 @Component({
   selector: 'app-assignment-practice',
-  imports: [RouterLink, PracticeComponent],
+  imports: [RouterLink, PracticeComponent, ResourceViewComponent],
   templateUrl: './assignment-practice.component.html',
   styleUrl: './assignment-practice.component.scss',
 })
@@ -39,7 +40,11 @@ export class AssignmentPracticeComponent implements OnInit {
       )
       .subscribe((item) => {
         this.assignment.set(
-          item && PRACTICE_BANKS.some((b) => b.version === item.version) ? item : null,
+          item &&
+            (PRACTICE_BANKS.some((b) => b.version === item.version) ||
+              (item.version === 'resource-v1' && item.resource))
+            ? item
+            : null,
         );
         this.loading.set(false);
       });

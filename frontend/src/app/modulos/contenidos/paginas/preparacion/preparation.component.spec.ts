@@ -9,6 +9,15 @@ import { PreparationResponse } from '../../modelos/preparation.model';
 import { ResourceExportService } from '../../servicios/resource-export.service';
 
 describe('Preparación docente', () => {
+  const quota = {
+    enabled: true,
+    daily_limit: 5,
+    used: 1,
+    remaining: 4,
+    resets_at: '2026-10-25T00:00:00Z',
+    max_output_tokens: 4096,
+    timeout_seconds: 30,
+  };
   const user = signal({ rol: 'teacher' });
   let http: HttpTestingController;
   const response: PreparationResponse = {
@@ -55,6 +64,7 @@ describe('Preparación docente', () => {
       message: 'Cuota agotada.',
     });
     fixture.detectChanges();
+    http.expectOne('/api/v1/content/quota').flush(quota);
     await fixture.whenStable();
     expect(fixture.nativeElement.textContent).toContain('Cuota agotada.');
     component.generate();
@@ -76,6 +86,25 @@ describe('Preparación docente', () => {
     http = TestBed.inject(HttpTestingController);
   });
   afterEach(() => http.verify());
+  it('permite reintentar tras un rechazo de cupo sin marcar la preparación como enviada', () => {
+    const fixture = setup();
+    const component = fixture.componentInstance;
+    component.prepare();
+    http.expectOne('/api/v1/content/prepare').flush(response);
+    component.generate();
+    http.expectOne('/api/v1/content/test-prepared/generate').flush(
+      { detail: 'Espera un minuto antes de generar otro recurso.' },
+      { status: 429, statusText: 'Too Many Requests' },
+    );
+    expect(component.sent()).toBe(false);
+    fixture.detectChanges();
+    http.expectOne('/api/v1/content/quota').flush(quota);
+    component.generate();
+    http.expectOne('/api/v1/content/test-prepared/generate').flush(
+      { detail: 'Espera un minuto antes de generar otro recurso.' },
+      { status: 429, statusText: 'Too Many Requests' },
+    );
+  });
   it('ofrece descarga solo al abrir historial y no hace solicitudes al descargar', () => {
     const exportFile = vi
       .spyOn(TestBed.inject(ResourceExportService), 'download')
@@ -106,6 +135,8 @@ describe('Preparación docente', () => {
     const fixture = TestBed.createComponent(PreparationComponent);
     fixture.componentInstance.topic = 'Derivadas';
     fixture.componentInstance.objective = 'Practicar';
+    fixture.detectChanges();
+    http.expectOne('/api/v1/content/quota').flush(quota);
     return fixture;
   }
   it('recupera un recurso guardado y bloquea su reenvío sin POST', () => {

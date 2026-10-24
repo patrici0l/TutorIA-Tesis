@@ -4,6 +4,20 @@ Fuente rectora: Plan_Implementacion_TutorIA-Lucero.docx, entregado por el autor 
 
 ## Bloque actual
 
+24 de octubre: corregido truncamiento del quiz de integrales (máximo local 512 →
+4096 tokens) y conectada asignación de recursos generados propios como material de
+estudio, migración 0015. Quiz real de cinco preguntas generado y abierto por alumno
+tras asignación. Interfaz simplificada, avisos de cuenta de prueba retirados,
+confirmaciones conservadas y cupo diario visible. Evidencia:
+[revisión de integrales y asignaciones](pruebas/revision_integrales_asignaciones.md).
+No cierra evaluación dinámica de recursos ni seguimiento de lectura.
+
+23 de octubre, instrucción final del autor: demo pública gratuita por enlace, sin
+correos ni PIN, con botones Profesor/Estudiante. Túnel HTTPS, sesiones de ambos roles,
+CSRF y logout comprobados remotamente; acceso docente comprobado en navegador.
+Cierre y restauración local verificados. Manual: [demo remota gratuita](manuales/demo_remota_gratuita.md).
+Mantiene perfiles compartidos y límites de IA; no equivale a evaluación académica.
+
 15 de octubre, prioridad del autor: revisión de textos y distribución de la interfaz.
 Actividades con formulario/listado separados, resumen de resultados y acciones agrupadas;
 práctica asignada con un solo título principal, historial organizado por intento y acceso

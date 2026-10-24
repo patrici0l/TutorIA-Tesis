@@ -10,6 +10,10 @@ class AssignmentService:
     def create(self, user, submission):
         if user.rol not in ("teacher", "admin"):
             raise HTTPException(403, "Solo un docente puede asignar actividades.")
+        if submission.resource_id is not None:
+            resource = self.repository.resource(user.id, submission.resource_id)
+            if resource is None:
+                raise HTTPException(404, "Selecciona un recurso propio generado correctamente.")
         student = self.repository.student(str(submission.student_email))
         if student is None:
             raise HTTPException(
@@ -23,7 +27,7 @@ class AssignmentService:
             or row.student_id != student.id
             or any(
                 getattr(row, key) != getattr(submission, key)
-                for key in ("version", "title", "instructions")
+                for key in ("version", "title", "instructions", "resource_id")
             )
         ):
             raise HTTPException(

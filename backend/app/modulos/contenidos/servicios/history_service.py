@@ -3,6 +3,7 @@ from uuid import UUID
 
 from fastapi import HTTPException
 
+from app.modulos.contenidos.generation_messages import generation_failure_message
 from app.modulos.contenidos.history_schemas import (
     GenerationAudit,
     HistoryDetail,
@@ -65,7 +66,7 @@ class HistoryService:
                     }
                 ),
             ),
-            message="La generación terminó sin un recurso válido. No se reintentó."
+            message=generation_failure_message(row["error_code"])
             if row["status"] == "failed"
             else None,
         )

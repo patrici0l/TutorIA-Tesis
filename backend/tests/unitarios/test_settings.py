@@ -61,3 +61,39 @@ def test_auth_preserves_custom_cas_parameter_names():
     Settings(
         _env_file=None, cas_service_parameter="ups_service", cas_ticket_parameter="ups_ticket"
     ).validate_auth()
+
+
+def remote_demo_settings(**overrides):
+    origin = "https://tutor-demo.trycloudflare.com"
+    values = dict(
+        _env_file=None,
+        auth_demo_public_origin=origin,
+        auth_cookie_secure=True,
+        auth_callback_url=origin + "/api/v1/auth/callback",
+        auth_frontend_url=origin + "/inicio",
+        auth_login_url=origin + "/login",
+    )
+    values.update(overrides)
+    return Settings(**values)
+
+
+def test_remote_demo_accepts_explicit_https_origin():
+    remote_demo_settings().validate_auth()
+
+
+@pytest.mark.parametrize("overrides", [
+    {"auth_demo_public_origin": ""},
+    {"auth_cookie_secure": False},
+    {"app_env": "production"},
+    {"auth_mode": "cas"},
+    {"auth_demo_public_origin": "https://trycloudflare.com"},
+    {"auth_demo_public_origin": "https://tutor.trycloudflare.com.evil.org"},
+    {"auth_demo_public_origin": "https://tutor.trycloudflare.com/"},
+    {"auth_demo_public_origin": "https://tutor.trycloudflare.com:443"},
+    {"auth_demo_public_origin": "http://tutor.trycloudflare.com"},
+    {"auth_demo_public_origin": "https://other.trycloudflare.com"},
+    {"auth_login_url": "https://other.trycloudflare.com/login"},
+])
+def test_remote_demo_rejects_unsafe_or_mismatched_settings(overrides):
+    with pytest.raises(ValueError):
+        remote_demo_settings(**overrides).validate_auth()

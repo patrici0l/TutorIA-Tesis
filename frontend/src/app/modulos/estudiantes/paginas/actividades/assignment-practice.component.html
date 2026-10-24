@@ -9,14 +9,32 @@
       @if (item.instructions) {
         <p class="instructions">{{ item.instructions }}</p>
       }
-      @if (item.status === 'open') {
+      @if (item.status === 'open' && !item.resource_id) {
         <p class="sharing-note">
           Al guardar, compartirás tus intentos y tu mejor resultado con el profesor que asignó la
           actividad.
         </p>
       }
     </header>
-    @if (item.status === 'open') {
+    @if (item.resource; as resource) {
+      <p>
+        Material de estudio con soluciones para revisar. Esta actividad no registra una
+        calificación.
+      </p>
+      <app-resource-view [resource]="resource" />
+      <section class="panel" aria-label="Fuentes del recurso">
+        <h2>Fuentes</h2>
+        @for (source of item.sources; track source.citation_id) {
+          <article>
+            <h3>{{ source.citation_id }} · {{ source.document_title }}</h3>
+            <p>
+              {{ source.source_kind === 'page' ? 'Página' : 'Párrafo' }} {{ source.source_index }}
+            </p>
+            <blockquote>{{ source.text }}</blockquote>
+          </article>
+        }
+      </section>
+    } @else if (item.status === 'open') {
       @for (entry of [item]; track entry.id) {
         <app-practice [assignment]="entry" />
       }

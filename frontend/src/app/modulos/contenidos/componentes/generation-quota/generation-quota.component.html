@@ -1,0 +1,45 @@
+<section aria-labelledby="quota-title" [attr.aria-busy]="loading()">
+  <h3 id="quota-title">Disponibilidad de generación</h3>
+  @if (quota(); as q) {
+    <p class="balance">
+      <strong>{{ q.remaining }}</strong> de {{ q.daily_limit }} solicitudes disponibles
+    </p>
+    <progress
+      [value]="q.used"
+      [max]="q.daily_limit"
+      aria-label="Solicitudes diarias utilizadas"
+    ></progress>
+    <p>
+      {{ q.used }} utilizadas · {{ ((q.used * 100) / q.daily_limit).toFixed(0) }}% del cupo
+      consumido
+    </p>
+    @if (!q.enabled) {
+      <p role="status">La generación no está habilitada.</p>
+    }
+    @if (q.remaining === 0) {
+      <p role="status">Cupo diario agotado.</p>
+    }
+    <p class="help">
+      Cupo compartido de TutorIA. Incluye envíos fallidos. Se renueva el
+      {{ q.resets_at | date: 'dd/MM/yyyy HH:mm' }}.
+    </p>
+    <details>
+      <summary>Límites por solicitud</summary>
+      <p>
+        Hasta {{ q.max_output_tokens }} tokens de salida · {{ q.timeout_seconds }} segundos de
+        espera.
+      </p>
+      <p>
+        El proveedor puede aplicar límites adicionales. Su saldo de tokens no está disponible aquí;
+        el consumo registrado se consulta en la trazabilidad de cada recurso.
+      </p>
+    </details>
+  }
+  @if (loading()) {
+    <p role="status">Consultando solicitudes disponibles…</p>
+  }
+  @if (error()) {
+    <p role="status">No pudimos consultar el cupo disponible.</p>
+  }
+  <button type="button" (click)="load()" [disabled]="loading()">Actualizar disponibilidad</button>
+</section>

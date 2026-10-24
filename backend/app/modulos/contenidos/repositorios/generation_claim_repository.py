@@ -16,6 +16,16 @@ class GenerationClaimRepository:
     def __init__(self, db: Session):
         self.db = db
 
+    def daily_usage(self):
+        now = self.db.scalar(select(func.clock_timestamp())).astimezone(UTC)
+        day_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        used = self.db.scalar(
+            select(func.count())
+            .select_from(ContentGeneration)
+            .where(ContentGeneration.generation_started_at >= day_start)
+        )
+        return used, day_start + timedelta(days=1)
+
     def claim(
         self,
         identifier: UUID,
@@ -69,7 +79,9 @@ class GenerationClaimRepository:
                 )
             )
             if count >= daily_limit:
-                raise HTTPException(429, "Se alcanzó el límite diario de pruebas. Continúa mañana.")
+                raise HTTPException(
+                    429, "Se alcanzó el límite diario de generación. Continúa mañana."
+                )
             recent = self.db.scalar(
                 select(func.count())
                 .select_from(ContentGeneration)

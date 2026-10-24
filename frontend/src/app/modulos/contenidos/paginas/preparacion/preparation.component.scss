@@ -3,6 +3,28 @@
 :host {
   display: block;
 }
+.workflow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0;
+}
+.workflow li {
+  background: var(--blue-soft);
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+summary {
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--blue-dark);
+}
+progress {
+  width: 100%;
+  accent-color: var(--blue-dark);
+}
 .eyebrow {
   color: var(--blue-dark);
   font-size: 10px;

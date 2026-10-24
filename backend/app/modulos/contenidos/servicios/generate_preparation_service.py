@@ -8,6 +8,7 @@ from app.configuracion.settings import Settings
 from app.modulos.contenidos.cost_schemas import CostBasis
 from app.modulos.contenidos.errors import ContentError
 from app.modulos.contenidos.execution_schemas import ExecutionConfiguration
+from app.modulos.contenidos.generation_messages import generation_failure_message
 from app.modulos.contenidos.repositorios.generation_claim_repository import (
     GenerationClaimRepository,
 )
@@ -76,10 +77,7 @@ class GeneratePreparationService:
             return GenerationResponse(
                 id=identifier,
                 status="failed",
-                message=(
-                    "No se pudo generar el recurso. Puede haberse agotado la cuota "
-                    "o el tiempo de espera. No se reintentó."
-                ),
+                message=generation_failure_message(error.code),
             )
         except Exception:
             self.trace.fail(identifier, owner, "generation_interrupted")

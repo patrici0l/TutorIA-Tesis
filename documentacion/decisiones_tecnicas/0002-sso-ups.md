@@ -43,3 +43,13 @@ No se realizaron solicitudes a endpoints de la UPS. Los tests CAS usan direccion
 
 ## Actualización del 13 de octubre
 Por solicitud del autor, login permite elegir student/teacher solo en development/mock. Son dos identidades ficticias fijas; no acepta correos ni admin. El perfil se fija en el intento persistido y se ignora cualquier selección enviada en callback. CAS rechaza la selección. Se conservan sesiones HttpOnly y roles locales existentes. Los dominios mostrados son orientativos hasta validar CAS con TI.
+
+## Actualización del 23 de octubre — revisión remota autorizada
+
+El autor solicita una demo gratuita accesible al tutor. Se conserva development/mock,
+con excepción optativa AUTH_DEMO_PUBLIC_ORIGIN: origen HTTPS exacto bajo trycloudflare.com,
+cookie Secure y las tres URLs del mismo origen. Sin la excepción se conserva loopback.
+La instrucción posterior del autor elimina correos y PIN: el túnel es público y
+cualquier visitante puede elegir los botones de los perfiles ficticios compartidos.
+No se habilitan CAS real, contraseñas locales ni cuentas nuevas. Se conservan sesiones
+HttpOnly/Secure y CSRF. Operación y límites en manuales/demo_remota_gratuita.md.

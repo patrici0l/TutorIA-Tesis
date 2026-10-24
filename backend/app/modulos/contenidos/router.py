@@ -5,10 +5,11 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from app.base_datos.session import get_session
-from app.configuracion.settings import get_settings
+from app.configuracion.settings import Settings, get_settings
 from app.modulos.contenidos.adaptation_schemas import PreparationRequest
 from app.modulos.contenidos.history_schemas import HistoryDetail, HistoryPage
 from app.modulos.contenidos.preparation_schemas import PreparationResponse
+from app.modulos.contenidos.quota_schemas import GenerationQuota
 from app.modulos.contenidos.repositorios.generation_claim_repository import (
     GenerationClaimRepository,
 )
@@ -33,6 +34,28 @@ from app.modulos.rag.servicios.search_service import SearchService
 from app.nucleo.dependencias.auth import require_client_header
 
 router = APIRouter(prefix="/content", tags=["content"])
+
+
+@router.get("/quota", response_model=GenerationQuota)
+def quota(
+    user: Owner,
+    db: Annotated[Session, Depends(get_session)],
+    settings: Annotated[Settings, Depends(get_settings)],
+):
+    used, resets_at = GenerationClaimRepository(db).daily_usage()
+    return GenerationQuota(
+        enabled=(
+            settings.llm_enabled
+            and settings.llm_free_tier_confirmed
+            and settings.llm_default_provider == "gemini"
+        ),
+        daily_limit=settings.llm_daily_request_limit,
+        used=used,
+        remaining=max(0, settings.llm_daily_request_limit - used),
+        resets_at=resets_at,
+        max_output_tokens=settings.llm_max_output_tokens,
+        timeout_seconds=settings.llm_timeout_seconds,
+    )
 
 
 def get_history_service(db: Annotated[Session, Depends(get_session)]):

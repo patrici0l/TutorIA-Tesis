@@ -10,6 +10,11 @@
     <h1>Preparar un recurso</h1>
     <p>Define qué quieres enseñar y revisa las fuentes que darán fundamento a tu recurso.</p>
   </header>
+  <ol class="workflow" aria-label="Pasos para crear y asignar">
+    <li>1. Preparar fuentes</li>
+    <li>2. Generar y revisar</li>
+    <li>3. Asignar recurso</li>
+  </ol>
   <div class="workspace">
     <section class="panel" aria-labelledby="prepare-title">
       <div class="section-title">
@@ -18,51 +23,53 @@
       </div>
       <form (ngSubmit)="prepare()" #form="ngForm">
         <fieldset [disabled]="loading() || generating() || loadingProfiles()">
-          <h3>Personalización</h3>
-          <p id="profile-choice" class="help">
-            Opcional: usa una observación ficticia del mismo tema. TutorIA ajustará la dificultad y
-            explicará el apoyo.
-          </p>
-          <button type="button" (click)="loadProfiles()">Consultar mis perfiles</button>
-          @if (selectedProfile(); as profile) {
-            <p class="help">
-              Perfil elegido: {{ profile.student_id }} · {{ profile.topic }} · Dominio
-              {{ masteryLabel(profile.mastery_level) }}
+          <details>
+            <summary>Personalización opcional</summary>
+            <p id="profile-choice" class="help">
+              Opcional: usa una observación del mismo tema. TutorIA ajustará la dificultad y
+              explicará el apoyo.
             </p>
-            <button type="button" (click)="chooseProfile(null)">Usar dificultad manual</button>
-          }
-          @if (profilePage(); as page) {
-            @for (profile of page.items; track profile.id) {
-              <button
-                type="button"
-                (click)="chooseProfile(profile)"
-                [attr.aria-pressed]="selectedProfile()?.id === profile.id"
-              >
-                {{ profile.student_id }} · {{ profile.topic }} ·
-                {{ masteryLabel(profile.mastery_level) }}
-              </button>
-            } @empty {
+            <button type="button" (click)="loadProfiles()">Consultar mis perfiles</button>
+            @if (selectedProfile(); as profile) {
               <p class="help">
-                No tienes perfiles guardados. <a routerLink="/perfiles">Crear un perfil ficticio</a>
+                Perfil elegido: {{ profile.student_id }} · {{ profile.topic }} · Dominio
+                {{ masteryLabel(profile.mastery_level) }}
               </p>
+              <button type="button" (click)="chooseProfile(null)">Usar dificultad manual</button>
             }
-            <div class="options">
-              <button
-                type="button"
-                (click)="loadProfiles(page.offset - page.limit)"
-                [disabled]="page.offset === 0"
-              >
-                Perfiles anteriores
-              </button>
-              <button
-                type="button"
-                (click)="loadProfiles(page.offset + page.limit)"
-                [disabled]="page.offset + page.limit >= page.total"
-              >
-                Perfiles siguientes
-              </button>
-            </div>
-          }
+            @if (profilePage(); as page) {
+              @for (profile of page.items; track profile.id) {
+                <button
+                  type="button"
+                  (click)="chooseProfile(profile)"
+                  [attr.aria-pressed]="selectedProfile()?.id === profile.id"
+                >
+                  {{ profile.student_id }} · {{ profile.topic }} ·
+                  {{ masteryLabel(profile.mastery_level) }}
+                </button>
+              } @empty {
+                <p class="help">
+                  No tienes perfiles guardados. <a routerLink="/perfiles">Crear un perfil</a>
+                </p>
+              }
+              <div class="options">
+                <button
+                  type="button"
+                  (click)="loadProfiles(page.offset - page.limit)"
+                  [disabled]="page.offset === 0"
+                >
+                  Perfiles anteriores
+                </button>
+                <button
+                  type="button"
+                  (click)="loadProfiles(page.offset + page.limit)"
+                  [disabled]="page.offset + page.limit >= page.total"
+                >
+                  Perfiles siguientes
+                </button>
+              </div>
+            }
+          </details>
           <label for="topic">Tema</label>
           <input
             id="topic"
@@ -148,7 +155,7 @@
               aria-describedby="answer-help"
             ></textarea>
             <p id="answer-help" class="help">
-              Usa una respuesta de prueba, sin nombres ni datos personales. Se guardará con esta
+              Escribe la respuesta sin nombres ni datos personales. Se guardará con esta
               preparación.
             </p>
           }
@@ -180,13 +187,7 @@
         <li>Comprueba que las fuentes sean pertinentes.</li>
         <li>Conserva la preparación para el siguiente paso.</li>
       </ol>
-      <div class="status-note">
-        <strong>Generación gratuita, bajo tu control.</strong>
-        <p>
-          Primero prepara el recurso y revisa sus fuentes. Después podrás solicitar la generación.
-          Máximo cinco intentos al día para toda la demostración; sin reintentos automáticos.
-        </p>
-      </div>
+      <div class="status-note"><app-generation-quota [refresh]="quotaRefresh()" /></div>
       <a routerLink="/documentos">Gestionar mis materiales ↗</a>
     </aside>
   </div>
@@ -250,16 +251,14 @@
           errores.
         </p>
         <button type="button" [disabled]="sent() || generating()" (click)="generate()">
-          {{
-            generating()
-              ? 'Generando…'
-              : sent()
-                ? 'Solicitud enviada'
-                : 'Generar con Gemini · nivel gratuito'
-          }}
+          {{ generating() ? 'Generando…' : sent() ? 'Solicitud enviada' : 'Generar recurso' }}
         </button>
         @if (generating()) {
-          <p role="status">Generando con las fuentes revisadas…</p>
+          <p role="status">2 de 3 · Generando y validando el recurso…</p>
+          <progress aria-label="Generación en curso"></progress>
+          <p class="help">
+            El proveedor no informa un porcentaje de avance. Conserva esta página abierta.
+          </p>
         }
         @if (restoredPending()) {
           <p role="status">
@@ -269,7 +268,11 @@
         }
         @if (generation(); as generated) {
           @if (generated.resource; as resource) {
+            <p role="status">Recurso guardado. Ya puedes asignarlo a un estudiante.</p>
             <app-resource-view [resource]="resource" />
+            <a routerLink="/actividades" [queryParams]="{ resource: prepared.id }"
+              >Asignar este recurso →</a
+            >
           } @else {
             <p role="alert">{{ generated.message }}</p>
           }

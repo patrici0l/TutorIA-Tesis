@@ -1,0 +1,32 @@
+:host {
+  display: block;
+}
+h3 {
+  font-size: 16px;
+  margin-top: 0;
+}
+p,
+summary {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.balance {
+  color: var(--ink);
+}
+.balance strong {
+  font-size: 24px;
+}
+progress {
+  width: 100%;
+  accent-color: var(--blue-dark);
+}
+button {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  background: white;
+  color: var(--blue-dark);
+  cursor: pointer;
+  margin-top: 12px;
+}

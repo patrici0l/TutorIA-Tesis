@@ -1,6 +1,7 @@
 from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import insert
 
+from app.modulos.contenidos.models import ContentGeneration
 from app.modulos.estudiantes.models import PracticeAssignment, PracticeAttempt
 from app.modulos.usuarios.models import User
 
@@ -28,6 +29,15 @@ class AssignmentRepository:
         row = self.db.get(PracticeAssignment, submission.id)
         self.db.commit()
         return row
+
+    def resource(self, teacher, identifier):
+        return self.db.scalar(
+            select(ContentGeneration).where(
+                ContentGeneration.id == identifier,
+                ContentGeneration.owner_id == teacher,
+                ContentGeneration.status == "succeeded",
+            )
+        )
 
     def scope(self, user):
         return (
@@ -65,6 +75,7 @@ class AssignmentRepository:
             select(
                 PracticeAssignment.id,
                 PracticeAssignment.version,
+                PracticeAssignment.resource_id,
                 PracticeAssignment.title,
                 PracticeAssignment.instructions,
                 PracticeAssignment.created_at,
@@ -79,11 +90,19 @@ class AssignmentRepository:
         )
 
     def detail(self, user, identifier):
-        return (
+        row = (
             self.db.execute(self.query(user).where(PracticeAssignment.id == identifier))
             .mappings()
             .first()
         )
+        if row is None:
+            return None
+        result = dict(row)
+        if row["resource_id"] is not None:
+            # Access is granted by the assignment scope, never by a student-supplied resource id.
+            resource = self.db.get(ContentGeneration, row["resource_id"])
+            result.update(resource=resource.resource, sources=resource.sources_snapshot)
+        return result
 
     def page(self, user, offset, limit):
         rows = (

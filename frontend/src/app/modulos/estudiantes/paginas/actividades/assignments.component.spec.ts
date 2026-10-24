@@ -1,6 +1,7 @@
+import { PreparationService } from '../../../contenidos/servicios/preparation.service';
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { of, Subject, throwError } from 'rxjs';
 import { AuthService } from '../../../../nucleo/servicios/auth.service';
 import { Assignment, AssignmentService } from '../../servicios/assignment.service';
@@ -8,9 +9,13 @@ import { AssignmentsComponent } from './assignments.component';
 
 describe('Actividades asignadas', () => {
   const user = signal({ rol: 'teacher' });
+  const detail = vi.fn();
+  let resourceParam = '';
   const service = { list: vi.fn(), create: vi.fn(), changeStatus: vi.fn() };
   beforeEach(async () => {
     user.set({ rol: 'teacher' });
+    resourceParam = '';
+    detail.mockReset();
     service.list.mockReset().mockReturnValue(of({ items: [], total: 0, offset: 0, limit: 10 }));
     service.create.mockReset();
     service.changeStatus.mockReset();
@@ -18,10 +23,56 @@ describe('Actividades asignadas', () => {
       imports: [AssignmentsComponent],
       providers: [
         provideRouter([]),
+        { provide: PreparationService, useValue: { detail } },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              get queryParamMap() {
+                return convertToParamMap(resourceParam ? { resource: resourceParam } : {});
+              },
+            },
+          },
+        },
         { provide: AuthService, useValue: { user, mode: signal('mock') } },
         { provide: AssignmentService, useValue: service },
       ],
     }).compileComponents();
+  });
+  it('asigna el recurso seleccionado y conserva el identificador al reintentar', async () => {
+    resourceParam = 'integral-id';
+    detail.mockReturnValue(
+      of({
+        status: 'succeeded',
+        preparation: { id: resourceParam },
+        resource: { title: 'Integrales' },
+      }),
+    );
+    service.create.mockReturnValue(throwError(() => new Error('offline')));
+    const f = TestBed.createComponent(AssignmentsComponent);
+    await f.whenStable();
+    const c = f.componentInstance;
+    c.email = 'estudiante.demo@example.org';
+    c.create();
+    c.create();
+    expect(service.create.mock.calls[0][0]).toMatchObject({
+      resource_id: resourceParam,
+      version: 'resource-v1',
+      title: 'Integrales',
+    });
+    expect(service.create.mock.calls[0][0].id).toBe(service.create.mock.calls[1][0].id);
+    expect(f.nativeElement.textContent).toContain('sin calificación automática');
+  });
+  it('bloquea un recurso pendiente o inaccesible sin asignar derivadas por error', async () => {
+    resourceParam = 'pending-id';
+    detail.mockReturnValue(of({ status: 'prepared', resource: null }));
+    const f = TestBed.createComponent(AssignmentsComponent);
+    await f.whenStable();
+    f.componentInstance.title = 'Integrales';
+    f.componentInstance.email = 'estudiante.demo@example.org';
+    f.componentInstance.create();
+    expect(service.create).not.toHaveBeenCalled();
+    expect(f.nativeElement.textContent).toContain('antes de asignarlo');
   });
   it('oculta creación al estudiante y muestra enlace a su actividad', async () => {
     user.set({ rol: 'student' });

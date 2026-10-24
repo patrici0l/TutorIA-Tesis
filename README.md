@@ -123,7 +123,10 @@ La interfaz no solicita contraseñas. Las rutas son GET `/api/v1/auth/login`, GE
 
 La plantilla `.env.example` incluye `AUTH_MODE=mock`, usuario ficticio estudiante y URLs locales. `AUTH_MOCK_USER=teacher` permite ensayar el rol docente con una identidad ficticia. Para CAS se requieren URLs HTTPS, `AUTH_COOKIE_SECURE=true`, parámetros y atributos confirmados por TI. Los endpoints CAS están vacíos deliberadamente; el arranque rechaza una configuración institucional incompleta. `est.ups.edu.ec` está habilitado; `ups.edu.ec` se habilita expresamente mediante `AUTH_ALLOWED_DOMAINS` cuando corresponda.
 
-El modo mock solo funciona en desarrollo y loopback. El callback y la interfaz deben compartir origen. Consulta la [decisión SSO](documentacion/decisiones_tecnicas/0002-sso-ups.md) antes de configurar CAS.
+El modo mock funciona en desarrollo y loopback por defecto. Para revisión remota se
+preparó una excepción explícita con HTTPS y túnel público por enlace; consulta la
+[demo remota gratuita](documentacion/manuales/demo_remota_gratuita.md).
+El callback y la interfaz deben compartir origen. Consulta la [decisión SSO](documentacion/decisiones_tecnicas/0002-sso-ups.md) antes de configurar CAS.
 
 ## Biblioteca docente
 

@@ -1,3 +1,4 @@
+import re
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal
@@ -34,11 +35,12 @@ class Settings(BaseSettings):
     anthropic_api_key: SecretStr = Field(default=SecretStr(""), repr=False)
     llm_timeout_seconds: int = Field(default=30, ge=5, le=60)
     llm_max_input_chars: int = Field(default=12000, ge=1000, le=24000)
-    llm_max_output_tokens: int = Field(default=1024, ge=128, le=4096)
+    llm_max_output_tokens: int = Field(default=4096, ge=128, le=4096)
     llm_requests_per_minute: int = Field(default=5, ge=1, le=10)
     auth_mode: Literal["mock", "cas"] = "mock"
     auth_mock_user: Literal["student", "teacher"] = "student"
     auth_cookie_secure: bool = False
+    auth_demo_public_origin: str = ""
     auth_session_hours: int = Field(default=8, ge=1, le=24)
     auth_callback_url: str = "http://localhost:4200/api/v1/auth/callback"
     auth_frontend_url: str = "http://localhost:4200/inicio"
@@ -60,12 +62,27 @@ class Settings(BaseSettings):
         return self
 
     def validate_auth(self) -> None:
+        if self.auth_demo_public_origin:
+            if (
+                self.auth_mode != "mock"
+                or self.app_env != "development"
+                or not self.auth_cookie_secure
+                or not re.fullmatch(
+                    r"https://[a-z0-9]+(?:-[a-z0-9]+)*\.trycloudflare\.com",
+                    self.auth_demo_public_origin,
+                )
+            ):
+                raise ValueError("La demo remota requiere mock/development, HTTPS y cookie Secure")
         origins = {
             (urlsplit(url).scheme, urlsplit(url).netloc)
             for url in (self.auth_callback_url, self.auth_frontend_url, self.auth_login_url)
         }
         if len(origins) != 1:
             raise ValueError("Callback e interfaz deben compartir origen para la cookie")
+        if self.auth_demo_public_origin and origins != {
+            ("https", urlsplit(self.auth_demo_public_origin).netloc)
+        }:
+            raise ValueError("Las URLs deben usar exactamente el origen de la demo remota")
         if urlsplit(self.auth_callback_url).path != "/api/v1/auth/callback":
             raise ValueError("AUTH_CALLBACK_URL debe apuntar a /api/v1/auth/callback")
         urls = [self.auth_callback_url, self.auth_frontend_url, self.auth_login_url]
@@ -102,7 +119,8 @@ class Settings(BaseSettings):
                 "127.0.0.1",
                 "::1",
             }:
-                raise ValueError("El modo mock solo permite redirecciones a loopback")
+                if not self.auth_demo_public_origin:
+                    raise ValueError("El modo mock solo permite redirecciones a loopback")
         if self.cas_service_parameter == self.cas_ticket_parameter:
             raise ValueError("Los parámetros service y ticket deben ser distintos")
         if self.cas_ticket_parameter == "state":

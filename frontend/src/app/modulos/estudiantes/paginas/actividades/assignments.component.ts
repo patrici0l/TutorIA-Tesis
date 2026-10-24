@@ -1,7 +1,9 @@
 import { Component, DestroyRef, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { PreparationService } from '../../../contenidos/servicios/preparation.service';
+import { HistoryDetail } from '../../../contenidos/modelos/history.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../../../nucleo/servicios/auth.service';
 import {
@@ -23,6 +25,11 @@ import { PRACTICE_BANKS } from '../../modelos/practice-bank';
 export class AssignmentsComponent implements OnInit {
   readonly auth = inject(AuthService);
   private readonly service = inject(AssignmentService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly resources = inject(PreparationService);
+  readonly selectedResource = signal<HistoryDetail | null>(null);
+  readonly resourceLoading = signal(false);
+  readonly resourceError = signal('');
   private readonly destroy = inject(DestroyRef);
   readonly teacher = computed(() => ['teacher', 'admin'].includes(this.auth.user()?.rol ?? ''));
   readonly banks = PRACTICE_BANKS;
@@ -44,8 +51,34 @@ export class AssignmentsComponent implements OnInit {
   private submission: AssignmentSubmission | null = null;
   ngOnInit() {
     this.load();
+    const id = this.route.snapshot.queryParamMap.get('resource');
+    if (id && this.teacher()) {
+      this.version = 'resource-v1';
+      this.resourceLoading.set(true);
+      this.resources
+        .detail(id)
+        .pipe(takeUntilDestroyed(this.destroy))
+        .subscribe({
+          next: (detail) => {
+            this.resourceLoading.set(false);
+            if (detail.status !== 'succeeded' || !detail.resource) {
+              this.resourceError.set('Genera el recurso correctamente antes de asignarlo.');
+              return;
+            }
+            this.selectedResource.set(detail);
+            this.title = detail.resource.title.slice(0, 120);
+          },
+          error: () => {
+            this.resourceLoading.set(false);
+            this.resourceError.set(
+              'No pudimos abrir el recurso. Vuelve a Mis recursos para seleccionarlo.',
+            );
+          },
+        });
+    }
   }
   bankTitle(version: string) {
+    if (version === 'resource-v1') return 'Material de estudio';
     return this.banks.find((b) => b.version === version)?.title ?? 'Práctica anterior';
   }
   load(offset = 0) {
@@ -69,11 +102,16 @@ export class AssignmentsComponent implements OnInit {
   }
   create() {
     if (!this.teacher() || this.saving() || this.changing() || this.loading()) return;
+    if (this.resourceLoading() || (this.version === 'resource-v1' && !this.selectedResource()))
+      return;
     const data = {
       student_email: this.email.trim().toLowerCase(),
       title: this.title.trim(),
       instructions: this.instructions.trim(),
       version: this.version,
+      ...(this.version === 'resource-v1'
+        ? { resource_id: this.selectedResource()!.preparation.id }
+        : {}),
     };
     if (!data.title || !data.student_email) {
       this.formError.set('Completa el título y el correo del estudiante.');

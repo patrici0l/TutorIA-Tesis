@@ -7,6 +7,7 @@ import { ResourceViewComponent } from '../../componentes/resource-view/resource-
 import { ResourceHistoryComponent } from '../../componentes/resource-history/resource-history.component';
 import { ResourceAuditComponent } from '../../componentes/resource-audit/resource-audit.component';
 import { ResourceExportComponent } from '../../componentes/resource-export/resource-export.component';
+import { GenerationQuotaComponent } from '../../componentes/generation-quota/generation-quota.component';
 import { HistoryDetail } from '../../modelos/history.model';
 import { AuthService } from '../../../../nucleo/servicios/auth.service';
 import {
@@ -29,6 +30,7 @@ import { ProfilePage, ProfileSummary } from '../../../perfiles/modelos/profile.m
     ResourceHistoryComponent,
     ResourceAuditComponent,
     ResourceExportComponent,
+    GenerationQuotaComponent,
   ],
   templateUrl: './preparation.component.html',
   styleUrl: './preparation.component.scss',
@@ -44,6 +46,7 @@ export class PreparationComponent {
   readonly canPrepare = computed(() => ['teacher', 'admin'].includes(this.auth.user()?.rol ?? ''));
   readonly loading = signal(false);
   readonly generating = signal(false);
+  readonly quotaRefresh = signal(0);
   readonly generation = signal<GenerationResponse | null>(null);
   readonly sent = signal(false);
   readonly error = signal('');
@@ -158,9 +161,13 @@ export class PreparationComponent {
         next: (response) => {
           this.generation.set(response);
           this.generating.set(false);
+          this.quotaRefresh.update((value) => value + 1);
         },
         error: (error: HttpErrorResponse) => {
           this.generating.set(false);
+          this.quotaRefresh.update((value) => value + 1);
+          // These responses reject the request before reserving a generation.
+          if ([401, 403, 429, 503].includes(error.status)) this.sent.set(false);
           this.error.set(
             typeof error.error?.detail === 'string'
               ? error.error.detail

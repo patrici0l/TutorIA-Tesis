@@ -21,11 +21,16 @@ class PracticeAssignment(Base):
     __table_args__ = (
         UniqueConstraint("id", "student_id", "version", name="uq_assignment_student_version"),
         CheckConstraint("status IN ('open', 'closed', 'cancelled')", name="ck_assignment_status"),
+        CheckConstraint(
+            "(version = 'resource-v1') = (resource_id IS NOT NULL)",
+            name="ck_assignment_resource",
+        ),
     )
     id: Mapped[UUID] = mapped_column(primary_key=True)
     teacher_id: Mapped[UUID] = mapped_column(ForeignKey("usuarios.id"), index=True)
     student_id: Mapped[UUID] = mapped_column(ForeignKey("usuarios.id"), index=True)
     version: Mapped[str] = mapped_column(String(40))
+    resource_id: Mapped[UUID | None] = mapped_column(ForeignKey("generaciones_contenido.id"))
     title: Mapped[str] = mapped_column(String(120))
     instructions: Mapped[str] = mapped_column(String(2000))
     status: Mapped[str] = mapped_column(String(12), server_default="open")
