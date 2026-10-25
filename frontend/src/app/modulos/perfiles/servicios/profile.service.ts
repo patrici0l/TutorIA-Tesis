@@ -1,3 +1,4 @@
+// Consulta y crea perfiles propios sin iniciar generación.
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ProfilePage, ProfileRequest, ProfileResponse } from '../modelos/profile.model';

@@ -1,3 +1,4 @@
+# Valida destinatario, recurso propio y cambios de estado sin sobrescribir conflictos.
 from fastapi import HTTPException
 
 from app.modulos.estudiantes.assignment_schemas import AssignmentPage

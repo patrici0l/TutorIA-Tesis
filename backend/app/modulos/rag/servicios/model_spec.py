@@ -1,3 +1,4 @@
+# Fija revisión, dimensiones y hashes de los artefactos del modelo local.
 MODEL_ID = "intfloat/multilingual-e5-small"
 MODEL_REVISION = "614241f622f53c4eeff9890bdc4f31cfecc418b3"
 EMBEDDING_VERSION = "e5-onnx-v1"

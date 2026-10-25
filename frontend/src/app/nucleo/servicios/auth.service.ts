@@ -1,3 +1,4 @@
+// Mantiene la identidad en memoria; la cookie de sesión permanece bajo control del servidor.
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpBackend, HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
@@ -5,6 +6,7 @@ import { SessionResponse, User } from '../modelos/auth.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  // Evita el ciclo con el interceptor que depende de este servicio.
   private readonly http = new HttpClient(inject(HttpBackend));
   private readonly currentUser = signal<User | null>(null);
   readonly user = this.currentUser.asReadonly();

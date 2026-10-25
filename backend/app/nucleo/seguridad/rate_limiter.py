@@ -1,3 +1,4 @@
+# Limita inicios por cliente dentro de este proceso; no coordina réplicas.
 from collections import deque
 from threading import Lock
 from time import monotonic

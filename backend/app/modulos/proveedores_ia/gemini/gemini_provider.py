@@ -1,3 +1,4 @@
+# Adapta generación Gemini y traduce respuestas y fallos al contrato interno.
 import json
 from time import monotonic
 

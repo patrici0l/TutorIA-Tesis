@@ -1,3 +1,4 @@
+# Expone preparación, envío explícito, historial privado y cupo de generación.
 from typing import Annotated
 from uuid import UUID
 

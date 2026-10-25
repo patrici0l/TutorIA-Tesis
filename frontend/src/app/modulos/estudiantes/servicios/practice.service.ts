@@ -1,3 +1,4 @@
+// Guarda intentos con identificador estable y consulta su historial privado.
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 

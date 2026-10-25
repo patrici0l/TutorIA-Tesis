@@ -1,3 +1,4 @@
+// Abre la actividad autorizada y presenta el banco o material según su contrato.
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';

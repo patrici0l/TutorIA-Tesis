@@ -1,3 +1,4 @@
+# Calcula embeddings E5 locales con límites de tokens y normalización reproducible.
 from pathlib import Path
 
 import numpy as np

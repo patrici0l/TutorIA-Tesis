@@ -1,3 +1,4 @@
+// Reabre recursos persistidos por identificador sin consumir otra inferencia.
 import { Component, DestroyRef, inject, input, output, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';

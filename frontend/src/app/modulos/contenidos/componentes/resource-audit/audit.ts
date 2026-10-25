@@ -1,3 +1,4 @@
+// Expone metadatos guardados sin reconstruir valores históricos desconocidos.
 import { Component, input } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { HistoryDetail } from '../../modelos/history.model';

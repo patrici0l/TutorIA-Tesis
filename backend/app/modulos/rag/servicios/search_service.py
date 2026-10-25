@@ -1,3 +1,4 @@
+# Combina embedding de consulta y búsqueda propia, conservando referencias y tiempos.
 from time import perf_counter
 from uuid import UUID
 

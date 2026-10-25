@@ -1,3 +1,4 @@
+# Adapta Responses al contrato común sin reintentos ni continuación automática.
 from app.modulos.proveedores_ia.servicios.text_rest_provider import TextRestProvider
 
 

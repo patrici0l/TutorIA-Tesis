@@ -1,3 +1,4 @@
+// Prepara la descarga local del detalle y auditoría seleccionados.
 import { Component, inject, input, OnChanges, signal } from '@angular/core';
 import { HistoryDetail } from '../../modelos/history.model';
 import { ResourceExportService } from '../../servicios/resource-export.service';

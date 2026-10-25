@@ -1,3 +1,4 @@
+// Consulta fuentes propias y retira resultados anteriores al iniciar otra búsqueda.
 import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';

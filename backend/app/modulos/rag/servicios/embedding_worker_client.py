@@ -1,3 +1,4 @@
+# Invoca el worker de embeddings con tiempo y salida acotados.
 import json
 import os
 import subprocess

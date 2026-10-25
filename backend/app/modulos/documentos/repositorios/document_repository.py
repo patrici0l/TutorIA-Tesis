@@ -1,3 +1,4 @@
+# Consulta y persiste metadatos de documentos restringidos a su propietario.
 from datetime import UTC, datetime
 from uuid import UUID
 

@@ -1,3 +1,4 @@
+# Aprovisiona identidades y valida sesiones opacas sin elevar permisos locales.
 import hashlib
 import secrets
 from datetime import UTC, datetime, timedelta

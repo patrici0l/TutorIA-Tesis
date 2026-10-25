@@ -1,5 +1,38 @@
 # Continuidad de TutorIA-Lucero
 
+## 25 de octubre — plan consolidado y comentarios de código
+
+Solicitud del autor: PDF con todas las fases, estados, evidencias y próximos pasos,
+y comentarios profesionales breves en el código. Inicio desde commit humano
+`0c27a91`, rama `feature/resource-preparation`, árbol limpio verificado.
+
+Creado PLAN_ACTUAL.md como fotografía editable: 16 etapas originales, correspondencia
+con 12 hitos, ampliaciones del MVP, 25 referencias E01-E25 y seis bloques N1-N6
+propuestos. Diferencia cumplimiento técnico, datos sintéticos, pilotos, validación
+académica, exclusiones y condicionales. No inventa porcentajes, fechas de ejecución,
+aprobación ni resultados nuevos. Ajustados seguimiento histórico, arquitectura y
+README para retirar contradicciones sobre proveedores, rutas y generación vigente.
+PDF de diez páginas en output/pdf/plan_trabajo_tutoria_2026-10-25.pdf, fuente editable
+y exportador reproducible infraestructura/scripts/export-work-plan.py (ReportLab).
+
+Comentarios añadidos/ajustados en 95 archivos: 60 Python y 35 TypeScript. Describen
+responsabilidad y reglas no obvias, con pocas notas locales de seguridad, cuota,
+idempotencia y ciclo del interceptor. Sin cambios de lógica. Equivalencia comprobada
+con AST Python en 138 módulos y representación TypeScript sin comentarios en 69
+archivos. El primer comparador léxico TS detectó solo normalización CRLF dentro de
+plantillas; sustituido por comparación mediante el parser/impresor TypeScript.
+Ruff backend y exportador aprobados. No se repitieron suites funcionales por
+comentarios/documentación; los resultados de tests del PDF son históricos por bloque.
+
+Verificación documental: 48 referencias locales presentes; 16 etapas y catálogo
+E01-E25 completos. PDF renderizado con Poppler y revisado visualmente en todas sus
+páginas; corregidos desborde final y anchuras de columnas. Numeración 1-10 y límites
+de texto comprobados por extracción. Sin llamadas IA, CAS ni cambios de servicios.
+Pendiente de revisión y commit humano de este bloque, incluido el PDF. Mensaje:
+`docs: consolidar plan con evidencias y comentar reglas del código`.
+Próximo: N1 revisión visual del MVP cuando el navegador esté disponible, acordar N3
+protocolo académico y delimitar N2 seguimiento como ampliación antes de implementarla.
+
 ## 25 de octubre — continuación de limpieza
 
 Rama `feature/resource-preparation`. Ampliadas exclusiones en los contextos Docker

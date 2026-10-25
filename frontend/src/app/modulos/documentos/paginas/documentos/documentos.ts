@@ -1,3 +1,4 @@
+// Coordina carga, extracción e indexación sin confundir sus estados de preparación.
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';

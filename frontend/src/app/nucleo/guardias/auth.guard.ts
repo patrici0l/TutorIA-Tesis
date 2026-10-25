@@ -1,3 +1,4 @@
+// Comprueba la sesión en servidor antes de activar rutas restringidas.
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { map } from 'rxjs';

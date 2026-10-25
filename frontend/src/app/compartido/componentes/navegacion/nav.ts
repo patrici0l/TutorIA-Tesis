@@ -1,3 +1,4 @@
+// Presenta destinos por rol y restaura el foco al cerrar el menú modal.
 import { Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';

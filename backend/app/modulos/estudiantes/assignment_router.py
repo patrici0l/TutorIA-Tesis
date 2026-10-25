@@ -1,3 +1,4 @@
+# Expone asignación y consulta de actividades según el rol de la sesión.
 from typing import Annotated
 from uuid import UUID
 

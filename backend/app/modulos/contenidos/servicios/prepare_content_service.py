@@ -1,3 +1,4 @@
+# Recupera fuentes y compone una preparación RAG sin invocar al proveedor.
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

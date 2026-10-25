@@ -152,7 +152,7 @@ Las carpetas de módulos futuros son reservas de estructura, no funcionalidades 
 
 ## Proveedores de IA preparados
 
-Gemini es el primer proveedor elegido por el autor. Interfaz LLMProvider, fábrica, adaptador REST y coordinador educativo implementados; OpenAI/Claude pendientes, sin fallback. gemini-3.1-flash-lite comprobado con material sintético. Presupuesto USD 0 y proyecto Free Tier confirmado mediante captura del autor, sin cambios de facturación.
+Gemini es el primer proveedor elegido por el autor. Interfaz LLMProvider, fábrica, adaptador REST y coordinador educativo implementados. OpenAI/Claude cuentan con adaptadores y pruebas simuladas; sus envíos reales desde API/UI permanecen pendientes, sin fallback. gemini-3.1-flash-lite comprobado con material sintético. Presupuesto USD 0 y proyecto Free Tier confirmado mediante captura del autor, sin cambios de facturación.
 
 La plantilla mantiene LLM_ENABLED=false y LLM_FREE_TIER_CONFIRMED=false; el entorno local autorizado los tiene en true. Configuración privada exclusivamente en .env, nunca en Angular/Git. La ruta de generación reserva cinco intentos globales/día UTC en PostgreSQL, incluidos fallos, con una petición simultánea y un minuto entre inicios. Sin reintentos automáticos. Este cupo no alcanza scripts manuales u otros clientes de la clave ni verifica facturación en Google. Ver [límites](documentacion/api/limites_gemini.md) y [evidencia API/UI](documentacion/pruebas/hito_07_generacion_ui.md).
 
@@ -191,7 +191,8 @@ El repositorio se inicia localmente; la publicación en GitHub requiere elegir l
 
 ## Documentación
 
-- [Plan y requisitos](documentacion/PLAN_DE_TRABAJO.md)
+- [Plan actual: fases, estado y evidencias](documentacion/PLAN_ACTUAL.md)
+- [Plan original y seguimiento histórico](documentacion/PLAN_DE_TRABAJO.md)
 - [Navegación superior y experiencia de uso](documentacion/arquitectura/navegacion.md)
 - [Arquitectura](documentacion/arquitectura/arquitectura.md)
 - [Decisiones iniciales](documentacion/decisiones_tecnicas/0001-base-tecnica.md)

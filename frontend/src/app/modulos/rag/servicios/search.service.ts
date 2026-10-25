@@ -1,3 +1,4 @@
+// Recupera fuentes indexadas sin solicitar generación al proveedor.
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { SearchResponse } from '../modelos/search.model';

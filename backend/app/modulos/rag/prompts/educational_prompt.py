@@ -1,3 +1,4 @@
+# Construye instrucciones versionadas y separa los datos de las fuentes no confiables.
 import hashlib
 import json
 import re

@@ -1,3 +1,4 @@
+# Ejecuta inferencia local aislada y devuelve un resultado estructurado al proceso padre.
 import json
 import logging
 import sys

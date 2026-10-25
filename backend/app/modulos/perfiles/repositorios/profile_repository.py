@@ -1,3 +1,4 @@
+# Guarda observaciones sucesivas y consulta perfiles por propietario.
 from uuid import UUID
 
 from sqlalchemy import func, select

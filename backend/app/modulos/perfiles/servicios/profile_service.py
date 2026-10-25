@@ -1,3 +1,4 @@
+# Valida el acceso y registro de perfiles sin generar recursos ni consumir IA.
 from uuid import UUID
 
 from fastapi import HTTPException

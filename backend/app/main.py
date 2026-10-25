@@ -1,3 +1,4 @@
+# Compone la API y valida configuración antes de aceptar solicitudes.
 import logging
 from contextlib import asynccontextmanager
 

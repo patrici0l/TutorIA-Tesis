@@ -1,3 +1,4 @@
+// Conserva bancos versionados para revisar intentos históricos con sus preguntas originales.
 import { PRACTICE_QUESTIONS, PracticeQuestion } from './practice-question';
 import { RULES_QUESTIONS } from './practice-rules';
 

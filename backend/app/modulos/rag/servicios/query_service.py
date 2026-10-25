@@ -1,3 +1,4 @@
+# Normaliza consultas matemáticas para el vocabulario de recuperación.
 import re
 
 QUERY_VERSION = "calculo-alias-v1"

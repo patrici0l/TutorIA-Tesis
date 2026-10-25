@@ -1,3 +1,4 @@
+// Separa preparación revisable, envío único e historial para evitar generaciones duplicadas.
 import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -166,7 +167,7 @@ export class PreparationComponent {
         error: (error: HttpErrorResponse) => {
           this.generating.set(false);
           this.quotaRefresh.update((value) => value + 1);
-          // These responses reject the request before reserving a generation.
+          // Estos rechazos ocurren antes de reservar; permiten otro envío de la preparación.
           if ([401, 403, 429, 503].includes(error.status)) this.sent.set(false);
           this.error.set(
             typeof error.error?.detail === 'string'

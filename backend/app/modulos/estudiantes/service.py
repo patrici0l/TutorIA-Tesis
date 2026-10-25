@@ -1,3 +1,4 @@
+# Corrige bancos fijos en servidor y valida estado, versión y reenvío del intento.
 from fastapi import HTTPException
 
 from app.modulos.estudiantes.schemas import ANSWER_KEYS, PracticeProgress
@@ -14,6 +15,7 @@ class PracticeService:
                 raise HTTPException(404, "Actividad no disponible.")
             if assignment.version != submission.version:
                 raise HTTPException(409, "El bloque no corresponde a esta actividad.")
+            # Una actividad cerrada admite recuperar el mismo intento, pero no crear otro.
             if assignment.status != "open":
                 existing = self.repository.attempt(owner, submission.id)
                 if (

@@ -1,3 +1,4 @@
+# Traduce disponibilidad de PostgreSQL/pgvector al contrato de salud de la API.
 import logging
 from typing import Literal
 

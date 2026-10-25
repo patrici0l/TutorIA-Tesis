@@ -1,3 +1,4 @@
+# Envía una preparación reservada una sola vez y persiste su resultado o fallo.
 from typing import Literal
 from uuid import UUID
 

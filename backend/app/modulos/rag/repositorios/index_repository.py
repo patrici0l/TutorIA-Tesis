@@ -1,3 +1,4 @@
+# Publica índices vectoriales de forma atómica tras validar la reclamación vigente.
 from datetime import UTC, datetime, timedelta
 from uuid import UUID, uuid4
 

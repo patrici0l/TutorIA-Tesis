@@ -1,3 +1,4 @@
+// Define preguntas y retroalimentación del bloque de reglas; el servidor valida el puntaje.
 import { PracticeQuestion } from './practice-question';
 
 export const RULES_QUESTIONS: readonly PracticeQuestion[] = [

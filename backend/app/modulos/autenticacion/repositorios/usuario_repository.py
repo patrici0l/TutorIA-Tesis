@@ -1,3 +1,4 @@
+# Persiste identidades, intentos de acceso y sesiones con operaciones atómicas.
 from datetime import UTC, datetime
 from uuid import UUID
 

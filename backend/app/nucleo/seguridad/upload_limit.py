@@ -1,3 +1,4 @@
+# Acota el cuerpo de carga antes de procesar archivos recibidos.
 from fastapi import HTTPException
 from starlette.responses import JSONResponse
 

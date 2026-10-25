@@ -1,3 +1,4 @@
+# Expone acceso, callback y sesión con cookies y respuestas sin caché.
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, Cookie, Depends, HTTPException, Query, Request, Response

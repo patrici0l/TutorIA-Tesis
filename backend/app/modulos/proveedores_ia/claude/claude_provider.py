@@ -1,3 +1,4 @@
+# Adapta Messages al contrato común y conserva consumo conocido y fallos seguros.
 from app.modulos.proveedores_ia.servicios.text_rest_provider import TextRestProvider
 
 

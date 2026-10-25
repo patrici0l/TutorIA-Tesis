@@ -1,3 +1,4 @@
+// Exporta una copia local del recurso y su trazabilidad sin volver a generar.
 import { DOCUMENT } from '@angular/common';
 import { inject, Injectable } from '@angular/core';
 import { HistoryDetail } from '../modelos/history.model';

@@ -1,3 +1,4 @@
+# Configura registros sin exponer URLs de autenticación ni secretos.
 import logging
 
 

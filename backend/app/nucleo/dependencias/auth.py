@@ -1,3 +1,4 @@
+# Resuelve la sesión en servidor y exige la cabecera de protección en escrituras.
 from typing import Annotated
 
 from fastapi import Cookie, Depends, Header, HTTPException

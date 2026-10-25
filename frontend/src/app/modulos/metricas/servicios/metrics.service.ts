@@ -1,3 +1,4 @@
+// Consulta métricas privadas ya registradas, sin acceder a facturación externa.
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MetricsSummary } from '../modelos/metrics.model';

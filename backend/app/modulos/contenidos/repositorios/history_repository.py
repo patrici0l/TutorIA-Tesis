@@ -1,3 +1,4 @@
+# Consulta recursos y auditoría propios sin iniciar nuevas inferencias.
 from uuid import UUID
 
 from sqlalchemy import func, select

@@ -1,3 +1,4 @@
+# Coordina la frecuencia de llamadas al proveedor dentro del proceso.
 from collections import deque
 from threading import BoundedSemaphore, Lock
 from time import monotonic

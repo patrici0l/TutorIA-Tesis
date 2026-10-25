@@ -1,3 +1,4 @@
+# Coordina archivos privados y metadatos conservando la propiedad del documento.
 import hashlib
 import logging
 import unicodedata

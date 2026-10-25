@@ -1,3 +1,4 @@
+// Gestiona respuestas e intentos; la corrección persistida la calcula el servidor.
 import { MathTextDirective } from '../../../../compartido/directivas/math-text.directive';
 import { Component, computed, DestroyRef, inject, Input, OnInit, signal } from '@angular/core';
 import { Assignment } from '../../servicios/assignment.service';

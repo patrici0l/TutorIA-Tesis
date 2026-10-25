@@ -1,3 +1,4 @@
+# Expone búsqueda sobre el corpus propio indexado, sin generar contenido con IA.
 from typing import Annotated
 
 from fastapi import APIRouter, Depends

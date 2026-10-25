@@ -1,3 +1,4 @@
+# Valida configuración de entorno, orígenes de acceso y límites de proveedores.
 import re
 from functools import lru_cache
 from pathlib import Path

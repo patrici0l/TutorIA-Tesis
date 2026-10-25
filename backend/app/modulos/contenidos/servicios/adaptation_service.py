@@ -1,3 +1,4 @@
+# Aplica la política versionada al perfil propio y conserva el motivo de adaptación.
 from uuid import UUID
 
 from fastapi import HTTPException

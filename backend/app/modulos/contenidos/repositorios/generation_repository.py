@@ -1,3 +1,4 @@
+# Conserva snapshots y transiciones de generación restringidas al propietario.
 import json
 from datetime import UTC, datetime
 from uuid import UUID

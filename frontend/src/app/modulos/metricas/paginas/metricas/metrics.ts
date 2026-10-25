@@ -1,3 +1,4 @@
+// Presenta uso de generación y distingue valores conocidos de datos no registrados.
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';

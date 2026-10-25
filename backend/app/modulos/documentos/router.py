@@ -1,3 +1,4 @@
+# Expone gestión de documentos propios con sesión, rol y protección de escritura.
 from typing import Annotated
 from uuid import UUID
 

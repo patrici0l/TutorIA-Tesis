@@ -1,3 +1,4 @@
+# Persiste intentos propios e identifica reenvíos por su UUID.
 from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import insert
 

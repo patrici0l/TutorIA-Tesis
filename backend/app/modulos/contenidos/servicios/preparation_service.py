@@ -1,3 +1,4 @@
+# Guarda solicitud, fuentes y adaptación revisables antes del envío al proveedor.
 import json
 from uuid import UUID
 

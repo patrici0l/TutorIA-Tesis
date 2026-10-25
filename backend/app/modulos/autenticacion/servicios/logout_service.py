@@ -1,3 +1,4 @@
+# Revoca la sesión de TutorIA; el cierre del SSO institucional es independiente.
 from app.modulos.autenticacion.repositorios.usuario_repository import UserRepository
 from app.modulos.autenticacion.servicios.session_service import digest_token
 

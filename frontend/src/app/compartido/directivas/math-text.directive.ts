@@ -1,14 +1,14 @@
 import { Directive, ElementRef, inject, input, OnChanges } from '@angular/core';
 import renderMathInElement from 'katex/contrib/auto-render';
 
-/** The bundled engine is loaded before Angular creates this directive. */
+/** KaTeX se carga antes de crear la vista y procesa cada cambio de texto. */
 @Directive({ selector: '[appMathText]' })
 export class MathTextDirective implements OnChanges {
   readonly appMathText = input.required<string>();
   private readonly host = inject(ElementRef<HTMLElement>);
 
   ngOnChanges() {
-    // Never interpret resource text as HTML. Only KaTeX generates markup.
+    // El recurso entra como texto; solo KaTeX genera el marcado matemático.
     const element = this.host.nativeElement;
     element.textContent = this.appMathText();
     renderMathInElement(element, {

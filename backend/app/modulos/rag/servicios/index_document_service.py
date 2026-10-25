@@ -1,3 +1,4 @@
+# Valida vectores completos antes de publicar el índice del documento.
 import math
 from threading import BoundedSemaphore
 from uuid import UUID

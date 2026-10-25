@@ -1,3 +1,4 @@
+// Ofrece el recorrido por rol y comprueba disponibilidad para el espacio docente.
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../../nucleo/servicios/auth.service';

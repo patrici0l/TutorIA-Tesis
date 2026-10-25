@@ -1,3 +1,4 @@
+# Define el contrato común de generación independiente del proveedor.
 from abc import ABC, abstractmethod
 
 from app.modulos.proveedores_ia.schemas import GenerationRequest, GenerationResult

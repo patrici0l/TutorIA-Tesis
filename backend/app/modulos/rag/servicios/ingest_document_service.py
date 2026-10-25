@@ -1,3 +1,4 @@
+# Coordina extracción aislada y publicación de fragmentos sin transacciones largas.
 import json
 import subprocess
 import sys

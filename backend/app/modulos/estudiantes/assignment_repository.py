@@ -1,3 +1,4 @@
+# Restringe actividades a docente o destinatario y conserva resultados y material.
 from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import insert
 
@@ -99,7 +100,7 @@ class AssignmentRepository:
             return None
         result = dict(row)
         if row["resource_id"] is not None:
-            # Access is granted by the assignment scope, never by a student-supplied resource id.
+            # El acceso depende de la asignación, no de un recurso indicado por el alumno.
             resource = self.db.get(ContentGeneration, row["resource_id"])
             result.update(resource=resource.resource, sources=resource.sources_snapshot)
         return result

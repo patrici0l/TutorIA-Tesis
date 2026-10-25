@@ -1,3 +1,4 @@
+# Agrega estados y consumo propio sin convertir valores desconocidos en cero.
 from uuid import UUID
 
 from sqlalchemy import BigInteger, func, or_, select

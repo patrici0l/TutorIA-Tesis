@@ -1,3 +1,4 @@
+// Muestra cupo compartido de solicitudes; no representa saldo de tokens del proveedor.
 import { Component, DestroyRef, inject, Input, OnChanges, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';

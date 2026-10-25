@@ -1,3 +1,4 @@
+# Selecciona un adaptador explícito sin cambiar de proveedor ante fallos.
 import httpx
 
 from app.configuracion.settings import Settings

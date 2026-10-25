@@ -1,3 +1,4 @@
+# Construye métricas con cobertura explícita de consumo, latencia y costo.
 from uuid import UUID
 
 from app.modulos.metricas.repositorios.metrics_repository import MetricsRepository

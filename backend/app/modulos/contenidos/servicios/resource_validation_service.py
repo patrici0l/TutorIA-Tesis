@@ -1,3 +1,4 @@
+# Valida estructura y referencias declaradas; la exactitud requiere revisión docente.
 import json
 
 from pydantic import BaseModel, ValidationError

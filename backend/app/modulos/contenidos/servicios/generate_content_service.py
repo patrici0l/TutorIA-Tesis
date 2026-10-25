@@ -1,3 +1,4 @@
+# Coordina generación interna y validación del resultado sobre una preparación.
 from dataclasses import dataclass
 from uuid import UUID
 

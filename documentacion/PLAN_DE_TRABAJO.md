@@ -2,7 +2,25 @@
 
 Fuente rectora: Plan_Implementacion_TutorIA-Lucero.docx, entregado por el autor el 4 de octubre de 2026. Su extracción en orden, incluidas tablas, está en `investigacion/plan_implementacion_fuente.txt`. Los documentos previos se usan como contexto; no se modifican. No se interpretan ejemplos de código como funciones ya implementadas.
 
-## Bloque actual
+## Estado vigente al 25 de octubre de 2026
+
+La fotografía consolidada está en [Plan actual: fases, estado y evidencias](PLAN_ACTUAL.md),
+con las 16 etapas originales, correspondencia a los 12 hitos, ampliaciones del MVP,
+pendientes y siguientes bloques propuestos. Exportación en
+`output/pdf/plan_trabajo_tutoria_2026-10-25.pdf`, reproducible con
+`infraestructura/scripts/export-work-plan.py` y ReportLab.
+
+Ubicación actual: MVP funcional y consolidación de etapas 11-13; evaluación formal
+de etapa 14 y cierre integral de etapa 15 pendientes. Gemini real, cuatro recursos,
+perfiles sintéticos, trazabilidad e historial disponibles. OpenAI/Claude cuentan con
+adaptadores y pruebas simuladas; envíos reales adicionales y revisión pedagógica
+siguen pendientes. CAS real y recepción institucional quedan fuera del alcance actual.
+
+Los bloques N1-N6 del resumen son una propuesta para revisar el plan, sin fechas ni
+aprobación académica inventadas. Las anotaciones siguientes conservan su contexto
+histórico; no sustituyen el estado consolidado.
+
+## Actualizaciones históricas por sesión
 
 24 de octubre: corregido truncamiento del quiz de integrales (máximo local 512 →
 4096 tokens) y conectada asignación de recursos generados propios como material de
@@ -256,8 +274,8 @@ Estado actual: personalización implementada y tres perfiles comparados; revisi�
 | 8 Perfiles | Recepción por API de rendimiento externo | Validación y persistencia de perfiles sintéticos | Completado técnicamente con API/UI sintética privada; conexión institucional fuera del alcance actual |
 | 9 Personalización | Alto, medio, dificultades y dificultad localizada | Diferencias justificadas para mismo tema y distintos perfiles | API/UI/historial y tres salidas reales comprobados; desviación de alcance/fidelidad registrada, evaluación pedagógica pendiente |
 | 10 Trazabilidad | Fuentes, historial y métricas | Reconstrucción de cada generación y sus fallos | Snapshots/estados/historial/perfil conservados; métricas privadas y costo gratuito condicionado versionado implementados; nueva traza real y tarifas generales pendientes; retención/purga opcional |
-| 11 Benchmark | Directo/RAG, perfiles, OpenAI/Gemini/Claude | Experimentos controlados y resultados reales registrados | Pendiente |
-| 12 Cierre | Endurecimiento, documentación, pruebas y MVP | Evidencia final, manuales e informe | Pendiente |
+| 11 Benchmark | Directo/RAG, perfiles, OpenAI/Gemini/Claude | Experimentos controlados y resultados reales registrados | Instrumentación offline y simulada implementada; ejecución comparativa real y revisión humana pendientes |
+| 12 Cierre | Endurecimiento, documentación, pruebas y MVP | Evidencia final, manuales e informe | En curso: MVP, manuales y mejoras UX disponibles; regresión final, evaluación e informe pendientes |
 
 La tabla de etapas 0–15 de la sección 19 se conserva íntegra en la fuente. Los hitos anteriores agrupan esas etapas sin cambiar el orden. Ejemplos, pistas y retos se amplían después de los recursos iniciales. La segunda asignatura es condicional al tiempo disponible.
 
@@ -269,9 +287,9 @@ La tabla de etapas 0–15 de la sección 19 se conserva íntegra en la fuente. L
 | 3 | Convenciones de idioma | Estructura y AGENTS.md |
 | 4–6 | Raíz, backend, módulos, frontend y animaciones | Estructura inicial; cada módulo se implementa en su hito |
 | 7 | Variables, secretos y exclusiones | Plantillas, script local y .gitignore |
-| 8 | Interfaz LLM, OpenAI, Gemini y Claude | Hito 6: interfaz/fábrica y primer adaptador Gemini; OpenAI/Claude y comparación pendientes |
+| 8 | Interfaz LLM, OpenAI, Gemini y Claude | Hito 6: Gemini real y fábrica; OpenAI/Claude implementados con pruebas simuladas, comparación real pendiente |
 | 9 | REST/OpenAPI versionada | Health, auth, documentos, RAG, perfiles, contenidos, historial y métricas implementados; contratos en api/ |
-| 10 | Diez entidades iniciales y Alembic | Alembic 0001–0009; identidad, documentos/chunks/índice, generaciones y perfiles implementados |
+| 10 | Diez entidades iniciales y Alembic | Alembic 0001–0015; identidad, documentos/chunks/índice, generaciones, perfiles, intentos y asignaciones implementados |
 | 11–12 | Flujo completo y RAG antes del LLM | Hitos 3–7, validación independiente de recuperación |
 | 13 | Perfil externo y variables académicas | Hito 8; campos completos en la fuente |
 | 14–15 | Recursos ampliables y personalización | Cuatro recursos iniciales y adaptación por perfil implementados; evaluación académica pendiente |
@@ -316,7 +334,7 @@ Autenticación implementada: GET `/auth/login`, GET `/auth/callback`, GET `/auth
 
 Documentos implementados: POST `/documents/upload`, GET `/documents`, GET y DELETE `/documents/{id}`, POST `/documents/{id}/process`, GET `/documents/{id}/chunks` y POST `/documents/{id}/index` (rebuild=true para reconstruir). Perfiles implementados: POST `/profiles`, GET `/profiles` paginado y GET `/profiles/{id}`, propios teacher/admin, solo sintéticos. Recuperación implementada: POST `/rag/search`, restringida al corpus propio teacher/admin. Preparación implementada: POST `/content/prepare` y Angular `/recursos`, con sesión, propiedad, CSRF y límites; no llama IA.
 
-Generación: POST `/content/generate`, `/content/quiz`, `/content/feedback`, `/content/explanation`, `/content/challenge`. Ejercicios se identificarán por `resource_type=EXERCISE` en el contrato genérico. Historial: GET `/generations` y `/generations/{id}`. Métricas: GET `/metrics`. Todas estas rutas llevarán el prefijo `/api/v1`.
+Contratos vigentes: POST `/content/prepare` y `/content/{id}/generate` para los cuatro tipos de recurso, incluido `resource_type=EXERCISE`. Historial: GET `/content/history` y `/content/history/{id}`. Cupo: GET `/content/quota`. Métricas: GET `/metrics`. Todas llevan el prefijo `/api/v1`. Las rutas por tipo y `/generations` pertenecían al diseño inicial; no son endpoints actuales.
 
 ## Campos de trazabilidad exigidos
 

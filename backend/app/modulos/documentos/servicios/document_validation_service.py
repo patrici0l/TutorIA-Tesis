@@ -1,3 +1,4 @@
+# Contrasta extensión, MIME y contenido antes de aceptar un documento.
 import io
 import unicodedata
 import zipfile

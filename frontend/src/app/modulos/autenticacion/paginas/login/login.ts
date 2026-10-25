@@ -1,3 +1,4 @@
+// Selecciona el acceso disponible según la configuración mock o CAS del servidor.
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';

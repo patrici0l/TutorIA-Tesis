@@ -1,3 +1,4 @@
+# Recupera vectores compatibles solo del corpus disponible del propietario.
 from uuid import UUID
 
 from sqlalchemy import func, select

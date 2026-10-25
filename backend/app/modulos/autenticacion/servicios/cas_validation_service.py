@@ -1,3 +1,4 @@
+# Valida la identidad CAS por HTTPS y rechaza XML inseguro o ambiguo.
 import httpx
 from defusedxml import ElementTree
 from defusedxml.common import DefusedXmlException

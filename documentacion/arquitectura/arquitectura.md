@@ -1,4 +1,7 @@
-# Arquitectura inicial
+# Arquitectura de TutorIA-Lucero
+
+Estado consolidado: 25 de octubre de 2026. El [plan actual](../PLAN_ACTUAL.md)
+separa implementación técnica, evidencia histórica y validación pendiente.
 
 El navegador carga Angular desde nginx y consulta `/api/v1/health` en el mismo origen. Nginx reenvía `/api/` a FastAPI. El router delega en HealthService, que usa HealthRepository para consultar PostgreSQL y comprobar la extensión `vector`. No se requieren claves LLM.
 
@@ -6,7 +9,10 @@ Docker Compose espera a PostgreSQL, ejecuta Alembic en un servicio de migración
 
 La API devuelve 503 si la BD o pgvector fallan. Angular diferencia este caso de una API inaccesible. El healthcheck comprueba infraestructura, no afirma que existan documentos, embeddings o generación.
 
-Las futuras capas seguirán router → servicio → repositorio. RAG tendrá loaders, retrievers, prompts y servicios separados. Los servicios educativos dependerán de una interfaz de proveedor común. La evolución prevista está detallada en el plan, aún sin implementación de esos módulos.
+Las capas siguen router → servicio → repositorio. RAG separa extracción, embeddings,
+recuperación y prompts. Los servicios educativos dependen de una interfaz común de
+proveedor. Autenticación, documentos, contenidos, perfiles, métricas y estudiantes
+cuentan con implementación; evaluación dispone de herramientas offline.
 
 El entorno actual es de desarrollo local, con autenticación mock y adaptador CAS preparado y con puertos publicados exclusivamente en loopback. No es un despliegue institucional de producción.
 
@@ -30,7 +36,7 @@ Angular incorpora DocumentChunksComponent para revisar texto paginado y fuentes;
 
 POST /documents/{id}/index delega en IndexDocumentService → IndexRepository. Un worker separado verifica pesos/tokenizer locales fijados por SHA-256, genera embeddings E5 de 384 dimensiones en CPU y valida longitud de tokens sin truncamiento. La descarga de pesos públicos es una operación explícita del perfil Docker embeddings; ninguna petición API descarga modelos ni transmite corpus fuera del entorno. El volumen embedding_data se monta solo para lectura en backend.
 
-La inferencia termina antes de abrir la transacción de publicación. La reclamación condicional, token de intento y timeout permiten recuperar indexaciones interrumpidas y rechazar publicaciones tardías. Texto/referencias permanecen intactos. Angular muestra progreso, errores persistidos, reintento y reconstrucción explícita. La decisión 0005 documenta recursos y reproducibilidad. La búsqueda top-k ya se implementó; la conexión LLM real permanece desactivada.
+La inferencia termina antes de abrir la transacción de publicación. La reclamación condicional, token de intento y timeout permiten recuperar indexaciones interrumpidas y rechazar publicaciones tardías. Texto/referencias permanecen intactos. Angular muestra progreso, errores persistidos, reintento y reconstrucción explícita. La decisión 0005 documenta recursos y reproducibilidad. Buscar fuentes no llama al LLM; la generación real se solicita expresamente desde Recursos.
 
 ## Recuperación de fuentes
 
@@ -38,10 +44,52 @@ Angular /busqueda → POST /api/v1/rag/search → SearchService → EmbeddingWor
 
 HNSW se compara en pruebas con plan confirmado, nunca se activa por una opción del cliente. La muestra técnica es pequeña y el ajuste de vocabulario se hizo sobre ella; validación independiente y rendimiento a escala siguen pendientes. Contrato api/rag.md, decisión 0006 y evidencia pruebas/hito_05.md. No se genera una respuesta ni se ofrece similitud como certeza.
 
-## Capa de proveedores IA
+## Capa de proveedores IA y generación
 
-`modulos/proveedores_ia` expone interfaz `generate`, esquemas internos, fábrica, limitador compartido por proceso y adaptador Gemini. La capa educativa futura dependerá de la interfaz; solamente el adaptador conoce REST y headers del proveedor. Devuelve texto completo y metadata normalizada para trazabilidad, sin realizar SQL ni consultar perfiles/documentos. Configuración y secretos viven en backend; Docker los suministra desde el entorno privado, nunca desde Angular.
+`modulos/proveedores_ia` ofrece `LLMProvider`, fábrica y adaptadores Gemini,
+OpenAI y Claude. Gemini tiene evidencia de uso real; los otros adaptadores se han
+probado con transporte simulado. El envío API/UI solo habilita Gemini bajo la
+configuración gratuita autorizada. No hay reintentos automáticos ni fallback.
+Los adaptadores conocen HTTP; los secretos permanecen en backend.
 
-Activación inicial deshabilitada por el autor. Pruebas con HTTPX MockTransport sin red; POST /content/prepare prepara fuentes sin IA; aún no hay coordinador de llamada IA. No se envía corpus ni se presenta una respuesta simulada en el producto. La decisión 0007 y api/proveedores_ia.md detallan límites, errores, ausencias de metadata y requisitos antes de conectar Gemini real. OpenAI/Claude siguen previstos por la misma interfaz; no están implementados ni se usan como fallback.
+`PreparationService → PrepareContentService → SearchService` prepara fuentes,
+solicitud y prompt versionado; un perfil sintético propio puede adaptar el apoyo.
+El docente revisa las fuentes antes de enviar el identificador a generación.
+`GenerationClaimRepository` reserva en PostgreSQL antes de salir a red y confirma
+límites globales compartidos. `GeneratePreparationService` llama al proveedor una
+vez; `GenerationTraceService` valida y persiste resultado o fallo seguro.
+Validar formato/citas no certifica exactitud matemática ni calidad pedagógica.
 
-`PrepareContentService → SearchService → EducationalPromptBuilder` prepara fuente/solicitud/esquema de recurso y hash canónico; `GenerationRepository` guarda evidencia antes de una eventual llamada. `GenerationTraceService → ResourceValidationService` valida estructura y pertenencia de citas antes de finalizar como succeeded; fallos quedan con código seguro y consumo conocido. Estado terminal no se sobreescribe. Contratos separados de explicación/ejercicio/quiz/feedback, dificultad manual, sin perfiles ni exactitud matemática certificada. Angular /recursos → POST /api/v1/content/prepare → PreparationService reutiliza la preparación interna y confirma su snapshot en PostgreSQL. Exige teacher/admin, propiedad, CSRF, no-store, cuerpo de 16 KiB y cinco intentos por propietario/minuto/proceso. Devuelve solo solicitud resumida, identificador y fuentes verificables; prompt y respuesta a revisar permanecen privados. No habilita llamadas IA ni historial público. Decisión 0008 y api/contenidos.md.
+El historial conserva snapshots de fuentes, perfil, prompt, modelo, límites y
+consumo reportado. La consulta privada y exportación local no regeneran recursos.
+Métricas y cuota distinguen datos conocidos de valores no registrados; el costo
+es una estimación condicionada, no una consulta de facturación. Contratos vigentes:
+[contenidos](../api/contenidos.md), [personalización](../api/personalizacion.md) y
+[auditoría](../api/auditoria_recursos.md).
+
+## Estudiantes y actividades
+
+`AssignmentService` valida docente, destinatario y recurso propio. La actividad
+comparte un banco fijo corregible o un recurso generado como material con soluciones.
+El destinatario accede mediante la asignación, sin recibir prompts ni perfiles privados.
+`PracticeService` corrige los bancos fijos en servidor y conserva intentos idempotentes.
+Cerrar/cancelar bloquea nuevas entregas y mantiene las anteriores. Los materiales
+generados todavía no registran lectura ni respuestas de quizzes dinámicos.
+
+## Interfaz y lectura del código
+
+Angular mantiene el recorrido Documentos → Recursos → Actividades y el acceso opcional
+a perfiles. El menú modal restaura el foco; KaTeX está empaquetado y procesa texto
+sin interpretar HTML externo. TS, HTML, SCSS y pruebas permanecen separados.
+
+Los comentarios directos describen responsabilidades y decisiones no evidentes:
+propiedad, transacciones, estados, límites, reenvíos y datos desconocidos. Deben ser
+breves, próximos a la regla y explicar su motivo; nombres y tipos expresivos no
+necesitan repetir cada instrucción. Las pruebas documentan los casos de comportamiento.
+
+## Evaluación y entrega
+
+Las herramientas de `modulos/evaluacion` preparan manifiestos, registros y revisión
+humana offline; la simulación no ejecuta un benchmark real. El protocolo, la revisión
+pedagógica y los experimentos completos siguen pendientes. La demo remota es una
+operación optativa con identidades ficticias compartidas, no un despliegue institucional.

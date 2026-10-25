@@ -1,3 +1,4 @@
+// Presenta cada contrato de recurso conservando fuentes y soluciones disponibles.
 import { MathTextDirective } from '../../../../compartido/directivas/math-text.directive';
 import { Component, input } from '@angular/core';
 import { CitedText, EducationalResource } from '../../modelos/preparation.model';

@@ -1,3 +1,4 @@
+# Expone perfiles sintéticos privados para docentes y administradores.
 from typing import Annotated
 from uuid import UUID
 

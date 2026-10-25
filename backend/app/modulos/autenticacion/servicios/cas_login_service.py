@@ -1,3 +1,4 @@
+# Vincula el callback al intento del navegador antes de crear una sesión.
 import secrets
 from datetime import UTC, datetime, timedelta
 from urllib.parse import parse_qs, urlencode, urlsplit

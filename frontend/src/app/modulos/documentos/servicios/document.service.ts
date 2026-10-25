@@ -1,3 +1,4 @@
+// Centraliza operaciones HTTP de documentos; los permisos se validan en servidor.
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { DocumentList, CourseDocument, DocumentChunkList } from '../modelos/document.model';

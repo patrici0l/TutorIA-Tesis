@@ -1,3 +1,4 @@
+# Reclama y publica fragmentos con control de concurrencia y de intentos tardíos.
 from datetime import UTC, datetime, timedelta
 from uuid import UUID, uuid4
 

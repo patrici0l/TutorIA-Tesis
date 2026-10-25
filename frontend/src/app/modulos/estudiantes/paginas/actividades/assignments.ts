@@ -1,3 +1,4 @@
+// Gestiona asignaciones por rol y distingue bancos corregibles de material de estudio.
 import { Component, DestroyRef, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';

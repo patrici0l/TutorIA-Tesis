@@ -1,3 +1,4 @@
+# Gestiona el motor compartido y el ciclo de sesión de cada solicitud.
 from functools import lru_cache
 
 from sqlalchemy import Engine, create_engine

@@ -1,3 +1,4 @@
+# Expone métricas privadas de uso; no consulta facturación del proveedor.
 from typing import Annotated
 
 from fastapi import APIRouter, Depends

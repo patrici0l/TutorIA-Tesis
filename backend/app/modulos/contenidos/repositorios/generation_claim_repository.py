@@ -1,3 +1,4 @@
+# Reserva el cupo global en PostgreSQL antes de permitir una llamada externa.
 from datetime import UTC, timedelta
 from uuid import UUID
 
@@ -36,6 +37,7 @@ class GenerationClaimRepository:
         execution_configuration: ExecutionConfiguration | None = None,
     ):
         try:
+            # Serializa reservas de todos los docentes para respetar el cupo compartido.
             self.db.execute(text("SELECT pg_advisory_xact_lock(739117)"))
             now = self.db.scalar(select(func.clock_timestamp())).astimezone(UTC)
             self.db.execute(
@@ -111,6 +113,7 @@ class GenerationClaimRepository:
             record.execution_configuration = (
                 execution_configuration.model_dump(mode="json") if execution_configuration else None
             )
+            # Confirma la reserva antes de salir a red; un fallo posterior también consume cupo.
             self.db.commit()
             return payload
         except Exception:

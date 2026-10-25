@@ -1,3 +1,4 @@
+// Consulta y modifica actividades con el estado esperado para detectar conflictos.
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {

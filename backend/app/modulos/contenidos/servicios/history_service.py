@@ -1,3 +1,4 @@
+# Presenta contenido y auditoría propios manteniendo explícitos los datos desconocidos.
 from typing import get_args
 from uuid import UUID
 

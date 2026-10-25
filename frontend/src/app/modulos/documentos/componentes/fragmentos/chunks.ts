@@ -1,3 +1,4 @@
+// Muestra fragmentos y referencias del documento seleccionado con paginación.
 import { Component, inject, input, OnChanges, OnDestroy, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Subscription } from 'rxjs';

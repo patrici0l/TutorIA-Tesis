@@ -1,3 +1,4 @@
+// Registra y consulta observaciones sintéticas privadas para la adaptación opcional.
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';

@@ -1,3 +1,4 @@
+// Carga pantallas bajo demanda y aplica el acceso por sesión y rol.
 import { Routes } from '@angular/router';
 import { authGuard } from './nucleo/guardias/auth.guard';
 

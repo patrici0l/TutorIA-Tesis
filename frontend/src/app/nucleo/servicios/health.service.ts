@@ -1,3 +1,4 @@
+// Consulta disponibilidad real sin inferirla del estado local de la interfaz.
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, timeout } from 'rxjs';

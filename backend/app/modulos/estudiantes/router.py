@@ -1,3 +1,4 @@
+# Expone intentos e historial privado de práctica con corrección en servidor.
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
