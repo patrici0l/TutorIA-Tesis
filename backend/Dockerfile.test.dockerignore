@@ -4,3 +4,10 @@ __pycache__
 .pytest_cache
 .ruff_cache
 *.egg-info
+.coverage
+htmlcov
+coverage
+logs
+*.log
+uploads
+models

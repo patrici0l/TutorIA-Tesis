@@ -13,3 +13,16 @@ respaldos_locales
 documentacion
 datos
 **/__pycache__
+
+# Resultados regenerables y registros locales
+**/.pytest_cache
+**/.ruff_cache
+**/*.egg-info
+**/coverage
+**/test-results
+**/playwright-report
+logs
+**/*.log
+
+# El frontend no copia el modelo local; el backend usa embedding_data.
+backend/models

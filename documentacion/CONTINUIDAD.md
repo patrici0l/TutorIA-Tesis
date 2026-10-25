@@ -1,5 +1,41 @@
 # Continuidad de TutorIA-Lucero
 
+## 25 de octubre — continuación de limpieza
+
+Rama `feature/resource-preparation`. Ampliadas exclusiones en los contextos Docker
+propios del backend (producción y pruebas): logs, cobertura, uploads y modelos
+locales. El contexto raíz del frontend también excluye backend/models, 487 351 240
+bytes que no forman parte de sus COPY. Modelo y tokenizer permanecen en disco;
+Compose conserva el volumen embedding_data. README corregido para reflejar los
+accesos Profesor/Estudiante y el resumen de disponibilidad vigente.
+
+Verificación estática de entradas COPY en los tres Dockerfiles: presentes y no
+excluidas; git diff --check correcto. No se construyeron imágenes ni se ejecutaron
+suites: cambios limitados a documentación y exclusiones de archivos no copiados.
+Limpieza previa conservada. Pendiente de revisión y commit humano:
+`chore: limpiar archivos vacíos y documentación redundante`.
+Próximo: revisión visual del flujo docente cuando el navegador esté habilitado.
+
+## 24 de octubre — limpieza del repositorio
+
+Commit humano anterior verificado: `2094121`. Rama `feature/resource-preparation`.
+Retirados 37 .gitkeep redundantes o de carpetas frontend sin implementación; seis
+carpetas frontend vacías retiradas. Cinco directorios generados enviados a Papelera:
+.pytest_cache y .ruff_cache de raíz/backend, y frontend/dist (4 333 400 bytes).
+La aprobación automática rechazó el borrado masivo inicial; la limpieza de directorios
+se completó de forma recuperable. Dependencias, caché Angular del servidor activo,
+logs activos, modelos, secretos, respaldos y evidencias académicas conservados.
+
+Guía de navegación reducida a la implementación vigente, con referencia al historial
+Git; retirada tabla de renombres ya concluidos del README frontend. Docker excluye
+cachés de pruebas, metadatos regenerables, informes y logs del contexto de construcción.
+Verificación: 170 referencias locales sin faltantes y git diff --check correcto;
+las 37 eliminaciones versionadas son únicamente archivos vacíos. Sin cambios de
+código ejecutable ni nuevas suites/build para no regenerar los residuos limpiados.
+Pendiente de commit humano: `chore: limpiar archivos vacíos y documentación redundante`.
+Próximo: revisión visual del flujo docente cuando el navegador esté habilitado.
+
+
 ## 24 de octubre — coherencia del recorrido docente
 
 Rama `feature/resource-preparation`. Portada docente organizada en materiales,

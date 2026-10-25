@@ -34,7 +34,7 @@ docker compose up -d --build --wait
 - Swagger: http://localhost:8000/api/v1/docs
 - OpenAPI: http://localhost:8000/api/v1/openapi.json
 
-Abrir `/login` y pulsar “Entrar a la demostración” en `AUTH_MODE=mock`: el backend crea una sesión ficticia, sin correo ni contraseña. “Iniciar sesión con cuenta UPS” corresponde únicamente al modo CAS, cuya conexión institucional sigue pendiente. La pantalla de inicio debe indicar API, base de datos y motor vectorial disponibles. HTTP 503 significa que la API está viva, pero PostgreSQL o pgvector no están disponibles. PostgreSQL no publica puertos hacia el equipo; API e interfaz se exponen solamente en loopback.
+Abrir `/login` y elegir Profesor o Estudiante en `AUTH_MODE=mock`: el backend crea una sesión ficticia, sin correo ni contraseña. “Iniciar sesión con cuenta UPS” corresponde únicamente al modo CAS, cuya conexión institucional sigue pendiente. El inicio docente muestra un resumen de disponibilidad; el detalle técnico se consulta en `/api/v1/health`. HTTP 503 significa que la API está viva, pero PostgreSQL o pgvector no están disponibles. PostgreSQL no publica puertos hacia el equipo; API e interfaz se exponen solamente en loopback.
 
 ```powershell
 docker compose ps

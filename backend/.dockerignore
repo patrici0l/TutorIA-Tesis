@@ -5,3 +5,11 @@ __pycache__
 .pytest_cache
 .ruff_cache
 tests
+*.egg-info
+.coverage
+htmlcov
+coverage
+logs
+*.log
+uploads
+models
