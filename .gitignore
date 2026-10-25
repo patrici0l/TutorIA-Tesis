@@ -31,6 +31,7 @@ tmp/
 temp/
 uploads/
 /models/
+/backend/models/
 postgres_data/
 .DS_Store
 Thumbs.db

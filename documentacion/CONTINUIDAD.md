@@ -1127,3 +1127,21 @@ regenerada: 326 archivos, 172 clases y 299 operaciones; exclusión Git verificad
 Sin llamadas IA ni conexión UPS. Próximo funcional: progreso por tema y filtros de actividades.
 Pendiente commit humano de HTML/SCSS, ajuste del test y seguimiento:
 style: mejora textos y distribucion de las pantallas.
+
+## 25 de octubre — modelo local fuera de Git y reparación del push
+
+El autor autorizó retirar los artefactos E5 del historial pendiente tras el rechazo
+remoto por model.onnx (448,48 MiB). Se reconstruyeron únicamente los cuatro commits
+no publicados, conservando autores, mensajes y cambios restantes; el commit de
+navegación 6e87af6 pasa a 214ed6a. Se conserva una rama local de respaldo
+backup/model-cleanup-20261025-083437; no debe publicarse porque contiene los pesos.
+Los archivos permanecen en backend/models/e5-small y /backend/models/ queda
+excluido mediante .gitignore. La descarga reproducible existente continúa en
+app.modulos.rag.servicios.prepare_model, con revisión y SHA-256 fijados.
+
+Verificación: árboles anterior y reconstruido idénticos fuera de backend/models;
+SHA-256 locales correctos y ausencia de blobs mayores de 100 MiB antes del
+push normal de feature/resource-preparation. Los commits publicados no se cambian.
+No cambia código de ejecución; las siete pruebas de navegación y TypeScript
+app/spec fueron aprobados antes de esta limpieza. Próximo: confirmar publicación
+y revisión visual móvil/escritorio del acceso y flujo por roles.
