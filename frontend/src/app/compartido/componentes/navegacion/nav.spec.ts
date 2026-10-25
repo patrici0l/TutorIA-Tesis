@@ -55,7 +55,7 @@ describe('Navegación superior', () => {
     expect(fixture.nativeElement.querySelectorAll('nav').length).toBe(1);
     expect(fixture.nativeElement.querySelector('.slider')).toBeNull();
   });
-  it('muestra destinos según el rol y acceso institucional cuando no hay sesión', async () => {
+  it('muestra destinos según el rol y ninguno cuando no hay sesión', async () => {
     const fixture = await setup();
     expect(fixture.componentInstance.items().map((item) => item.path)).toContain('/metricas');
     user.set({ rol: 'student' });
@@ -67,7 +67,7 @@ describe('Navegación superior', () => {
     ]);
     user.set(null);
     await fixture.whenStable();
-    expect(fixture.componentInstance.items().map((item) => item.path)).toEqual(['/login']);
+    expect(fixture.componentInstance.items()).toEqual([]);
   });
   it('marca la ruta activa y cierra el desplegable tras navegar', async () => {
     const fixture = await setup();

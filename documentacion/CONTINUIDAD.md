@@ -1,5 +1,25 @@
 # Continuidad de TutorIA-Lucero
 
+## 25 de octubre — acceso sin navegación redundante
+
+Solicitud del autor a partir de captura: retirar Explorar en el acceso, donde solo
+repetía Entrar. App crea la navegación únicamente con usuario de sesión; al cerrar
+o perder sesión se retira la barra completa. Eliminado destino /login del menú sin
+sesión. Conservados destinos de docente/estudiante, diálogo y acceso por perfiles.
+Guía de navegación actualizada. Sin cambios de autenticación, backend o datos.
+
+Validación: siete pruebas aprobadas en app.spec.ts y nav.spec.ts; cubren ausencia
+sin sesión, presencia por ambos roles, retirada al perder sesión y comportamiento
+del diálogo/destinos. TypeScript app/spec sin errores; Prettier aplicado a los tres
+TS afectados y git diff --check correcto. Ejecución inicial de tests detenida tras
+espera del entorno; repetición con configuración temporal de dos workers y threads
+aprobada (32,67 s); configuración retirada. Sin nueva revisión visual en navegador.
+Rama feature/resource-preparation, anterior commit humano 06b848b verificado.
+Revisión solicitada por el autor completada: siete pruebas aprobadas nuevamente, TypeScript app/spec sin errores y git diff --check correcto. Commit autorizado expresamente con mensaje `ocultar explorador antes de iniciar sesión`.
+Próximo: revisión visual móvil/escritorio del acceso y flujo por roles. El problema
+previo de push por modelo grande permanece fuera del alcance de este cambio; no
+se reescribió el historial de Git.
+
 ## 25 de octubre — plan consolidado y comentarios de código
 
 Solicitud del autor: PDF con todas las fases, estados, evidencias y próximos pasos,

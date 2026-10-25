@@ -17,14 +17,7 @@ export class NavigationComponent {
   readonly open = signal(false);
   readonly items = computed(() => {
     const user = this.auth.user();
-    if (!user)
-      return [
-        {
-          path: '/login',
-          label: 'Entrar',
-          description: 'Entra a tu espacio de aprendizaje',
-        },
-      ];
+    if (!user) return [];
     const links = [{ path: '/inicio', label: 'Inicio', description: 'Tu espacio de trabajo' }];
     if (user.rol === 'student') {
       links.push(

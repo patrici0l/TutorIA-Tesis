@@ -41,8 +41,9 @@
       </div>
     </div>
 
-    <!-- Navegación principal -->
-    <app-workspace-navigation />
+    @if (auth.user()) {
+      <app-workspace-navigation />
+    }
   </header>
 
   <!-- Contenido principal -->

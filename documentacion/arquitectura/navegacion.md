@@ -4,7 +4,7 @@
 
 - Docente: Inicio → Mis documentos → Recursos → Actividades asignadas. Buscar fuentes y Perfiles de aprendizaje son apoyos opcionales; Uso de generación muestra consumo y estados.
 - Estudiante: Inicio → Actividades asignadas → Práctica libre.
-- Sin sesión: Entrar.
+- Sin sesión: pantalla de acceso sin menú Explorar ni enlace Entrar duplicado.
 
 El [flujo docente](../manuales/flujo_docente.md) describe el recorrido completo. Las
 actividades asignadas comparten contenido con un estudiante; la práctica libre es
@@ -16,8 +16,9 @@ repaso voluntario con historial personal.
 por rol. Su plantilla, estilos y pruebas son `nav.html`, `nav.scss` y `nav.spec.ts`.
 `app.ts` conserva la cabecera, la cuenta y el cierre de sesión.
 
-Explorar abre un diálogo modal lateral. Cierra con su botón, el fondo, Escape o al
-navegar, y devuelve el foco al botón de apertura. El fondo queda inerte y sin
+Explorar se muestra al disponer de sesión y abre un diálogo modal lateral. Cierra
+con su botón, el fondo, Escape o al navegar, y devuelve el foco al botón de apertura.
+El fondo queda inerte y sin
 scroll; el menú admite desplazamiento interno y respeta movimiento reducido.
 Los enlaces usan RouterLink, RouterLinkActive y aria-current. El servidor valida
 los permisos de cada operación.
