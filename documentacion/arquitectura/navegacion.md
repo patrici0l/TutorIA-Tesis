@@ -1,4 +1,38 @@
-# Navegación superior de TutorIA
+# Navegación de TutorIA
+
+El menú docente sigue Inicio → Mis documentos → Recursos → Actividades asignadas; Buscar fuentes y Perfiles de aprendizaje son apoyos opcionales, y Uso de generación permite consultar consumo y estados. Recorrido completo: [flujo docente](../manuales/flujo_docente.md).
+
+La implementación vigente se encuentra en `frontend/src/app/compartido/componentes/navegacion/nav.ts`, con `nav.html`, `nav.scss` y `nav.spec.ts`. Los nombres anteriores en la evidencia histórica corresponden a la estructura previa al refactor del 24 de octubre.
+
+## 24 de octubre — menú lateral y renderizado matemático
+
+Rama `feature/resource-preparation`. Solicitud UI/UX implementada: Explorar abre
+un menú lateral modal nativo, sin carrusel ni segunda lista de destinos. Cierre
+por botón, fondo, Escape y navegación; foco restaurado, fondo inerte, desplazamiento
+del fondo bloqueado y movimiento reducido respetado. Portada sin enlaces secundarios
+redundantes; se conservan cambios previos del autor en cabecera y pie.
+
+Conceptos separados: Actividades asignadas (ejercicios/materiales del docente) y
+Práctica libre (repaso voluntario e historial personal). Rutas y persistencia intactas.
+KaTeX y CSS/fuentes empaquetados localmente; importación estática antes de crear las
+vistas matemáticas. Directiva síncrona para texto de recursos y ejercicios, incluidos
+quiz, soluciones y revisión; actualiza al cambiar entradas. Admite los delimitadores de KaTeX $, $$, \( y \[;
+texto como textContent, trust=false y errores tolerados, sin habilitar HTML externo.
+
+Pruebas: 34/34 iniciales en siete archivos; tras nueva prueba de quiz y orden de
+menú, 11/11 en los tres archivos afectados (35 casos distintos en total). Build
+producción aprobado, inicial 327.05 kB sin advertencias. Navegador local: acceso
+docente, menú abierto, Escape/foco y navegación Inicio comprobados visualmente.
+No había recursos guardados en la base local; fórmulas verificadas con fixtures,
+sin consumir IA. No se ejecutó una matriz completa de tamaños/dispositivos.
+
+Pendiente de commit humano. Revisar frontend y documentación de este bloque sin
+incluir LICENSE, modelos ni cambios previos ajenos. Mensaje sugerido:
+`feat(ui): simplificar navegación y renderizar fórmulas con KaTeX`.
+Próximo: revisar visualmente un recurso real cuando exista en la base local;
+continuar seguimiento por tema y filtros de actividades según el plan.
+
+## Implementación anterior — 6 de octubre (referencia histórica)
 
 Implementada el 6 de octubre de 2026 a solicitud directa del autor. Sustituye la barra lateral por cabecera superior fija al desplazarse, pestañas horizontales y un acceso Explorar. Mantiene Angular y la paleta UPS existente.
 
@@ -31,3 +65,5 @@ docker build --target build -t tutoria-frontend-validation:local -f frontend/Doc
 docker run --rm tutoria-frontend-validation:local npm test -- --watch=false
 docker compose up -d --build --no-deps --wait frontend
 ```
+
+Referencia técnica del motor: [auto-render de KaTeX](https://katex.org/docs/autorender.html) y [opciones de seguridad](https://katex.org/docs/options.html).

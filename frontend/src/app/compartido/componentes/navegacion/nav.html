@@ -1,0 +1,42 @@
+<div class="navigation-bar">
+  <button
+    #trigger
+    type="button"
+    class="explore-trigger"
+    [attr.aria-expanded]="open()"
+    aria-controls="workspace-explore"
+    aria-haspopup="dialog"
+    (click)="toggle()"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+    Explorar
+  </button>
+</div>
+<dialog
+  #panel
+  id="workspace-explore"
+  aria-labelledby="explore-title"
+  (cancel)="cancel($event)"
+  (click)="backdrop($event)"
+>
+  <div class="drawer">
+    <header>
+      <h2 id="explore-title">Explorar</h2>
+      <button type="button" autofocus aria-label="Cerrar menú" (click)="close()">✕</button>
+    </header>
+    <nav aria-label="Navegación principal">
+      @for (item of items(); track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="selected"
+          ariaCurrentWhenActive="page"
+          [routerLinkActiveOptions]="{ exact: item.path !== '/actividades' }"
+          (click)="close()"
+        >
+          <strong>{{ item.label }}</strong
+          ><small>{{ item.description }}</small>
+        </a>
+      }
+    </nav>
+  </div>
+</dialog>

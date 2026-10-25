@@ -1,5 +1,105 @@
 # Continuidad de TutorIA-Lucero
 
+## 24 de octubre — coherencia del recorrido docente
+
+Rama `feature/resource-preparation`. Portada docente organizada en materiales,
+recursos y asignación/seguimiento, con un único acceso a actividades. Menú con el
+mismo orden; perfiles quedan como personalización opcional y las métricas se
+identifican como Uso de generación, diferenciadas del seguimiento estudiantil.
+
+Documentos explica extracción y preparación para buscar fuentes, enlaza a Recursos
+al estar indexado y pliega reconstrucción/modelo bajo mantenimiento. Recursos coloca
+el formulario básico antes de personalización, las fuentes antes de Generar y el
+historial después del resultado; retira el botón de generación al terminar. Se
+conservan fuentes, citas, trazabilidad, exportación y controles de cupo/errores.
+Actividades distingue ejercicios autocorregidos de materiales con soluciones,
+identifica el recurso seleccionado y oculta su resumen al cambiar a un banco fijo.
+Retirado el desvío docente a práctica libre desde el estado vacío. Los materiales
+no registran lectura ni respuestas; esto se explica sin presentar métricas ficticias.
+Guía vigente: manuales/flujo_docente.md. Conservados nombres cortos y logo del autor.
+
+Validación: build producción aprobado, inicial 327.08 kB sin advertencias; TypeScript
+app y spec aprobados. Suite de 23 archivos: 100/101 iniciales; corregida la nueva
+prueba para cambiar el select mediante su evento real y verificados 6/6 casos del
+archivo de actividades. 101 casos distintos aprobados en conjunto. La otra prueba
+nueva comprueba fuentes antes de generar y ausencia de reenvío al abrir un recurso
+finalizado. Para sortear demoras de instrumentación local se usó WALLABY_ENTRY=1
+y configuración temporal Vitest con dos workers, sin paralelismo de archivos y pool
+threads; retirada al terminar. No se alteraron extensiones ni ajustes del equipo.
+
+Revisión visual pendiente: el navegador local está deshabilitado en Work. No se
+consumió IA ni se escribieron datos reales; backend y DB sin cambios. Pendiente de
+commit humano. Revisar frontend del recorrido docente y su documentación; mensaje
+sugerido: `feat(ui): ordenar el flujo docente de materiales a actividades`.
+Próximo: revisión visual del recorrido en navegador cuando esté disponible y
+continuar seguimiento por tema/filtros según el plan.
+
+
+## 24 de octubre — nombres cortos en componentes frontend
+
+Solicitud del autor: nombres como `login.html`, sin `.component`, y limpieza de
+restos de elementos retirados. Renombrados los 72 archivos de 18 componentes,
+incluidos TS/HTML/SCSS/spec; nueve nombres compuestos/largos reducidos a nav,
+resolve, chunks, prepare, view, history, audit, export y quota. Actualizados imports,
+rutas lazy, arranque, referencias a plantillas/estilos y pruebas. Clases, selectores
+y URLs conservados. Generador Angular configurado sin sufijo de componente; criterio
+y equivalencias en frontend/README.md.
+
+Limpieza: estilos huérfanos tag/mock-notice/notice-dot, quick-links y domain, y
+metadatos icon que ya no usa el menú. Conservados logo UPS y cambios visuales del
+autor. El estado inicial ya compilaba y pasaba 99 pruebas; no se detectaron errores
+de componentes ausentes ni se restauraron elementos eliminados.
+
+Verificación final: build producción sin advertencias, 99/99 pruebas en 23 archivos,
+TypeScript sin imports/parámetros locales sin uso; comprobadas 134 referencias
+relativas y 36 plantillas/estilos sin archivos faltantes. Generador revisado en
+simulación sin crear archivos. Sin cambios backend, base de datos ni llamadas IA.
+Rama feature/resource-preparation, pendiente de commit humano. Revisar renombres,
+limpieza y documentación; mensaje sugerido:
+`refactor(frontend): acortar archivos de componentes y limpiar estilos huérfanos`.
+Próximo: continuar la revisión funcional de UI según el plan.
+
+
+## 24 de octubre — menú lateral y renderizado matemático
+
+Rama `feature/resource-preparation`. Solicitud UI/UX implementada: Explorar abre
+un menú lateral modal nativo, sin carrusel ni segunda lista de destinos. Cierre
+por botón, fondo, Escape y navegación; foco restaurado, fondo inerte, desplazamiento
+del fondo bloqueado y movimiento reducido respetado. Portada sin enlaces secundarios
+redundantes; se conservan cambios previos del autor en cabecera y pie.
+
+Conceptos separados: Actividades asignadas (ejercicios/materiales del docente) y
+Práctica libre (repaso voluntario e historial personal). Rutas y persistencia intactas.
+KaTeX y CSS/fuentes empaquetados localmente; importación estática antes de crear las
+vistas matemáticas. Directiva síncrona para texto de recursos y ejercicios, incluidos
+quiz, soluciones y revisión; actualiza al cambiar entradas. Admite $, $$, \( y \[;
+texto como textContent, trust=false y errores tolerados, sin habilitar HTML externo.
+
+Pruebas: 34/34 iniciales en siete archivos; tras nueva prueba de quiz y orden de
+menú, 11/11 en los tres archivos afectados (35 casos distintos en total). Build
+producción aprobado, inicial 327.05 kB sin advertencias. Navegador local: acceso
+docente, menú abierto, Escape/foco y navegación Inicio comprobados visualmente.
+No había recursos guardados en la base local; fórmulas verificadas con fixtures,
+sin consumir IA. No se ejecutó una matriz completa de tamaños/dispositivos.
+
+Pendiente de commit humano. Revisar frontend y documentación de este bloque sin
+incluir LICENSE, modelos ni cambios previos ajenos. Mensaje sugerido:
+`feat(ui): simplificar navegación y renderizar fórmulas con KaTeX`.
+Próximo: revisar visualmente un recurso real cuando exista en la base local;
+continuar seguimiento por tema y filtros de actividades según el plan.
+
+
+## 24 de octubre — ejecución local sin contenedores
+
+PostgreSQL 18 de Windows reutilizado con base y rol dedicados `tutoria_localdev`;
+pgvector disponible y migraciones aplicadas hasta 0015. Credenciales únicamente en
+`backend/.env`, fuera de Git. Bases preexistentes conservadas. Angular arrancado con
+proxy local y FastAPI con recarga; health directo y por proxy: API/DB/pgvector OK.
+Modelo E5 descargado y verificado en `backend/models/e5-small`. Sesiones mock docente
+y estudiante verificadas por HTTP local. Rama `feature/resource-preparation`.
+Próximo: continuar desarrollo local; los datos Docker no se importaron.
+
+
 ## 24 de octubre — generación, asignación y mensajes
 
 Solicitud del autor: corregir recursos de integrales y su asignación; limpiar avisos de

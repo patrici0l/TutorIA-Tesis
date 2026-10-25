@@ -114,3 +114,15 @@ main {
     }
   }
 }
+
+// Long display equations scroll within their content instead of widening the page.
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-block: 0.25rem;
+  max-width: 100%;
+}
+
+body:has(dialog[open]) {
+  overflow: hidden;
+}

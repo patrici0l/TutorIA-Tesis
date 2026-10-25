@@ -1,0 +1,56 @@
+<section class="auth-card fade-in">
+  <p class="eyebrow">TU ESPACIO DE APRENDIZAJE</p>
+  <h1>Bienvenido a TutorIA</h1>
+  @if (loginMode() === 'mock') {
+    <p>Elige tu espacio de trabajo para continuar.</p>
+  } @else if (loginMode() === 'cas') {
+    <p>Accede con tu cuenta institucional para continuar en tu espacio de aprendizaje.</p>
+  }
+  @if (denied) {
+    <p class="error" role="alert">
+      No se pudo completar el acceso. El intento pudo vencer o tu cuenta no tiene acceso habilitado.
+      Inténtalo nuevamente.
+    </p>
+  }
+  @if (failed()) {
+    <p class="error" role="alert">
+      No se pudo comprobar el acceso. Revisa que los servicios estén disponibles e inténtalo
+      nuevamente.
+    </p>
+    <button class="login-button" type="button" (click)="load()">Reintentar conexión</button>
+  }
+  @if (loading()) {
+    <p role="status">Comprobando acceso…</p>
+  } @else if (loginMode()) {
+    @if (loginMode() === 'mock') {
+      <div class="profile-grid">
+        <div class="profile-card">
+          <h2>Estudiante</h2>
+          <p>Practica ejercicios, revisa explicaciones y consulta tus intentos.</p>
+          <a class="login-button" href="/api/v1/auth/login?demo_profile=student"
+            >Entrar como estudiante <span aria-hidden="true">↗</span></a
+          >
+        </div>
+        <div class="profile-card">
+          <h2>Profesor</h2>
+          <p>Organiza documentos, busca fuentes y prepara actividades.</p>
+          <a class="login-button" href="/api/v1/auth/login?demo_profile=teacher"
+            >Entrar como profesor <span aria-hidden="true">↗</span></a
+          >
+        </div>
+      </div>
+    } @else {
+      <a class="login-button" href="/api/v1/auth/login"
+        >Iniciar sesión con cuenta UPS <span aria-hidden="true">↗</span></a
+      >
+    }
+    <p class="privacy">
+      @if (loginMode() === 'mock') {
+        Por el momento no necesitas una cuenta institucional para acceder a TutorIA
+      } @else {
+        Tu contraseña institucional se ingresa únicamente en el portal de la UPS. TutorIA no la
+        solicita ni la almacena.
+      }
+    </p>
+  }
+</section>

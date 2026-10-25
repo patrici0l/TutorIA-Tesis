@@ -1,0 +1,167 @@
+@use '../../../../compartido/estilos/workspace' as workspace;
+
+.eyebrow {
+  color: var(--blue-dark);
+  font-size: 11px;
+  letter-spacing: 1.4px;
+  font-weight: 700;
+}
+h1 {
+  font-size: clamp(30px, 3.4vw, 46px);
+  line-height: 1.15;
+  letter-spacing: -1.3px;
+  max-width: 780px;
+  margin: 14px 0 20px;
+}
+.lead {
+  color: var(--muted);
+  max-width: 650px;
+  line-height: 1.8;
+  margin-bottom: 32px;
+}
+.actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+.actions a,
+.study-card {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  background: white;
+}
+.actions a {
+  color: var(--ink);
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+}
+.actions a:hover {
+  border-color: var(--blue);
+}
+.actions span {
+  font-size: 11px;
+  color: var(--blue-dark);
+  font-weight: 700;
+}
+h2 {
+  font-size: 23px;
+  line-height: 1.3;
+  margin: 18px 0 10px;
+}
+.actions p,
+.study-card p {
+  color: var(--muted);
+  line-height: 1.8;
+  font-size: 14px;
+}
+.actions b {
+  margin-top: auto;
+  padding-top: 20px;
+  color: var(--blue-dark);
+  font-size: 14px;
+}
+a {
+  color: var(--blue-dark);
+}
+.connection-panel {
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--muted);
+}
+.connection-panel p {
+  flex: 1;
+}
+button,
+.primary {
+  border: 0;
+  border-radius: 8px;
+  padding: 12px 18px;
+  color: white;
+  background: var(--blue-dark);
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.study-card {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 32px;
+}
+@include workspace.readable-page;
+.assignment-shortcut {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 28px;
+  margin-bottom: 24px;
+  background: var(--blue-soft);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  text-decoration: none;
+}
+.assignment-shortcut > div {
+  min-width: 0;
+}
+.assignment-shortcut h2 {
+  margin: 8px 0;
+}
+.assignment-shortcut p {
+  margin: 0;
+  color: var(--muted);
+}
+.shortcut-action {
+  flex-shrink: 0;
+  font-size: 0.875rem;
+  font-weight: 650;
+}
+.assignment-shortcut:hover {
+  border-color: var(--blue);
+}
+.study-card p,
+.actions p {
+  font-size: 0.9375rem;
+  line-height: 1.65;
+}
+@media (max-width: 760px) {
+  .assignment-shortcut {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+    padding: 22px;
+  }
+  .actions a,
+  .study-card {
+    padding: 22px;
+  }
+}
+.study-card aside {
+  border-left: 1px solid var(--border);
+  padding: 24px;
+  align-self: center;
+}
+.primary {
+  margin-top: 16px;
+}
+@media (max-width: 760px) {
+  .actions,
+  .study-card {
+    grid-template-columns: 1fr;
+  }
+  .study-card aside {
+    border-left: 0;
+    border-top: 1px solid var(--border);
+    padding: 20px 0 0;
+  }
+}

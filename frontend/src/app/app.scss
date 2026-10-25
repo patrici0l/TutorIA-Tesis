@@ -1,0 +1,327 @@
+/* =====================================
+   ESTRUCTURA GENERAL
+===================================== */
+
+.shell {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* =====================================
+   ENCABEZADO PRINCIPAL
+===================================== */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #ffffff;
+  border-top: 4px solid var(--gold);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 3px 16px #002d6205;
+}
+
+.masthead {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  min-height: 86px;
+  max-width: 1250px;
+  margin: auto;
+  padding: 16px 48px;
+  box-sizing: border-box;
+}
+
+/* =====================================
+   IDENTIDAD TUTORIA
+===================================== */
+
+.brand {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--navy);
+  text-decoration: none;
+  font-size: 28px;
+  font-weight: 750;
+  letter-spacing: -1.3px;
+  flex-shrink: 0;
+}
+
+.brand-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  background: var(--gold);
+  color: var(--navy);
+  border-radius: 10px;
+  font-family: Georgia, serif;
+  font-style: italic;
+  transition: transform 180ms ease;
+}
+
+.brand:hover .brand-icon {
+  transform: rotate(-5deg);
+}
+
+.brand-dot {
+  color: var(--gold);
+  margin-left: -8px;
+}
+
+/* =====================================
+   LOGOTIPO INSTITUCIONAL UPS
+===================================== */
+
+.institution {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 24px;
+  border-left: 1px solid var(--border);
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+.ups-logo {
+  display: block;
+  width: 160px;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* =====================================
+   CUENTA DE USUARIO
+===================================== */
+
+.account {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  background: var(--blue-soft);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  font-size: 12px;
+  color: var(--blue-dark);
+  flex-shrink: 0;
+}
+
+.account-name {
+  max-width: 220px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.account-name small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 400;
+  margin-top: 4px;
+}
+
+/* Botón cerrar sesión */
+
+.account button {
+  min-height: 44px;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  padding: 10px 12px;
+  color: var(--blue-dark);
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+  transition:
+    background 180ms,
+    border-color 180ms;
+}
+
+.account button:hover {
+  background: var(--blue-soft);
+  border-color: #b3cde5;
+}
+
+.account button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* =====================================
+   CONTENIDO PRINCIPAL
+===================================== */
+
+main {
+  width: 100%;
+  max-width: 1250px;
+  padding: 40px 48px 52px;
+  margin: 0 auto;
+  flex: 1;
+  scroll-margin-top: 170px;
+  box-sizing: border-box;
+}
+
+main:focus {
+  outline: none;
+}
+
+/* =====================================
+   PIE DE PÁGINA
+===================================== */
+
+footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  max-width: 1250px;
+  margin: auto;
+  padding: 20px 48px;
+  color: var(--muted);
+  font-size: 11px;
+  box-sizing: border-box;
+}
+
+/* =====================================
+   ACCESIBILIDAD
+===================================== */
+
+.skip-link {
+  position: fixed;
+  top: -80px;
+  left: 16px;
+  background: #ffffff;
+  padding: 12px;
+  z-index: 30;
+  border-radius: 5px;
+  color: var(--blue-dark);
+}
+
+.skip-link:focus {
+  top: 12px;
+}
+
+/* =====================================
+   RESPONSIVE - TABLETS
+===================================== */
+
+@media (max-width: 1050px) {
+  .masthead {
+    gap: 18px;
+  }
+
+  .ups-logo {
+    width: 150px;
+  }
+
+  .institution {
+    padding-left: 18px;
+  }
+
+  .account-name {
+    max-width: 160px;
+  }
+}
+
+/* =====================================
+   RESPONSIVE - PANTALLAS MEDIANAS
+===================================== */
+
+@media (max-width: 850px) {
+  .masthead,
+  main,
+  footer {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .masthead {
+    flex-wrap: wrap;
+  }
+
+  .institution {
+    order: 3;
+    width: 100%;
+    padding: 12px 0 0;
+    border-left: none;
+    border-top: 1px solid var(--border);
+  }
+
+  .ups-logo {
+    width: 140px;
+  }
+}
+
+/* =====================================
+   RESPONSIVE - CELULARES
+===================================== */
+
+@media (max-width: 600px) {
+  .masthead {
+    gap: 14px;
+    min-height: 74px;
+    flex-wrap: wrap;
+    padding: 14px 16px;
+  }
+
+  .brand {
+    font-size: 25px;
+  }
+
+  .account {
+    gap: 8px;
+  }
+
+  .account-name {
+    display: none;
+  }
+
+  .avatar {
+    width: 30px;
+    height: 30px;
+  }
+
+  .account button {
+    padding: 9px;
+  }
+
+  .institution {
+    width: 100%;
+    order: 3;
+    padding: 12px 0 0;
+    border-left: none;
+    border-top: 1px solid var(--border);
+  }
+
+  .ups-logo {
+    width: 120px;
+    max-width: 100%;
+  }
+
+  main {
+    padding: 28px 20px;
+    scroll-margin-top: 160px;
+  }
+
+  footer {
+    padding: 20px;
+    flex-wrap: wrap;
+    font-size: 10px;
+  }
+}
