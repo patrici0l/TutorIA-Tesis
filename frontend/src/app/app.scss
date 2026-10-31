@@ -166,18 +166,6 @@ main:focus {
    PIE DE PÁGINA
 ===================================== */
 
-footer {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  width: 100%;
-  max-width: 1250px;
-  margin: auto;
-  padding: 20px 48px;
-  color: var(--muted);
-  font-size: 11px;
-  box-sizing: border-box;
-}
 
 /* =====================================
    ACCESIBILIDAD
@@ -227,10 +215,6 @@ footer {
 @media (max-width: 850px) {
   .masthead,
   main,
-  footer {
-    padding-left: 24px;
-    padding-right: 24px;
-  }
 
   .masthead {
     flex-wrap: wrap;
@@ -300,9 +284,4 @@ footer {
     scroll-margin-top: 160px;
   }
 
-  footer {
-    padding: 20px;
-    flex-wrap: wrap;
-    font-size: 10px;
-  }
 }

@@ -5,7 +5,7 @@ import { authGuard } from './nucleo/guardias/auth.guard';
 export const routes: Routes = [
   {
     path: 'actividades',
-    title: 'Actividades asignadas | Prototipo',
+    title: 'Actividades asignadas',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./modulos/estudiantes/paginas/actividades/assignments').then(
@@ -14,7 +14,7 @@ export const routes: Routes = [
   },
   {
     path: 'actividades/:id',
-    title: 'Resolver actividad | Prototipo',
+    title: 'Resolver actividad',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./modulos/estudiantes/paginas/actividades/resolve').then(
@@ -23,28 +23,28 @@ export const routes: Routes = [
   },
   {
     path: 'practica',
-    title: 'Práctica libre | Prototipo',
+    title: 'Práctica libre',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./modulos/estudiantes/paginas/practica/practice').then((m) => m.PracticeComponent),
   },
   {
     path: 'metricas',
-    title: 'Uso de generación | Prototipo',
+    title: 'Uso de generación',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./modulos/metricas/paginas/metricas/metrics').then((m) => m.MetricsComponent),
   },
   {
     path: 'perfiles',
-    title: 'Perfiles de aprendizaje | Prototipo',
+    title: 'Perfiles de aprendizaje',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./modulos/perfiles/paginas/perfiles/profiles').then((m) => m.ProfilesComponent),
   },
   {
     path: 'recursos',
-    title: 'Recursos | Prototipo',
+    title: 'Recursos',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./modulos/contenidos/paginas/preparacion/prepare').then(
@@ -53,7 +53,7 @@ export const routes: Routes = [
   },
   {
     path: 'busqueda',
-    title: 'Búsqueda de fuentes | Prototipo',
+    title: 'Búsqueda de fuentes',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./modulos/rag/paginas/busqueda/search').then((m) => m.SearchComponent),
@@ -61,13 +61,13 @@ export const routes: Routes = [
   { path: '', redirectTo: 'inicio', pathMatch: 'full' },
   {
     path: 'login',
-    title: 'Entrar | Prototipo',
+    title: 'Entrar',
     loadComponent: () =>
       import('./modulos/autenticacion/paginas/login/login').then((m) => m.LoginComponent),
   },
   {
     path: 'documentos',
-    title: 'Documentos del curso | Prototipo',
+    title: 'Documentos del curso',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./modulos/documentos/paginas/documentos/documentos').then(
@@ -76,7 +76,7 @@ export const routes: Routes = [
   },
   {
     path: 'inicio',
-    title: 'Inicio | prototipo',
+    title: 'Inicio',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./modulos/inicio/paginas/inicio/inicio').then((m) => m.InicioComponent),

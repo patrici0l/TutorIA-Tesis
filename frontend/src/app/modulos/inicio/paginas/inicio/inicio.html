@@ -1,12 +1,11 @@
 <section class="intro page-heading fade-in">
-  <p class="eyebrow">{{ student() ? 'TU ESPACIO DE ESTUDIO' : 'TU ESPACIO DOCENTE' }}</p>
   <h1>
-    {{ student() ? 'Un paso más para entender las derivadas.' : 'Prepara y comparte tu clase' }}
+    {{ student() ? 'Actividades y práctica' : 'Materiales y recursos' }}
   </h1>
   <p class="lead">
     {{
       student()
-        ? 'Practica a tu ritmo y descubre por qué funciona cada respuesta.'
+        ? 'Consulta tus actividades o inicia una práctica.'
         : 'Prepara tus materiales, crea un recurso y asígnalo a tus estudiantes.'
     }}
   </p>
@@ -33,10 +32,9 @@
       >
     </div>
     <aside>
-      <strong>Sin presión</strong>
+      <strong>Resultados</strong>
       <p>
-        Esta práctica es voluntaria y no cuenta como una nota. Al terminar, guarda tu resultado para
-        consultar tu progreso cuando vuelvas.
+        Guarda el resultado al terminar para consultarlo en el historial.
       </p>
     </aside>
   </section>
@@ -44,7 +42,7 @@
   <section class="actions" aria-label="Herramientas docentes">
     <a routerLink="/documentos"
       ><span>01 · MATERIALES</span>
-      <h2>Organiza tu biblioteca</h2>
+      <h2>Documentos</h2>
       <p>Sube documentos y prepara sus fuentes para utilizarlas en tus recursos.</p>
       <b>Abrir documentos ↗</b></a
     >
@@ -59,7 +57,7 @@
     >
     <a routerLink="/actividades"
       ><span>03 · ASIGNACIÓN Y SEGUIMIENTO</span>
-      <h2>Comparte y revisa resultados</h2>
+      <h2>Actividades asignadas</h2>
       <p>
         Comparte materiales de estudio o asigna ejercicios con corrección automática y consulta sus
         resultados.

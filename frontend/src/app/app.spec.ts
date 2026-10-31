@@ -23,7 +23,7 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     expect(fixture.nativeElement.querySelector('.skip-link')).toBeTruthy();
-    expect(fixture.nativeElement.textContent).toContain('Prototipo');
+    expect(fixture.nativeElement.textContent).toContain('Recursos educativos');
     expect(fixture.nativeElement.querySelector('app-workspace-navigation')).toBeNull();
     expect(fixture.nativeElement.querySelector('.explore-trigger')).toBeNull();
   });

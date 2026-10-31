@@ -1,10 +1,9 @@
 <section class="auth-card fade-in">
-  <p class="eyebrow">TU ESPACIO DE APRENDIZAJE</p>
-  <h1>Bienvenido a Prototipo</h1>
+  <h1>Acceso</h1>
   @if (loginMode() === 'mock') {
-    <p>Elige tu espacio de trabajo para continuar.</p>
+    <p>Selecciona un perfil.</p>
   } @else if (loginMode() === 'cas') {
-    <p>Accede con tu cuenta institucional para continuar en tu espacio de aprendizaje.</p>
+    <p>Accede con tu cuenta institucional.</p>
   }
   @if (denied) {
     <p class="error" role="alert">
@@ -44,13 +43,5 @@
         >Iniciar sesión con cuenta UPS <span aria-hidden="true">↗</span></a
       >
     }
-    <p class="privacy">
-      @if (loginMode() === 'mock') {
-        Por el momento no necesitas una cuenta institucional para acceder a Prototipo
-      } @else {
-        Tu contraseña institucional se ingresa únicamente en el portal de la UPS. Prototipo no la
-        solicita ni la almacena.
-      }
-    </p>
   }
 </section>

@@ -9,12 +9,6 @@
   border-top: 4px solid var(--gold);
   border-radius: 12px;
 }
-.eyebrow {
-  font-size: 10px;
-  letter-spacing: 1.5px;
-  color: var(--blue-dark);
-  font-weight: 700;
-}
 h1 {
   font-size: 32px;
   letter-spacing: -1px;
@@ -44,9 +38,6 @@ p {
 }
 .login-button:hover {
   background: var(--navy);
-}
-.privacy {
-  font-size: 12px;
 }
 .profile-card {
   border: 1px solid var(--border);
@@ -79,12 +70,6 @@ p {
 }
 .profile-card h2 {
   margin-bottom: 0;
-}
-.privacy {
-  border-top: 1px solid var(--border);
-  padding-top: 20px;
-  margin-bottom: 0;
-  font-size: 0.8125rem;
 }
 .login-button {
   align-items: center;

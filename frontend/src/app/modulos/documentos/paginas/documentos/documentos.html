@@ -183,7 +183,7 @@
         <div class="processing" [attr.aria-busy]="indexingId() === document.id">
           <h3>{{ indexLabel(document) }}</h3>
           <p>
-            Prepara los fragmentos para que Prototipo pueda encontrar fuentes al crear un recurso.
+            Prepara los fragmentos para buscar fuentes al crear un recurso.
           </p>
           @if (document.index_status === 'failed') {
             <p>{{ indexError(document) }}</p>
