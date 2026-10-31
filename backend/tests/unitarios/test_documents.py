@@ -21,7 +21,7 @@ from app.modulos.rag.models import DocumentChunk
 from app.modulos.usuarios.models import User
 from app.nucleo.dependencias.auth import get_current_user
 
-HEADERS = {"X-TutorIA-Client": "web"}
+HEADERS = {"X-Prototipo-Client": "web"}
 MIME_DOCX = DocumentValidationService.formats[".docx"]
 
 

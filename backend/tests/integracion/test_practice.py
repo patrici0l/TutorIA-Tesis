@@ -17,7 +17,7 @@ def test_private_durable_idempotent_practice_history(trace_database):
     current.rol = "student"
     app.dependency_overrides[get_current_user] = lambda: current
     app.dependency_overrides[get_session] = lambda: db
-    headers = {"X-TutorIA-Client": "web"}
+    headers = {"X-Prototipo-Client": "web"}
     payload = {"id": str(uuid4()), "version": "derivadas-v1", "answers": [0, 0, 3]}
     with TestClient(app) as client:
         assert client.get("/api/v1/practice/attempts").json()["best_score"] is None

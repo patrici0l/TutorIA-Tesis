@@ -7,5 +7,5 @@ RUN npm run build
 
 FROM nginxinc/nginx-unprivileged:1.28-alpine
 COPY infraestructura/nginx/default.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/dist/tutoria/browser /usr/share/nginx/html
+COPY --from=build /app/dist/prototipo/browser /usr/share/nginx/html
 EXPOSE 8080

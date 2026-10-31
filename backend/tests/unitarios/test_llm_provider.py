@@ -60,6 +60,7 @@ def test_incomplete_preserves_only_safe_measurements(raw, expected):
 def configuration(**changes):
     values = dict(
         llm_enabled=True,
+        llm_max_output_tokens=1024,
         llm_default_provider="gemini",
         llm_model="model-test-v1",
         gemini_api_key=SecretStr(FAKE_KEY),

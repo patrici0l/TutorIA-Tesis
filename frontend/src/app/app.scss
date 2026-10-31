@@ -35,7 +35,7 @@
 }
 
 /* =====================================
-   IDENTIDAD TUTORIA
+   IDENTIDAD Prototipo
 ===================================== */
 
 .brand {
@@ -51,27 +51,8 @@
   flex-shrink: 0;
 }
 
-.brand-icon {
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  background: var(--gold);
-  color: var(--navy);
-  border-radius: 10px;
-  font-family: Georgia, serif;
-  font-style: italic;
-  transition: transform 180ms ease;
-}
 
-.brand:hover .brand-icon {
-  transform: rotate(-5deg);
-}
 
-.brand-dot {
-  color: var(--gold);
-  margin-left: -8px;
-}
 
 /* =====================================
    LOGOTIPO INSTITUCIONAL UPS

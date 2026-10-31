@@ -2,4 +2,4 @@
 services:
   backend:
     environment:
-      AUTH_MOCK_USER: ${TUTORIA_DEMO_ROLE:?Selecciona student o teacher con el script de demostracion}
+      AUTH_MOCK_USER: ${Prototipo_DEMO_ROLE:?Selecciona student o teacher con el script de demostracion}

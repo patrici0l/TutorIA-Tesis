@@ -33,7 +33,7 @@ from tests.integracion.test_generation_claim import claim_database as claim_data
 from tests.unitarios.test_profile_validation import SAMPLE
 
 pytestmark = trace_marks
-HEADERS = {"X-TutorIA-Client": "web"}
+HEADERS = {"X-Prototipo-Client": "web"}
 
 
 @pytest.mark.parametrize("policy_version", ["profile-adaptation-v1", "profile-adaptation-v2"])

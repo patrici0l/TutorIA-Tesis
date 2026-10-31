@@ -74,7 +74,7 @@ def test_validation_transport_sends_exact_service_to_configured_server(monkeypat
         assert request.url.params["ticket"] == "ST-fictional"
         assert (
             request.url.params["service"]
-            == "https://tutoria.example.org/api/v1/auth/callback?state=abc"
+            == "https://prototipo.example.org/api/v1/auth/callback?state=abc"
         )
         return httpx.Response(200, content=xml())
 
@@ -88,7 +88,7 @@ def test_validation_transport_sends_exact_service_to_configured_server(monkeypat
         _env_file=None, cas_validate_url="https://sso.example.org/approved-validation"
     )
     result = CasValidationService(settings).validate(
-        "ST-fictional", "https://tutoria.example.org/api/v1/auth/callback?state=abc"
+        "ST-fictional", "https://prototipo.example.org/api/v1/auth/callback?state=abc"
     )
     assert result.rol == "student"
 
@@ -111,5 +111,5 @@ def test_cas_transport_failure_rejects_authentication(monkeypatch, status):
     settings = Settings(_env_file=None, cas_validate_url="https://sso.example.org/validation")
     with pytest.raises(CasValidationError):
         CasValidationService(settings).validate(
-            "ST-fictional", "https://tutoria.example.org/callback"
+            "ST-fictional", "https://prototipo.example.org/callback"
         )

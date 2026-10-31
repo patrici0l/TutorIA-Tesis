@@ -8,9 +8,9 @@ $ErrorActionPreference = 'Stop'
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
 $composeFiles = @('compose', '-f', (Join-Path $projectRoot 'docker-compose.yml'),
     '-f', (Join-Path $projectRoot 'infraestructura/docker/compose.demo.yml'))
-$previousRole = [Environment]::GetEnvironmentVariable('TUTORIA_DEMO_ROLE', 'Process')
+$previousRole = [Environment]::GetEnvironmentVariable('Prototipo_DEMO_ROLE', 'Process')
 try {
-    $env:TUTORIA_DEMO_ROLE = $Role
+    $env:Prototipo_DEMO_ROLE = $Role
     # Comprueba la configuración efectiva sin mostrar variables, cookies ni secretos.
     $guard = @'
 import sys
@@ -33,5 +33,5 @@ sys.exit(0 if ok else 1)
     Write-Host 'No modifica .env. Un compose up sin este complemento puede restaurar el rol de la configuracion base.'
 }
 finally {
-    [Environment]::SetEnvironmentVariable('TUTORIA_DEMO_ROLE', $previousRole, 'Process')
+    [Environment]::SetEnvironmentVariable('Prototipo_DEMO_ROLE', $previousRole, 'Process')
 }

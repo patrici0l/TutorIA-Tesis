@@ -20,7 +20,7 @@ export class ResourceExportService {
     const link = this.document.createElement('a');
     try {
       link.href = url;
-      link.download = `tutoria-recurso-${id}.json`;
+      link.download = `prototipo-recurso-${id}.json`;
       link.hidden = true;
       this.document.body.appendChild(link);
       link.click();

@@ -41,9 +41,9 @@ def test_auth_rejects_invalid_cas_endpoint_port(field):
         _env_file=None,
         auth_mode="cas",
         auth_cookie_secure=True,
-        auth_callback_url="https://tutoria.example.org/api/v1/auth/callback",
-        auth_frontend_url="https://tutoria.example.org/inicio",
-        auth_login_url="https://tutoria.example.org/login",
+        auth_callback_url="https://prototipo.example.org/api/v1/auth/callback",
+        auth_frontend_url="https://prototipo.example.org/inicio",
+        auth_login_url="https://prototipo.example.org/login",
         cas_login_url="https://sso.example.org/login",
         cas_validate_url="https://sso.example.org/validate",
     )

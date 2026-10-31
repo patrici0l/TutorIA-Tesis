@@ -139,7 +139,7 @@ def logout(
     current_session: SessionCookie = None,
     browser_state: StateCookie = None,
 ):
-    """Cierra la sesión de TutorIA; no cierra globalmente el SSO de UPS."""
+    """Cierra la sesión de Prototipo; no cierra globalmente el SSO de UPS."""
     if browser_state:
         from app.modulos.autenticacion.servicios.session_service import digest_token
 

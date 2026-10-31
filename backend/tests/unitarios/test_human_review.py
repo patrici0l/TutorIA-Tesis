@@ -1,6 +1,6 @@
 import copy
+import json
 from datetime import UTC, datetime, timedelta
-from pathlib import Path
 
 import pytest
 
@@ -124,11 +124,12 @@ def test_invalid_review_rejected(review, mutation):
         apply_assessment(*review)
 
 
-def test_cli_template_and_validation_never_overwrite(tmp_path, monkeypatch):
-    evidence = Path(__file__).resolve().parents[3] / "documentacion/pruebas"
-    paths = [
-        str(evidence / f"hito_09_piloto_v4_{level}.json") for level in ("low", "medium", "high")
-    ]
+def test_cli_template_and_validation_never_overwrite(tmp_path, monkeypatch, trial):
+    paths = []
+    for row in trial:
+        path = tmp_path / f"history_{row['level']}.json"
+        path.write_text(json.dumps(row["history"]), encoding="utf-8")
+        paths.append(str(path))
     draft, report = tmp_path / "draft.json", tmp_path / "report.json"
     monkeypatch.setattr("sys.argv", ["human_review", "prepare", *paths, str(draft)])
     assert main() == 0

@@ -10,14 +10,14 @@ describe('Protección HTTP', () => {
   it('agrega cabecera CSRF a escrituras propias, sin token bearer', () => {
     TestBed.inject(HttpClient).post('/api/v1/example', {}).subscribe();
     const request = TestBed.inject(HttpTestingController).expectOne('/api/v1/example');
-    expect(request.request.headers.get('X-TutorIA-Client')).toBe('web');
+    expect(request.request.headers.get('X-Prototipo-Client')).toBe('web');
     expect(request.request.headers.has('Authorization')).toBe(false);
     request.flush({});
   });
   it('no envía la cabecera a otros dominios', () => {
     TestBed.inject(HttpClient).post('https://example.org/resource', {}).subscribe();
     const request = TestBed.inject(HttpTestingController).expectOne('https://example.org/resource');
-    expect(request.request.headers.has('X-TutorIA-Client')).toBe(false);
+    expect(request.request.headers.has('X-Prototipo-Client')).toBe(false);
     request.flush({});
   });
   it('redirige al acceso si una sesión es rechazada', () => {

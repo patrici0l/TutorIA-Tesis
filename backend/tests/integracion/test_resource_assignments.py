@@ -44,7 +44,7 @@ def test_generated_integrals_can_be_assigned_privately_and_reopened(trace_databa
     app = create_app()
     app.dependency_overrides[get_current_user] = lambda: current
     app.dependency_overrides[get_session] = lambda: db
-    headers = {"X-TutorIA-Client": "web"}
+    headers = {"X-Prototipo-Client": "web"}
     base = "/api/v1/practice/assignments"
     payload = {
         "id": str(uuid4()),

@@ -20,6 +20,7 @@ KEY = "fictitious-unit-test-key"
 def config(kind, **changes):
     values = dict(
         llm_enabled=True,
+        llm_max_output_tokens=1024,
         llm_default_provider=kind,
         llm_model="model-test",
         openai_api_key=KEY,

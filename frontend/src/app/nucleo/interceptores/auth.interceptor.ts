@@ -11,7 +11,7 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
   if (!request.url.startsWith('/api/v1/')) return next(request);
   const modifying = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method);
   const protectedRequest = modifying
-    ? request.clone({ setHeaders: { 'X-TutorIA-Client': 'web' } })
+    ? request.clone({ setHeaders: { 'X-Prototipo-Client': 'web' } })
     : request;
   return next(protectedRequest).pipe(
     catchError((error: unknown) => {

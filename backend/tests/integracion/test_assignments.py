@@ -43,7 +43,7 @@ def test_assignment_lifecycle_permissions_and_private_attempts(trace_database):
     app = create_app()
     app.dependency_overrides[get_current_user] = lambda: current
     app.dependency_overrides[get_session] = lambda: db
-    headers = {"X-TutorIA-Client": "web"}
+    headers = {"X-Prototipo-Client": "web"}
     payload = {
         "id": str(uuid4()),
         "student_email": students[0].institutional_email,
@@ -148,7 +148,7 @@ def test_assignment_status_preserves_results_and_blocks_new_attempts(trace_datab
     app = create_app()
     app.dependency_overrides[get_current_user] = lambda: current
     app.dependency_overrides[get_session] = lambda: db
-    headers = {"X-TutorIA-Client": "web"}
+    headers = {"X-Prototipo-Client": "web"}
     base = "/api/v1/practice/assignments"
     attempts_url = "/api/v1/practice/attempts"
     payload = {

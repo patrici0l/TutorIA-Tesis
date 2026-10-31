@@ -41,7 +41,7 @@ export class AuthService {
   }
   logout() {
     return this.http
-      .post<void>('/api/v1/auth/logout', {}, { headers: { 'X-TutorIA-Client': 'web' } })
+      .post<void>('/api/v1/auth/logout', {}, { headers: { 'X-Prototipo-Client': 'web' } })
       .pipe(
         tap(() => this.clear()),
         catchError((error) => throwError(() => error)),

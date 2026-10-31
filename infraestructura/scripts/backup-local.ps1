@@ -23,9 +23,9 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'No se pudo identificar la imagen del backend.' }
 
     $identifier = [Guid]::NewGuid().ToString('N')
-    $backupDirectory = Join-Path $projectRoot "respaldos_locales/$identifier"
+    $backupDirectory = Join-Path $projectRoot "documentacion-local/respaldos/$identifier"
     New-Item -ItemType Directory -Path $backupDirectory | Out-Null
-    $containerDump = "/tmp/tutoria-$identifier.dump"
+    $containerDump = "/tmp/prototipo-$identifier.dump"
     try {
         # El archivo binario no pasa por redirección de PowerShell.
         Invoke-DockerChecked -DockerArguments @(

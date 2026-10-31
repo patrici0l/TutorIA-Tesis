@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "tutoria": {
+    "prototipo": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -87,10 +87,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "tutoria:build:production"
+              "buildTarget": "prototipo:build:production"
             },
             "development": {
-              "buildTarget": "tutoria:build:development"
+              "buildTarget": "prototipo:build:development"
             }
           },
           "defaultConfiguration": "development"

@@ -6,8 +6,8 @@ services:
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_NAME: ${DB_NAME:-tutoria}
-      DB_USER: ${DB_USER:-tutoria}
+      DB_NAME: ${DB_NAME:-prototipo}
+      DB_USER: ${DB_USER:-prototipo}
       DB_PASSWORD: ${DB_PASSWORD:?Configura .env}
       RUN_DB_TESTS: "1"
       AUTH_MODE: mock

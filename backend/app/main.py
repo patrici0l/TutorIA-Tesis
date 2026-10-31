@@ -36,7 +36,7 @@ async def lifespan(app: FastAPI):
 
 def create_app() -> FastAPI:
     app = FastAPI(
-        title="TutorIA-Lucero",
+        title="prototipo",
         version=APP_VERSION,
         lifespan=lifespan,
         docs_url=f"{API_PREFIX}/docs",

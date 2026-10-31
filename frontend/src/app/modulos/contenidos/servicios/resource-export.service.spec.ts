@@ -88,7 +88,7 @@ describe('Descarga local del historial', () => {
       filename = this.download;
     });
     TestBed.inject(ResourceExportService).download(detail);
-    expect(filename).toBe(`tutoria-recurso-${detail.preparation.id}.json`);
+    expect(filename).toBe(`prototipo-recurso-${detail.preparation.id}.json`);
     expect(revoke).not.toHaveBeenCalled();
     vi.advanceTimersByTime(1000);
     expect(revoke).toHaveBeenCalledExactlyOnceWith('blob:local-export');

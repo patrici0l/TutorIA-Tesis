@@ -20,7 +20,7 @@ describe('Sesión con cookie', () => {
     expect(auth.mode()).toBe('mock');
     auth.logout().subscribe();
     const logout = http.expectOne('/api/v1/auth/logout');
-    expect(logout.request.headers.get('X-TutorIA-Client')).toBe('web');
+    expect(logout.request.headers.get('X-Prototipo-Client')).toBe('web');
     logout.flush(null);
     expect(auth.user()).toBeNull();
   });

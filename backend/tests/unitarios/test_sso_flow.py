@@ -73,7 +73,7 @@ def test_remote_demo_https_login_session_csrf_and_logout(auth_app, monkeypatch):
     assert client.get("/api/v1/auth/me").json()["user"]["rol"] == "teacher"
     assert client.post("/api/v1/auth/logout").status_code == 403
     assert client.post(
-        "/api/v1/auth/logout", headers={"X-TutorIA-Client": "web"}
+        "/api/v1/auth/logout", headers={"X-Prototipo-Client": "web"}
     ).status_code == 204
     assert client.get("/api/v1/auth/me").status_code == 401
 
@@ -132,16 +132,16 @@ def test_mock_flow_cookie_provisioning_and_logout(auth_app):
         "last_login",
     }
     assert me.headers["cache-control"] == "no-store"
-    token = client.cookies.get("tutoria_session")
+    token = client.cookies.get("prototipo_session")
     with Session(engine) as db:
         assert db.scalar(select(AuthSession)).digest != token
         assert db.scalar(select(User)).institutional_id == "mock:student-001"
     assert client.post("/api/v1/auth/logout").status_code == 403
     assert (
-        client.post("/api/v1/auth/logout", headers={"X-TutorIA-Client": "web"}).status_code == 204
+        client.post("/api/v1/auth/logout", headers={"X-Prototipo-Client": "web"}).status_code == 204
     )
     assert client.get("/api/v1/auth/me").status_code == 401
-    client.cookies.set("tutoria_session", token, domain="localhost.local", path="/api/v1")
+    client.cookies.set("prototipo_session", token, domain="localhost.local", path="/api/v1")
     assert client.get("/api/v1/auth/me").status_code == 401
 
 
@@ -149,12 +149,12 @@ def test_repeat_login_updates_user_and_rotates_session(auth_app):
     client, engine, _ = auth_app
     mock_login(client)
     first = client.get("/api/v1/auth/me").json()["user"]
-    old_token = client.cookies.get("tutoria_session")
+    old_token = client.cookies.get("prototipo_session")
     mock_login(client)
     second = client.get("/api/v1/auth/me").json()["user"]
     assert first["id"] == second["id"]
     assert second["last_login"] >= first["last_login"]
-    assert client.cookies.get("tutoria_session") != old_token
+    assert client.cookies.get("prototipo_session") != old_token
     with Session(engine) as db:
         assert len(db.scalars(select(User)).all()) == 1
         assert len(db.scalars(select(AuthSession)).all()) == 1
@@ -163,13 +163,17 @@ def test_repeat_login_updates_user_and_rotates_session(auth_app):
 def test_callback_requires_matching_browser_state_and_single_use(auth_app):
     client, _, _ = auth_app
     start = client.get("/api/v1/auth/login")
-    state = client.cookies.get("tutoria_login_state")
+    state = client.cookies.get("prototipo_login_state")
     url = start.headers["location"]
     client.cookies.clear()
     assert "access_denied" in client.get(url).headers["location"]
-    client.cookies.set("tutoria_login_state", state, domain="localhost.local", path="/api/v1/auth")
+    client.cookies.set(
+        "prototipo_login_state", state, domain="localhost.local", path="/api/v1/auth"
+    )
     assert client.get(url).headers["location"].endswith("/inicio")
-    client.cookies.set("tutoria_login_state", state, domain="localhost.local", path="/api/v1/auth")
+    client.cookies.set(
+        "prototipo_login_state", state, domain="localhost.local", path="/api/v1/auth"
+    )
     assert "access_denied" in client.get(url).headers["location"]
 
 
@@ -189,7 +193,7 @@ def test_non_ascii_callback_state_returns_safe_denial(auth_app):
     assert result.status_code == 303
     assert result.headers["location"].endswith("/login?error=access_denied")
     assert result.headers["cache-control"] == "no-store"
-    assert client.cookies.get("tutoria_login_state") is None
+    assert client.cookies.get("prototipo_login_state") is None
     with Session(engine) as db:
         assert db.scalar(select(AuthSession)) is None
 
@@ -247,12 +251,12 @@ def test_cas_callback_uses_server_validator_and_exact_service(auth_app):
     settings = get_settings()
     settings.auth_mode = "cas"
     settings.auth_cookie_secure = True
-    settings.auth_callback_url = "https://tutoria.example.org/api/v1/auth/callback"
-    settings.auth_frontend_url = "https://tutoria.example.org/inicio"
-    settings.auth_login_url = "https://tutoria.example.org/login"
+    settings.auth_callback_url = "https://prototipo.example.org/api/v1/auth/callback"
+    settings.auth_frontend_url = "https://prototipo.example.org/inicio"
+    settings.auth_login_url = "https://prototipo.example.org/login"
     settings.cas_login_url = "https://sso.example.org/login"
     settings.cas_validate_url = "https://sso.example.org/validate"
-    client.base_url = "https://tutoria.example.org"
+    client.base_url = "https://prototipo.example.org"
     calls = []
 
     class Validator:
@@ -290,7 +294,7 @@ def test_invalid_cas_ticket_does_not_create_session(auth_app):
     app.dependency_overrides[get_cas_validator] = lambda: Reject()
     result = client.get(start.headers["location"] + "&ticket=invalid")
     assert "access_denied" in result.headers["location"]
-    assert client.cookies.get("tutoria_session") is None
+    assert client.cookies.get("prototipo_session") is None
 
 
 def test_models_have_no_password_fields():

@@ -5,7 +5,7 @@ import { authGuard } from './nucleo/guardias/auth.guard';
 export const routes: Routes = [
   {
     path: 'actividades',
-    title: 'Actividades asignadas | TutorIA',
+    title: 'Actividades asignadas | Prototipo',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./modulos/estudiantes/paginas/actividades/assignments').then(
@@ -14,7 +14,7 @@ export const routes: Routes = [
   },
   {
     path: 'actividades/:id',
-    title: 'Resolver actividad | TutorIA',
+    title: 'Resolver actividad | Prototipo',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./modulos/estudiantes/paginas/actividades/resolve').then(
@@ -23,28 +23,28 @@ export const routes: Routes = [
   },
   {
     path: 'practica',
-    title: 'Práctica libre | TutorIA',
+    title: 'Práctica libre | Prototipo',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./modulos/estudiantes/paginas/practica/practice').then((m) => m.PracticeComponent),
   },
   {
     path: 'metricas',
-    title: 'Uso de generación | TutorIA',
+    title: 'Uso de generación | Prototipo',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./modulos/metricas/paginas/metricas/metrics').then((m) => m.MetricsComponent),
   },
   {
     path: 'perfiles',
-    title: 'Perfiles de aprendizaje | TutorIA',
+    title: 'Perfiles de aprendizaje | Prototipo',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./modulos/perfiles/paginas/perfiles/profiles').then((m) => m.ProfilesComponent),
   },
   {
     path: 'recursos',
-    title: 'Recursos | TutorIA',
+    title: 'Recursos | Prototipo',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./modulos/contenidos/paginas/preparacion/prepare').then(
@@ -53,7 +53,7 @@ export const routes: Routes = [
   },
   {
     path: 'busqueda',
-    title: 'Búsqueda de fuentes | TutorIA',
+    title: 'Búsqueda de fuentes | Prototipo',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./modulos/rag/paginas/busqueda/search').then((m) => m.SearchComponent),
@@ -61,13 +61,13 @@ export const routes: Routes = [
   { path: '', redirectTo: 'inicio', pathMatch: 'full' },
   {
     path: 'login',
-    title: 'Entrar | TutorIA',
+    title: 'Entrar | Prototipo',
     loadComponent: () =>
       import('./modulos/autenticacion/paginas/login/login').then((m) => m.LoginComponent),
   },
   {
     path: 'documentos',
-    title: 'Documentos del curso | TutorIA',
+    title: 'Documentos del curso | Prototipo',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./modulos/documentos/paginas/documentos/documentos').then(
@@ -76,7 +76,7 @@ export const routes: Routes = [
   },
   {
     path: 'inicio',
-    title: 'Inicio | TutorIA-Lucero',
+    title: 'Inicio | prototipo',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./modulos/inicio/paginas/inicio/inicio').then((m) => m.InicioComponent),

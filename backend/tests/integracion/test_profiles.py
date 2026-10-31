@@ -11,7 +11,7 @@ from tests.integracion.test_content_trace_database import trace_database as trac
 from tests.unitarios.test_profile_validation import SAMPLE
 
 pytestmark = trace_marks
-HEADERS = {"X-TutorIA-Client": "web"}
+HEADERS = {"X-Prototipo-Client": "web"}
 
 
 def test_profile_api_durable_immutable_owner_and_validation(trace_database):

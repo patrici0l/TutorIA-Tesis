@@ -7,11 +7,6 @@
 **/.env.*
 !**/.env.example
 secretos_locales
-seguimiento_privado
-guia_personal
-respaldos_locales
-documentacion
-datos
 **/__pycache__
 
 # Resultados regenerables y registros locales
@@ -26,3 +21,6 @@ logs
 
 # El frontend no copia el modelo local; el backend usa embedding_data.
 backend/models
+
+documentacion-local
+AGENTS.md

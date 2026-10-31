@@ -36,13 +36,13 @@ try {
     $testContainerId = Invoke-DockerChecked -DockerArguments @(
         'run', '-d', '--pull', 'never', '--network', 'none',
         '--tmpfs', '/var/lib/postgresql/data:rw,size=512m',
-        '-e', 'POSTGRES_HOST_AUTH_METHOD=trust', '-e', 'POSTGRES_USER=tutoria_restore',
-        '-e', 'POSTGRES_DB=tutoria_restore', $postgresImage
+        '-e', 'POSTGRES_HOST_AUTH_METHOD=trust', '-e', 'POSTGRES_USER=prototipo_restore',
+        '-e', 'POSTGRES_DB=prototipo_restore', $postgresImage
     )
     if ($testContainerId -notmatch '^[0-9a-f]{64}$') { throw 'Identificador temporal inválido.' }
     $ready = $false
     for ($attempt = 0; $attempt -lt 30; $attempt++) {
-        & docker exec $testContainerId pg_isready -q -U tutoria_restore -d tutoria_restore
+        & docker exec $testContainerId pg_isready -q -U prototipo_restore -d prototipo_restore
         if ($LASTEXITCODE -eq 0) { $ready = $true; break }
         Start-Sleep -Seconds 1
     }
@@ -50,7 +50,7 @@ try {
     Invoke-DockerChecked -DockerArguments @('cp', (Join-Path $backupPath 'database.dump'), "${testContainerId}:/tmp/database.dump") | Out-Null
     Invoke-DockerChecked -DockerArguments @(
         'exec', $testContainerId, 'pg_restore', '--exit-on-error', '--no-owner', '--no-acl',
-        '-U', 'tutoria_restore', '-d', 'tutoria_restore', '/tmp/database.dump'
+        '-U', 'prototipo_restore', '-d', 'prototipo_restore', '/tmp/database.dump'
     ) | Out-Null
     $sql = @'
 SELECT json_build_object(
@@ -65,7 +65,7 @@ SELECT json_build_object(
 '@
     $databaseCheck = (Invoke-DockerChecked -DockerArguments @(
         'exec', $testContainerId, 'psql', '-X', '-v', 'ON_ERROR_STOP=1',
-        '-U', 'tutoria_restore', '-d', 'tutoria_restore', '-Atc', $sql
+        '-U', 'prototipo_restore', '-d', 'prototipo_restore', '-Atc', $sql
     )) | ConvertFrom-Json
     if (-not $databaseCheck.migration -or -not $databaseCheck.pgvector_version) { throw 'Restauración sin migración o motor vectorial.' }
 
@@ -97,7 +97,7 @@ print(json.dumps({'file_count':len(entries),'all_file_hashes_match':True}))
         '--entrypoint', 'python', $backendImage, '-c', $documentCode
     )) | ConvertFrom-Json
     $report = [ordered]@{
-        verification_version = 'tutoria-local-restore-v1'
+        verification_version = 'prototipo-local-restore-v1'
         verified_at_utc = [DateTime]::UtcNow.ToString('o')
         status = 'passed'
         database_restore = $databaseCheck

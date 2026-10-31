@@ -1,7 +1,7 @@
 name: tutoria-lucero
 
 x-backend: &backend
-  image: tutoria-backend:local
+  image: prototipo-backend:local
   build: ./backend
   environment:
     APP_ENV: ${APP_ENV:-development}

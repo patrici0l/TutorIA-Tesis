@@ -1,1 +1,1 @@
-"""API modular de TutorIA-Lucero."""
+"""API modular de prototipo."""

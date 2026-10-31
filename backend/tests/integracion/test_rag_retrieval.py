@@ -192,7 +192,7 @@ def test_reference_retrieval_filters_sources_exact_and_hnsw(postgres_ingestion):
         result = client.post(
             "/api/v1/rag/search",
             json={"query": dataset["queries"][0]["text"], "top_k": 3},
-            headers={"X-TutorIA-Client": "web"},
+            headers={"X-Prototipo-Client": "web"},
         )
         assert result.status_code == 200, result.text
         assert result.json()["results"][0]["document_title"] == "Derivada y tasa de cambio"
