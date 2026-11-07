@@ -37,6 +37,18 @@ describe('Documentos propios', () => {
     embedding_version: null,
   };
   beforeEach(async () => {
+    Object.defineProperty(HTMLDialogElement.prototype, 'showModal', {
+      configurable: true,
+      value() {
+        this.setAttribute('open', '');
+      },
+    });
+    Object.defineProperty(HTMLDialogElement.prototype, 'close', {
+      configurable: true,
+      value() {
+        this.removeAttribute('open');
+      },
+    });
     user.set({ rol: 'teacher' });
     await TestBed.configureTestingModule({
       imports: [DocumentsComponent],
@@ -71,11 +83,16 @@ describe('Documentos propios', () => {
     const input = fixture.nativeElement.querySelector('input[type=file]');
     component.file.set(new File(['derivadas'], 'curso.txt', { type: 'text/plain' }));
     component.title = 'Derivadas';
+    component.course = 'Cálculo Diferencial';
+    component.sourceReference = 'Muestra sintética';
+    component.permissionNote = 'Prueba';
+    component.authorizationConfirmed = true;
     component.upload(input);
     const upload = http.expectOne('/api/v1/documents/upload');
     expect(upload.request.body instanceof FormData).toBe(true);
     expect(upload.request.body.get('title')).toBe('Derivadas');
     upload.flush(sampleDocument);
+    http.expectOne('/api/v1/documents/doc-1').flush(sampleDocument);
     http
       .expectOne('/api/v1/documents?limit=20&offset=0')
       .flush({ items: [sampleDocument], total: 1, limit: 20, offset: 0 });
@@ -88,6 +105,10 @@ describe('Documentos propios', () => {
     const component = setup().componentInstance;
     component.file.set(new File(['derivadas'], 'curso.txt'));
     component.title = 'Derivadas';
+    component.course = 'Cálculo Diferencial';
+    component.sourceReference = 'Muestra sintética';
+    component.permissionNote = 'Prueba';
+    component.authorizationConfirmed = true;
     component.upload(document.createElement('input'));
     http
       .expectOne('/api/v1/documents/upload')
@@ -282,5 +303,83 @@ describe('Documentos propios', () => {
       chunk_count: 1,
     });
     expect(component.selected()?.processing_status).toBe('processed');
+  });
+  it('exige permiso y procedencia antes de cargar', () => {
+    const component = setup().componentInstance;
+    component.file.set(new File(['texto'], 'curso.txt'));
+    component.title = 'Prueba';
+    component.upload(document.createElement('input'));
+    http.expectNone('/api/v1/documents/upload');
+  });
+  it('busca por asignatura sin solicitar IA y permite paginar', () => {
+    const component = setup().componentInstance;
+    component.filterCourse = 'Probabilidad y Estadística';
+    component.textQuery = 'media';
+    component.searchText();
+    const request = http.expectOne((r) => r.url === '/api/v1/documents/text-search');
+    expect(request.request.params.get('course')).toBe('Probabilidad y Estadística');
+    expect(request.request.params.get('q')).toBe('media');
+    request.flush({ items: [], total: 0, limit: 20, offset: 0 });
+    expect(component.textResults()?.total).toBe(0);
+  });
+  it('cancela resultados pendientes cuando cambia el filtro', () => {
+    const component = setup().componentInstance;
+    component.filterCourse = 'Cálculo Diferencial';
+    component.textQuery = 'derivada';
+    component.searchText();
+    const request = http.expectOne((r) => r.url === '/api/v1/documents/text-search');
+    component.filterCourse = 'Probabilidad y Estadística';
+    component.resetTextSearch();
+    expect(request.cancelled).toBe(true);
+    expect(component.textResults()).toBeNull();
+    expect(component.searchingText()).toBe(false);
+  });
+  it('nueva versión exige confirmar nuevamente el permiso', () => {
+    const component = setup().componentInstance;
+    component.authorizationConfirmed = true;
+    component.newVersion({ ...sampleDocument, course: 'Cálculo Diferencial', version_number: 2 });
+    expect(component.previousVersionId).toBe(sampleDocument.id);
+    expect(component.course).toBe('Cálculo Diferencial');
+    expect(component.authorizationConfirmed).toBe(false);
+  });
+  it('abre carga solo al solicitarla y restaura foco y desplazamiento al cerrar', () => {
+    const fixture = setup();
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+    const trigger = element.querySelector('.library-heading button') as HTMLButtonElement;
+    const dialog = element.querySelector('dialog')!;
+    expect(dialog.open).toBe(false);
+    trigger.focus();
+    trigger.click();
+    fixture.detectChanges();
+    expect(dialog.open).toBe(true);
+    expect(fixture.componentInstance.panelMode()).toBe('upload');
+    expect(document.body.style.overflow).toBe('hidden');
+    dialog.dispatchEvent(new Event('cancel', { cancelable: true }));
+    fixture.detectChanges();
+    expect(dialog.open).toBe(false);
+    expect(document.body.style.overflow).not.toBe('hidden');
+    expect(document.activeElement).toBe(trigger);
+  });
+  it('muestra una sola cabecera y separa datos técnicos y origen del contenido', () => {
+    const fixture = setup();
+    fixture.componentInstance.view(sampleDocument);
+    http.expectOne('/api/v1/documents/doc-1').flush(sampleDocument);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.querySelectorAll('#drawer-title').length).toBe(1);
+    expect(element.querySelector('[aria-label="Datos técnicos"]')).toBeNull();
+    const buttons = element.querySelectorAll('.detail-sections button');
+    (buttons[2] as HTMLButtonElement).click();
+    fixture.detectChanges();
+    expect(element.querySelector('[aria-label="Datos técnicos"]')?.textContent).toContain(
+      'SHA-256',
+    );
+    expect((element.querySelector('[aria-label="Contenido"]') as HTMLElement).hidden).toBe(true);
+    (buttons[1] as HTMLButtonElement).click();
+    fixture.detectChanges();
+    expect(element.querySelector('[aria-label="Datos técnicos"]')).toBeNull();
+    expect(element.querySelector('[aria-label="Origen y versiones"]')).toBeTruthy();
+    fixture.componentInstance.closePanel();
   });
 });

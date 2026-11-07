@@ -54,11 +54,7 @@ class GeneratePreparationService:
         target = GenerationTarget(
             provider=self.settings.llm_default_provider, requested_model=self.settings.llm_model
         )
-        cost_basis = (
-            CostBasis(requested_model=target.requested_model)
-            if target.provider == "gemini"
-            else None
-        )
+        cost_basis = CostBasis(requested_model=target.requested_model)
         request = self.claim.claim(
             identifier,
             owner,

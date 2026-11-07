@@ -5,18 +5,18 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
-$runtime = Join-Path $projectRoot 'secretos_locales/demo-remota'
+$runtime = Join-Path $projectRoot 'infraestructura/herramientas/demo-remota'
 $statePath = Join-Path $runtime 'state.json'
 $overridePath = Join-Path $runtime 'compose.remote.json'
-$cloudflared = Join-Path $projectRoot 'secretos_locales/herramientas/cloudflared.exe'
-$compose = @('compose', '--project-directory', $projectRoot,
+$cloudflared = Join-Path $projectRoot 'infraestructura/herramientas/cloudflared.exe'
+$compose = @('compose', '--env-file', (Join-Path $projectRoot 'licencias/secure_data.env'), '--project-directory', $projectRoot,
     '-f', (Join-Path $projectRoot 'docker-compose.yml'))
 
 if (Test-Path -LiteralPath $statePath) {
     throw 'Hay una demo registrada. Ejecuta stop-remote-demo.ps1 antes de iniciar otra.'
 }
 if (-not (Test-Path -LiteralPath $cloudflared)) {
-    throw 'Falta secretos_locales/herramientas/cloudflared.exe. Consulta el manual de demo remota.'
+    throw 'Falta infraestructura/herramientas/cloudflared.exe. Consulta el manual de demo remota.'
 }
 New-Item -ItemType Directory -Force -Path $runtime | Out-Null
 
@@ -57,7 +57,7 @@ sys.exit(0 if ok else 1)
 '@
 & docker @compose exec -T backend python -c $modelGuard
 if ($LASTEXITCODE -ne 0) {
-    throw 'Prepara embeddings: docker compose --profile embeddings run --rm prepare-embeddings'
+    throw 'Desde la raiz: docker compose --env-file licencias/secure_data.env --profile embeddings run --rm prepare-embeddings'
 }
 
 $tunnelProcess = $null

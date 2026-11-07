@@ -117,7 +117,13 @@ def upload(
 ):
     return client.post(
         "/api/v1/documents/upload",
-        data={"title": "Derivadas"},
+        data={
+            "title": "Derivadas",
+            "course": "Cálculo Diferencial",
+            "source_reference": "Muestra sintética",
+            "permission_note": "Material sintético de prueba",
+            "authorization_confirmed": "true",
+        },
         files={"file": (filename, content, mime)},
         headers=headers,
     )
@@ -274,3 +280,155 @@ def test_invalid_title_and_active_pdf(document_app):
     stream = io.BytesIO()
     writer.write(stream)
     assert upload(client, "curso.pdf", stream.getvalue(), "application/pdf").status_code == 422
+
+
+CATALOG_METADATA = {
+    "title": "Muestra sintética v0.1",
+    "course": "Cálculo Diferencial",
+    "source_reference": "Generado para pruebas; no es material docente",
+    "permission_note": "Uso de muestra sintética de prueba",
+    "authorization_confirmed": "true",
+}
+
+
+def catalog_upload(client, **changes):
+    return client.post(
+        "/api/v1/documents/upload",
+        data={**CATALOG_METADATA, **changes},
+        files={"file": ("muestra.txt", b"Concepto comun 100% y derivada.", "text/plain")},
+        headers=HEADERS,
+    )
+
+
+def test_catalog_requires_metadata_and_explicit_permission(document_app):
+    client = document_app[0]
+    for field in ("course", "source_reference", "permission_note"):
+        assert catalog_upload(client, **{field: " "}).status_code == 422
+    assert catalog_upload(client, authorization_confirmed="false").status_code == 422
+    response = client.post(
+        "/api/v1/documents/upload",
+        data={"title": "Sin procedencia"},
+        files={"file": ("x.txt", b"texto", "text/plain")},
+        headers=HEADERS,
+    )
+    assert response.status_code == 422
+    assert client.get("/api/v1/documents").json()["total"] == 0
+
+
+def test_catalog_isolates_course_owner_and_searches_literal_text(document_app):
+    client, _, app, owner, other, _ = document_app
+    ids = []
+    for course in ("Cálculo Diferencial", "Probabilidad y Estadística"):
+        response = catalog_upload(client, course=course)
+        assert response.status_code == 201, response.text
+        identifier = response.json()["id"]
+        ids.append(identifier)
+        assert (
+            client.post(f"/api/v1/documents/{identifier}/process", headers=HEADERS).status_code
+            == 200
+        )
+    params = {"course": "CÁLCULO DIFERENCIAL", "q": "100%"}
+    page = client.get("/api/v1/documents/text-search", params=params).json()
+    assert page["total"] == 1
+    assert page["items"][0]["document"]["id"] == ids[0]
+    assert page["items"][0]["chunk"]["source_index"] == 1
+    assert (
+        client.get("/api/v1/documents", params={"course": "probabilidad y estadística"}).json()[
+            "total"
+        ]
+        == 1
+    )
+    assert (
+        client.get("/api/v1/documents/text-search", params={**params, "q": "_"}).json()["total"]
+        == 0
+    )
+    assert (
+        client.get("/api/v1/documents/text-search", params={**params, "offset": 1}).json()["items"]
+        == []
+    )
+    app.dependency_overrides[get_current_user] = lambda: other
+    assert client.get("/api/v1/documents/text-search", params=params).json()["total"] == 0
+    assert client.get(f"/api/v1/documents/{ids[0]}/original").status_code == 404
+    assert catalog_upload(client, previous_version_id=ids[0]).status_code == 404
+    owner.rol = "student"
+    app.dependency_overrides[get_current_user] = lambda: owner
+    assert client.get("/api/v1/documents/text-search", params=params).status_code == 403
+
+
+def test_versions_preserve_original_and_reject_branches(document_app):
+    client, _, _, _, _, directory = document_app
+    first = catalog_upload(client).json()
+    second_response = catalog_upload(client, previous_version_id=first["id"])
+    assert second_response.status_code == 201, second_response.text
+    second = second_response.json()
+    assert second["version_number"] == 2 and second["previous_version_id"] == first["id"]
+    assert second["permission_recorded_at"]
+    assert (directory / first["id"]).exists() and (directory / second["id"]).exists()
+    assert (
+        client.get(f"/api/v1/documents/{first['id']}/original").content
+        == (directory / first["id"]).read_bytes()
+    )
+    assert catalog_upload(client, previous_version_id=first["id"]).status_code == 409
+    assert (
+        catalog_upload(client, previous_version_id=second["id"], course="Otra materia").status_code
+        == 409
+    )
+    assert len(list(directory.iterdir())) == 2
+    assert client.delete(f"/api/v1/documents/{second['id']}", headers=HEADERS).status_code == 204
+    assert catalog_upload(client, previous_version_id=first["id"]).status_code == 409
+    (directory / first["id"]).write_bytes(b"alterado")
+    assert client.get(f"/api/v1/documents/{first['id']}/original").status_code == 409
+
+
+@pytest.mark.parametrize("extension", ["txt", "pdf", "docx"])
+def test_catalog_full_extraction_for_supported_formats(document_app, extension):
+    from pypdf.generic import DecodedStreamObject, DictionaryObject, NameObject
+
+    client = document_app[0]
+    payload, mime = b"Derivadas: ejemplo sintetico.", "text/plain"
+    if extension == "docx":
+        payload, mime = docx(), MIME_DOCX
+    elif extension == "pdf":
+        writer = PdfWriter()
+        page = writer.add_blank_page(width=612, height=792)
+        font = DictionaryObject(
+            {
+                NameObject("/Type"): NameObject("/Font"),
+                NameObject("/Subtype"): NameObject("/Type1"),
+                NameObject("/BaseFont"): NameObject("/Helvetica"),
+            }
+        )
+        page[NameObject("/Resources")] = DictionaryObject(
+            {NameObject("/Font"): DictionaryObject({NameObject("/F1"): font})}
+        )
+        content = DecodedStreamObject()
+        content.set_data(b"BT /F1 12 Tf 72 720 Td (Derivadas: ejemplo sintetico.) Tj ET")
+        page[NameObject("/Contents")] = writer._add_object(content)
+        stream = io.BytesIO()
+        writer.write(stream)
+        payload, mime = stream.getvalue(), "application/pdf"
+    response = client.post(
+        "/api/v1/documents/upload",
+        data=CATALOG_METADATA,
+        files={"file": (f"sintetico.{extension}", payload, mime)},
+        headers=HEADERS,
+    )
+    assert response.status_code == 201, response.text
+    identifier = response.json()["id"]
+    processed = client.post(f"/api/v1/documents/{identifier}/process", headers=HEADERS)
+    assert processed.status_code == 200, processed.text
+    hits = client.get(
+        "/api/v1/documents/text-search", params={"course": "Cálculo Diferencial", "q": "Derivadas"}
+    ).json()
+    assert hits["total"] == 1
+    hit = hits["items"][0]
+    assert hit["chunk"]["source_kind"] == ("page" if extension == "pdf" else "paragraph")
+    assert client.get(f"/api/v1/documents/{identifier}/original").content == payload
+    client.delete(f"/api/v1/documents/{identifier}", headers=HEADERS)
+    assert (
+        client.get(
+            "/api/v1/documents/text-search",
+            params={"course": "Cálculo Diferencial", "q": "Derivadas"},
+        ).json()["total"]
+        == 0
+    )

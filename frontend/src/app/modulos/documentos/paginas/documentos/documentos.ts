@@ -1,5 +1,14 @@
 // Coordina carga, extracción e indexación sin confundir sus estados de preparación.
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  ElementRef,
+  inject,
+  OnInit,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -8,7 +17,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../../../nucleo/servicios/auth.service';
 import { DocumentService } from '../../servicios/document.service';
-import { CourseDocument } from '../../modelos/document.model';
+import { CourseDocument, TextSearchPage } from '../../modelos/document.model';
 import { DocumentChunksComponent } from '../../componentes/fragmentos/chunks';
 
 @Component({
@@ -18,6 +27,47 @@ import { DocumentChunksComponent } from '../../componentes/fragmentos/chunks';
   styleUrl: './documentos.scss',
 })
 export class DocumentsComponent implements OnInit {
+  @ViewChild('documentPanel', { static: true }) private panel!: ElementRef<HTMLDialogElement>;
+  readonly panelMode = signal<'upload' | 'detail'>('detail');
+  readonly detailSection = signal<'content' | 'origin' | 'technical'>('content');
+  private panelTrigger: HTMLElement | null = null;
+  private previousOverflow = '';
+
+  openPanel(mode: 'upload' | 'detail') {
+    this.panelMode.set(mode);
+    const dialog = this.panel.nativeElement;
+    if (!dialog.open) {
+      this.panelTrigger = globalThis.document.activeElement as HTMLElement;
+      this.previousOverflow = globalThis.document.body.style.overflow;
+      globalThis.document.body.style.overflow = 'hidden';
+      dialog.showModal();
+    }
+    dialog.scrollTop = 0;
+  }
+  openUpload() {
+    this.detailRequest?.unsubscribe();
+    this.detailLoading.set(false);
+    this.previousVersionId = undefined;
+    this.openPanel('upload');
+  }
+  closePanel() {
+    if (this.busy()) return;
+    this.closeDetails();
+    this.pendingDelete.set(null);
+    if (this.panel.nativeElement.open) {
+      this.panel.nativeElement.close();
+      globalThis.document.body.style.overflow = this.previousOverflow;
+    }
+    this.panelTrigger?.focus();
+  }
+  constructor() {
+    this.destroyRef.onDestroy(() => {
+      if (this.panel?.nativeElement.open) {
+        this.panel.nativeElement.close();
+        globalThis.document.body.style.overflow = this.previousOverflow;
+      }
+    });
+  }
   readonly auth = inject(AuthService);
   private readonly service = inject(DocumentService);
   private readonly destroyRef = inject(DestroyRef);
@@ -39,6 +89,72 @@ export class DocumentsComponent implements OnInit {
   readonly offset = signal(0);
   readonly file = signal<File | null>(null);
   title = '';
+  course = '';
+  sourceReference = '';
+  permissionNote = '';
+  authorizationConfirmed = false;
+  previousVersionId: string | undefined;
+  filterCourse = '';
+  textQuery = '';
+  readonly textResults = signal<TextSearchPage | null>(null);
+  readonly searchingText = signal(false);
+  private textRequest?: Subscription;
+
+  metadataReady() {
+    return !!(
+      this.course.trim() &&
+      this.sourceReference.trim() &&
+      this.permissionNote.trim() &&
+      this.authorizationConfirmed
+    );
+  }
+  newVersion(document: CourseDocument) {
+    this.openPanel('upload');
+    this.previousVersionId = document.id;
+    this.title = document.title;
+    this.course = document.course ?? '';
+    this.sourceReference = document.source_reference ?? '';
+    this.permissionNote = document.permission_note ?? '';
+    this.authorizationConfirmed = false;
+    this.success.set('');
+    this.file.set(null);
+    const input = this.panel.nativeElement.querySelector<HTMLInputElement>('input[type=file]');
+    if (input) input.value = '';
+    this.pendingDelete.set(null);
+  }
+  openPrevious() {
+    const item = this.selected();
+    if (item?.previous_version_id) this.view({ ...item, id: item.previous_version_id });
+  }
+  resetTextSearch() {
+    this.textRequest?.unsubscribe();
+    this.textResults.set(null);
+    this.searchingText.set(false);
+  }
+  searchText(offset = 0) {
+    this.resetTextSearch();
+    if (!this.filterCourse.trim() || !this.textQuery.trim()) {
+      this.searchingText.set(false);
+      this.error.set('Indica asignatura y texto para buscar.');
+      return;
+    }
+    this.searchingText.set(true);
+    this.error.set('');
+    this.textRequest = this.service
+      .searchText(this.filterCourse.trim(), this.textQuery.trim(), offset)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (page) => {
+          this.textResults.set(page);
+          this.searchingText.set(false);
+        },
+        error: (error) => {
+          this.error.set(this.message(error));
+          this.searchingText.set(false);
+        },
+      });
+  }
+
   canManage() {
     return ['teacher', 'admin'].includes(this.auth.user()?.rol ?? '');
   }
@@ -49,7 +165,7 @@ export class DocumentsComponent implements OnInit {
     this.loading.set(true);
     this.error.set('');
     this.service
-      .list(offset)
+      .list(offset, this.filterCourse.trim())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (page) => {
@@ -81,23 +197,32 @@ export class DocumentsComponent implements OnInit {
   }
   upload(input: HTMLInputElement) {
     const file = this.file();
-    if (!file || !this.title.trim() || this.locked()) return;
+    if (!file || !this.title.trim() || !this.metadataReady() || this.locked()) return;
     this.busy.set(true);
     this.error.set('');
     this.success.set('');
     this.service
-      .upload(file, this.title.trim())
+      .upload(file, this.title.trim(), {
+        course: this.course.trim(),
+        source_reference: this.sourceReference.trim(),
+        permission_note: this.permissionNote.trim(),
+        authorization_confirmed: this.authorizationConfirmed,
+        previous_version_id: this.previousVersionId,
+      })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => {
+        next: (saved) => {
           this.busy.set(false);
           this.file.set(null);
           this.title = '';
+          this.previousVersionId = undefined;
+          this.authorizationConfirmed = false;
           input.value = '';
           this.success.set(
             'Documento guardado. Abre sus detalles para extraer y segmentar el texto.',
           );
           this.load(0);
+          this.view(saved);
         },
         error: (error) => {
           this.error.set(this.message(error));
@@ -106,6 +231,8 @@ export class DocumentsComponent implements OnInit {
       });
   }
   view(document: CourseDocument) {
+    this.openPanel('detail');
+    this.detailSection.set('content');
     this.detailRequest?.unsubscribe();
     this.selected.set(null);
     this.detailLoading.set(true);
@@ -285,7 +412,7 @@ export class DocumentsComponent implements OnInit {
         next: () => {
           this.busy.set(false);
           this.pendingDelete.set(null);
-          this.closeDetails();
+          this.closePanel();
           this.success.set('Documento eliminado.');
           this.load(
             this.documents().length === 1 && this.offset() > 0 ? this.offset() - 20 : this.offset(),

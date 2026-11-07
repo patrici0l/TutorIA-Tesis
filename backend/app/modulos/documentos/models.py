@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import UUID, uuid4
 
-from sqlalchemy import DateTime, ForeignKey, String, func
+from sqlalchemy import DateTime, ForeignKey, String, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.base_datos.models.base import Base
@@ -9,6 +9,13 @@ from app.base_datos.models.base import Base
 
 class Document(Base):
     __tablename__ = "documentos"
+    __table_args__ = (UniqueConstraint("previous_version_id", name="uq_document_previous"),)
+    course: Mapped[str | None] = mapped_column(String(160), index=True)
+    source_reference: Mapped[str | None] = mapped_column(String(500))
+    permission_note: Mapped[str | None] = mapped_column(String(500))
+    permission_recorded_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    version_number: Mapped[int] = mapped_column(default=1, server_default="1")
+    previous_version_id: Mapped[UUID | None] = mapped_column(ForeignKey("documentos.id"))
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     owner_id: Mapped[UUID] = mapped_column(ForeignKey("usuarios.id"), index=True)
     filename: Mapped[str] = mapped_column(String(180))

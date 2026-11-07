@@ -26,8 +26,8 @@ try {
             throw 'Respaldo alterado o incompleto. No se inició restauración.'
         }
     }
-    $postgresId = Invoke-DockerChecked -DockerArguments @('compose', 'ps', '--all', '-q', 'postgres')
-    $backendId = Invoke-DockerChecked -DockerArguments @('compose', 'ps', '--all', '-q', 'backend')
+    $postgresId = Invoke-DockerChecked -DockerArguments @('compose', '--env-file', (Join-Path $projectRoot 'licencias/secure_data.env'), 'ps', '--all', '-q', 'postgres')
+    $backendId = Invoke-DockerChecked -DockerArguments @('compose', '--env-file', (Join-Path $projectRoot 'licencias/secure_data.env'), 'ps', '--all', '-q', 'backend')
     if (-not $postgresId -or -not $backendId) { throw 'Deben existir los contenedores del proyecto para identificar las imágenes.' }
     $postgresImage = Invoke-DockerChecked -DockerArguments @('inspect', '--format', '{{.Image}}', $postgresId)
     $backendImage = Invoke-DockerChecked -DockerArguments @('inspect', '--format', '{{.Image}}', $backendId)

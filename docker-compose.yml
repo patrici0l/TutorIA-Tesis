@@ -52,7 +52,7 @@ services:
     environment:
       POSTGRES_DB: ${DB_NAME:-tutoria}
       POSTGRES_USER: ${DB_USER:-tutoria}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:?Configura DB_PASSWORD en .env}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Configura DB_PASSWORD en licencias/secure_data.env}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:

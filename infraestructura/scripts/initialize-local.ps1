@@ -1,8 +1,8 @@
 $ErrorActionPreference = 'Stop'
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
-$envPath = Join-Path $projectRoot '.env'
+$envPath = Join-Path $projectRoot 'licencias/secure_data.env'
 if (Test-Path -LiteralPath $envPath) {
-    Write-Host 'Ya existe .env; se conserva sin modificaciones.'
+    Write-Host 'Ya existe licencias/secure_data.env; se conserva sin modificaciones.'
     exit 0
 }
 $passwordBytes = New-Object byte[] 32

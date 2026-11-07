@@ -1,4 +1,10 @@
 export interface CourseDocument {
+  course?: string | null;
+  source_reference?: string | null;
+  permission_note?: string | null;
+  permission_recorded_at?: string | null;
+  version_number?: number;
+  previous_version_id?: string | null;
   id: string;
   filename: string;
   title: string;
@@ -41,6 +47,20 @@ export interface DocumentChunkList {
 }
 export interface DocumentList {
   items: CourseDocument[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface DocumentMetadata {
+  course: string;
+  source_reference: string;
+  permission_note: string;
+  authorization_confirmed: boolean;
+  previous_version_id?: string;
+}
+export interface TextSearchPage {
+  items: { document: CourseDocument; chunk: DocumentChunk }[];
   total: number;
   limit: number;
   offset: number;

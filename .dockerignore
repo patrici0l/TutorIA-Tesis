@@ -6,7 +6,7 @@
 **/.env
 **/.env.*
 !**/.env.example
-secretos_locales
+infraestructura/herramientas
 **/__pycache__
 
 # Resultados regenerables y registros locales
@@ -23,4 +23,7 @@ logs
 backend/models
 
 documentacion-local
+versionesDM
 AGENTS.md
+
+licencias/*.env

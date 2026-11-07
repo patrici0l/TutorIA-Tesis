@@ -6,7 +6,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
-$composeFiles = @('compose', '-f', (Join-Path $projectRoot 'docker-compose.yml'),
+$composeFiles = @('compose', '--env-file', (Join-Path $projectRoot 'licencias/secure_data.env'), '-f', (Join-Path $projectRoot 'docker-compose.yml'),
     '-f', (Join-Path $projectRoot 'infraestructura/docker/compose.demo.yml'))
 $previousRole = [Environment]::GetEnvironmentVariable('Prototipo_DEMO_ROLE', 'Process')
 try {

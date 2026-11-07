@@ -20,8 +20,10 @@ class DocumentRepository:
             )
         )
 
-    def list_owned(self, owner: UUID, limit: int, offset: int):
+    def list_owned(self, owner: UUID, limit: int, offset: int, course: str | None = None):
         query = select(Document).where(Document.owner_id == owner, Document.deleted_at.is_(None))
+        if course:
+            query = query.where(Document.course == course)
         count = self.db.scalar(select(func.count()).select_from(query.subquery()))
         items = self.db.scalars(
             query.order_by(Document.created_at.desc(), Document.id).limit(limit).offset(offset)
@@ -57,3 +59,26 @@ class DocumentRepository:
         self.db.commit()
         self.db.expire_all()
         return True
+
+    def has_next_version(self, identifier: UUID):
+        # Deleted successors still belong to history; never reuse their version number.
+        return self.db.scalar(select(Document.id).where(Document.previous_version_id == identifier))
+
+    def search_text(self, owner: UUID, course: str, text: str, limit: int, offset: int):
+        query = (
+            select(Document, DocumentChunk)
+            .join(DocumentChunk, DocumentChunk.document_id == Document.id)
+            .where(
+                Document.owner_id == owner,
+                Document.course == course,
+                Document.deleted_at.is_(None),
+                Document.processing_status == "processed",
+                Document.permission_recorded_at.is_not(None),
+                DocumentChunk.text.icontains(text, autoescape=True),
+            )
+        )
+        total = self.db.scalar(select(func.count()).select_from(query.subquery()))
+        rows = self.db.execute(
+            query.order_by(Document.id, DocumentChunk.position).limit(limit).offset(offset)
+        )
+        return rows.all(), total

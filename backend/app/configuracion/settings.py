@@ -11,7 +11,10 @@ from sqlalchemy import URL
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=Path(__file__).resolve().parents[3] / "licencias" / "backend.env",
+        extra="ignore",
+    )
     app_env: str = "development"
     database_url: SecretStr = SecretStr("")
     db_host: str = "localhost"

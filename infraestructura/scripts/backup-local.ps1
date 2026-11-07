@@ -11,13 +11,13 @@ function Invoke-DockerChecked {
 Push-Location $projectRoot
 try {
     foreach ($service in @('frontend', 'backend', 'prepare-embeddings', 'migrate')) {
-        $running = & docker compose ps --status running -q $service
+        $running = & docker compose --env-file "$projectRoot/licencias/secure_data.env" ps --status running -q $service
         if ($LASTEXITCODE -ne 0) { throw 'No se pudo comprobar el estado de los servicios.' }
         if ($running) { throw "Detén el servicio $service antes de respaldar. No se creó ninguna copia." }
     }
-    $postgresId = & docker compose ps --status running -q postgres
+    $postgresId = & docker compose --env-file "$projectRoot/licencias/secure_data.env" ps --status running -q postgres
     if ($LASTEXITCODE -ne 0 -or -not $postgresId) { throw 'PostgreSQL debe estar iniciado.' }
-    $backendId = & docker compose ps --all -q backend
+    $backendId = & docker compose --env-file "$projectRoot/licencias/secure_data.env" ps --all -q backend
     if ($LASTEXITCODE -ne 0 -or -not $backendId) { throw 'Debe existir el contenedor backend con sus volúmenes.' }
     $backendImage = & docker inspect --format '{{.Image}}' $backendId
     if ($LASTEXITCODE -ne 0) { throw 'No se pudo identificar la imagen del backend.' }
@@ -29,7 +29,7 @@ try {
     try {
         # El archivo binario no pasa por redirección de PowerShell.
         Invoke-DockerChecked -DockerArguments @(
-            'compose', 'exec', '-T', 'postgres', 'sh', '-c',
+            'compose', '--env-file', (Join-Path $projectRoot 'licencias/secure_data.env'), 'exec', '-T', 'postgres', 'sh', '-c',
             'pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" --format=custom --no-owner --no-acl --file="$1"',
             'backup', $containerDump
         )
@@ -37,7 +37,7 @@ try {
     }
     finally {
         # Ruta temporal literal, creada exclusivamente por esta ejecución.
-        & docker compose exec -T postgres rm -f -- $containerDump
+        & docker compose --env-file "$projectRoot/licencias/secure_data.env" exec -T postgres rm -f -- $containerDump
         if ($LASTEXITCODE -ne 0) { Write-Warning 'No se pudo retirar el dump temporal del contenedor.' }
     }
 
