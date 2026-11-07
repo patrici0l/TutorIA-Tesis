@@ -1,0 +1,5 @@
+@if (auth.user()?.rol === 'student') {
+  <app-student-home />
+} @else {
+  <app-teacher-home />
+}

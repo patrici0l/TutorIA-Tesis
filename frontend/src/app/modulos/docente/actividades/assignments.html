@@ -1,0 +1,219 @@
+<a class="back-link" routerLink="/inicio">← Volver al inicio</a>
+<header class="page-heading">
+  <p class="eyebrow">ACOMPAÑAMIENTO DOCENTE</p>
+  <h1>Actividades asignadas</h1>
+  <p>Asigna ejercicios o materiales de estudio y gestiona las entregas.</p>
+</header>
+<div class="assignment-layout with-form">
+  <form (ngSubmit)="create()" class="panel assignment-form">
+    <h2>Asignar una actividad</h2>
+    <p class="help">
+      Los bloques de ejercicios registran intentos y aciertos. Los recursos generados se comparten
+      como material de estudio, con sus soluciones.
+    </p>
+    <a routerLink="/recursos">Elegir o crear un recurso en Mis recursos →</a>
+    @if (resourceLoading()) {
+      <p role="status">Cargando recurso…</p>
+    }
+    @if (resourceError()) {
+      <p role="alert">{{ resourceError() }}</p>
+      <a routerLink="/recursos">Volver a Mis recursos y elegir otro →</a>
+    }
+    @if (selectedResource(); as detail) {
+      @if (version === 'resource-v1') {
+        <p>
+          Material de estudio: <strong>{{ detail.resource?.title }}</strong
+          >. Se comparte con sus fuentes y soluciones, sin calificación automática.
+        </p>
+      }
+    }
+    <fieldset
+      [disabled]="saving() || loading() || changing() || resourceLoading() || !!resourceError()"
+    >
+      <label
+        >Título
+        <input
+          name="title"
+          [(ngModel)]="title"
+          required
+          maxlength="120"
+          placeholder="Ej. Repaso de reglas de derivación"
+      /></label>
+      <label
+        >Correo del estudiante
+        <input
+          name="email"
+          type="email"
+          [(ngModel)]="email"
+          required
+          maxlength="254"
+          aria-describedby="student-email-help"
+      /></label>
+      <p id="student-email-help" class="help">
+        La cuenta debe haber iniciado sesión antes.
+        @if (auth.mode() === 'mock') {
+          <span class="demo-email"
+            >Correo disponible: <strong>estudiante.demo&#64;example.org</strong></span
+          >
+        }
+      </p>
+      <label
+        >Contenido de la actividad
+        <select name="version" [(ngModel)]="version">
+          @if (selectedResource()) {
+            <option value="resource-v1">
+              {{ selectedResource()?.resource?.title }} · material de estudio
+            </option>
+          }
+          @for (bank of banks; track bank.version) {
+            <option [value]="bank.version">{{ bank.title }} · ejercicios autocorregidos</option>
+          }
+        </select></label
+      >
+      <label
+        >Instrucciones (opcional)
+        <textarea
+          name="instructions"
+          [(ngModel)]="instructions"
+          maxlength="2000"
+          rows="3"
+        ></textarea>
+      </label>
+      <button type="submit">{{ saving() ? 'Asignando…' : 'Asignar actividad' }}</button>
+    </fieldset>
+    @if (formError()) {
+      <p class="message error" role="alert">{{ formError() }}</p>
+    }
+    @if (success()) {
+      <p class="message" role="status">{{ success() }}</p>
+    }
+  </form>
+
+  <section
+    class="assignment-list"
+    aria-labelledby="activity-list-title"
+    [attr.aria-busy]="loading()"
+  >
+    <div class="list-heading">
+      <div>
+        <h2 id="activity-list-title">Seguimiento de actividades</h2>
+        @if (page(); as results) {
+          <p class="help">
+            {{ results.total }} {{ results.total === 1 ? 'actividad' : 'actividades' }}
+          </p>
+        }
+      </div>
+      <button
+        type="button"
+        class="secondary"
+        (click)="load()"
+        [disabled]="loading() || saving() || changing()"
+      >
+        {{ loading() ? 'Cargando…' : 'Actualizar actividades' }}
+      </button>
+    </div>
+    @if (error()) {
+      <p class="message error" role="alert">{{ error() }}</p>
+    }
+    @if (statusSuccess()) {
+      <p class="message" role="status">{{ statusSuccess() }}</p>
+    }
+    @if (page(); as results) {
+      <p class="help scope-note">
+        Consulta el material asignado o los resultados de cada práctica.
+      </p>
+      @for (item of results.items; track item.id) {
+        <app-assignment-card [item]="item" [showRecipient]="true">
+          <div class="buttons">
+            @if (item.status === 'open') {
+              <button
+                type="button"
+                (click)="requestStatus(item, 'closed')"
+                [disabled]="changing() || saving() || loading()"
+              >
+                Cerrar actividad
+              </button>
+            } @else {
+              <button
+                type="button"
+                (click)="requestStatus(item, 'open')"
+                [disabled]="changing() || saving() || loading()"
+              >
+                Reactivar actividad
+              </button>
+            }
+            @if (item.status !== 'cancelled') {
+              <button
+                type="button"
+                class="secondary"
+                (click)="requestStatus(item, 'cancelled')"
+                [disabled]="changing() || saving() || loading()"
+              >
+                Cancelar actividad
+              </button>
+            }
+          </div>
+          @if (pendingChange(); as change) {
+            @if (change.item.id === item.id) {
+              <section class="confirmation" aria-label="Confirmar cambio de estado">
+                <p>
+                  {{
+                    change.item.resource_id
+                      ? 'Se actualizará el estado de la actividad; el material seguirá disponible para consulta.'
+                      : change.status === 'open'
+                        ? 'El estudiante podrá guardar nuevos intentos.'
+                        : change.status === 'closed'
+                          ? 'Se detendrán las entregas de esta actividad.'
+                          : 'La actividad quedará marcada como cancelada y no recibirá nuevas entregas.'
+                  }}
+                </p>
+                <p class="help">
+                  Los resultados guardados se conservan. Puedes cambiar el estado después.
+                </p>
+                <div class="buttons">
+                  <button type="button" (click)="confirmStatus()" [disabled]="changing()">
+                    {{ changing() ? 'Guardando…' : 'Confirmar cambio' }}
+                  </button>
+                  <button
+                    type="button"
+                    class="secondary"
+                    (click)="pendingChange.set(null)"
+                    [disabled]="changing()"
+                  >
+                    Volver
+                  </button>
+                </div>
+                @if (statusError()) {
+                  <p role="alert">{{ statusError() }}</p>
+                }
+              </section>
+            }
+          }
+        </app-assignment-card>
+      } @empty {
+        <div class="panel empty-state">
+          <h3>Tu primera actividad empieza aquí</h3>
+          <p>Elige un recurso guardado o completa el formulario con un bloque de ejercicios.</p>
+        </div>
+      }
+      @if (results.total > results.limit) {
+        <div class="buttons">
+          <button
+            (click)="load(results.offset - results.limit)"
+            [disabled]="loading() || saving() || changing() || results.offset === 0"
+          >
+            Más recientes
+          </button>
+          <button
+            (click)="load(results.offset + results.limit)"
+            [disabled]="
+              loading() || saving() || changing() || results.offset + results.limit >= results.total
+            "
+          >
+            Anteriores
+          </button>
+        </div>
+      }
+    }
+  </section>
+</div>

@@ -1,5 +1,5 @@
-import { SearchHit } from '../../rag/modelos/search.model';
-import { ProfileResponse } from '../../perfiles/modelos/profile.model';
+import { SearchHit } from '../../docente/busqueda/modelos/search.model';
+import { ProfileResponse } from '../../docente/perfiles/modelos/profile.model';
 
 export type ResourceType = 'EXPLANATION' | 'EXERCISE' | 'QUIZ' | 'FEEDBACK';
 export type Difficulty = 'basic' | 'intermediate' | 'advanced';

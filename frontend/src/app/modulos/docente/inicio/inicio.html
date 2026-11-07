@@ -1,0 +1,50 @@
+<section class="intro page-heading fade-in">
+  <h1>Materiales y recursos</h1>
+  <p class="lead">Prepara tus materiales, crea un recurso y asígnalo a tus estudiantes.</p>
+</section>
+
+<section class="actions" aria-label="Herramientas docentes">
+  <a routerLink="/documentos"
+    ><span>01 · MATERIALES</span>
+    <h2>Documentos</h2>
+    <p>Sube documentos y prepara sus fuentes para utilizarlas en tus recursos.</p>
+    <b>Abrir documentos ↗</b></a
+  >
+  <a routerLink="/recursos"
+    ><span>02 · RECURSOS</span>
+    <h2>Prepara un recurso</h2>
+    <p>
+      Define el objetivo, revisa las fuentes y genera el contenido. También puedes retomar recursos
+      guardados.
+    </p>
+    <b>Preparar recursos ↗</b></a
+  >
+  <a routerLink="/actividades"
+    ><span>03 · ASIGNACIÓN Y SEGUIMIENTO</span>
+    <h2>Actividades asignadas</h2>
+    <p>
+      Comparte materiales de estudio o asigna ejercicios con corrección automática y consulta sus
+      resultados.
+    </p>
+    <b>Gestionar actividades →</b></a
+  >
+</section>
+<section class="connection-panel" aria-label="Disponibilidad" [attr.aria-busy]="loading()">
+  <p role="status" aria-live="polite">
+    @if (loading()) {
+      Comprobando la conexión…
+    } @else if (error()) {
+      No se pudo conectar. Inténtalo de nuevo en unos momentos.
+    } @else if (health()?.status === 'ok') {
+      Todo listo para trabajar.
+    } @else {
+      Algunas funciones no están disponibles. Vuelve a comprobar la conexión.
+    }
+  </p>
+  <button type="button" (click)="refresh()" [disabled]="loading()">
+    {{ loading() ? 'Comprobando…' : 'Comprobar conexión' }}
+  </button>
+  @if (checkedAt()) {
+    <small>Última comprobación: {{ checkedAt() }}</small>
+  }
+</section>

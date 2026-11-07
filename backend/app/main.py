@@ -11,13 +11,13 @@ from app.base_datos.session import get_engine
 from app.configuracion.constants import API_PREFIX, APP_VERSION
 from app.configuracion.logging_config import configure_logging
 from app.configuracion.settings import get_settings
+from app.modulos.actividades.router import router as assignment_router
 from app.modulos.autenticacion.router import router as auth_router
 from app.modulos.contenidos.router import router as content_router
 from app.modulos.documentos.router import router as documents_router
-from app.modulos.estudiantes.assignment_router import router as assignment_router
-from app.modulos.estudiantes.router import router as practice_router
 from app.modulos.metricas.router import router as metrics_router
 from app.modulos.perfiles.router import router as profiles_router
+from app.modulos.practica.router import router as practice_router
 from app.modulos.rag.router import router as rag_router
 from app.nucleo.seguridad.rate_limiter import AuthRateLimiter
 from app.nucleo.seguridad.upload_limit import UploadLimitMiddleware

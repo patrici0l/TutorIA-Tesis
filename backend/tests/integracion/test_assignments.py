@@ -10,12 +10,13 @@ from sqlalchemy.orm import Session
 
 from app.base_datos.session import get_engine, get_session
 from app.main import create_app
-from app.modulos.estudiantes.assignment_repository import AssignmentRepository
-from app.modulos.estudiantes.assignment_schemas import AssignmentSubmission
-from app.modulos.estudiantes.models import PracticeAssignment, PracticeAttempt
-from app.modulos.estudiantes.repository import PracticeRepository
-from app.modulos.estudiantes.schemas import PracticeSubmission
-from app.modulos.estudiantes.service import PracticeService
+from app.modulos.actividades.models import PracticeAssignment
+from app.modulos.actividades.repository import AssignmentRepository
+from app.modulos.actividades.schemas import AssignmentSubmission
+from app.modulos.practica.models import PracticeAttempt
+from app.modulos.practica.repository import PracticeRepository
+from app.modulos.practica.schemas import PracticeSubmission
+from app.modulos.practica.service import PracticeService
 from app.modulos.usuarios.models import User
 from app.nucleo.dependencias.auth import get_current_user
 from tests.integracion.test_content_trace_database import pytestmark as pytestmark

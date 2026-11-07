@@ -25,16 +25,10 @@ from app.modulos.rag.repositorios.index_repository import IndexRepository
 from app.modulos.rag.schemas import DocumentChunkList
 from app.modulos.rag.servicios.index_document_service import IndexDocumentService
 from app.modulos.rag.servicios.ingest_document_service import IngestDocumentService
-from app.modulos.usuarios.models import User
-from app.nucleo.dependencias.auth import get_current_user, require_client_header
+from app.nucleo.dependencias.auth import require_client_header
+from app.nucleo.dependencias.autorizacion import Owner
 
 router = APIRouter(prefix="/documents", tags=["documents"])
-
-
-def get_document_owner(user: Annotated[User, Depends(get_current_user)]):
-    if user.rol not in {"teacher", "admin"}:
-        raise HTTPException(403, "La gestión de documentos requiere permisos de docente.")
-    return user
 
 
 def get_document_service(db: Annotated[Session, Depends(get_session)]):
@@ -48,7 +42,6 @@ def get_ingest_service(db: Annotated[Session, Depends(get_session)]):
     )
 
 
-Owner = Annotated[User, Depends(get_document_owner)]
 Service = Annotated[DocumentService, Depends(get_document_service)]
 IngestService = Annotated[IngestDocumentService, Depends(get_ingest_service)]
 

@@ -1,3 +1,4 @@
+import { navigationItems } from './links';
 // Presenta destinos por rol y restaura el foco al cerrar el menú modal.
 import { Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -18,56 +19,7 @@ export class NavigationComponent {
   readonly items = computed(() => {
     const user = this.auth.user();
     if (!user) return [];
-    const links = [{ path: '/inicio', label: 'Inicio', description: 'Tu espacio de trabajo' }];
-    if (user.rol === 'student') {
-      links.push(
-        {
-          path: '/actividades',
-          label: 'Actividades asignadas',
-          description: 'Ejercicios y materiales de tu profesor',
-        },
-        {
-          path: '/practica',
-          label: 'Práctica libre',
-          description: 'Repaso voluntario con historial personal',
-        },
-      );
-    }
-    if (user.rol === 'teacher' || user.rol === 'admin') {
-      links.push(
-        {
-          path: '/documentos',
-          label: 'Mis documentos',
-          description: 'Sube y prepara tus materiales de clase',
-        },
-        {
-          path: '/recursos',
-          label: 'Recursos',
-          description: 'Crea recursos o retoma los que guardaste',
-        },
-        {
-          path: '/actividades',
-          label: 'Actividades asignadas',
-          description: 'Asigna contenido y consulta resultados',
-        },
-        {
-          path: '/busqueda',
-          label: 'Buscar fuentes',
-          description: 'Consulta tus documentos preparados',
-        },
-        {
-          path: '/perfiles',
-          label: 'Perfiles de aprendizaje',
-          description: 'Apoyo opcional para adaptar un recurso',
-        },
-        {
-          path: '/metricas',
-          label: 'Uso de generación',
-          description: 'Consulta solicitudes, tokens y tiempos de generación',
-        },
-      );
-    }
-    return links;
+    return navigationItems(user.rol);
   });
 
   constructor() {

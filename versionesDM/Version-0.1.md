@@ -64,9 +64,9 @@ Rutas relativas a `TutorIA-Lucero`. No se crearon clases de dominio redundantes 
 | `backend/app/modulos/documentos/servicios/document_service.py` — `DocumentService` | Ampliada | `upload` valida propietario/curso de versión anterior, conserva archivos y maneja conflictos; `get` y `delete` conservan controles de propiedad |
 | `backend/app/modulos/documentos/router.py` | Ampliado; funciones, no clase | Contrato multipart obligatorio, consulta textual y descarga autenticada; mantiene sesión, roles y protección de escritura |
 | `backend/alembic/versions/0016_document_catalog.py` | Nueva migración | Añade columnas, índice por asignatura, FK anterior y unicidad de sucesor; conserva documentos anteriores |
-| `frontend/src/app/modulos/documentos/modelos/document.model.ts` | Ampliado | Interfaces `CourseDocument`, `DocumentMetadata` y `TextSearchPage` para representar el contrato |
-| `frontend/src/app/modulos/documentos/servicios/document.service.ts` — `DocumentService` | Ampliada | Envía multipart con metadatos, filtra listado y consulta `/text-search` |
-| `frontend/src/app/modulos/documentos/paginas/documentos/documentos.ts` — `DocumentsComponent` | Ampliada | `metadataReady`, `newVersion`, `openPrevious`, `searchText`, `resetTextSearch`; cancela consultas obsoletas al cambiar filtros |
+| `frontend/src/app/modulos/docente/documentos/modelos/document.model.ts` | Ampliado | Interfaces `CourseDocument`, `DocumentMetadata` y `TextSearchPage` para representar el contrato |
+| `frontend/src/app/modulos/docente/documentos/servicios/document.service.ts` — `DocumentService` | Ampliada | Envía multipart con metadatos, filtra listado y consulta `/text-search` |
+| `frontend/src/app/modulos/docente/documentos/paginas/documentos/documentos.ts` — `DocumentsComponent` | Ampliada | `metadataReady`, `newVersion`, `openPrevious`, `searchText`, `resetTextSearch`; cancela consultas obsoletas al cambiar filtros |
 | `documentos.html` y `documentos.scss`, misma carpeta | Ampliados | Formulario, asignaturas sugeridas, coincidencias, permiso, versiones y descarga de original |
 | `backend/app/modulos/documentos/servicios/document_validation_service.py` — `DocumentValidationService` | Reutilizada | Validación del archivo antes de persistirlo; no se reemplazó por validación exclusiva del navegador |
 | `backend/app/modulos/rag/servicios/ingest_document_service.py` — `IngestDocumentService` | Reutilizada | Coordina extracción aislada y publicación de fragmentos; diferencia estados y fallos |
@@ -125,7 +125,7 @@ Pruebas locales del 05/11/2026:
 - **Una prueba de integración PostgreSQL aprobada**: `backend/tests/integracion/test_document_catalog.py`, con extracción real, aislamiento y restricción única. Usa transacción exterior con rollback y archivos temporales.
 - Docker: backend, frontend y PostgreSQL saludables; nginx→FastAPI→PostgreSQL/pgvector verificado; frontend HTTP 200; Alembic `0016_document_catalog (head)`. Construcción de aplicación completada. No se realizó una revisión visual manual del navegador.
 
-Archivos de regresión principales: `backend/tests/unitarios/test_documents.py`, `backend/tests/integracion/test_document_catalog.py` y `frontend/src/app/modulos/documentos/paginas/documentos/documentos.spec.ts`.
+Archivos de regresión principales: `backend/tests/unitarios/test_documents.py`, `backend/tests/integracion/test_document_catalog.py` y `frontend/src/app/modulos/docente/documentos/paginas/documentos/documentos.spec.ts`.
 
 Comandos reproducibles desde la raíz, sin copiar secretos:
 

@@ -1,0 +1,244 @@
+@use '../../../compartido/estilos/workspace' as workspace;
+
+:host {
+  display: block;
+  max-width: 850px;
+  margin: auto;
+}
+.history {
+  margin-top: 32px;
+}
+.panel + .panel {
+  margin-top: 24px;
+}
+button[aria-pressed='true'] {
+  background: var(--blue-soft);
+  border-width: 2px;
+}
+.review-button {
+  display: block;
+  margin-top: 10px;
+}
+.review-list {
+  padding-left: 24px;
+}
+.review-list > li + li {
+  border-top: 1px solid var(--border);
+}
+a {
+  color: var(--blue-dark);
+}
+header {
+  margin: 32px 0;
+}
+p {
+  color: var(--muted);
+}
+.panel {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 32px;
+}
+.progress {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--muted);
+}
+progress {
+  width: 100%;
+  height: 7px;
+  margin: 16px 0;
+  accent-color: var(--blue);
+}
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 24px 0;
+}
+legend {
+  font-size: 14px;
+  margin-bottom: 14px;
+}
+label {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 16px;
+  margin: 10px 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+}
+label.selected {
+  border-color: var(--blue);
+  background: var(--blue-soft);
+}
+input {
+  accent-color: var(--blue);
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+}
+@include workspace.readable-page;
+.result-list {
+  list-style: none;
+  margin: 24px 0;
+  padding: 0;
+}
+.result-list li + li {
+  border-top: 1px solid var(--border);
+}
+.result-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 16px;
+  flex-wrap: wrap;
+}
+.result-row span {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+.result-list p {
+  margin: 8px 0 0;
+}
+.result-actions {
+  margin-top: 16px;
+}
+.save-note,
+.save-error {
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: var(--blue-soft);
+}
+.save-error {
+  background: #fff2f2;
+  color: #942c30;
+}
+.history-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.history-heading h2 {
+  margin: 0 0 8px;
+}
+.history-heading p {
+  margin: 0;
+}
+.history-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  padding: 20px 0 0;
+  margin: 16px 0 0;
+  border-top: 1px solid var(--border);
+}
+.history-summary dt {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+.history-summary dd {
+  font-size: 1.3rem;
+  font-weight: 650;
+  margin: 6px 0 0;
+}
+.attempt-list {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 0;
+}
+.attempt-list > li {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.attempt-info {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+.attempt-info h3 {
+  font-size: 1rem;
+  margin: 0 0 6px;
+}
+.attempt-info time {
+  color: var(--muted);
+  font-size: 0.8125rem;
+  display: block;
+}
+.attempt-info a {
+  display: inline-flex;
+  margin-top: 8px;
+  font-size: 0.875rem;
+}
+.attempt-result {
+  min-width: 0;
+}
+.attempt-result strong {
+  font-size: 0.9375rem;
+}
+.review-list > li {
+  padding: 22px 0;
+}
+label span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+button {
+  border: 1px solid var(--blue-dark);
+  border-radius: 8px;
+  padding: 12px 18px;
+  background: var(--blue-dark);
+  color: white;
+  cursor: pointer;
+}
+button.secondary {
+  background: white;
+  color: var(--blue-dark);
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.feedback,
+.hint {
+  border-left: 4px solid var(--gold);
+  padding: 16px 20px;
+  background: #fff9e9;
+  margin: 24px 0;
+}
+.feedback.correct {
+  border-color: #2e7454;
+  background: #f0f8f3;
+}
+.feedback h3 {
+  margin-top: 0;
+}
+li {
+  padding: 12px 0;
+}
+.session-note {
+  font-size: 13px;
+}
+@media (max-width: 600px) {
+  .panel {
+    padding: 20px;
+  }
+  h2 {
+    font-size: 21px;
+  }
+}

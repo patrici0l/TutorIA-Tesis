@@ -1,0 +1,53 @@
+<article class="panel activity-card">
+  <div class="badges">
+    <span class="badge" [class.inactive]="item().status !== 'open'">{{
+      statusLabels[item().status]
+    }}</span>
+    <span class="badge">{{
+      item().resource_id
+        ? 'Material de estudio'
+        : item().attempts
+          ? 'Con resultados'
+          : 'Sin entregas'
+    }}</span>
+  </div>
+  <h3>{{ item().title }}</h3>
+  <p class="bank-name">{{ bankTitle(item().version) }}</p>
+  <p class="help">Asignada el {{ item().created_at | date: 'dd/MM/yyyy' }}</p>
+  @if (showRecipient()) {
+    <p class="recipient">
+      <span>Estudiante</span><strong>{{ item().student_email }}</strong>
+    </p>
+  }
+  @if (item().instructions) {
+    <div class="instructions">
+      <h4>Indicaciones</h4>
+      <p>{{ item().instructions }}</p>
+    </div>
+  }
+  @if (item().status_changed_at) {
+    <p class="help">
+      Estado actualizado el {{ item().status_changed_at | date: 'dd/MM/yyyy HH:mm' }}
+    </p>
+  }
+  @if (item().resource_id) {
+    <p class="help">
+      Material de consulta con soluciones. No registra intentos ni confirma la lectura del
+      estudiante.
+    </p>
+  } @else {
+    <dl class="result-summary">
+      <div>
+        <dt>Intentos guardados</dt>
+        <dd>{{ item().attempts }}</dd>
+      </div>
+      <div>
+        <dt>Mejor resultado</dt>
+        <dd>
+          {{ item().best_score === null ? 'Sin resultados' : item().best_score + ' de 3' }}
+        </dd>
+      </div>
+    </dl>
+  }
+  <ng-content />
+</article>

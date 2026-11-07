@@ -27,12 +27,12 @@ from app.modulos.contenidos.servicios.history_service import HistoryService
 from app.modulos.contenidos.servicios.preparation_service import PreparationService
 from app.modulos.contenidos.servicios.prepare_content_service import PrepareContentService
 from app.modulos.contenidos.servicios.resource_validation_service import ResourceValidationService
-from app.modulos.documentos.router import Owner
 from app.modulos.perfiles.repositorios.profile_repository import ProfileRepository
 from app.modulos.rag.prompts.educational_prompt import EducationalPromptBuilder
 from app.modulos.rag.router import get_search_service
 from app.modulos.rag.servicios.search_service import SearchService
 from app.nucleo.dependencias.auth import require_client_header
+from app.nucleo.dependencias.autorizacion import Owner
 
 router = APIRouter(prefix="/content", tags=["content"])
 

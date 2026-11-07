@@ -5,10 +5,10 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.base_datos.session import get_session
-from app.modulos.documentos.router import Owner
 from app.modulos.metricas.repositorios.metrics_repository import MetricsRepository
 from app.modulos.metricas.schemas import MetricsSummary
 from app.modulos.metricas.servicios.metrics_service import MetricsService
+from app.nucleo.dependencias.autorizacion import Owner
 
 router = APIRouter(prefix="/metrics", tags=["metrics"])
 

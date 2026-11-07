@@ -8,7 +8,7 @@ export const routes: Routes = [
     title: 'Actividades asignadas',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./modulos/estudiantes/paginas/actividades/assignments').then(
+      import('./nucleo/componentes/actividades/assignments').then(
         (m) => m.AssignmentsComponent,
       ),
   },
@@ -17,7 +17,7 @@ export const routes: Routes = [
     title: 'Resolver actividad',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./modulos/estudiantes/paginas/actividades/resolve').then(
+      import('./modulos/estudiante/actividades/resolve').then(
         (m) => m.AssignmentPracticeComponent,
       ),
   },
@@ -26,28 +26,28 @@ export const routes: Routes = [
     title: 'Práctica libre',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./modulos/estudiantes/paginas/practica/practice').then((m) => m.PracticeComponent),
+      import('./modulos/estudiante/practica/practice').then((m) => m.PracticeComponent),
   },
   {
     path: 'metricas',
     title: 'Uso de generación',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./modulos/metricas/paginas/metricas/metrics').then((m) => m.MetricsComponent),
+      import('./modulos/docente/metricas/paginas/metricas/metrics').then((m) => m.MetricsComponent),
   },
   {
     path: 'perfiles',
     title: 'Perfiles de aprendizaje',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./modulos/perfiles/paginas/perfiles/profiles').then((m) => m.ProfilesComponent),
+      import('./modulos/docente/perfiles/paginas/perfiles/profiles').then((m) => m.ProfilesComponent),
   },
   {
     path: 'recursos',
     title: 'Recursos',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./modulos/contenidos/paginas/preparacion/prepare').then(
+      import('./modulos/docente/recursos/paginas/preparacion/prepare').then(
         (m) => m.PreparationComponent,
       ),
   },
@@ -56,7 +56,7 @@ export const routes: Routes = [
     title: 'Búsqueda de fuentes',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./modulos/rag/paginas/busqueda/search').then((m) => m.SearchComponent),
+      import('./modulos/docente/busqueda/paginas/busqueda/search').then((m) => m.SearchComponent),
   },
   { path: '', redirectTo: 'inicio', pathMatch: 'full' },
   {
@@ -70,7 +70,7 @@ export const routes: Routes = [
     title: 'Documentos del curso',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./modulos/documentos/paginas/documentos/documentos').then(
+      import('./modulos/docente/documentos/paginas/documentos/documentos').then(
         (m) => m.DocumentsComponent,
       ),
   },
@@ -79,7 +79,7 @@ export const routes: Routes = [
     title: 'Inicio',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./modulos/inicio/paginas/inicio/inicio').then((m) => m.InicioComponent),
+      import('./nucleo/componentes/inicio/inicio').then((m) => m.InicioComponent),
   },
   { path: '**', redirectTo: 'inicio' },
 ];

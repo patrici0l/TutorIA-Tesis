@@ -10,9 +10,9 @@ from fastapi.testclient import TestClient
 from pydantic import ValidationError
 
 from app.main import create_app
-from app.modulos.estudiantes.router import get_practice_service
-from app.modulos.estudiantes.schemas import ANSWER_KEYS, CORRECT_OPTIONS, PracticeSubmission
-from app.modulos.estudiantes.service import PracticeService
+from app.modulos.practica.router import get_practice_service
+from app.modulos.practica.schemas import ANSWER_KEYS, CORRECT_OPTIONS, PracticeSubmission
+from app.modulos.practica.service import PracticeService
 from app.nucleo.dependencias.auth import get_current_user
 
 
@@ -48,7 +48,7 @@ def test_score_computed_by_server_and_reused_id_cannot_change_answers():
 
 def test_bank_version_and_answer_key_match_frontend():
     root = Path(__file__).resolve().parents[3]
-    source = root / "frontend/src/app/modulos/estudiantes/modelos/practice-question.ts"
+    source = root / "frontend/src/app/modulos/practica/modelos/practice-question.ts"
     if not source.exists():
         pytest.skip("El contenedor backend no incluye fuentes Angular")
     assert (

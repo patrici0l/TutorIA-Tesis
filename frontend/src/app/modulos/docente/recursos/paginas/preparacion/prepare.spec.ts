@@ -1,0 +1,369 @@
+import { signal } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
+import { AuthService } from '../../../../../nucleo/servicios/auth.service';
+import { PreparationComponent } from './prepare';
+import { PreparationResponse } from '../../../../contenidos/modelos/preparation.model';
+import { ResourceExportService } from '../../../../contenidos/servicios/resource-export.service';
+
+describe('Preparación docente', () => {
+  const quota = {
+    enabled: true,
+    daily_limit: 5,
+    used: 1,
+    remaining: 4,
+    resets_at: '2026-10-25T00:00:00Z',
+    max_output_tokens: 4096,
+    timeout_seconds: 30,
+  };
+  const user = signal({ rol: 'teacher' });
+  let http: HttpTestingController;
+  const response: PreparationResponse = {
+    id: 'test-prepared',
+    status: 'prepared',
+    topic: 'Derivadas',
+    learning_objective: 'Practicar',
+    resource_type: 'EXPLANATION',
+    difficulty: 'basic',
+    question_count: null,
+    sources: [
+      {
+        id: 'c1',
+        citation_id: 'S1',
+        document_id: 'd1',
+        document_title: 'Fuente sintética',
+        filename: 'fuente.txt',
+        source_kind: 'paragraph',
+        source_index: 1,
+        position: 0,
+        char_start: 0,
+        char_end: 18,
+        source_sha256: 'source-hash',
+        document_sha256: 'file-hash',
+        text: '<script>no ejecutar</script>',
+        processing_version: 'test-v1',
+        similarity: 0.9,
+      },
+    ],
+  };
+  it('envía una preparación una sola vez y muestra un fallo sin reintentar', async () => {
+    const fixture = setup(),
+      component = fixture.componentInstance;
+    component.prepare();
+    http.expectOne('/api/v1/content/prepare').flush(response);
+    component.generate();
+    component.generate();
+    const call = http.expectOne('/api/v1/content/test-prepared/generate');
+    expect(call.request.body).toEqual({});
+    call.flush({
+      id: 'test-prepared',
+      status: 'failed',
+      resource: null,
+      message: 'Cuota agotada.',
+    });
+    fixture.detectChanges();
+    http.expectOne('/api/v1/content/quota').flush(quota);
+    await fixture.whenStable();
+    expect(fixture.nativeElement.textContent).toContain('Cuota agotada.');
+    component.generate();
+    http.expectNone('/api/v1/content/test-prepared/generate');
+    component.clearResult();
+    expect(component.generation()).toBeNull();
+  });
+  beforeEach(async () => {
+    user.set({ rol: 'teacher' });
+    await TestBed.configureTestingModule({
+      imports: [PreparationComponent],
+      providers: [
+        provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: AuthService, useValue: { user } },
+      ],
+    }).compileComponents();
+    http = TestBed.inject(HttpTestingController);
+  });
+  afterEach(() => http.verify());
+  it('permite reintentar tras un rechazo de cupo sin marcar la preparación como enviada', () => {
+    const fixture = setup();
+    const component = fixture.componentInstance;
+    component.prepare();
+    http.expectOne('/api/v1/content/prepare').flush(response);
+    component.generate();
+    http
+      .expectOne('/api/v1/content/test-prepared/generate')
+      .flush(
+        { detail: 'Espera un minuto antes de generar otro recurso.' },
+        { status: 429, statusText: 'Too Many Requests' },
+      );
+    expect(component.sent()).toBe(false);
+    fixture.detectChanges();
+    http.expectOne('/api/v1/content/quota').flush(quota);
+    component.generate();
+    http
+      .expectOne('/api/v1/content/test-prepared/generate')
+      .flush(
+        { detail: 'Espera un minuto antes de generar otro recurso.' },
+        { status: 429, statusText: 'Too Many Requests' },
+      );
+  });
+  it('ofrece descarga solo al abrir historial y no hace solicitudes al descargar', () => {
+    const exportFile = vi
+      .spyOn(TestBed.inject(ResourceExportService), 'download')
+      .mockImplementation(() => {});
+    const fixture = setup();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('app-resource-export')).toBeNull();
+    const detail = {
+      preparation: response,
+      status: 'failed' as const,
+      created_at: '2026-10-10T00:00:00Z',
+      completed_at: '2026-10-10T00:01:00Z',
+      resource: null,
+      message: 'Fallo conservado',
+      audit: null,
+    };
+    fixture.componentInstance.restore(detail);
+    fixture.detectChanges();
+    fixture.nativeElement.querySelector('app-resource-export button').click();
+    expect(exportFile).toHaveBeenCalledExactlyOnceWith(detail);
+    http.expectNone(() => true);
+    fixture.componentInstance.clearResult();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('app-resource-export')).toBeNull();
+    exportFile.mockRestore();
+  });
+  function setup() {
+    const fixture = TestBed.createComponent(PreparationComponent);
+    fixture.componentInstance.topic = 'Derivadas';
+    fixture.componentInstance.objective = 'Practicar';
+    fixture.detectChanges();
+    http.expectOne('/api/v1/content/quota').flush(quota);
+    return fixture;
+  }
+  it('recupera un recurso guardado y bloquea su reenvío sin POST', () => {
+    const fixture = setup(),
+      component = fixture.componentInstance;
+    component.restore({
+      preparation: response,
+      status: 'succeeded',
+      created_at: '2026-10-07T22:00:00Z',
+      completed_at: '2026-10-07T22:00:01Z',
+      resource: null,
+      message: null,
+    });
+    expect(component.result()?.id).toBe('test-prepared');
+    expect(component.sent()).toBe(true);
+    expect(component.generation()?.status).toBe('succeeded');
+    component.generate();
+    http.expectNone((req) => req.method === 'POST');
+    component.restore({
+      preparation: response,
+      status: 'generating',
+      created_at: '2026-10-07T22:00:00Z',
+      completed_at: null,
+      resource: null,
+      message: null,
+    });
+    expect(component.restoredPending()).toBe(true);
+    component.generate();
+    http.expectNone((req) => req.method === 'POST');
+    component.restore({
+      preparation: response,
+      status: 'prepared',
+      created_at: '2026-10-07T22:00:00Z',
+      completed_at: null,
+      resource: null,
+      message: null,
+    });
+    expect(component.sent()).toBe(false);
+  });
+  it('envía contrato mínimo, evita doble envío y muestra fuentes como texto', async () => {
+    const fixture = setup(),
+      component = fixture.componentInstance;
+    fixture.detectChanges();
+    component.prepare();
+    component.prepare();
+    const call = http.expectOne('/api/v1/content/prepare');
+    expect(call.request.body).toEqual({
+      topic: 'Derivadas',
+      learning_objective: 'Practicar',
+      resource_type: 'EXPLANATION',
+      difficulty: 'basic',
+    });
+    call.flush(response);
+    await fixture.whenStable();
+    expect(fixture.nativeElement.textContent).toContain('PREPARADO, SIN GENERAR');
+    expect(fixture.nativeElement.querySelector('blockquote').textContent).toBe(
+      response.sources[0].text,
+    );
+    expect(fixture.nativeElement.querySelector('script')).toBeNull();
+    component.clearResult();
+    expect(component.result()).toBeNull();
+  });
+  it('solo envía campos del recurso seleccionado y elimina respuesta al cambiar', () => {
+    const component = setup().componentInstance;
+    component.resourceType = 'FEEDBACK';
+    component.studentAnswer = 'Respuesta de prueba';
+    component.prepare();
+    const feedback = http.expectOne('/api/v1/content/prepare');
+    expect(feedback.request.body.student_answer).toBe('Respuesta de prueba');
+    expect(feedback.request.body.question_count).toBeUndefined();
+    feedback.flush(response);
+    component.resourceType = 'QUIZ';
+    component.changeResource();
+    expect(component.studentAnswer).toBe('');
+    component.prepare();
+    const quiz = http.expectOne('/api/v1/content/prepare');
+    expect(quiz.request.body.question_count).toBe(3);
+    expect(quiz.request.body.student_answer).toBeUndefined();
+    quiz.flush(response);
+  });
+  it('maneja falta de fuentes y permite volver a enviar sin reintentos automáticos', () => {
+    const component = setup().componentInstance;
+    component.prepare();
+    http
+      .expectOne('/api/v1/content/prepare')
+      .flush({ detail: 'No hay fuentes disponibles.' }, { status: 422, statusText: 'No sources' });
+    expect(component.loading()).toBe(false);
+    expect(component.error()).toBe('No hay fuentes disponibles.');
+    expect(component.result()).toBeNull();
+    component.prepare();
+    http.expectOne('/api/v1/content/prepare').flush(response);
+    expect(component.result()?.id).toBe('test-prepared');
+  });
+  it('selecciona un perfil propio y envía únicamente su identificador', async () => {
+    const fixture = setup(),
+      component = fixture.componentInstance;
+    component.loadProfiles();
+    const profile = {
+      id: 'profile-test',
+      student_id: 'SYN-001',
+      topic: 'Derivadas',
+      performance: 42,
+      mastery_level: 'low' as const,
+      created_at: '2026-10-08T00:00:00Z',
+    };
+    http
+      .expectOne('/api/v1/profiles?offset=0&limit=10')
+      .flush({ items: [profile], total: 1, offset: 0, limit: 10 });
+    component.chooseProfile(profile);
+    component.objective = 'Practicar';
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('#difficulty').disabled).toBe(true);
+    component.prepare();
+    const call = http.expectOne('/api/v1/content/prepare');
+    expect(call.request.body.profile_id).toBe('profile-test');
+    expect(call.request.body.profile).toBeUndefined();
+    call.flush(response);
+    component.chooseProfile(null);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('#difficulty').disabled).toBe(false);
+    expect(component.result()).toBeNull();
+  });
+  it('muestra la adaptación conservada sin generar al abrir historial', () => {
+    const fixture = setup(),
+      component = fixture.componentInstance;
+    const adaptation = {
+      policy_version: 'profile-adaptation-v1',
+      profile: {
+        id: 'p1',
+        student_id: 'SYN-001',
+        topic: 'Derivadas',
+        performance: 42,
+        attempts: 4,
+        mastery_level: 'low' as const,
+        recommended_support: 'reinforcement' as const,
+        frequent_errors: ['<script>no ejecutar</script>'],
+        data_kind: 'synthetic' as const,
+        schema_version: 'performance-profile-v1' as const,
+        created_at: '2026-10-08T00:00:00Z',
+      },
+      requested_difficulty: 'advanced' as const,
+      effective_difficulty: 'basic' as const,
+      guidance: 'Paso a paso',
+      reason: 'Dominio bajo informado',
+      focus_errors: ['<script>no ejecutar</script>'],
+      suggested_resources: ['EXERCISE' as const],
+    };
+    component.restore({
+      preparation: { ...response, adaptation },
+      status: 'prepared',
+      created_at: '2026-10-08T00:00:00Z',
+      completed_at: null,
+      resource: null,
+      message: null,
+    });
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Dominio bajo informado');
+    expect(fixture.nativeElement.textContent).toContain('Aplicada: Básica');
+    expect(fixture.nativeElement.querySelector('script')).toBeNull();
+    http.expectNone('/api/v1/content/prepare');
+    http.expectNone('/api/v1/content/test-prepared/generate');
+  });
+  it('rechaza campos incompletos y evita peticiones del estudiante', () => {
+    const fixture = setup(),
+      component = fixture.componentInstance;
+    component.resourceType = 'FEEDBACK';
+    component.prepare();
+    expect(component.error()).toBeTruthy();
+    user.set({ rol: 'student' });
+    component.studentAnswer = 'Prueba';
+    component.prepare();
+    fixture.detectChanges();
+    http.expectNone('/api/v1/content/prepare');
+    expect(fixture.nativeElement.textContent).toContain('Espacio docente');
+  });
+  it('presenta las fuentes antes de generar y retira esa acción al recuperar un recurso finalizado', () => {
+    const fixture = setup();
+    const component = fixture.componentInstance;
+    component.restore({
+      preparation: response,
+      status: 'prepared',
+      created_at: '2026-10-24T12:00:00Z',
+      completed_at: null,
+      resource: null,
+      message: null,
+    });
+    fixture.detectChanges();
+    const root = fixture.nativeElement as HTMLElement;
+    const sources = root.querySelector<HTMLDetailsElement>('.source-review')!;
+    const generate = Array.from(root.querySelectorAll('button')).find((button) =>
+      button.textContent?.includes('Generar recurso con estas fuentes'),
+    )!;
+    expect(sources.open).toBe(true);
+    expect(
+      sources.compareDocumentPosition(generate) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    component.restore({
+      preparation: response,
+      status: 'succeeded',
+      created_at: '2026-10-24T12:00:00Z',
+      completed_at: '2026-10-24T12:00:01Z',
+      resource: {
+        resource_type: 'EXPLANATION',
+        title: 'Recurso',
+        summary: { text: 'Concepto', citations: ['S1'] },
+        steps: [],
+        worked_example: { text: 'Ejemplo', citations: ['S1'] },
+      },
+      message: null,
+    });
+    fixture.detectChanges();
+    expect(
+      Array.from(root.querySelectorAll('button')).some((button) =>
+        button.textContent?.includes('Generar recurso con estas fuentes'),
+      ),
+    ).toBe(false);
+    expect(root.querySelector('a[href^="/actividades"]')?.getAttribute('href')).toContain(
+      'resource=test-prepared',
+    );
+    http.expectNone('/api/v1/content/test-prepared/generate');
+  });
+});
