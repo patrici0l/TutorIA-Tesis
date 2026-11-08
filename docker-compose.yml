@@ -49,6 +49,8 @@ x-backend: &backend
 services:
   postgres:
     image: pgvector/pgvector:0.8.2-pg17-bookworm
+    ports:
+      - "127.0.0.1:5433:5432"
     environment:
       POSTGRES_DB: ${DB_NAME:-tutoria}
       POSTGRES_USER: ${DB_USER:-tutoria}
@@ -112,3 +114,4 @@ volumes:
   postgres_data:
   document_data:
   embedding_data:
+
