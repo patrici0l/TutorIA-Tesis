@@ -28,6 +28,17 @@ class ContentRequest(ContentModel):
     """Contrato interno inicial; proveedor/propietario/perfil no vienen del cliente."""
 
     topic: str = Field(min_length=1, max_length=160)
+    course: str | None = Field(default=None, min_length=1, max_length=160)
+
+    @field_validator("course")
+    @classmethod
+    def normalize_course(cls, value):
+        if value is None:
+            return value
+        value = unicodedata.normalize("NFC", value.strip()).casefold()
+        if not value or any(unicodedata.category(c).startswith("C") for c in value):
+            raise ValueError("Indica una asignatura válida.")
+        return value
     learning_objective: str = Field(min_length=1, max_length=400)
     resource_type: ResourceType
     difficulty: Difficulty = "basic"

@@ -1,8 +1,8 @@
 // Compone la sesión visible y el cierre de acceso en el shell de la aplicación.
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
-import { NavigationComponent } from './compartido/componentes/navegacion/nav';
-import { AuthService } from './nucleo/servicios/auth.service';
+import { NavigationComponent } from './compartido/navegacion/navegacion';
+import { AuthService } from './inicio/sesion.service';
 
 @Component({
   imports: [RouterOutlet, RouterLink, NavigationComponent],

@@ -90,7 +90,7 @@ def test_prepare_uses_authenticated_owner_and_local_retrieval():
     assert received_owner == owner
     assert query.top_k == 3
     assert "Derivadas" in query.query and "tasa de cambio" in query.query
-    assert result.prompt_version == "educational-rag-v1"
+    assert result.prompt_version == "educational-rag-v2"
 
 
 def test_context_without_sources_or_with_invalid_sources_fails():

@@ -16,7 +16,7 @@ PREPARATION_LIMITER = AuthRateLimiter(limit=5)
 ERRORS = {
     "content_no_sources": (
         422,
-        "No hay fuentes disponibles. Carga, procesa e indexa tus materiales.",
+        "No hay fuentes habilitadas para esta asignatura. Revisa tus materiales.",
     ),
     "content_context_limit": (
         422,

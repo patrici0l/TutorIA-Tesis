@@ -11,6 +11,7 @@ from app.modulos.rag.schemas import DocumentChunkResponse
 class DocumentResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     course: str | None = None
+    published_at: datetime | None = None
     source_reference: str | None = None
     permission_note: str | None = None
     permission_recorded_at: datetime | None = None

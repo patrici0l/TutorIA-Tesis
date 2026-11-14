@@ -1,0 +1,46 @@
+<article aria-label="Recurso generado">
+  <h3><span [appMathText]="resource().title"></span></h3>
+  @for (section of sections(); track section.heading) {
+    <section>
+      <h4>{{ section.heading }}</h4>
+      @for (block of section.blocks; track $index) {
+        <p>
+          <span [appMathText]="block.text"></span>
+          <small>Fuentes: {{ block.citations.join(', ') }}</small>
+        </p>
+      }
+    </section>
+  }
+  @if (resource(); as r) {
+    @if (r.resource_type === 'QUIZ') {
+      <p class="reading-note">
+        Preguntas de repaso con soluciones. Las opciones son de consulta; no necesitas marcar
+        respuestas.
+      </p>
+      @for (question of r.questions; track $index) {
+        <section>
+          <h4>Pregunta {{ $index + 1 }}</h4>
+          <p>
+            <span [appMathText]="question.statement.text"></span>
+            <small>Fuentes: {{ question.statement.citations.join(', ') }}</small>
+          </p>
+          <ol type="A">
+            @for (option of question.options; track $index) {
+              <li><span [appMathText]="option"></span></li>
+            }
+          </ol>
+          <details>
+            <summary>Ver respuesta y explicación</summary>
+            <p>
+              Respuesta: <span [appMathText]="question.options[question.correct_option]"></span>
+            </p>
+            <p>
+              <span [appMathText]="question.explanation.text"></span>
+              <small>Fuentes: {{ question.explanation.citations.join(', ') }}</small>
+            </p>
+          </details>
+        </section>
+      }
+    }
+  }
+</article>

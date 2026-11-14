@@ -1,4 +1,4 @@
-@use './app/compartido/animaciones/motion';
+@use './app/compartido/estilos/movimiento';
 :root {
   --navy: #002d62;
   --blue: #0065b0;
@@ -125,4 +125,39 @@ main {
 
 body:has(dialog[open]) {
   overflow: hidden;
+}
+
+// Las acciones de navegación conservan enlaces reales con apariencia de botón.
+main a.action-link,
+main a.back-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid var(--blue-dark);
+  border-radius: 7px;
+  background: var(--blue-dark);
+  color: white;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+}
+main a.action-link.secondary,
+main a.back-link {
+  background: white;
+  color: var(--blue-dark);
+  border-color: var(--border);
+}
+main a.action-link:hover,
+main a.back-link:hover {
+  box-shadow: 0 0 0 2px var(--blue-soft);
+}
+main a.action-link:focus-visible,
+main a.back-link:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
 }

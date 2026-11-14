@@ -31,6 +31,13 @@ class GenerationResponse(BaseModel):
     message: str | None = None
 
 
+def generation_enabled(settings: Settings):
+    return settings.llm_enabled and (
+        (settings.llm_default_provider == "gemini" and settings.llm_free_tier_confirmed)
+        or (settings.llm_default_provider == "claude" and settings.llm_paid_usage_confirmed)
+    )
+
+
 class GeneratePreparationService:
     def __init__(
         self, claim: GenerationClaimRepository, trace: GenerationTraceService, settings: Settings
@@ -38,13 +45,8 @@ class GeneratePreparationService:
         self.claim, self.trace, self.settings = claim, trace, settings
 
     def generate(self, identifier: UUID, owner: UUID):
-        # La autorización gratuita existente es específica de Gemini, no de otros proveedores.
-        if self.settings.llm_default_provider != "gemini":
-            raise HTTPException(
-                503, "Este proveedor aún no está habilitado para envíos desde la API."
-            )
-        if not self.settings.llm_enabled or not self.settings.llm_free_tier_confirmed:
-            raise HTTPException(503, "La generación gratuita aún no está habilitada.")
+        if not generation_enabled(self.settings):
+            raise HTTPException(503, "La generación aún no está habilitada para este proveedor.")
         try:
             provider = create_provider(self.settings)
         except ProviderError:
@@ -54,7 +56,12 @@ class GeneratePreparationService:
         target = GenerationTarget(
             provider=self.settings.llm_default_provider, requested_model=self.settings.llm_model
         )
-        cost_basis = CostBasis(requested_model=target.requested_model)
+        # La confirmación gratuita de Gemini no implica costo cero para Claude.
+        cost_basis = (
+            CostBasis(requested_model=target.requested_model)
+            if target.provider == "gemini"
+            else None
+        )
         request = self.claim.claim(
             identifier,
             owner,

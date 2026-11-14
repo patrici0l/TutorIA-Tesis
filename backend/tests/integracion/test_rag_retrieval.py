@@ -16,6 +16,7 @@ from test_ingestion_database import postgres_ingestion as postgres_ingestion
 
 from app.main import create_app
 from app.modulos.documentos.models import Document
+from app.modulos.documentos.schemas import DocumentMetadata
 from app.modulos.rag.models import DocumentChunk
 from app.modulos.rag.repositorios.index_repository import IndexRepository
 from app.modulos.rag.repositorios.search_repository import SearchRepository
@@ -56,7 +57,16 @@ def test_reference_retrieval_filters_sources_exact_and_hnsw(postgres_ingestion):
             headers=Headers({"content-type": "text/plain"}),
         )
         try:
-            record = documents.upload(upload, entry["title"], owner.id)
+            record = documents.upload(
+                upload,
+                entry["title"],
+                owner.id,
+                DocumentMetadata(
+                    course="cálculo diferencial",
+                    source_reference="Muestra sintética",
+                    permission_note="Prueba local",
+                ),
+            )
         finally:
             upload.file.close()
         ingest.process(record.id, owner.id)
@@ -68,6 +78,7 @@ def test_reference_retrieval_filters_sources_exact_and_hnsw(postgres_ingestion):
             token,
             [{"id": snapshot[0][0], "embedding": vector, "embedding_tokens": count}],
         )
+        documents.repository.set_publication(record.id, owner.id, True)
         keys[snapshot[0][0]] = entry["key"]
         references[snapshot[0][0]] = entry["text"]
 
@@ -90,6 +101,11 @@ def test_reference_retrieval_filters_sources_exact_and_hnsw(postgres_ingestion):
             size_bytes=1,
             sha256="0" * 64,
             status="uploaded",
+            course="cálculo diferencial",
+            published_at=datetime.now(UTC),
+            permission_recorded_at=datetime.now(UTC),
+            source_reference="Sintético",
+            permission_note="Prueba local",
             processing_status="processed",
             processing_version="test",
             index_status="indexed",
@@ -131,16 +147,19 @@ def test_reference_retrieval_filters_sources_exact_and_hnsw(postgres_ingestion):
             )
         )
     db.commit()
-    assert repository.count_available(owner.id) == len(keys)
+    assert repository.count_available(owner.id, "cálculo diferencial") == len(keys)
     report_rows = []
     for entry, query, baseline in zip(dataset["queries"], queries, baseline_queries, strict=True):
-        baseline_keys = [keys[row["id"]] for row in repository.search(owner.id, baseline, 3, 0)]
+        baseline_keys = [
+            keys[row["id"]]
+            for row in repository.search(owner.id, baseline, 3, 0, "cálculo diferencial")
+        ]
         baseline_rank = (
             baseline_keys.index(entry["relevant"]) + 1
             if entry["relevant"] in baseline_keys
             else None
         )
-        exact = repository.search(owner.id, query, 3, 0)
+        exact = repository.search(owner.id, query, 3, 0, "cálculo diferencial")
         exact_ids = [row["id"] for row in exact]
         assert len(exact_ids) == 3 and set(exact_ids) <= keys.keys()
         assert [row["similarity"] for row in exact] == sorted(
@@ -155,7 +174,7 @@ def test_reference_retrieval_filters_sources_exact_and_hnsw(postgres_ingestion):
         db.execute(text("SET LOCAL enable_sort = off"))
         db.execute(text("SET LOCAL hnsw.ef_search = 80"))
         db.execute(text("SET LOCAL hnsw.iterative_scan = strict_order"))
-        statement = repository.statement(owner.id, query, 3, exact=False)
+        statement = repository.statement(owner.id, query, 3, "cálculo diferencial", exact=False)
         compiled = statement.compile(db.bind, compile_kwargs={"literal_binds": True})
         plan = "\n".join(db.scalars(text("EXPLAIN " + str(compiled))))
         assert "ix_fragmentos_embedding_cosine" in plan
@@ -183,7 +202,7 @@ def test_reference_retrieval_filters_sources_exact_and_hnsw(postgres_ingestion):
     assert top1 >= 0.75
     assert all(row["hnsw_recall_at_3"] == 1 for row in report_rows)
     unrelated, _ = model.encode(["¿Cómo preparar una sopa de verduras?"], "query")
-    assert repository.search(owner.id, unrelated[0], 3, 0.99) == []
+    assert repository.search(owner.id, unrelated[0], 3, 0.99, "cálculo diferencial") == []
     service = SearchService(repository, EmbeddingWorkerClient(ingest.settings))
     app = create_app()
     app.dependency_overrides[get_current_user] = lambda: owner
@@ -191,7 +210,11 @@ def test_reference_retrieval_filters_sources_exact_and_hnsw(postgres_ingestion):
     with TestClient(app) as client:
         result = client.post(
             "/api/v1/rag/search",
-            json={"query": dataset["queries"][0]["text"], "top_k": 3},
+            json={
+                "course": "cálculo diferencial",
+                "query": dataset["queries"][0]["text"],
+                "top_k": 3,
+            },
             headers={"X-Prototipo-Client": "web"},
         )
         assert result.status_code == 200, result.text
@@ -207,9 +230,10 @@ def test_reference_retrieval_filters_sources_exact_and_hnsw(postgres_ingestion):
     from uuid import UUID
 
     documents.delete(UUID(selected["document_id"]), owner.id)
-    assert repository.count_available(owner.id) == len(keys) - 1
+    assert repository.count_available(owner.id, "cálculo diferencial") == len(keys) - 1
     assert selected["id"] not in [
-        str(row["id"]) for row in repository.search(owner.id, queries[0], 10, 0)
+        str(row["id"])
+        for row in repository.search(owner.id, queries[0], 10, 0, "cálculo diferencial")
     ]
     report = {
         "dataset": dataset["version"],

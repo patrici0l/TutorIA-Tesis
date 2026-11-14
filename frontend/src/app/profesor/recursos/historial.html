@@ -1,0 +1,85 @@
+<section aria-labelledby="history-title">
+  <div class="header">
+    <div>
+      <p class="eyebrow">TU TRABAJO, GUARDADO</p>
+      <h2 id="history-title" tabindex="-1">
+        {{ assignmentMode() ? 'Elige un recurso para asignar' : 'Mis recursos' }}
+      </h2>
+    </div>
+    <button type="button" [disabled]="busy() || locked()" (click)="load()">
+      {{ page() ? 'Actualizar historial' : 'Ver historial guardado' }}
+    </button>
+  </div>
+  <p>
+    {{
+      assignmentMode()
+        ? 'Solo los recursos generados tienen el botón Usar este recurso. Al elegirlo, volverás a la asignación con el material seleccionado.'
+        : 'Abre tus preparaciones guardadas, resultados y fuentes originales.'
+    }}
+  </p>
+  @if (busy()) {
+    <p role="status">Consultando recursos guardados…</p>
+  }
+  @if (error()) {
+    <p id="history-error" tabindex="-1" role="alert">{{ error() }}</p>
+  }
+  @if (page(); as history) {
+    @if (!history.total) {
+      <p>Aún no tienes preparaciones guardadas. Empieza con un objetivo concreto.</p>
+    }
+    <ul>
+      @for (item of history.items; track item.id) {
+        <li [class.selected]="selectedId() === item.id">
+          <div>
+            <strong>{{ item.topic }}</strong>
+            <p>{{ types[item.resource_type] }} · {{ difficulties[item.difficulty] }}</p>
+            <p>{{ item.created_at | date: 'dd/MM/yyyy HH:mm' }} · {{ labels[item.status] }}</p>
+          </div>
+          <div class="resource-actions">
+            @if (assignmentMode() && item.status === 'succeeded') {
+              @if (!locked() && !busy()) {
+                <a
+                  class="action-link"
+                  [attr.aria-label]="'Usar para asignar: ' + item.topic"
+                  routerLink="/actividades"
+                  [queryParams]="{ resource: item.id }"
+                  >Usar este recurso</a
+                >
+              }
+            }
+            <button
+              type="button"
+              [disabled]="busy() || locked()"
+              (click)="open(item.id)"
+              [attr.aria-label]="'Abrir recurso: ' + item.topic"
+            >
+              {{ assignmentMode() ? 'Revisar recurso' : 'Abrir recurso' }} →
+            </button>
+          </div>
+        </li>
+      }
+    </ul>
+    @if (history.total) {
+      <nav aria-label="Páginas del historial">
+        <button
+          type="button"
+          [disabled]="busy() || locked() || history.offset === 0"
+          (click)="load(history.offset - history.limit)"
+        >
+          Anteriores
+        </button>
+        <span
+          >{{ history.offset + 1 }}–{{ history.offset + history.items.length }} de
+          {{ history.total }}</span
+        >
+        <button
+          type="button"
+          [disabled]="busy() || locked() || history.offset + history.limit >= history.total"
+          (click)="load(history.offset + history.limit)"
+        >
+          Siguientes
+        </button>
+      </nav>
+    }
+  }
+</section>

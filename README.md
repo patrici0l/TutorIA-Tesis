@@ -49,4 +49,13 @@ Comprobar una copia con `./infraestructura/scripts/verify-local-backup.ps1 -Back
 
 ## Desarrollo
 
-Frontend: [instrucciones](frontend/README.md). Para backend directo, ejecutar desde backend con sus dependencias instaladas; carga licencias/backend.env mediante una ruta independiente del directorio actual. Docker recibe la configuración de licencias/secure_data.env. La única plantilla es `.env.example`, sin claves reales. Para backend directo, copiarla a `licencias/backend.env`, cambiar `DB_HOST=localhost` y configurar una base accesible desde el equipo: PostgreSQL de Compose no publica su puerto al host. No sobrescribir archivos privados existentes.
+Frontend: [instrucciones](frontend/README.md). Para backend directo, ejecutar desde backend con sus dependencias instaladas; carga licencias/backend.env mediante una ruta independiente del directorio actual. Docker recibe la configuración de licencias/secure_data.env. La única plantilla es `.env.example`, sin claves reales. Para backend directo, copiarla a `licencias/backend.env`, cambiar `DB_HOST=localhost` y configurar una base accesible desde el equipo: PostgreSQL de Compose está disponible en `127.0.0.1:5433` (`DB_PORT=5433` para el backend directo). No sobrescribir archivos privados existentes.
+
+
+## Versión 0.2
+
+La búsqueda y preparación de recursos requieren asignatura y materiales habilitados. Después de procesar, indexar y revisar una versión, usar **Habilitar como fuente** en sus detalles. **Retirar de recursos** conserva el original y evita nuevas recuperaciones; las preparaciones pendientes con esa fuente deben rehacerse. Los materiales anteriores a esta actualización necesitan habilitación explícita.
+
+Claude utiliza el adaptador existente y requiere modelo, clave y confirmación de presupuesto mediante `LLM_PAID_USAGE_CONFIRMED=true`, además de `LLM_ENABLED=true` y `LLM_DEFAULT_PROVIDER=claude`. La plantilla mantiene los envíos deshabilitados. No se asigna un costo cero a Claude.
+
+Alcance, API, pruebas, archivos nuevos y pendientes de aceptación: [versión 0.2](versionesDM/Version-0.2.md).

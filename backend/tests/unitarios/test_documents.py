@@ -432,3 +432,68 @@ def test_catalog_full_extraction_for_supported_formats(document_app, extension):
         ).json()["total"]
         == 0
     )
+
+
+def test_publication_requires_review_and_owner_and_can_be_withdrawn(document_app):
+    from app.modulos.rag.servicios.model_spec import (
+        DIMENSIONS,
+        EMBEDDING_VERSION,
+        MODEL_ID,
+        MODEL_REVISION,
+    )
+
+    client, engine, _, owner, other, _ = document_app
+    result = upload(client)
+    assert result.status_code == 201
+    identifier = result.json()["id"]
+    assert result.json()["published_at"] is None
+    url = f"/api/v1/documents/{identifier}/publish"
+    assert client.post(url).status_code == 403
+    assert client.post(url, headers=HEADERS).status_code == 409
+    from uuid import UUID
+
+    with Session(engine) as db:
+        document = db.get(Document, UUID(identifier))
+        document.processing_status = "processed"
+        document.processing_version = "test"
+        document.index_status = "indexed"
+        document.embedding_model = MODEL_ID
+        document.embedding_revision = MODEL_REVISION
+        document.embedding_version = EMBEDDING_VERSION
+        document.chunk_count = 1
+        db.commit()
+    assert client.post(url, headers=HEADERS).status_code == 409  # Índice incompleto.
+    with Session(engine) as db:
+        db.add(
+            DocumentChunk(
+                document_id=UUID(identifier),
+                position=0,
+                source_kind="paragraph",
+                source_index=1,
+                char_start=0,
+                char_end=5,
+                text="Texto",
+                source_sha256="a" * 64,
+                embedding=[1.0] + [0.0] * (DIMENSIONS - 1),
+                embedding_tokens=2,
+            )
+        )
+        db.commit()
+    published = client.post(url, headers=HEADERS)
+    assert published.status_code == 200 and published.json()["published_at"]
+    assert client.post(url, headers=HEADERS).json()["published_at"].rstrip("Z") == published.json()[
+        "published_at"
+    ].rstrip("Z")
+    owner.rol = "student"
+    assert client.post(url, headers=HEADERS).status_code == 403
+    owner.rol = "teacher"
+    with Session(engine) as db:
+        db.get(Document, UUID(identifier)).owner_id = other.id
+        db.commit()
+    assert client.post(url, headers=HEADERS).status_code == 404
+    with Session(engine) as db:
+        db.get(Document, UUID(identifier)).owner_id = owner.id
+        db.commit()
+    withdrawn = client.post(f"/api/v1/documents/{identifier}/withdraw", headers=HEADERS)
+    assert withdrawn.status_code == 200 and withdrawn.json()["published_at"] is None
+    assert client.get(f"/api/v1/documents/{identifier}/original").status_code == 200

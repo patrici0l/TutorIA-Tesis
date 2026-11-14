@@ -1,6 +1,6 @@
 // Carga pantallas bajo demanda y aplica el acceso por sesión y rol.
 import { Routes } from '@angular/router';
-import { authGuard } from './nucleo/guardias/auth.guard';
+import { authGuard } from './inicio/sesion.guard';
 
 export const routes: Routes = [
   {
@@ -8,78 +8,63 @@ export const routes: Routes = [
     title: 'Actividades asignadas',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./nucleo/componentes/actividades/assignments').then(
-        (m) => m.AssignmentsComponent,
-      ),
+      import('./compartido/actividades/actividades').then((m) => m.AssignmentsComponent),
   },
   {
     path: 'actividades/:id',
     title: 'Resolver actividad',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./modulos/estudiante/actividades/resolve').then(
-        (m) => m.AssignmentPracticeComponent,
-      ),
+      import('./estudiante/actividades/resolver').then((m) => m.AssignmentPracticeComponent),
   },
   {
     path: 'practica',
     title: 'Práctica libre',
     canActivate: [authGuard],
-    loadComponent: () =>
-      import('./modulos/estudiante/practica/practice').then((m) => m.PracticeComponent),
+    loadComponent: () => import('./estudiante/practica/practica').then((m) => m.PracticeComponent),
   },
   {
     path: 'metricas',
     title: 'Uso de generación',
     canActivate: [authGuard],
-    loadComponent: () =>
-      import('./modulos/docente/metricas/paginas/metricas/metrics').then((m) => m.MetricsComponent),
+    loadComponent: () => import('./profesor/metricas/metricas').then((m) => m.MetricsComponent),
   },
   {
     path: 'perfiles',
     title: 'Perfiles de aprendizaje',
     canActivate: [authGuard],
-    loadComponent: () =>
-      import('./modulos/docente/perfiles/paginas/perfiles/profiles').then((m) => m.ProfilesComponent),
+    loadComponent: () => import('./profesor/perfiles/perfiles').then((m) => m.ProfilesComponent),
   },
   {
     path: 'recursos',
     title: 'Recursos',
     canActivate: [authGuard],
-    loadComponent: () =>
-      import('./modulos/docente/recursos/paginas/preparacion/prepare').then(
-        (m) => m.PreparationComponent,
-      ),
+    loadComponent: () => import('./profesor/recursos/preparar').then((m) => m.PreparationComponent),
   },
   {
     path: 'busqueda',
     title: 'Búsqueda de fuentes',
     canActivate: [authGuard],
-    loadComponent: () =>
-      import('./modulos/docente/busqueda/paginas/busqueda/search').then((m) => m.SearchComponent),
+    loadComponent: () => import('./profesor/busqueda/busqueda').then((m) => m.SearchComponent),
   },
   { path: '', redirectTo: 'inicio', pathMatch: 'full' },
   {
     path: 'login',
     title: 'Entrar',
-    loadComponent: () =>
-      import('./modulos/autenticacion/paginas/login/login').then((m) => m.LoginComponent),
+    loadComponent: () => import('./inicio/login').then((m) => m.LoginComponent),
   },
   {
     path: 'documentos',
     title: 'Documentos del curso',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./modulos/docente/documentos/paginas/documentos/documentos').then(
-        (m) => m.DocumentsComponent,
-      ),
+      import('./profesor/documentos/documentos').then((m) => m.DocumentsComponent),
   },
   {
     path: 'inicio',
     title: 'Inicio',
     canActivate: [authGuard],
-    loadComponent: () =>
-      import('./nucleo/componentes/inicio/inicio').then((m) => m.InicioComponent),
+    loadComponent: () => import('./inicio/inicio').then((m) => m.InicioComponent),
   },
   { path: '**', redirectTo: 'inicio' },
 ];

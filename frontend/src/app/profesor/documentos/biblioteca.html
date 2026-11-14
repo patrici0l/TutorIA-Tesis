@@ -1,0 +1,53 @@
+<section class="panel" aria-labelledby="library-title" [attr.aria-busy]="loading()">
+  <div class="heading">
+    <h2 id="library-title" tabindex="-1">
+      Mis documentos <span>{{ total() }}</span>
+    </h2>
+    <button class="secondary" (click)="reload.emit(offset())" [disabled]="loading() || locked()">
+      Actualizar
+    </button>
+  </div>
+  @if (loading()) {
+    <p role="status">Cargando documentos…</p>
+  } @else if (documents().length === 0) {
+    <p>Aún no tienes documentos. Añade tu primer material del curso.</p>
+  } @else {
+    <ul class="document-list">
+      @for (document of documents(); track document.id) {
+        <li [class.selected]="selectedId() === document.id">
+          <div>
+            <h3>{{ document.title }} · v{{ document.version_number ?? 1 }}</h3>
+            <p>{{ document.course || 'Pendiente de clasificación' }}</p>
+            <span class="badge">{{ processingLabel(document) }}</span>
+          </div>
+          <div class="actions">
+            <button
+              class="secondary"
+              (click)="openDocument.emit(document)"
+              [disabled]="busy()"
+              [attr.aria-label]="'Ver detalles de ' + document.title"
+            >
+              Abrir
+            </button>
+          </div>
+        </li>
+      }
+    </ul>
+    <div class="pagination">
+      <button
+        class="secondary"
+        (click)="reload.emit(offset() - 20)"
+        [disabled]="offset() === 0 || locked()"
+      >
+        Anterior</button
+      ><span>{{ offset() + 1 }}–{{ offset() + documents().length }} de {{ total() }}</span
+      ><button
+        class="secondary"
+        (click)="reload.emit(offset() + 20)"
+        [disabled]="offset() + documents().length >= total() || locked()"
+      >
+        Siguiente
+      </button>
+    </div>
+  }
+</section>

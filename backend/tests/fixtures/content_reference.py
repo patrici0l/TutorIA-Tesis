@@ -6,7 +6,10 @@ from app.modulos.rag.schemas import SearchHit, SearchResponse
 
 def request(kind="EXPLANATION", **values):
     fields = dict(
-        topic="Derivadas", learning_objective="Comprender la tasa de cambio", resource_type=kind
+        course="cálculo diferencial",
+        topic="Derivadas",
+        learning_objective="Comprender la tasa de cambio",
+        resource_type=kind,
     )
     if kind == "FEEDBACK":
         fields["student_answer"] = "Respuesta sintética del estudiante."

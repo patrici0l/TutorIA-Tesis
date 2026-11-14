@@ -11,6 +11,7 @@ class Document(Base):
     __tablename__ = "documentos"
     __table_args__ = (UniqueConstraint("previous_version_id", name="uq_document_previous"),)
     course: Mapped[str | None] = mapped_column(String(160), index=True)
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     source_reference: Mapped[str | None] = mapped_column(String(500))
     permission_note: Mapped[str | None] = mapped_column(String(500))
     permission_recorded_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

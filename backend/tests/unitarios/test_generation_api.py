@@ -48,3 +48,37 @@ def test_disabled_generation_never_claims_or_sends():
         service.generate(uuid4(), uuid4())
     assert error.value.status_code == 503
     claim.claim.assert_not_called()
+
+
+def test_claude_requires_its_own_budget_confirmation(monkeypatch):
+    import pytest
+    from fastapi import HTTPException
+
+    from tests.fixtures.content_reference import resource
+
+    claim, trace, provider = Mock(), Mock(), Mock()
+    settings = Settings(_env_file=None).model_copy(
+        update={
+            "llm_enabled": True,
+            "llm_default_provider": "claude",
+            "llm_model": "claude-test",
+            "llm_free_tier_confirmed": True,
+            "llm_paid_usage_confirmed": False,
+        }
+    )
+    factory = Mock(return_value=provider)
+    monkeypatch.setattr(
+        "app.modulos.contenidos.servicios.generate_preparation_service.create_provider", factory
+    )
+    with pytest.raises(HTTPException) as error:
+        GeneratePreparationService(claim, trace, settings).generate(uuid4(), uuid4())
+    assert error.value.status_code == 503
+    factory.assert_not_called()
+    claim.claim.assert_not_called()
+    settings = settings.model_copy(update={"llm_paid_usage_confirmed": True})
+    trace.finish.return_value = resource()
+    result = GeneratePreparationService(claim, trace, settings).generate(uuid4(), uuid4())
+    assert result.status == "succeeded"
+    assert claim.claim.call_args.kwargs["cost_basis"] is None
+    assert claim.claim.call_args.args[2].provider == "claude"
+    provider.generate.assert_called_once_with(claim.claim.return_value)

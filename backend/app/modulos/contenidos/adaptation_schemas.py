@@ -1,13 +1,14 @@
 from typing import Literal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.modulos.contenidos.schemas import ContentRequest, Difficulty, ResourceType
 from app.modulos.perfiles.schemas import ProfileResponse
 
 
 class PreparationRequest(ContentRequest):
+    course: str = Field(min_length=1, max_length=160)
     profile_id: UUID | None = None
 
 

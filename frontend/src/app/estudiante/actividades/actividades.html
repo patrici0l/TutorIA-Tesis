@@ -1,0 +1,75 @@
+<a class="back-link" routerLink="/inicio">← Volver al inicio</a>
+<header class="page-heading">
+  <p class="eyebrow">TU ESPACIO DE ESTUDIO</p>
+  <h1>Actividades asignadas</h1>
+  <p>Ejercicios y materiales de tu profesor. La práctica libre es un repaso voluntario separado.</p>
+</header>
+<div class="assignment-layout">
+  <section
+    class="assignment-list"
+    aria-labelledby="activity-list-title"
+    [attr.aria-busy]="loading()"
+  >
+    <div class="list-heading">
+      <div>
+        <h2 id="activity-list-title">Tus actividades</h2>
+        @if (page(); as results) {
+          <p class="help">
+            {{ results.total }} {{ results.total === 1 ? 'actividad' : 'actividades' }}
+          </p>
+        }
+      </div>
+      <button type="button" class="secondary" (click)="load()" [disabled]="loading()">
+        {{ loading() ? 'Cargando…' : 'Actualizar actividades' }}
+      </button>
+    </div>
+    @if (error()) {
+      <p class="message error" role="alert">{{ error() }}</p>
+    }
+
+    @if (page(); as results) {
+      <p class="help scope-note">
+        Abre tus materiales de estudio o resuelve las prácticas asignadas.
+      </p>
+      @for (item of results.items; track item.id) {
+        <app-assignment-card [item]="item" [showRecipient]="false">
+          <a class="activity-link action-link" [routerLink]="['/actividades', item.id]"
+            >{{
+              item.resource_id
+                ? 'Ver recurso'
+                : item.status !== 'open'
+                  ? 'Ver actividad y resultados'
+                  : item.attempts
+                    ? 'Volver a practicar'
+                    : 'Resolver actividad'
+            }}
+            →</a
+          >
+        </app-assignment-card>
+      } @empty {
+        <div class="panel empty-state">
+          <h3>Todavía no hay actividades</h3>
+          <p>Cuando tu profesor te asigne ejercicios o un material de estudio, aparecerán aquí.</p>
+
+          <a class="activity-link action-link" routerLink="/practica">Ir a la práctica libre →</a>
+        </div>
+      }
+      @if (results.total > results.limit) {
+        <div class="buttons">
+          <button
+            (click)="load(results.offset - results.limit)"
+            [disabled]="loading() || results.offset === 0"
+          >
+            Más recientes
+          </button>
+          <button
+            (click)="load(results.offset + results.limit)"
+            [disabled]="loading() || results.offset + results.limit >= results.total"
+          >
+            Anteriores
+          </button>
+        </div>
+      }
+    }
+  </section>
+</div>

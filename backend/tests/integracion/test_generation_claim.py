@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import UTC, datetime, timedelta
 
 import pytest
 from fastapi import HTTPException
@@ -17,7 +17,14 @@ from app.modulos.contenidos.servicios.history_service import HistoryService
 from app.modulos.contenidos.servicios.resource_validation_service import ResourceValidationService
 from app.modulos.documentos.models import Document
 from app.modulos.proveedores_ia.schemas import GenerationTarget
+from app.modulos.rag.models import DocumentChunk
 from app.modulos.rag.prompts.educational_prompt import EducationalPromptBuilder
+from app.modulos.rag.servicios.model_spec import (
+    DIMENSIONS,
+    EMBEDDING_VERSION,
+    MODEL_ID,
+    MODEL_REVISION,
+)
 from tests.fixtures.content_reference import request, retrieval
 from tests.integracion.test_content_trace_database import pytestmark as trace_marks
 from tests.integracion.test_content_trace_database import response
@@ -39,6 +46,10 @@ def claim_database(trace_database):
 def preparation(db, repository, owner):
     found = retrieval()
     hit = found.results[0]
+    hit.course = "cálculo diferencial"
+    hit.version_number = 1
+    hit.source_reference = "Material sintético"
+    hit.published_at = datetime.now(UTC)
     db.add(
         Document(
             id=hit.document_id,
@@ -48,6 +59,34 @@ def preparation(db, repository, owner):
             mime_type="text/plain",
             size_bytes=10,
             sha256=hit.document_sha256,
+            course=hit.course,
+            source_reference=hit.source_reference,
+            permission_note="Permiso sintético",
+            permission_recorded_at=datetime.now(UTC),
+            published_at=hit.published_at,
+            processing_status="processed",
+            processing_version=hit.processing_version,
+            index_status="indexed",
+            chunk_count=1,
+            embedding_model=MODEL_ID,
+            embedding_revision=MODEL_REVISION,
+            embedding_version=EMBEDDING_VERSION,
+        )
+    )
+    db.flush()
+    db.add(
+        DocumentChunk(
+            id=hit.id,
+            document_id=hit.document_id,
+            position=hit.position,
+            source_kind=hit.source_kind,
+            source_index=hit.source_index,
+            char_start=hit.char_start,
+            char_end=hit.char_end,
+            text=hit.text,
+            source_sha256=hit.source_sha256,
+            embedding=[1.0] + [0.0] * (DIMENSIONS - 1),
+            embedding_tokens=10,
         )
     )
     db.commit()
@@ -291,3 +330,34 @@ def test_saved_limits_match_gemini_payload_and_not_later_settings(claim_database
     )
     assert configuration.max_output_tokens == sent[0]["generationConfig"]["maxOutputTokens"] == 1024
     assert configuration.max_input_chars == 12000 and configuration.timeout_seconds == 30
+
+
+@pytest.mark.parametrize(
+    "change", ["withdraw", "republish", "course", "permission", "text", "revision"]
+)
+def test_changed_source_rejected_before_quota_reservation(claim_database, change):
+    db, repository, owners = claim_database
+    identifier = preparation(db, repository, owners[0])
+    record = db.get(ContentGeneration, identifier)
+    from uuid import UUID
+
+    source = record.sources_snapshot[0]
+    document = db.get(Document, UUID(source["document_id"]))
+    if change == "withdraw":
+        document.published_at = None
+    elif change == "republish":
+        document.published_at = datetime.now(UTC)
+    elif change == "course":
+        document.course = "probabilidad y estadística"
+    elif change == "permission":
+        document.permission_recorded_at = None
+    elif change == "revision":
+        document.embedding_revision = "obsoleta"
+    else:
+        db.get(DocumentChunk, UUID(source["id"])).text = "X" * len(source["text"])
+    db.commit()
+    with pytest.raises(HTTPException) as error:
+        GenerationClaimRepository(db).claim(identifier, owners[0], TARGET, 5)
+    assert error.value.status_code == 422
+    assert db.get(ContentGeneration, identifier).status == "prepared"
+    assert db.get(ContentGeneration, identifier).generation_started_at is None

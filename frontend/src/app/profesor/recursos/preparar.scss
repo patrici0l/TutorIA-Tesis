@@ -1,0 +1,242 @@
+@use '../../compartido/estilos/espacio-trabajo' as workspace;
+
+.workflow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0;
+}
+
+progress {
+  width: 100%;
+  accent-color: var(--blue-dark);
+}
+
+h2 {
+  font-weight: 600;
+  margin: 0;
+}
+h3 {
+  font-size: 18px;
+  margin: 8px 0;
+}
+p {
+  color: var(--muted);
+}
+a {
+  color: var(--blue-dark);
+  font-size: 13px;
+  text-underline-offset: 4px;
+}
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.panel {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  margin-top: 24px;
+  min-width: 0;
+}
+.section-title {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.step {
+  background: var(--blue-soft);
+  color: var(--blue-dark);
+  font-size: 12px;
+  border-radius: 50%;
+  padding: 10px;
+}
+fieldset {
+  border: 0;
+  margin: 24px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+label {
+  font-size: 13px;
+  font-weight: 600;
+  display: block;
+}
+input,
+textarea,
+select {
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font: inherit;
+}
+textarea {
+  resize: vertical;
+}
+.options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.options label {
+  margin-bottom: 10px;
+}
+.help {
+  font-size: 12px;
+  margin: 0 0 6px;
+}
+button {
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--blue-dark);
+  color: white;
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+button:hover:not(:disabled) {
+  background: var(--navy);
+}
+button:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
+.status-note {
+  background: var(--blue-soft);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 24px 0;
+  font-size: 13px;
+}
+.status-note p {
+  margin-bottom: 0;
+}
+.notice {
+  padding: 18px;
+  border-radius: 8px;
+  background: var(--blue-soft);
+}
+.error {
+  background: #fff2f2;
+  color: #a1292b;
+}
+
+.confirmation {
+  border-left: 4px solid var(--gold);
+}
+.source {
+  border-top: 3px solid var(--blue);
+}
+blockquote {
+  margin: 20px 0;
+  padding: 18px;
+  border-left: 3px solid var(--gold);
+  background: var(--surface);
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+dl,
+code {
+  font-size: 12px;
+  line-height: 1.6;
+}
+dt {
+  font-weight: 600;
+  margin-top: 12px;
+}
+dd {
+  margin: 4px 0;
+  color: var(--muted);
+}
+
+@media (max-width: 800px) {
+  .workspace {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+@media (max-width: 480px) {
+  .panel {
+    padding: 20px;
+  }
+  .options {
+    grid-template-columns: 1fr;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  button {
+    transition: none;
+  }
+}
+
+@include workspace.readable-page;
+
+[hidden] {
+  display: none !important;
+}
+.workspace-tabs,
+.result-actions,
+.profile-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.workspace-tabs {
+  margin-top: 24px;
+}
+button.secondary {
+  background: white;
+  color: var(--blue-dark);
+  border: 1px solid var(--border);
+}
+.workspace-tabs button[aria-pressed='true'],
+.workflow button[aria-current='step'] {
+  background: var(--blue-dark);
+  color: white;
+  border-color: var(--blue-dark);
+}
+.profile-options {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+}
+.profile-picker {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+.profile-pagination {
+  justify-content: space-between;
+  font-size: 12px;
+}
+.result-actions {
+  margin: 16px 0;
+}
+:where(h2, #profile-picker, #profile-feedback, .notice):focus {
+  outline: 2px solid var(--gold);
+  outline-offset: 5px;
+}
+
+summary {
+  cursor: pointer;
+  color: var(--blue-dark);
+  font-size: 13px;
+}

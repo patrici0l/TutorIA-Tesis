@@ -1,4 +1,5 @@
 import unicodedata
+from datetime import datetime
 from typing import Literal
 from uuid import UUID
 
@@ -25,9 +26,18 @@ class DocumentChunkList(BaseModel):
 
 class SearchRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
+    course: str = Field(min_length=1, max_length=160)
     query: str = Field(min_length=1, max_length=1000)
     top_k: int = Field(default=5, ge=1, le=10, strict=True)
     min_similarity: float = Field(default=0, ge=0, le=1, allow_inf_nan=False)
+
+    @field_validator("course")
+    @classmethod
+    def normalize_course(cls, value: str):
+        value = unicodedata.normalize("NFC", value.strip()).casefold()
+        if not value or any(unicodedata.category(c).startswith("C") for c in value):
+            raise ValueError("Indica una asignatura válida.")
+        return value
 
     @field_validator("query")
     @classmethod
@@ -39,6 +49,11 @@ class SearchRequest(BaseModel):
 
 
 class SearchHit(DocumentChunkResponse):
+    # Opcionales para poder consultar las trazas guardadas antes de v0.2.
+    course: str | None = None
+    version_number: int | None = None
+    source_reference: str | None = None
+    published_at: datetime | None = None
     document_id: UUID
     document_title: str
     filename: str
@@ -49,6 +64,7 @@ class SearchHit(DocumentChunkResponse):
 
 
 class SearchResponse(BaseModel):
+    course: str | None = None
     query: str
     embedding_query: str
     query_version: str

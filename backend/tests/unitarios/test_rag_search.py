@@ -28,11 +28,14 @@ from app.modulos.rag.servicios.search_service import SearchService
 )
 def test_search_rejects_invalid_requests(payload):
     with pytest.raises(ValidationError):
-        SearchRequest(**payload)
+        SearchRequest(course="cálculo diferencial", **payload)
 
 
 def test_search_normalizes_unicode_and_whitespace():
-    assert SearchRequest(query="  li\u0301mite\n de\t función  ").query == "límite de función"
+    assert (
+        SearchRequest(course="cálculo diferencial", query="  li\u0301mite\n de\t función  ").query
+        == "límite de función"
+    )
 
 
 def test_query_aliases_are_explicit_and_do_not_duplicate_concepts():
@@ -43,10 +46,12 @@ def test_query_aliases_are_explicit_and_do_not_duplicate_concepts():
 
 def test_search_without_corpus_never_runs_model():
     service = SearchService(
-        SimpleNamespace(count_available=lambda _: 0),
+        SimpleNamespace(count_available=lambda *_: 0),
         SimpleNamespace(encode=lambda *_: pytest.fail("No corpus must not invoke model")),
     )
-    response = service.search(SearchRequest(query="derivada"), uuid4())
+    response = service.search(
+        SearchRequest(course="cálculo diferencial", query="derivada"), uuid4()
+    )
     assert response.results == [] and response.available_chunks == 0
 
 
@@ -64,11 +69,11 @@ def test_search_errors_are_safe(code, status):
     from fastapi import HTTPException
 
     service = SearchService(
-        SimpleNamespace(count_available=lambda _: 1),
+        SimpleNamespace(count_available=lambda *_: 1),
         SimpleNamespace(encode=lambda *_: {"error": code}),
     )
     with pytest.raises(HTTPException) as error:
-        service.search(SearchRequest(query="derivada"), uuid4())
+        service.search(SearchRequest(course="cálculo diferencial", query="derivada"), uuid4())
     assert error.value.status_code == status
 
 
@@ -76,17 +81,37 @@ def test_search_authorization_body_limit_csrf_and_no_store(document_app):
     client, _, app, owner, _, _ = document_app
     url = "/api/v1/rag/search"
     app.dependency_overrides[get_search_service] = lambda: SearchService(
-        SimpleNamespace(count_available=lambda _: 0), SimpleNamespace()
+        SimpleNamespace(count_available=lambda *_: 0), SimpleNamespace()
     )
-    assert client.post(url, json={"query": "derivada"}).status_code == 403
-    result = client.post(url, json={"query": "derivada"}, headers=HEADERS)
+    assert (
+        client.post(url, json={"course": "cálculo diferencial", "query": "derivada"}).status_code
+        == 403
+    )
+    result = client.post(
+        url, json={"course": "cálculo diferencial", "query": "derivada"}, headers=HEADERS
+    )
     assert result.status_code == 200 and result.json()["results"] == []
     assert result.headers["Cache-Control"] == "no-store"
-    assert client.post(url, json={"query": "x" * 17000}, headers=HEADERS).status_code == 413
+    assert (
+        client.post(
+            url, json={"course": "cálculo diferencial", "query": "x" * 17000}, headers=HEADERS
+        ).status_code
+        == 413
+    )
     owner.rol = "student"
-    assert client.post(url, json={"query": "derivada"}, headers=HEADERS).status_code == 403
+    assert (
+        client.post(
+            url, json={"course": "cálculo diferencial", "query": "derivada"}, headers=HEADERS
+        ).status_code
+        == 403
+    )
     app.dependency_overrides.clear()
-    assert client.post(url, json={"query": "derivada"}, headers=HEADERS).status_code == 401
+    assert (
+        client.post(
+            url, json={"course": "cálculo diferencial", "query": "derivada"}, headers=HEADERS
+        ).status_code
+        == 401
+    )
 
 
 def test_inference_slot_is_shared_and_released(monkeypatch):
@@ -101,3 +126,32 @@ def test_inference_slot_is_shared_and_released(monkeypatch):
         client.encode(["derivada"])
     assert EMBEDDING_SLOTS.acquire(blocking=False)
     EMBEDDING_SLOTS.release()
+
+
+@pytest.mark.parametrize("course", [None, "", "  ", "x" * 161, "Cálculo\x00"])
+def test_semantic_search_requires_readable_course(course):
+    with pytest.raises(ValidationError):
+        SearchRequest(query="derivada", course=course)
+
+
+def test_semantic_search_normalizes_and_passes_course_to_repository():
+    from unittest.mock import Mock
+
+    repository = Mock()
+    repository.count_available.return_value = 1
+    repository.search.return_value = []
+    from app.modulos.rag.servicios.model_spec import DIMENSIONS
+
+    worker = SimpleNamespace(
+        encode=lambda *_: {
+            "vectors": [[1.0] + [0.0] * (DIMENSIONS - 1)],
+            "token_counts": [4],
+        }
+    )
+    owner = uuid4()
+    response = SearchService(repository, worker).search(
+        SearchRequest(query="derivada", course="  CA\u0301LCULO DIFERENCIAL  "), owner
+    )
+    assert response.course == "cálculo diferencial"
+    repository.count_available.assert_called_once_with(owner, response.course)
+    assert repository.search.call_args.args[-1] == response.course

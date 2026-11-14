@@ -30,6 +30,7 @@ class Settings(BaseSettings):
     embedding_model_path: Path = Path("models/e5-small")
     embedding_timeout_seconds: int = Field(default=180, ge=30, le=180)
     llm_free_tier_confirmed: bool = False
+    llm_paid_usage_confirmed: bool = False
     llm_daily_request_limit: int = Field(default=5, ge=1, le=20)
     llm_enabled: bool = False
     llm_default_provider: Literal["gemini", "openai", "claude"] = "gemini"

@@ -1,0 +1,5 @@
+@use './lista-actividades';
+
+:host + :host {
+  margin-top: 20px;
+}

@@ -32,6 +32,7 @@ class IndexRepository:
                 ),
             )
             .values(
+                published_at=None,
                 index_status="indexing", index_token=token, index_started_at=now, index_error=None
             )
             .execution_options(synchronize_session=False)

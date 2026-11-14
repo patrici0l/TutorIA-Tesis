@@ -49,7 +49,7 @@ def test_same_topic_distinct_policy_and_private_prompt(level, difficulty, kind):
     )
     assert "perfil ni datos" not in prepared.generation_request.instructions
     assert "datos no confiables" in prepared.generation_request.instructions
-    assert prepared.prompt_version == "educational-rag-profile-v4"
+    assert prepared.prompt_version == "educational-rag-profile-v5"
 
 
 def test_topic_mismatch_and_missing_profile_rejected_before_preparation():
@@ -79,7 +79,7 @@ def test_high_guidance_is_subordinate_to_explicit_goal_and_untrusted_errors():
     payload = json.loads(prepared.generation_request.prompt)
     assert payload["request"]["learning_objective"] == original.learning_objective
     assert payload["focus_errors"] == [injected]
-    assert prepared.prompt_version == "educational-rag-profile-v4"
+    assert prepared.prompt_version == "educational-rag-profile-v5"
 
 
 def test_historical_policy_is_not_relabelled_when_loaded():
@@ -122,7 +122,7 @@ def test_no_errors_no_localized_diagnosis_and_manual_compatibility():
     )
     assert snapshot.focus_errors == [] and "localizado" not in snapshot.reason
     manual = EducationalPromptBuilder().build(request(), retrieval())
-    assert manual.adaptation is None and manual.prompt_version == "educational-rag-v1"
+    assert manual.adaptation is None and manual.prompt_version == "educational-rag-v2"
     assert "focus_errors" not in json.loads(manual.generation_request.prompt)
 
 

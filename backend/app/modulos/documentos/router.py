@@ -160,6 +160,24 @@ def get_document(identifier: UUID, service: Service, user: Owner):
     return service.get(identifier, user.id)
 
 
+@router.post(
+    "/{identifier}/publish",
+    response_model=DocumentResponse,
+    dependencies=[Depends(require_client_header)],
+)
+def publish_document(identifier: UUID, service: Service, user: Owner):
+    return service.repository.set_publication(identifier, user.id, True)
+
+
+@router.post(
+    "/{identifier}/withdraw",
+    response_model=DocumentResponse,
+    dependencies=[Depends(require_client_header)],
+)
+def withdraw_document(identifier: UUID, service: Service, user: Owner):
+    return service.repository.set_publication(identifier, user.id, False)
+
+
 @router.delete("/{identifier}", status_code=204, dependencies=[Depends(require_client_header)])
 def delete_document(identifier: UUID, service: Service, user: Owner):
     service.delete(identifier, user.id)

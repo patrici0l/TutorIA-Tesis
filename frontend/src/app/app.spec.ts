@@ -3,8 +3,8 @@ import { provideRouter } from '@angular/router';
 import { App } from './app';
 import { provideHttpClient } from '@angular/common/http';
 import { signal } from '@angular/core';
-import { AuthService } from './nucleo/servicios/auth.service';
-import { User } from './nucleo/modelos/auth.model';
+import { AuthService } from './inicio/sesion.service';
+import { User } from './inicio/sesion.model';
 
 describe('App', () => {
   const user = signal<User | null>(null);

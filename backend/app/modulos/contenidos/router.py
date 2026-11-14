@@ -21,6 +21,7 @@ from app.modulos.contenidos.servicios.generate_preparation_service import (
     GeneratePreparationService,
     GenerationCommand,
     GenerationResponse,
+    generation_enabled,
 )
 from app.modulos.contenidos.servicios.generation_trace_service import GenerationTraceService
 from app.modulos.contenidos.servicios.history_service import HistoryService
@@ -45,11 +46,7 @@ def quota(
 ):
     used, resets_at = GenerationClaimRepository(db).daily_usage()
     return GenerationQuota(
-        enabled=(
-            settings.llm_enabled
-            and settings.llm_free_tier_confirmed
-            and settings.llm_default_provider == "gemini"
-        ),
+        enabled=generation_enabled(settings),
         daily_limit=settings.llm_daily_request_limit,
         used=used,
         remaining=max(0, settings.llm_daily_request_limit - used),

@@ -14,9 +14,14 @@ class SearchRepository:
         self.db = db
 
     @staticmethod
-    def eligibility(owner: UUID):
+    def eligibility(owner: UUID, course: str):
         return (
             Document.owner_id == owner,
+            Document.course == course,
+            Document.published_at.is_not(None),
+            Document.permission_recorded_at.is_not(None),
+            Document.permission_note.is_not(None),
+            Document.source_reference.is_not(None),
             Document.deleted_at.is_(None),
             Document.status == "uploaded",
             Document.processing_status == "processed",
@@ -27,17 +32,19 @@ class SearchRepository:
             DocumentChunk.embedding.is_not(None),
         )
 
-    def count_available(self, owner: UUID):
+    def count_available(self, owner: UUID, course: str):
         count = self.db.scalar(
             select(func.count())
             .select_from(DocumentChunk)
             .join(Document)
-            .where(*self.eligibility(owner))
+            .where(*self.eligibility(owner, course))
         )
         self.db.commit()  # Do not hold a read transaction during model inference.
         return count
 
-    def statement(self, owner: UUID, vector: list[float], top_k: int, exact: bool = True):
+    def statement(
+        self, owner: UUID, vector: list[float], top_k: int, course: str, exact: bool = True
+    ):
         columns = (
             DocumentChunk.id,
             DocumentChunk.position,
@@ -53,8 +60,12 @@ class SearchRepository:
             Document.filename,
             Document.sha256.label("document_sha256"),
             Document.processing_version,
+            Document.course,
+            Document.version_number,
+            Document.source_reference,
+            Document.published_at,
         )
-        eligible = select(*columns).join(Document).where(*self.eligibility(owner))
+        eligible = select(*columns).join(Document).where(*self.eligibility(owner, course))
         if exact:
             # Filter before ranking; materialization prevents an approximate HNSW scan.
             corpus = eligible.cte("eligible_corpus").prefix_with("MATERIALIZED")
@@ -68,8 +79,10 @@ class SearchRepository:
         distance = DocumentChunk.embedding.cosine_distance(vector)
         return eligible.add_columns(distance.label("distance")).order_by(distance).limit(top_k)
 
-    def search(self, owner: UUID, vector: list[float], top_k: int, min_similarity: float):
-        rows = self.db.execute(self.statement(owner, vector, top_k)).mappings().all()
+    def search(
+        self, owner: UUID, vector: list[float], top_k: int, min_similarity: float, course: str
+    ):
+        rows = self.db.execute(self.statement(owner, vector, top_k, course)).mappings().all()
         results = []
         for row in rows:
             item = dict(row)
