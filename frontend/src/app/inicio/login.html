@@ -1,47 +1,166 @@
-<section class="auth-card fade-in">
-  <h1>Acceso</h1>
-  @if (loginMode() === 'mock') {
-    <p>Selecciona un perfil.</p>
-  } @else if (loginMode() === 'cas') {
-    <p>Accede con tu cuenta institucional.</p>
-  }
+<section class="auth-layout fade-in">
+  <!-- Encabezado Editorial de Acceso -->
+  <div class="auth-heading">
+    <div class="access-badge"></div>
+
+    <h1 class="font-serif page-title">Ingreso a la plataforma</h1>
+
+    @if (loginMode() === 'mock') {
+    } @else if (loginMode() === 'cas') {
+      <p class="lead-text">
+        Accede con tu cuenta institucional de la Universidad Politécnica Salesiana.
+      </p>
+    }
+  </div>
+
+  <!-- Alertas de Estado y Errores -->
   @if (denied) {
-    <p class="error" role="alert">
-      No se pudo completar el acceso. El intento pudo vencer o tu cuenta no tiene acceso habilitado.
-      Inténtalo nuevamente.
-    </p>
+    <div class="alert-box error-alert fade-in" role="alert">
+      <span class="material-symbols-outlined alert-icon" aria-hidden="true">error</span>
+      <p>
+        No se pudo completar el acceso. El intento pudo vencer o tu cuenta no tiene acceso
+        habilitado. Inténtalo nuevamente.
+      </p>
+    </div>
   }
+
   @if (failed()) {
-    <p class="error" role="alert">
-      No se pudo comprobar el acceso. Revisa que los servicios estén disponibles e inténtalo
-      nuevamente.
-    </p>
-    <button class="login-button" type="button" (click)="load()">Reintentar conexión</button>
+    <div class="alert-box error-alert fade-in" role="alert">
+      <span class="material-symbols-outlined alert-icon" aria-hidden="true">wifi_off</span>
+      <div class="alert-content">
+        <p>
+          No se pudo comprobar el acceso. Revisa que los servicios estén disponibles e inténtalo
+          nuevamente.
+        </p>
+        <button class="retry-button interactive-button" type="button" (click)="load()">
+          Reintentar conexión
+        </button>
+      </div>
+    </div>
   }
+
+  <!-- Estado de Comprobación -->
   @if (loading()) {
-    <p role="status">Comprobando acceso…</p>
+    <div class="loading-state fade-in" role="status">
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Comprobando acceso…</p>
+    </div>
   } @else if (loginMode()) {
     @if (loginMode() === 'mock') {
+      <!-- Cuadrícula de Perfiles Académicos -->
       <div class="profile-grid">
-        <div class="profile-card">
-          <h2>Estudiante</h2>
-          <p>Practica ejercicios, revisa explicaciones y consulta tus intentos.</p>
-          <a class="login-button" href="/api/v1/auth/login?demo_profile=student"
-            >Entrar como estudiante <span aria-hidden="true">↗</span></a
+
+
+        <!-- TARJETA: ESTUDIANTE -->
+        <article class="profile-card interactive-card stagger-1">
+          <div class="card-top">
+            <div class="icon-avatar student-avatar" aria-hidden="true"></div>
+            <span class="role-pill">Pregrado</span>
+          </div>
+          <div class="card-body">
+            <h2 class="font-serif card-title">Estudiante</h2>
+            <p class="card-description">
+              Practica ejercicios, revisa explicaciones y consulta tus intentos.
+            </p>
+            <ul class="features-list">
+              <li>
+                <span class="material-symbols-outlined feat-icon" aria-hidden="true"
+                  >auto_stories</span
+                >
+                <span>Guías de estudio y material de clase</span>
+              </li>
+              <li>
+                <span class="material-symbols-outlined feat-icon" aria-hidden="true">verified</span>
+                <span>Evaluación y retroalimentación interactiva</span>
+              </li>
+              <li>
+                <span class="material-symbols-outlined feat-icon" aria-hidden="true"
+                  >trending_up</span
+                >
+                <span>Historial de intentos y progreso</span>
+              </li>
+            </ul>
+          </div>
+
+          <a
+            class="login-button secondary interactive-button"
+            href="/api/v1/auth/login?demo_profile=student"
           >
-        </div>
-        <div class="profile-card">
-          <h2>Profesor</h2>
-          <p>Organiza documentos, busca fuentes y prepara actividades.</p>
-          <a class="login-button" href="/api/v1/auth/login?demo_profile=teacher"
-            >Entrar como profesor <span aria-hidden="true">↗</span></a
+            <span>Entrar como estudiante</span>
+            <span class="arrow-symbol" aria-hidden="true">→</span>
+          </a>
+        </article>
+
+        <!-- TARJETA: PROFESOR -->
+        <article class="profile-card interactive-card stagger-2">
+          <div class="card-top">
+            <div class="icon-avatar teacher-avatar" aria-hidden="true">
+            </div>
+            <span class="role-pill docencia-pill">Docencia</span>
+          </div>
+
+          <div class="card-body">
+            <h2 class="font-serif card-title">Profesor</h2>
+            <p class="card-description">
+              Organiza documentos, busca fuentes y prepara actividades.
+            </p>
+
+            <ul class="features-list">
+              <li>
+                <span class="material-symbols-outlined feat-icon" aria-hidden="true"
+                  >psychology</span
+                >
+                <span>Asistencia pedagógica para reactivos</span>
+              </li>
+              <li>
+                <span class="material-symbols-outlined feat-icon" aria-hidden="true"
+                  >inventory_2</span
+                >
+                <span>Gestión de fuentes y documentos</span>
+              </li>
+              <li>
+                <span class="material-symbols-outlined feat-icon" aria-hidden="true"
+                  >monitoring</span
+                >
+                <span>Preparación y seguimiento de actividades</span>
+              </li>
+            </ul>
+          </div>
+
+          <a
+            class="login-button primary interactive-button"
+            href="/api/v1/auth/login?demo_profile=teacher"
           >
-        </div>
+            <span>Entrar como profesor</span>
+            <span class="arrow-symbol" aria-hidden="true">→</span>
+          </a>
+        </article>
       </div>
     } @else {
-      <a class="login-button" href="/api/v1/auth/login"
-        >Iniciar sesión con cuenta UPS <span aria-hidden="true">↗</span></a
-      >
+      <!-- Modo CAS Oficial -->
+      <div class="cas-container stagger-1">
+        <article class="profile-card cas-card interactive-card">
+          <div class="card-top">
+            <div class="icon-avatar teacher-avatar" aria-hidden="true">
+              <span class="material-symbols-outlined">security</span>
+            </div>
+            <span class="role-pill docencia-pill">Autenticación Oficial</span>
+          </div>
+
+          <div class="card-body">
+            <h2 class="font-serif card-title">Cuenta Institucional Salesiana</h2>
+            <p class="card-description">
+              Accede a la plataforma utilizando tu cuenta y credenciales oficiales de la Universidad
+              Politécnica Salesiana.
+            </p>
+          </div>
+
+          <a class="login-button primary interactive-button" href="/api/v1/auth/login">
+            <span>Iniciar sesión con cuenta UPS</span>
+            <span class="arrow-symbol" aria-hidden="true">→</span>
+          </a>
+        </article>
+      </div>
     }
   }
 </section>

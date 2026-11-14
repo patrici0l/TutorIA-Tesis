@@ -67,16 +67,38 @@ a {
 }
 .connection-panel {
   border-top: 1px solid var(--border);
-  padding-top: 20px;
+  padding-top: 243px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  justify-content: space-between; /* Separa el estado a la izquierda y los controles a la derecha */
+  gap: 24px;
   flex-wrap: wrap;
-  font-size: 13px;
+  font-size: 11px;
   color: var(--muted);
 }
-.connection-panel p {
+
+.status-indicator-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Espacio entre el punto de estado y su texto */
   flex: 1;
+  min-width: 200px;
+}
+
+.status-indicator-wrapper p {
+  margin: 0; /* Evita desalineaciones verticales del texto de estado */
+}
+
+.connection-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Espacio exacto entre el botón "Comprobar conexión" y la hora */
+  flex-wrap: wrap;
+}
+
+.checked-time {
+  margin: 0;
+  white-space: nowrap; /* Evita que la hora se rompa en dos líneas */
 }
 button,
 .primary {

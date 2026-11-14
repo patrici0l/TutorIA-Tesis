@@ -1,50 +1,95 @@
 <section class="intro page-heading fade-in">
-  <h1>Materiales y recursos</h1>
+  <div class="heading-badge"></div>
+  <h1 class="font-serif">Materiales y recursos</h1>
   <p class="lead">Prepara tus materiales, crea un recurso y asígnalo a tus estudiantes.</p>
 </section>
-
+<!-- Trilogía de Módulos Docentes Estilo Editorial -->
 <section class="actions" aria-label="Herramientas docentes">
-  <a routerLink="/documentos"
-    ><span>01 · MATERIALES</span>
-    <h2>Documentos</h2>
-    <p>Sube documentos y prepara sus fuentes para utilizarlas en tus recursos.</p>
-    <b>Abrir documentos ↗</b></a
-  >
-  <a routerLink="/recursos"
-    ><span>02 · RECURSOS</span>
-    <h2>Prepara un recurso</h2>
+  <!-- Módulo 01: Documentos -->
+  <a class="action-card interactive-card stagger-1" routerLink="/documentos">
+    <div class="card-header">
+      <span class="step-tag">01 · MATERIALES</span>
+    </div>
+    <h2 class="font-serif">Documentos</h2>
+    <p>Sube archivos y organiza las fuentes que usarás para crear tus materiales.</p>
+    <b class="card-link">
+      <span>Abrir documentos</span>
+      <span class="arrow-icon" aria-hidden="true">↗</span>
+    </b>
+  </a>
+
+  <!-- Módulo 02: Recursos -->
+  <a class="action-card interactive-card stagger-2 featured-card" routerLink="/recursos">
+    <div class="card-header">
+      <span class="step-tag highlight">02 · RECURSOS</span>
+    </div>
+    <h2 class="font-serif">Prepara un recurso</h2>
     <p>
-      Define el objetivo, revisa las fuentes y genera el contenido. También puedes retomar recursos
-      guardados.
+      Define el objetivo, revisa tus fuentes y genera el contenido. También puedes retomar lo que ya tengas guardado.
     </p>
-    <b>Preparar recursos ↗</b></a
-  >
-  <a routerLink="/actividades"
-    ><span>03 · ASIGNACIÓN Y SEGUIMIENTO</span>
-    <h2>Actividades asignadas</h2>
+    <b class="card-link">
+      <span>Preparar recursos</span>
+      <span class="arrow-icon" aria-hidden="true">↗</span>
+    </b>
+  </a>
+
+  <!-- Módulo 03: Actividades -->
+  <a class="action-card interactive-card stagger-3" routerLink="/actividades">
+    <div class="card-header">
+      <span class="step-tag">03 · ASIGNACIÓN Y SEGUIMIENTO</span>
+    </div>
+    <h2 class="font-serif">Actividades asignadas</h2>
     <p>
-      Comparte materiales de estudio o asigna ejercicios con corrección automática y consulta sus
-      resultados.
+      Comparte lecturas, asigna ejercicios con corrección automática y revisa el progreso de tus estudiantes.
     </p>
-    <b>Gestionar actividades →</b></a
-  >
+    <b class="card-link">
+      <span>Gestionar actividades</span>
+      <span class="arrow-icon" aria-hidden="true">→</span>
+    </b>
+  </a>
 </section>
-<section class="connection-panel" aria-label="Disponibilidad" [attr.aria-busy]="loading()">
-  <p role="status" aria-live="polite">
-    @if (loading()) {
-      Comprobando la conexión…
-    } @else if (error()) {
-      No se pudo conectar. Inténtalo de nuevo en unos momentos.
-    } @else if (health()?.status === 'ok') {
-      Todo listo para trabajar.
-    } @else {
-      Algunas funciones no están disponibles. Vuelve a comprobar la conexión.
+
+<!-- Panel de Disponibilidad y Estado de Servicios -->
+<section
+  class="connection-panel fade-in stagger-4"
+  aria-label="Disponibilidad"
+  [attr.aria-busy]="loading()"
+>
+  <div class="status-indicator-wrapper">
+    <span
+      class="status-dot"
+      [class.pulse-indicator]="loading()"
+      [class.status-ok]="!loading() && !error() && health()?.status === 'ok'"
+      [class.status-warning]="
+        !loading() && !error() && health()?.status && health()?.status !== 'ok'
+      "
+      [class.status-error]="!loading() && error()"
+      aria-hidden="true"
+    ></span>
+    <p role="status" aria-live="polite">
+      @if (loading()) {
+        Verificando la conexión...
+      } @else if (error()) {
+        Sin conexión. Inténtalo de nuevo en un momento.
+      } @else if (health()?.status === 'ok') {
+      } @else {
+        Algunos servicios presentan intermitencias. Vuelve a comprobar.
+      }
+    </p>
+
+  </div>
+
+  <div class="connection-controls">
+    <button
+      type="button"
+      class="refresh-button interactive-button"
+      (click)="refresh()"
+      [disabled]="loading()"
+    >
+      {{ loading() ? 'Verificando…' : 'Comprobar conexión' }}
+    </button>
+    @if (checkedAt()) {
+      <small class="checked-time">Última comprobación: {{ checkedAt() }}</small>
     }
-  </p>
-  <button type="button" (click)="refresh()" [disabled]="loading()">
-    {{ loading() ? 'Comprobando…' : 'Comprobar conexión' }}
-  </button>
-  @if (checkedAt()) {
-    <small>Última comprobación: {{ checkedAt() }}</small>
-  }
+  </div>
 </section>

@@ -1,287 +1,293 @@
-/* =====================================
-   ESTRUCTURA GENERAL
-===================================== */
+/* ==========================================================================
+   ESTRUCTURA GENERAL DEL SHELL
+   ========================================================================== */
 
 .shell {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
+  background-color: var(--surface);
 }
 
-/* =====================================
-   ENCABEZADO PRINCIPAL
-===================================== */
+/* ==========================================================================
+   ENCABEZADO INSTITUCIONAL EDITORIAL (Sticky + Glassmorphism)
+   ========================================================================== */
 
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 20;
-  background: #ffffff;
-  border-top: 4px solid var(--gold);
+  z-index: 50;
+  background: rgba(250, 249, 245, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 3px solid var(--gold);
   border-bottom: 1px solid var(--border);
-  box-shadow: 0 3px 16px #002d6205;
+  box-shadow: 0 1px 3px rgba(10, 37, 64, 0.03), 0 4px 12px rgba(10, 37, 64, 0.02);
+  transition: border-color var(--motion-fast) ease, box-shadow var(--motion-fast) ease;
 }
 
 .masthead {
   display: flex;
   align-items: center;
-  gap: 24px;
+  justify-content: space-between;
+  gap: 20px;
   width: 100%;
-  min-height: 86px;
-  max-width: 1250px;
-  margin: auto;
-  padding: 16px 48px;
+  min-height: 72px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 12px 32px;
   box-sizing: border-box;
 }
 
-/* =====================================
-   IDENTIDAD Prototipo
-===================================== */
+/* ==========================================================================
+   IDENTIDAD INSTITUCIONAL UPS
+   ========================================================================== */
 
 .brand {
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  color: var(--navy);
-  text-decoration: none;
-  font-size: 28px;
-  font-weight: 750;
-  letter-spacing: -1.3px;
-  flex-shrink: 0;
-}
-
-
-
-
-/* =====================================
-   LOGOTIPO INSTITUCIONAL UPS
-===================================== */
-
-.institution {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-left: 24px;
-  border-left: 1px solid var(--border);
-  min-width: 0;
-  flex-shrink: 1;
-}
-
-.ups-logo {
-  display: block;
-  width: 160px;
-  max-width: 100%;
-  height: auto;
-  object-fit: contain;
-}
-
-/* =====================================
-   CUENTA DE USUARIO
-===================================== */
-
-.account {
-  margin-left: auto;
   display: flex;
   align-items: center;
   gap: 12px;
+  text-decoration: none;
+  color: var(--navy);
+  user-select: none;
+  transition: transform var(--motion-fast) var(--ease-editorial);
+
+  &:hover {
+    .brand-title {
+      color: var(--blue);
+    }
+    .ups-emblem {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(10, 37, 64, 0.18);
+    }
+  }
+}
+
+.ups-emblem {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--navy);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  box-shadow: 0 2px 6px rgba(10, 37, 64, 0.12);
+  flex-shrink: 0;
+  transition: transform var(--motion-fast) var(--ease-editorial), box-shadow var(--motion-fast) var(--ease-editorial);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title {
+  font-size: 1.05rem;
+  font-weight: 650;
+  line-height: 1.2;
+  color: var(--navy);
+  letter-spacing: -0.015em;
+  transition: color var(--motion-fast) ease;
+}
+
+.brand-sub {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+  margin-top: 2px;
+}
+
+/* ==========================================================================
+   INDICADOR DE PERÍODO ACADÉMICO
+   ========================================================================== */
+
+.academic-period {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  background: var(--paper-warm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--muted);
+  user-select: none;
+}
+
+.period-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #16a34a; /* Verde esmeralda de actividad académica */
+  display: inline-block;
+}
+
+/* ==========================================================================
+   CUENTA DE USUARIO Y SESIÓN
+   ========================================================================== */
+
+.account {
+  display: flex;
+  align-items: center;
+  gap: 14px;
   min-width: 0;
 }
 
 .avatar {
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   background: var(--blue-soft);
   border: 1px solid var(--border);
-  border-radius: 50%;
-  font-size: 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 700;
   color: var(--blue-dark);
   flex-shrink: 0;
 }
 
-.account-name {
+.account-details {
+  display: flex;
+  flex-direction: column;
   max-width: 220px;
   min-width: 0;
-  overflow-wrap: anywhere;
-  font-size: 14px;
+}
+
+.account-name {
+  font-size: 0.85rem;
   font-weight: 600;
-}
-
-.account-name small {
-  display: block;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 400;
-  margin-top: 4px;
-}
-
-/* Botón cerrar sesión */
-
-.account button {
-  min-height: 44px;
-  border: 1px solid var(--border);
-  background: #ffffff;
-  padding: 10px 12px;
-  color: var(--blue-dark);
-  border-radius: 7px;
-  cursor: pointer;
-  font-size: 13px;
+  color: var(--ink);
+  line-height: 1.25;
   white-space: nowrap;
-  transition:
-    background 180ms,
-    border-color 180ms;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.account button:hover {
-  background: var(--blue-soft);
-  border-color: #b3cde5;
+.account-role {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--muted);
+  margin-top: 2px;
 }
 
-.account button:disabled {
-  opacity: 0.6;
-  cursor: wait;
+.logout-button {
+  min-height: 36px;
+  border: 1px solid var(--border);
+  background: var(--surface-card);
+  padding: 7px 14px;
+  color: var(--navy);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: var(--shadow-resting);
+
+  &:hover {
+    background: var(--paper-warm);
+    border-color: var(--border-dark);
+    color: var(--blue);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
 }
 
-/* =====================================
-   CONTENIDO PRINCIPAL
-===================================== */
+/* ==========================================================================
+   CONTENIDO PRINCIPAL Y BANNER DE ERROR
+   ========================================================================== */
 
 main {
   width: 100%;
-  max-width: 1250px;
-  padding: 40px 48px 52px;
+  max-width: 1280px;
+  padding: 32px 32px 64px;
   margin: 0 auto;
   flex: 1;
-  scroll-margin-top: 170px;
   box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+  }
 }
 
-main:focus {
-  outline: none;
+.error-banner {
+  background: #fdf2f2;
+  border: 1px solid #f8b4b4;
+  color: #9b1c1c;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  margin-bottom: 24px;
 }
 
-/* =====================================
-   PIE DE PÁGINA
-===================================== */
-
-
-/* =====================================
-   ACCESIBILIDAD
-===================================== */
+/* ==========================================================================
+   ACCESIBILIDAD (Skip Link)
+   ========================================================================== */
 
 .skip-link {
   position: fixed;
   top: -80px;
   left: 16px;
-  background: #ffffff;
-  padding: 12px;
-  z-index: 30;
-  border-radius: 5px;
+  background: var(--surface-card);
+  padding: 12px 18px;
+  z-index: 100;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--blue);
   color: var(--blue-dark);
+  font-weight: 600;
+  box-shadow: var(--shadow-lifted);
+  transition: top var(--motion-fast) var(--ease-editorial);
+
+  &:focus {
+    top: 16px;
+  }
 }
 
-.skip-link:focus {
-  top: 12px;
+/* ==========================================================================
+   RESPONSIVE DESIGN
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .academic-period {
+    display: none;
+  }
 }
 
-/* =====================================
-   RESPONSIVE - TABLETS
-===================================== */
-
-@media (max-width: 1050px) {
+@media (max-width: 680px) {
   .masthead {
-    gap: 18px;
+    padding: 10px 16px;
+    min-height: 64px;
   }
 
-  .ups-logo {
-    width: 150px;
+  .brand-sub {
+    display: none;
   }
 
-  .institution {
-    padding-left: 18px;
-  }
-
-  .account-name {
-    max-width: 160px;
-  }
-}
-
-/* =====================================
-   RESPONSIVE - PANTALLAS MEDIANAS
-===================================== */
-
-@media (max-width: 850px) {
-  .masthead,
-  main,
-
-  .masthead {
-    flex-wrap: wrap;
-  }
-
-  .institution {
-    order: 3;
-    width: 100%;
-    padding: 12px 0 0;
-    border-left: none;
-    border-top: 1px solid var(--border);
-  }
-
-  .ups-logo {
-    width: 140px;
-  }
-}
-
-/* =====================================
-   RESPONSIVE - CELULARES
-===================================== */
-
-@media (max-width: 600px) {
-  .masthead {
-    gap: 14px;
-    min-height: 74px;
-    flex-wrap: wrap;
-    padding: 14px 16px;
-  }
-
-  .brand {
-    font-size: 25px;
-  }
-
-  .account {
-    gap: 8px;
-  }
-
-  .account-name {
+  .account-details {
     display: none;
   }
 
   .avatar {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
   }
 
-  .account button {
-    padding: 9px;
-  }
-
-  .institution {
-    width: 100%;
-    order: 3;
-    padding: 12px 0 0;
-    border-left: none;
-    border-top: 1px solid var(--border);
-  }
-
-  .ups-logo {
-    width: 120px;
-    max-width: 100%;
+  .logout-button {
+    padding: 6px 10px;
+    font-size: 0.75rem;
   }
 
   main {
-    padding: 28px 20px;
-    scroll-margin-top: 160px;
+    padding: 20px 16px 40px;
   }
-
 }

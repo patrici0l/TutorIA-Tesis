@@ -1,22 +1,120 @@
-@keyframes fade-in {
+:root {
+  /* Curvas Bézier de deceleración orgánica */
+  --ease-editorial: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-tactile: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-bounce-subtle: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Escala de tiempos de respuesta */
+  --motion-instant: 120ms;
+  --motion-fast: 180ms;
+  --motion-normal: 260ms;
+  --motion-gentle: 380ms;
+}
+/* ==========================================================================
+   KEYFRAMES DE ENTRADA Y ESTADOS
+   ========================================================================== */
+@keyframes fade-in-editorial {
   from {
     opacity: 0;
-    transform: translateY(5px);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
-.fade-in {
-  animation: fade-in 180ms ease-out;
+@keyframes scale-in-subtle {
+  from {
+    opacity: 0;
+    transform: scale(0.98) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(0.85);
+  }
+}
+/* ==========================================================================
+   CLASES DE UTILIDAD DE ENTRADA
+   ========================================================================== */
+.fade-in {
+  animation: fade-in-editorial var(--motion-normal) var(--ease-editorial) both;
+  will-change: opacity, transform;
+}
+.fade-in-scale {
+  animation: scale-in-subtle var(--motion-gentle) var(--ease-editorial) both;
+  will-change: opacity, transform;
+}
+/* Escalonamiento para listas y cuadrículas (Staggered Entrance) */
+.stagger-1 {
+  animation-delay: 50ms;
+}
+.stagger-2 {
+  animation-delay: 100ms;
+}
+.stagger-3 {
+  animation-delay: 150ms;
+}
+.stagger-4 {
+  animation-delay: 200ms;
+}
+/* ==========================================================================
+   MICRO-INTERACCIONES REUTILIZABLES
+   ========================================================================== */
+/* Tarjetas interactivas con elevación natural y respuesta al clic */
+.interactive-card {
+  transition:
+    transform var(--motion-normal) var(--ease-editorial),
+    box-shadow var(--motion-normal) var(--ease-editorial),
+    border-color var(--motion-fast) ease;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lifted);
+    border-color: var(--border-dark);
+  }
+  &:active {
+    transform: translateY(0) scale(0.995);
+    transition-duration: var(--motion-instant);
+  }
+}
+/* Botones con respuesta elástica */
+.interactive-button {
+  transition:
+    transform var(--motion-instant) var(--ease-editorial),
+    background-color var(--motion-fast) ease,
+    border-color var(--motion-fast) ease,
+    box-shadow var(--motion-fast) var(--ease-editorial);
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-resting);
+  }
+  &:active {
+    transform: translateY(0.5px) scale(0.99);
+  }
+}
+/* Indicador de estado activo palpitante */
+.pulse-indicator {
+  animation: pulse-dot 2.4s ease-in-out infinite;
+}
+/*----------------------------------------------------------------------------
+xACCESIBILIDAD Y MOVIMIENTO REDUCIDO
+   ------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    animation: none !important;
-    transition: none !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
 }

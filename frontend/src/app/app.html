@@ -3,37 +3,37 @@
 <div class="shell">
   <header class="site-header">
     <div class="masthead">
-      <!-- Acceso al inicio -->
-      <a class="brand" routerLink="/inicio" aria-label="Ir al inicio">
-        Recursos educativos
+      <!-- Identidad UPS y Acceso al Inicio -->
+      <a class="brand group" routerLink="/inicio" aria-label="Ir al inicio de Recursos educativos">
+        <div class="ups-emblem" aria-hidden="true">UPS</div>
+        <div class="brand-text">
+          <span class="brand-title">Recursos educativos</span>
+        </div>
       </a>
-
-      <!-- Logotipo institucional UPS -->
-
-      <div class="institution">
-        <img
-          src="/images/logo-ups.png"
-          alt="Universidad Politécnica Salesiana Ecuador"
-          class="ups-logo"
-        />
-      </div>
-      <!-- Cuenta del usuario -->
+      <!-- Cuenta del usuario y controles de sesión -->
       <div class="account">
         @if (auth.user(); as user) {
           <span class="avatar" aria-hidden="true">
             {{ (user.nombre || user.institutional_email).slice(0, 1).toUpperCase() }}
           </span>
 
-          <span class="account-name">
-            {{ user.nombre || user.institutional_email }}
-            {{ auth.mode() === 'mock' ? '' : user.apellido }}
-
-            <small>
+          <div class="account-details">
+            <span class="account-name">
+              {{ user.nombre || user.institutional_email }}
+              {{ auth.mode() === 'mock' ? '' : user.apellido }}
+            </span>
+            <span class="account-role">
               {{ user.rol === 'student' ? 'Espacio de estudiante' : 'Espacio docente' }}
-            </small>
-          </span>
+            </span>
+          </div>
 
-          <button type="button" (click)="logout()" [disabled]="signingOut()">
+          <button
+            type="button"
+            class="logout-button interactive-button"
+            (click)="logout()"
+            [disabled]="signingOut()"
+            aria-label="Cerrar sesión"
+          >
             {{ signingOut() ? 'Cerrando…' : 'Cerrar sesión' }}
           </button>
         }
@@ -48,12 +48,11 @@
   <!-- Contenido principal -->
   <main id="contenido" tabindex="-1">
     @if (logoutError()) {
-      <p role="alert">
+      <p class="error-banner" role="alert">
         {{ logoutError() }}
       </p>
     }
 
     <router-outlet />
   </main>
-
 </div>
