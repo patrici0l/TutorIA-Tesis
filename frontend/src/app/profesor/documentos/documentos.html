@@ -1,34 +1,41 @@
-<header class="page-heading library-heading">
+<header class="page-heading library-heading fade-in">
   <div>
-    <h1>Documentos</h1>
-    <p>Consulta y revisa los materiales de tus asignaturas.</p>
+    <span class="eyebrow">GESTIÓN ACADÉMICA</span>
+    <h1 class="font-serif">Documentos</h1>
+    <p class="lead-subtitle">Consulta, organiza y supervisa la indexación analítica de los materiales de tus asignaturas.</p>
   </div>
   @if (canManage()) {
-    <button (click)="openUpload()" [disabled]="locked()">Subir documento</button>
+    <button class="primary-upload-btn interactive-button" (click)="openUpload()" [disabled]="locked()">
+      + Subir documento
+    </button>
   }
 </header>
+
 @if (!canManage()) {
-  <section class="panel">
-    <h2>Espacio docente</h2>
+  <section class="panel fade-in">
+    <h2 class="font-serif">Espacio docente</h2>
     <p>Consulta tus actividades desde el menú principal.</p>
   </section>
 } @else {
   @if (error()) {
-    <p id="document-page-error" tabindex="-1" class="notice error" role="alert">{{ error() }}</p>
+    <p id="document-page-error" tabindex="-1" class="notice error fade-in" role="alert">{{ error() }}</p>
   }
   @if (success()) {
-    <p id="document-page-success" tabindex="-1" class="notice success" role="status">
+    <p id="document-page-success" tabindex="-1" class="notice success fade-in" role="status">
       {{ success() }}
     </p>
   }
+
   <datalist id="course-options">
     <option value="Cálculo Diferencial"></option>
     <option value="Probabilidad y Estadística"></option>
   </datalist>
-  <section class="panel search-bar" aria-label="Buscar materiales">
-    <div>
-      <label for="filter-course">Asignatura</label
-      ><input
+
+  <!-- Barra de Búsqueda y Filtro de Biblioteca -->
+  <section class="panel search-bar fade-in" aria-label="Buscar materiales">
+    <div class="field-group">
+      <label for="filter-course">Filtrar por asignatura</label>
+      <input
         id="filter-course"
         [(ngModel)]="filterCourse"
         list="course-options"
@@ -37,27 +44,32 @@
         placeholder="Todas las asignaturas"
       />
     </div>
-    <button class="secondary" (click)="load(0, true)" [disabled]="locked() || loading()">
+
+    <button class="secondary interactive-button filter-btn" (click)="load(0, true)" [disabled]="locked() || loading()">
       Filtrar
     </button>
-    <div>
-      <label for="text-query">Buscar en el contenido</label
-      ><input
+
+    <div class="field-group search-field">
+      <label for="text-query">Buscar en el contenido indexado (OCR y fragmentos)</label>
+      <input
         id="text-query"
         [(ngModel)]="textQuery"
         (ngModelChange)="resetTextSearch()"
         (keydown.enter)="searchText()"
         maxlength="200"
-        placeholder="Ej. población"
+        placeholder="Buscar por conceptos, palabras clave o fragmentos…"
       />
     </div>
+
     <button
+      class="primary-search-btn interactive-button"
       (click)="searchText()"
       [disabled]="searchingText() || !filterCourse.trim() || !textQuery.trim()"
     >
       {{ searchingText() ? 'Buscando…' : 'Buscar' }}
     </button>
-    <small>Selecciona una asignatura para buscar en el texto.</small>
+
+    <small class="search-hint">Selecciona una asignatura para realizar la búsqueda semántica en el texto.</small>
   </section>
   @if (textResults()) {
     <section

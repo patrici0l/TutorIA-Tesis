@@ -1,47 +1,64 @@
-<article class="panel activity-card">
+<article class="panel activity-card interactive-card fade-in">
+  <!-- Insignias de Estado y Tipo de Contenido -->
   <div class="badges">
-    <span class="badge" [class.inactive]="item().status !== 'open'">{{
-      statusLabels[item().status]
-    }}</span>
-    <span class="badge">{{
-      item().resource_id
-        ? 'Material de estudio'
-        : item().attempts
-          ? 'Con resultados'
-          : 'Sin entregas'
-    }}</span>
+    <span
+      class="badge status-badge"
+      [class.badge-open]="item().status === 'open'"
+      [class.inactive]="item().status !== 'open'"
+    >
+      {{ statusLabels[item().status] }}
+    </span>
+
+    <span class="badge type-badge">
+      {{
+        item().resource_id
+          ? 'Material de estudio'
+          : item().attempts
+            ? 'Con resultados'
+            : 'Sin entregas'
+      }}
+    </span>
   </div>
-  <h3>{{ item().title }}</h3>
+
+  <!-- Título y Subtítulo de Cátedra -->
+  <h3 class="font-serif activity-title">{{ item().title }}</h3>
   <p class="bank-name">{{ bankTitle(item().version) }}</p>
-  <p class="help">Asignada el {{ item().created_at | date: 'dd/MM/yyyy' }}</p>
+  <p class="help date-meta">Asignada el {{ item().created_at | date: 'dd/MM/yyyy' }}</p>
+
+  <!-- Destinatario (Vista Docente) -->
   @if (showRecipient()) {
     <p class="recipient">
-      <span>Estudiante</span><strong>{{ item().student_email }}</strong>
+      <span class="recipient-label">Estudiante asignado:</span>
+      <strong class="recipient-email">{{ item().student_email }}</strong>
     </p>
   }
+
+  <!-- Bloque de Indicaciones Pedagógicas -->
   @if (item().instructions) {
     <div class="instructions">
-      <h4>Indicaciones</h4>
-      <p>{{ item().instructions }}</p>
+      <h4 class="instructions-title">Indicaciones del docente</h4>
+      <p class="instructions-body">{{ item().instructions }}</p>
     </div>
   }
+
   @if (item().status_changed_at) {
-    <p class="help">
+    <p class="help status-update-meta">
       Estado actualizado el {{ item().status_changed_at | date: 'dd/MM/yyyy HH:mm' }}
     </p>
   }
+
+  <!-- Resumen de Resultados / Material de Consulta -->
   @if (item().resource_id) {
-    <p class="help">
-      Material de consulta con soluciones. No registra intentos ni confirma la lectura del
-      estudiante.
+    <p class="help study-note">
+      Material de consulta con soluciones. No registra intentos ni confirma la lectura del estudiante.
     </p>
   } @else {
     <dl class="result-summary">
-      <div>
+      <div class="metric-box">
         <dt>Intentos guardados</dt>
         <dd>{{ item().attempts }}</dd>
       </div>
-      <div>
+      <div class="metric-box">
         <dt>Mejor resultado</dt>
         <dd>
           {{ item().best_score === null ? 'Sin resultados' : item().best_score + ' de 3' }}
@@ -49,5 +66,9 @@
       </div>
     </dl>
   }
-  <ng-content />
+
+  <!-- Acciones y Enlaces inyectados -->
+  <div class="activity-actions">
+    <ng-content />
+  </div>
 </article>

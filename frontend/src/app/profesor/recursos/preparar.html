@@ -5,15 +5,18 @@
     <a class="action-link" routerLink="/inicio">Volver al inicio</a>
   </section>
 } @else {
-  <header class="intro page-heading">
+   <!-- Encabezado Editorial -->
+  <header class="intro page-heading fade-in">
     <p class="eyebrow">DEL MATERIAL A LA PRÁCTICA</p>
-    <h1>Recursos</h1>
-    <p>Elige una asignatura, indica qué necesitas y revisa las fuentes antes de generar.</p>
+    <h1 class="font-serif">Recursos</h1>
+    <p class="lead-subtitle">Elige una asignatura, indica qué necesitas y revisa las fuentes antes de generar.</p>
   </header>
-  <nav class="workspace-tabs" aria-label="Recursos">
+
+  <!-- Pestañas del Espacio de Trabajo -->
+  <nav class="workspace-tabs fade-in" aria-label="Recursos">
     <button
       type="button"
-      class="secondary"
+      class="secondary interactive-button"
       [attr.aria-pressed]="workspaceMode() === 'create'"
       [disabled]="loading() || generating()"
       (click)="result() ? showResult() : showEditor()"
@@ -22,7 +25,7 @@
     </button>
     <button
       type="button"
-      class="secondary"
+      class="secondary interactive-button"
       [attr.aria-pressed]="workspaceMode() === 'saved'"
       [disabled]="loading() || generating()"
       (click)="showSaved()"
@@ -30,15 +33,17 @@
       Mis recursos
     </button>
   </nav>
+
+  <!-- Pasos Guiados del Flujo Editorial -->
   <ol
-    class="workflow"
+    class="workflow fade-in"
     aria-label="Pasos para crear y asignar"
     [hidden]="workspaceMode() !== 'create'"
   >
     <li>
       <button
         type="button"
-        class="secondary"
+        class="secondary interactive-button step-btn"
         [attr.aria-current]="editing() && inputStep() === 'course' ? 'step' : null"
         [disabled]="loading() || generating()"
         (click)="showCourse()"
@@ -49,7 +54,7 @@
     <li>
       <button
         type="button"
-        class="secondary"
+        class="secondary interactive-button step-btn"
         [attr.aria-current]="editing() && inputStep() === 'details' ? 'step' : null"
         [disabled]="!selectedCourse()?.enabled || loading() || generating()"
         (click)="showEditor()"
@@ -60,7 +65,7 @@
     <li>
       <button
         type="button"
-        class="secondary"
+        class="secondary interactive-button step-btn"
         [attr.aria-current]="!editing() && currentStep() === 3 ? 'step' : null"
         [disabled]="!result() || loading() || generating()"
         (click)="showResult()"
@@ -71,7 +76,7 @@
     <li>
       <button
         type="button"
-        class="secondary"
+        class="secondary interactive-button step-btn"
         [attr.aria-current]="!editing() && currentStep() === 4 ? 'step' : null"
         [disabled]="!generation()?.resource || generating()"
         (click)="showResult(); revealGenerated()"

@@ -1,44 +1,70 @@
-<section aria-labelledby="chunks-title" [attr.aria-busy]="loading()">
+<section class="chunks-section fade-in" aria-labelledby="chunks-title" [attr.aria-busy]="loading()">
+  <!-- Encabezado de Fragmentos -->
   <div class="heading">
-    <h3 id="chunks-title" tabindex="-1">Fragmentos extraídos</h3>
+    <h3 id="chunks-title" class="font-serif" tabindex="-1">Fragmentos extraídos</h3>
     <span class="count">{{ total() }} {{ total() === 1 ? 'fragmento' : 'fragmentos' }}</span>
   </div>
-  <p class="help">Cada fragmento conserva su referencia al documento original.</p>
+
+  <p class="help">Cada fragmento conserva su referencia exacta al documento o diapositiva original.</p>
+
+  <!-- Error de Carga -->
   @if (error()) {
-    <div class="error" role="alert">
+    <div class="error fade-in" role="alert">
       <p>{{ error() }}</p>
-      <button (click)="load(offset(), true)" [disabled]="loading()">Reintentar</button>
+      <button class="interactive-button" (click)="load(offset(), true)" [disabled]="loading()">
+        Reintentar
+      </button>
     </div>
   }
+
+  <!-- Estado de Carga -->
   @if (loading()) {
-    <p role="status">Cargando fragmentos…</p>
+    <div class="loading-state fade-in" role="status">
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Cargando fragmentos…</p>
+    </div>
   } @else if (!error() && chunks().length === 0) {
-    <p>No hay fragmentos disponibles para este documento.</p>
+    <!-- Estado Vacío -->
+    <div class="empty-state fade-in">
+      <p>No hay fragmentos disponibles para este documento.</p>
+    </div>
   } @else if (!error()) {
+    <!-- Lista de Fichas de Fragmentos -->
     <ol class="chunks" [attr.start]="offset() + 1">
       @for (chunk of chunks(); track chunk.id) {
         <li
           [id]="'document-chunk-' + chunk.id"
+          class="chunk-card interactive-card"
           tabindex="-1"
           [class.selected]="targetChunk()?.id === chunk.id"
         >
           <div class="reference">
-            <strong>Fragmento {{ offset() + $index + 1 }}</strong>
-            <span
-              >{{ chunk.source_kind === 'page' ? 'Página' : 'Párrafo' }}
-              {{ chunk.source_index }}</span
-            >
+            <strong class="font-serif">Fragmento {{ offset() + $index + 1 }}</strong>
+            <span class="source-tag">
+              {{ chunk.source_kind === 'page' ? 'Página' : 'Párrafo' }} {{ chunk.source_index }}
+            </span>
           </div>
           <p class="text">{{ chunk.text }}</p>
         </li>
       }
     </ol>
+
+    <!-- Paginación de Fragmentos -->
     <nav class="pagination" aria-label="Páginas de fragmentos">
-      <button (click)="load(offset() - 10, true)" [disabled]="offset() === 0 || loading()">
+      <button
+        class="interactive-button"
+        (click)="load(offset() - 10, true)"
+        [disabled]="offset() === 0 || loading()"
+      >
         Anteriores
       </button>
-      <span>{{ offset() + 1 }}–{{ offset() + chunks().length }} de {{ total() }}</span>
+
+      <span class="pagination-info">
+        {{ offset() + 1 }}–{{ offset() + chunks().length }} de {{ total() }}
+      </span>
+
       <button
+        class="interactive-button"
         (click)="load(offset() + 10, true)"
         [disabled]="offset() + chunks().length >= total() || loading()"
       >

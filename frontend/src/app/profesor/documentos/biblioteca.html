@@ -1,48 +1,83 @@
-<section class="panel" aria-labelledby="library-title" [attr.aria-busy]="loading()">
+<section class="panel library-panel fade-in" aria-labelledby="library-title" [attr.aria-busy]="loading()">
+  <!-- Encabezado Editorial del Catálogo -->
   <div class="heading">
-    <h2 id="library-title" tabindex="-1">
-      Mis documentos <span>{{ total() }}</span>
-    </h2>
-    <button class="secondary" (click)="reload.emit(offset())" [disabled]="loading() || locked()">
-      Actualizar
+    <div class="title-group">
+      <h2 id="library-title" class="font-serif" tabindex="-1">
+        Mis documentos <span>{{ total() }}</span>
+      </h2>
+    </div>
+    <button class="secondary interactive-button" (click)="reload.emit(offset())" [disabled]="loading() || locked()">
+      <svg class="btn-svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+      </svg>
+      <span>Actualizar</span>
     </button>
   </div>
+
+  <!-- Estado de Carga -->
   @if (loading()) {
-    <p role="status">Cargando documentos…</p>
+    <div class="loading-state fade-in" role="status">
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Cargando documentos…</p>
+    </div>
   } @else if (documents().length === 0) {
-    <p>Aún no tienes documentos. Añade tu primer material del curso.</p>
+    <!-- Estado Vacío Limpio -->
+    <div class="empty-state fade-in">
+      <p>Aún no tienes documentos. Añade tu primer material del curso.</p>
+    </div>
   } @else {
+    <!-- Catálogo de Documentos -->
     <ul class="document-list">
       @for (document of documents(); track document.id) {
-        <li [class.selected]="selectedId() === document.id">
-          <div>
-            <h3>{{ document.title }} · v{{ document.version_number ?? 1 }}</h3>
-            <p>{{ document.course || 'Pendiente de clasificación' }}</p>
-            <span class="badge">{{ processingLabel(document) }}</span>
+        <li class="document-row" [class.selected]="selectedId() === document.id">
+          <div class="document-meta">
+            <div class="meta-header">
+              <h3>{{ document.title }} · v{{ document.version_number ?? 1 }}</h3>
+              <span
+                class="badge"
+                [class.badge-ok]="document.processing_status === 'processed'"
+                [class.badge-error]="document.processing_status === 'failed'"
+                [class.badge-pending]="document.processing_status === 'pending' || document.processing_status === 'processing'"
+              >
+                {{ processingLabel(document) }}
+              </span>
+            </div>
+            <p class="course-text">
+              {{ document.course || 'Pendiente de clasificación' }}
+            </p>
           </div>
+
           <div class="actions">
             <button
-              class="secondary"
+              class="secondary interactive-button open-btn"
               (click)="openDocument.emit(document)"
               [disabled]="busy()"
               [attr.aria-label]="'Ver detalles de ' + document.title"
             >
-              Abrir
+              <span>Abrir</span>
+              <span class="arrow-icon" aria-hidden="true">→</span>
             </button>
           </div>
         </li>
       }
     </ul>
+
+    <!-- Paginación -->
     <div class="pagination">
       <button
-        class="secondary"
+        class="secondary interactive-button"
         (click)="reload.emit(offset() - 20)"
         [disabled]="offset() === 0 || locked()"
       >
-        Anterior</button
-      ><span>{{ offset() + 1 }}–{{ offset() + documents().length }} de {{ total() }}</span
-      ><button
-        class="secondary"
+        Anterior
+      </button>
+
+      <span class="pagination-info">
+        {{ offset() + 1 }}–{{ offset() + documents().length }} de {{ total() }}
+      </span>
+
+      <button
+        class="secondary interactive-button"
         (click)="reload.emit(offset() + 20)"
         [disabled]="offset() + documents().length >= total() || locked()"
       >
