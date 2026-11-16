@@ -1,5 +1,6 @@
 // Centraliza operaciones HTTP de documentos; los permisos se validan en servidor.
 import { inject, Injectable } from '@angular/core';
+import { DOCUMENT_PAGE_SIZE } from './documentos.model';
 import { HttpClient } from '@angular/common/http';
 import {
   DocumentList,
@@ -14,7 +15,7 @@ export class DocumentService {
   private readonly http = inject(HttpClient);
   list(offset = 0, course = '') {
     return this.http.get<DocumentList>(
-      `/api/v1/documents?limit=20&offset=${offset}${course ? '&course=' + encodeURIComponent(course) : ''}`,
+      `/api/v1/documents?limit=${DOCUMENT_PAGE_SIZE}&offset=${offset}${course ? '&course=' + encodeURIComponent(course) : ''}`,
     );
   }
   get(id: string) {

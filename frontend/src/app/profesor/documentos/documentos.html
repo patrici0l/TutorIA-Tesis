@@ -1,24 +1,36 @@
+
+<!-- Encabezado principal y acción de subida -->
 <header class="page-heading library-heading fade-in">
   <div>
     <span class="eyebrow">GESTIÓN ACADÉMICA</span>
     <h1 class="font-serif">Documentos</h1>
-    <p class="lead-subtitle">Consulta, organiza y supervisa la indexación analítica de los materiales de tus asignaturas.</p>
+    <p class="lead-subtitle">
+      Consulta, organiza y supervisa la indexación analítica de los materiales de tus asignaturas.
+    </p>
   </div>
   @if (canManage()) {
-    <button class="primary-upload-btn interactive-button" (click)="openUpload()" [disabled]="locked()">
+    <button
+      class="primary-upload-btn interactive-button"
+      (click)="openUpload()"
+      [disabled]="locked()"
+    >
       + Subir documento
     </button>
   }
 </header>
 
+<!-- Vista restringida para usuarios sin permisos de gestión -->
 @if (!canManage()) {
   <section class="panel fade-in">
     <h2 class="font-serif">Espacio docente</h2>
     <p>Consulta tus actividades desde el menú principal.</p>
   </section>
 } @else {
+  <!-- Alertas globales de error y éxito -->
   @if (error()) {
-    <p id="document-page-error" tabindex="-1" class="notice error fade-in" role="alert">{{ error() }}</p>
+    <p id="document-page-error" tabindex="-1" class="notice error fade-in" role="alert">
+      {{ error() }}
+    </p>
   }
   @if (success()) {
     <p id="document-page-success" tabindex="-1" class="notice success fade-in" role="status">
@@ -27,25 +39,53 @@
   }
 
   <datalist id="course-options">
-    <option value="Cálculo Diferencial"></option>
-    <option value="Probabilidad y Estadística"></option>
+    @for (course of courseOptions(); track course.value) {
+      <option [value]="course.value"></option>
+    }
   </datalist>
 
-  <!-- Barra de Búsqueda y Filtro de Biblioteca -->
+  <!-- Barra de búsqueda semántica y filtro por asignatura -->
   <section class="panel search-bar fade-in" aria-label="Buscar materiales">
     <div class="field-group">
       <label for="filter-course">Filtrar por asignatura</label>
-      <input
-        id="filter-course"
+      <p-select
+        inputId="filter-course"
+        styleClass="course-select"
+        appendTo="body"
+        [options]="courseOptions()"
         [(ngModel)]="filterCourse"
-        list="course-options"
-        maxlength="160"
-        (ngModelChange)="resetTextSearch()"
+        optionLabel="label"
+        optionValue="value"
         placeholder="Todas las asignaturas"
-      />
+        [filter]="true"
+        filterBy="label"
+        filterPlaceholder="Buscar asignatura…"
+        [showClear]="true"
+        [resetFilterOnHide]="true"
+        emptyFilterMessage="No se encontraron asignaturas"
+        emptyMessage="No hay asignaturas disponibles"
+        [loading]="loadingCourses()"
+        [disabled]="loading() || loadingCourses()"
+        (ngModelChange)="resetTextSearch()"
+        (onClear)="clearCourse()"
+      >
+        <ng-template #item let-course>
+          <div class="course-option">
+            <span>{{ course.label }}</span>
+            <small>{{ course.documents }} {{ course.documents === 1 ? 'documento' : 'documentos' }}</small>
+          </div>
+        </ng-template>
+        <ng-template #selectedItem let-course>
+          <span>{{ course.label }}</span>
+        </ng-template>
+      </p-select>
     </div>
 
-    <button class="secondary interactive-button filter-btn" (click)="load(0, true)" [disabled]="locked() || loading()">
+    <button
+      class="secondary interactive-button filter-btn"
+      (click)="load(0, true)"
+      [disabled]="locked() || loading()"
+    >
       Filtrar
     </button>
 
@@ -64,13 +104,17 @@
     <button
       class="primary-search-btn interactive-button"
       (click)="searchText()"
-      [disabled]="searchingText() || !filterCourse.trim() || !textQuery.trim()"
+      [disabled]="searchingText() || !filterCourse?.trim() || !textQuery.trim()"
     >
       {{ searchingText() ? 'Buscando…' : 'Buscar' }}
     </button>
 
-    <small class="search-hint">Selecciona una asignatura para realizar la búsqueda semántica en el texto.</small>
+    <small class="search-hint">
+      Selecciona una asignatura para realizar la búsqueda semántica en el texto.
+    </small>
   </section>
+
+  <!-- Resultados de búsqueda en fragmentos -->
   @if (textResults()) {
     <section
       id="document-search-results"
@@ -105,8 +149,11 @@
       <button class="secondary" (click)="resetTextSearch()">Cerrar resultados</button>
     </section>
   }
+
+  <!-- Listado principal de la biblioteca -->
   <app-document-library
     [documents]="documents()"
+    [courseFilter]="appliedCourse()"
     [selectedId]="selected()?.id ?? null"
     [total]="total()"
     [offset]="offset()"
@@ -116,14 +163,18 @@
     [processingId]="processingId()"
     (reload)="load($event, true)"
     (openDocument)="view($event)"
+    (clearCourseFilter)="clearCourse()"
   />
 }
+
+<!-- Panel lateral (Drawer) para subida y detalle de documento -->
 <dialog
   #documentPanel
   class="document-drawer"
   aria-labelledby="drawer-title"
   (cancel)="$event.preventDefault(); closePanel()"
 >
+  <!-- Cabecera del panel lateral -->
   <div class="drawer-heading">
     <div>
       <h2 id="drawer-title" tabindex="-1">
@@ -146,6 +197,8 @@
     </div>
     <button class="secondary" (click)="closePanel()" [disabled]="busy()" autofocus>Cerrar</button>
   </div>
+
+  <!-- Notificaciones internas del panel -->
   @if (error()) {
     <p id="document-panel-error" tabindex="-1" class="notice error" role="alert">{{ error() }}</p>
   }
@@ -154,6 +207,8 @@
       {{ success() }}
     </p>
   }
+
+  <!-- Formulario de subida / nueva versión -->
   <div [hidden]="panelMode() !== 'upload'" class="drawer-body">
     <p>PDF, DOCX o TXT · Hasta 10 MiB.</p>
     <form (ngSubmit)="upload(fileInput)">
@@ -167,6 +222,7 @@
         [disabled]="locked()"
         placeholder="Ej. Introducción a las derivadas"
       />
+
       <label for="document-course">Asignatura</label>
       <input
         id="document-course"
@@ -178,9 +234,9 @@
         [disabled]="locked()"
       />
 
-      <label for="document-source"
-        >Procedencia (autor, institución o referencia del material)</label
-      >
+      <label for="document-source">
+        Procedencia (autor, institución o referencia del material)
+      </label>
       <input
         id="document-source"
         name="source"
@@ -189,9 +245,10 @@
         required
         [disabled]="locked()"
       />
-      <label for="document-permission"
-        >Permiso de uso (quién lo autoriza y evidencia o licencia)</label
-      >
+
+      <label for="document-permission">
+        Permiso de uso (quién lo autoriza y evidencia o licencia)
+      </label>
       <input
         id="document-permission"
         name="permission"
@@ -200,45 +257,110 @@
         required
         [disabled]="locked()"
       />
-      <label
-        ><input
+
+      <label>
+        <input
           type="checkbox"
           name="authorized"
           [(ngModel)]="authorizationConfirmed"
           [disabled]="locked()"
         />
-        Confirmo que dispongo de permiso para usar este material.</label
-      >
+        Confirmo que dispongo de permiso para usar este material.
+      </label>
+
       @if (previousVersionId) {
         <p>Selecciona el archivo actualizado. Se conserva la versión anterior.</p>
         <button type="button" (click)="previousVersionId = undefined" [disabled]="locked()">
           Cargar como documento independiente
         </button>
       }
+
+      <!-- Zona interactiva de selección y arrastre de archivo -->
       <label for="document-file">Archivo del curso</label>
-      <input
-        #fileInput
-        id="document-file"
-        type="file"
-        accept=".pdf,.docx,.txt"
-        (change)="choose($event)"
-        [disabled]="locked()"
-        aria-describedby="file-help"
-      />
+      <div
+        class="upload-zone"
+        [class.is-dragging]="dragging()"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave($event)"
+        (drop)="onDrop($event, fileInput)"
+      >
+        <input
+          #fileInput
+          id="document-file"
+          class="visually-hidden-file"
+          type="file"
+          accept=".pdf,.docx,.txt"
+          (change)="choose($event)"
+          [disabled]="locked()"
+          aria-describedby="file-help"
+        />
+
+        @if (file(); as selectedFile) {
+          <!-- Vista previa del archivo cargado -->
+          <article class="selected-file-card" aria-label="Archivo seleccionado">
+            <div class="file-icon" [attr.data-type]="fileType(selectedFile)">
+              {{ fileType(selectedFile) }}
+            </div>
+
+            <div class="selected-file-info">
+              <strong [title]="selectedFile.name">{{ selectedFile.name }}</strong>
+              <span>{{ size(selectedFile.size) }} · Listo para guardar</span>
+            </div>
+
+            <button
+              type="button"
+              class="secondary"
+              (click)="fileInput.click()"
+              [disabled]="locked()"
+            >
+              Reemplazar
+            </button>
+            <button
+              type="button"
+              class="remove-file"
+              (click)="removeFile(fileInput)"
+              [disabled]="locked()"
+              aria-label="Quitar archivo"
+            >
+              ×
+            </button>
+          </article>
+        } @else {
+          <!-- Área de arrastre vacía -->
+          <div class="upload-prompt">
+            <span class="upload-icon" aria-hidden="true">↑</span>
+            <h3>Arrastra aquí el documento</h3>
+            <p>PDF, DOCX o TXT · hasta 10 MiB</p>
+            <button
+              type="button"
+              class="secondary"
+              (click)="fileInput.click()"
+              [disabled]="locked()"
+            >
+              Explorar archivos
+            </button>
+          </div>
+        }
+      </div>
+
       <p id="file-help">
         Tu documento será privado. Después de guardarlo, abre sus detalles para extraer el texto y
         prepararlo para la búsqueda.
       </p>
+
       <button type="submit" [disabled]="locked() || !file() || !title.trim() || !metadataReady()">
         {{ busy() ? 'Guardando…' : 'Guardar documento' }}
       </button>
     </form>
   </div>
+
+  <!-- Vista de detalle del documento seleccionado -->
   @if (panelMode() === 'detail') {
     @if (detailLoading()) {
       <p role="status">Cargando detalles…</p>
     }
     @if (selected(); as document) {
+      <!-- Navegación por pestañas del detalle -->
       <nav class="detail-sections" aria-label="Apartados del documento">
         <button
           class="secondary"
@@ -262,6 +384,8 @@
           Datos técnicos
         </button>
       </nav>
+
+      <!-- Pestaña 1: Flujo de extracción, indexación y publicación -->
       <section
         id="document-content"
         tabindex="-1"
@@ -274,6 +398,8 @@
           <li [class.complete]="document.index_status === 'indexed'">2. Preparar búsqueda</li>
           <li [class.complete]="!!document.published_at">3. Revisar y habilitar</li>
         </ol>
+
+        <!-- Etapa 1: Extracción de texto -->
         @if (document.processing_status !== 'processed') {
           <div class="processing">
             <p>
@@ -309,6 +435,7 @@
             }
           </div>
         } @else {
+          <!-- Etapa 2: Indexación vectorial y revisión de fragmentos -->
           <details class="vector-tools" [open]="document.index_status !== 'indexed'">
             <summary>2. Preparar para buscar fuentes</summary>
             <div
@@ -368,6 +495,7 @@
               }
             </div>
           </details>
+
           <details
             class="fragment-review"
             #fragmentReview
@@ -382,6 +510,8 @@
             />
           </details>
         }
+
+        <!-- Etapa 3: Habilitación como fuente para recursos -->
         <div id="document-publication" tabindex="-1" class="stage">
           <h3>
             {{ document.published_at ? 'Habilitado para recursos' : '3. Revisar y habilitar' }}
@@ -403,9 +533,11 @@
           }
           @if (document.published_at) {
             <p>Este material ya se puede usar para crear recursos.</p>
-            <a class="action-link" routerLink="/recursos" [queryParams]="{ course: document.course }"
-              >Crear recurso con esta asignatura →</a
-            >
+            <a
+              class="action-link"
+              routerLink="/recursos"
+              [queryParams]="{ course: document.course }"
+            >Crear recurso con esta asignatura →</a>
           } @else if (document.index_status !== 'indexed') {
             <p>Completa la preparación para búsqueda antes de habilitarlo.</p>
           } @else if (!document.permission_recorded_at) {
@@ -416,6 +548,8 @@
           </p>
         </div>
       </section>
+
+      <!-- Pestaña 2: Procedencia, permisos e historial de versiones -->
       @if (detailSection() === 'origin') {
         <section
           id="document-origin"
@@ -440,6 +574,8 @@
           }
         </section>
       }
+
+      <!-- Pestaña 3: Metadatos técnicos y hash -->
       @if (detailSection() === 'technical') {
         <section
           id="document-technical"
@@ -464,10 +600,15 @@
           </dl>
         </section>
       }
+
+      <!-- Acciones adicionales (descarga, nueva versión, borrado) -->
       <details class="document-options">
         <summary>Más acciones</summary>
         <div class="actions">
-          <a class="action-link secondary" [href]="'/api/v1/documents/' + document.id + '/original'">Descargar original</a>
+          <a
+            class="action-link secondary"
+            [href]="'/api/v1/documents/' + document.id + '/original'"
+          >Descargar original</a>
           <button class="secondary" (click)="newVersion(document)" [disabled]="locked()">
             Nueva versión
           </button>
@@ -483,6 +624,8 @@
           </button>
         </div>
       </details>
+
+      <!-- Confirmación de eliminación -->
       @if (pendingDelete(); as document) {
         <section class="panel deletion" role="alert" aria-labelledby="delete-title">
           <h2 id="delete-title" tabindex="-1">Eliminar «{{ document.title }}»</h2>
@@ -492,8 +635,9 @@
           </p>
           <div class="actions">
             <button class="danger" (click)="remove()" [disabled]="locked()">
-              {{ busy() ? 'Eliminando…' : 'Confirmar eliminación' }}</button
-            ><button class="secondary" (click)="pendingDelete.set(null)" [disabled]="locked()">
+              {{ busy() ? 'Eliminando…' : 'Confirmar eliminación' }}
+            </button>
+            <button class="secondary" (click)="pendingDelete.set(null)" [disabled]="locked()">
               Cancelar
             </button>
           </div>

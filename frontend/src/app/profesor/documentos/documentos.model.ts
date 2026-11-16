@@ -1,3 +1,4 @@
+
 export interface CourseDocument {
   published_at?: string | null;
   course?: string | null;
@@ -40,6 +41,7 @@ export interface DocumentChunk {
   char_end: number;
   text: string;
 }
+
 export interface DocumentChunkList {
   items: DocumentChunk[];
   total: number;
@@ -66,3 +68,4 @@ export interface TextSearchPage {
   limit: number;
   offset: number;
 }
+export const DOCUMENT_PAGE_SIZE = 5;

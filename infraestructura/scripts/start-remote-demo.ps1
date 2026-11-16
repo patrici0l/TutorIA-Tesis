@@ -18,6 +18,8 @@ if (Test-Path -LiteralPath $statePath) {
 if (-not (Test-Path -LiteralPath $cloudflared)) {
     throw 'Falta infraestructura/herramientas/cloudflared.exe. Consulta el manual de demo remota.'
 }
+& $cloudflared --version
+if ($LASTEXITCODE -ne 0) { throw 'cloudflared no se puede ejecutar. Instala la version oficial para Windows x64.' }
 New-Item -ItemType Directory -Force -Path $runtime | Out-Null
 
 # Verifica el modo base sin imprimir configuracion privada ni cambiar .env.
@@ -92,10 +94,27 @@ try {
         AUTH_FRONTEND_URL = "$publicOrigin/inicio"
         AUTH_LOGIN_URL = "$publicOrigin/login"
     } } } } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $overridePath -Encoding utf8
-    Set-Content -LiteralPath (Join-Path $runtime 'enlace.txt') -Value $publicOrigin -Encoding utf8
     $backendChanged = $true
     & docker @compose -f $overridePath up -d --no-deps --wait backend
     if ($LASTEXITCODE -ne 0) { throw 'No se pudo habilitar el backend remoto.' }
+    # El dominio puede tardar en propagarse. No anunciar un enlace sin comprobarlo.
+    $remoteReady = $false
+    for ($attempt = 0; $attempt -lt 12; $attempt++) {
+        $tunnelProcess.Refresh()
+        if ($tunnelProcess.HasExited) { throw 'El tunel termino durante la verificacion remota.' }
+        try {
+            & (Join-Path $PSScriptRoot 'check-health.ps1') -BaseUrl $publicOrigin
+            $page = Invoke-WebRequest -Uri "$publicOrigin/login" -TimeoutSec 12
+            if ($page.StatusCode -ne 200 -or $page.Content -notmatch '<app-root') {
+                throw 'La interfaz publica no responde correctamente.'
+            }
+            $remoteReady = $true
+            break
+        }
+        catch { Start-Sleep -Seconds 2 }
+    }
+    if (-not $remoteReady) { throw 'No se pudo verificar el acceso HTTPS publico.' }
+    Set-Content -LiteralPath (Join-Path $runtime 'enlace.txt') -Value $publicOrigin -Encoding utf8
     Write-Host "Enlace de demostracion: $publicOrigin"
     Write-Host 'Acceso publico: cualquiera con el enlace puede elegir profesor o estudiante, sin correo ni PIN.'
     Write-Host 'Usa el enlace HTTPS tambien en este equipo. Los perfiles ficticios comparten datos por rol.'

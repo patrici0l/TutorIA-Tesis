@@ -1,4 +1,8 @@
-<section class="panel library-panel fade-in" aria-labelledby="library-title" [attr.aria-busy]="loading()">
+<section
+  class="panel library-panel fade-in"
+  aria-labelledby="library-title"
+  [attr.aria-busy]="loading()"
+>
   <!-- Encabezado Editorial del Catálogo -->
   <div class="heading">
     <div class="title-group">
@@ -6,9 +10,24 @@
         Mis documentos <span>{{ total() }}</span>
       </h2>
     </div>
-    <button class="secondary interactive-button" (click)="reload.emit(offset())" [disabled]="loading() || locked()">
-      <svg class="btn-svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+    <button
+      class="secondary interactive-button"
+      (click)="reload.emit(offset())"
+      [disabled]="loading() || locked()"
+    >
+      <svg
+        class="btn-svg"
+        viewBox="0 0 24 24"
+        width="14"
+        height="14"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
       </svg>
       <span>Actualizar</span>
     </button>
@@ -21,9 +40,19 @@
       <p>Cargando documentos…</p>
     </div>
   } @else if (documents().length === 0) {
-    <!-- Estado Vacío Limpio -->
     <div class="empty-state fade-in">
-      <p>Aún no tienes documentos. Añade tu primer material del curso.</p>
+      @if (courseFilter()) {
+        <p>No hay documentos para «{{ courseFilter() }}».</p>
+        <button
+          class="secondary interactive-button"
+          (click)="clearCourseFilter.emit()"
+          [disabled]="loading()"
+        >
+          Limpiar filtro
+        </button>
+      } @else {
+        <p>Aún no tienes documentos. Añade tu primer material del curso.</p>
+      }
     </div>
   } @else {
     <!-- Catálogo de Documentos -->
@@ -37,7 +66,10 @@
                 class="badge"
                 [class.badge-ok]="document.processing_status === 'processed'"
                 [class.badge-error]="document.processing_status === 'failed'"
-                [class.badge-pending]="document.processing_status === 'pending' || document.processing_status === 'processing'"
+                [class.badge-pending]="
+                  document.processing_status === 'pending' ||
+                  document.processing_status === 'processing'
+                "
               >
                 {{ processingLabel(document) }}
               </span>
@@ -66,7 +98,7 @@
     <div class="pagination">
       <button
         class="secondary interactive-button"
-        (click)="reload.emit(offset() - 20)"
+        (click)="reload.emit(offset() - pageSize)"
         [disabled]="offset() === 0 || locked()"
       >
         Anterior
@@ -78,7 +110,7 @@
 
       <button
         class="secondary interactive-button"
-        (click)="reload.emit(offset() + 20)"
+        (click)="reload.emit(offset() + pageSize)"
         [disabled]="offset() + documents().length >= total() || locked()"
       >
         Siguiente

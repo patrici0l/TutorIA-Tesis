@@ -30,6 +30,53 @@ verifica los artefactos existentes y descarga únicamente los que falten o no se
 Los datos se conservan en los volúmenes de Compose; no uses `down -v` para actualizar.
 Comprueba el arranque con `docker compose --env-file licencias/secure_data.env ps` y `./infraestructura/scripts/check-health.ps1`.
 
+## Prueba remota con el tutor
+
+Desde PowerShell, con Docker Desktop iniciado y el modelo de embeddings preparado:
+
+```powershell
+./infraestructura/scripts/start-remote-demo.ps1
+```
+
+El script reconstruye la aplicación, verifica el modelo y publica la interfaz y la API
+mediante un túnel HTTPS. Comprueba el acceso público antes de mostrar el enlace y lo
+guarda en `infraestructura/herramientas/demo-remota/enlace.txt`. El tutor puede abrirlo
+y elegir **Profesor**; también puede probar **Estudiante**. Son perfiles de demostración
+compartidos por rol, sin contraseña: cualquier persona con el enlace puede acceder a
+sus datos. Comparte únicamente para la revisión y usa materiales destinados a la demo.
+
+Se necesita el ejecutable oficial Windows x64 de cloudflared en
+`infraestructura/herramientas/cloudflared.exe` ([descargas oficiales](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/downloads/)).
+Las claves permanecen en el backend y la configuración local se conserva. La generación
+de IA mantiene el proveedor y los límites definidos en `licencias/secure_data.env`.
+
+El equipo, Docker e Internet deben permanecer activos y Windows no debe suspenderse.
+Cloudflare proporciona un [enlace temporal](https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/)
+que cambia al iniciar otro túnel; el proyecto sigue ejecutándose en este equipo.
+Para finalizar la revisión y recuperar el acceso local:
+
+```powershell
+./infraestructura/scripts/stop-remote-demo.ps1
+```
+
+No ejecutar `docker compose up` con solo la configuración base durante la demo:
+restauraría las redirecciones de autenticación a localhost. Para volver a construir y
+publicar cambios, cerrar la demo e iniciarla de nuevo; compartir el nuevo enlace.
+
+### Swagger y reglas de adaptación
+
+La documentación interactiva está en `/api/v1/docs` y el contrato JSON en
+`/api/v1/openapi.json`. Para probar operaciones protegidas, abrir `/login` en otra
+pestaña del mismo navegador e iniciar sesión como Profesor; Swagger utiliza esa cookie.
+Las escrituras protegidas requieren además `x-prototipo-client: web`.
+
+`GET /api/v1/adaptation/rules` consulta la política local vigente sin generar contenido
+ni consumir cuota. Requiere docente o administrador. Admite `version` (actualmente
+`profile-adaptation-v2`) y `mastery_level` (`low`, `medium`, `high`). Sin filtros devuelve
+las tres reglas con dificultad, orientación, tipos sugeridos y motivo. Una versión no
+disponible devuelve 404; un filtro inválido, 422. El dominio lo informa el docente:
+este catálogo no calcula el perfil ni sustituye el contrato del motor de ADAPTIA.
+
 ## Compatibilidad
 
 Se conservan identificadores existentes de base de datos, proyecto Compose y respaldos para mantener acceso a los datos. No representan el nombre del producto. Las cookies y la cabecera del cliente usan el identificador neutro `prototipo`; las sesiones anteriores requieren iniciar sesión otra vez.

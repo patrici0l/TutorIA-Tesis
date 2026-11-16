@@ -14,6 +14,7 @@ from app.configuracion.settings import get_settings
 from app.modulos.actividades.router import router as assignment_router
 from app.modulos.autenticacion.router import router as auth_router
 from app.modulos.contenidos.router import router as content_router
+from app.modulos.contenidos.rules_router import router as rules_router
 from app.modulos.documentos.router import router as documents_router
 from app.modulos.metricas.router import router as metrics_router
 from app.modulos.perfiles.router import router as profiles_router
@@ -36,14 +37,41 @@ async def lifespan(app: FastAPI):
 
 def create_app() -> FastAPI:
     app = FastAPI(
-        title="prototipo",
+        title="TutorIA — API de recursos educativos",
+        description=(
+            "API de documentos, recuperación de fuentes y generación de recursos educativos.\n\n"
+            "### Cómo probar\n"
+            "1. Abre [la aplicación](/login) en otra pestaña de este mismo navegador "
+            "e inicia sesión como **Profesor**.\n"
+            "2. Regresa a esta página y utiliza **Try it out**. La sesión se envía "
+            "mediante una cookie HttpOnly; no se pega un token Bearer.\n"
+            "3. En las escrituras protegidas envía `x-prototipo-client: web` "
+            "cuando el endpoint lo solicite. Las operaciones pueden modificar datos "
+            "y la generación puede consumir cuota del proveedor.\n\n"
+            "### Reglas de adaptación\n"
+            "`GET /api/v1/adaptation/rules` permite consultar la política local vigente "
+            "y filtrar por dominio. Su consulta no genera recursos ni consume cuota.\n\n"
+            "Los perfiles de aprendizaje son sintéticos y el nivel de dominio lo informa "
+            "el docente. El contrato de integración Bearer y el formato de respuesta "
+            "ADAPTIA siguen pendientes de acuerdo e implementación."
+        ),
         version=APP_VERSION,
+        servers=[{"url": "/", "description": "Este servidor"}],
+        openapi_tags=[
+            {
+                "name": "Reglas de adaptación",
+                "description": (
+                    "Catálogo versionado de la política local aplicada a perfiles sintéticos."
+                ),
+            },
+        ],
         lifespan=lifespan,
         docs_url=f"{API_PREFIX}/docs",
         redoc_url=f"{API_PREFIX}/redoc",
         openapi_url=f"{API_PREFIX}/openapi.json",
     )
     app.include_router(router, prefix=API_PREFIX)
+    app.include_router(rules_router, prefix=API_PREFIX)
     app.include_router(auth_router, prefix=API_PREFIX)
     app.include_router(documents_router, prefix=API_PREFIX)
     app.include_router(rag_router, prefix=API_PREFIX)
@@ -83,6 +111,7 @@ def create_app() -> FastAPI:
                 f"{API_PREFIX}/profiles",
                 f"{API_PREFIX}/metrics",
                 f"{API_PREFIX}/practice",
+                f"{API_PREFIX}/adaptation",
             )
         ):
             response.headers["Cache-Control"] = "no-store"

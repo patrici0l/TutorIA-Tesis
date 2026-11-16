@@ -4,7 +4,23 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.modulos.contenidos.schemas import ContentRequest, Difficulty, ResourceType
-from app.modulos.perfiles.schemas import ProfileResponse
+from app.modulos.perfiles.schemas import MasteryLevel, ProfileResponse
+
+
+class AdaptationRule(BaseModel):
+    mastery_level: MasteryLevel = Field(description="Nivel de dominio informado por el docente.")
+    effective_difficulty: Difficulty
+    guidance: str = Field(description="Orientación utilizada al preparar el recurso.")
+    suggested_resources: list[ResourceType] = Field(
+        description="Tipos sugeridos; no restringen el tipo solicitado."
+    )
+    reason: str
+
+
+class AdaptationRuleCatalog(BaseModel):
+    version: str = Field(examples=["profile-adaptation-v2"])
+    rules: list[AdaptationRule]
+    application_notes: list[str]
 
 
 class PreparationRequest(ContentRequest):
