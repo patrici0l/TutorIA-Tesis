@@ -265,7 +265,7 @@ describe('Preparación docente', () => {
       created_at: '2026-10-08T00:00:00Z',
     };
     http
-      .expectOne('/api/v1/profiles?offset=0&limit=10')
+      .expectOne('/api/v1/profiles?offset=0&limit=5')
       .flush({ items: [profile], total: 1, offset: 0, limit: 10 });
     component.chooseProfile(profile);
     component.objective = 'Practicar';

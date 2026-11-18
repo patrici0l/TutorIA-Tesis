@@ -30,7 +30,8 @@
       <app-resource-view [resource]="resource" [compact]="true" />
       <details class="panel source-details" aria-label="Fuentes del recurso">
         <summary>Consultar fuentes del material · {{ item.sources?.length ?? 0 }}</summary>
-        @for (source of item.sources; track source.citation_id) {
+        <p>Extractos ordenados por relevancia; pueden continuar en otros fragmentos. Las citas corresponden al material guardado por tu docente.</p>
+        @for (source of (item.sources ?? []).slice(sourceOffset(), sourceOffset() + 5); track source.citation_id) {
           <article>
             <h3>{{ source.citation_id }} · {{ source.document_title }}</h3>
             <p>
@@ -38,6 +39,13 @@
             </p>
             <blockquote>{{ source.text }}</blockquote>
           </article>
+        }
+        @if ((item.sources?.length ?? 0) > 5) {
+          <nav aria-label="Páginas de citas" class="actions">
+            <button (click)="sourceOffset.set(sourceOffset() - 5)" [disabled]="sourceOffset() === 0">Anteriores</button>
+            <span>Página {{ sourceOffset() / 5 + 1 }}</span>
+            <button (click)="sourceOffset.set(sourceOffset() + 5)" [disabled]="sourceOffset() + 5 >= (item.sources?.length ?? 0)">Siguientes</button>
+          </nav>
         }
       </details>
     } @else if (item.status === 'open') {

@@ -25,7 +25,7 @@ def test_processing_traceability_pagination_idempotency_and_delete(document_app)
     record = result.json()
     assert record["processing_status"] == "processed"
     assert record["chunk_count"] == 2 and record["processed_at"]
-    assert record["processing_version"] == "text-v1"
+    assert record["processing_version"] == "text-v2"
     assert record["chunk_chars"] == 1000 and record["chunk_overlap"] == 150
     assert record["text_chars"] == sum(len(paragraph) for paragraph in text.split("\n\n"))
     assert "processing_token" not in record
@@ -170,3 +170,40 @@ def test_worker_crash_has_safe_result(document_app, monkeypatch):
         client.get(f"/api/v1/documents/{identifier}").json()["processing_error"]
         == "extraction_failed"
     )
+
+
+def test_rebuild_requires_withdrawal_and_invalidates_old_search(document_app):
+    from datetime import UTC, datetime
+
+    client, engine, _, _, _, _ = document_app
+    content = ("La filosofía estudia las causas esenciales. " * 40).encode()
+    identifier = upload(client, content=content).json()["id"]
+    url = f"/api/v1/documents/{identifier}"
+    assert client.post(f"{url}/process", headers=HEADERS).status_code == 200
+    old_chunks = client.get(f"{url}/chunks").json()["items"]
+    with Session(engine) as db:
+        document = db.get(Document, UUID(identifier))
+        document.processing_version = "text-v1"
+        document.published_at = datetime.now(UTC)
+        document.index_status = "indexed"
+        document.indexed_at = datetime.now(UTC)
+        db.commit()
+    assert client.post(f"{url}/process?rebuild=true", headers=HEADERS).status_code == 409
+    assert client.get(f"{url}/chunks").json()["items"] == old_chunks
+    with Session(engine) as db:
+        document = db.get(Document, UUID(identifier))
+        document.published_at = None
+        document.index_status = "indexing"
+        db.commit()
+    assert client.post(f"{url}/process?rebuild=true", headers=HEADERS).status_code == 409
+    with Session(engine) as db:
+        db.get(Document, UUID(identifier)).index_status = "indexed"
+        db.commit()
+    response = client.post(f"{url}/process?rebuild=true", headers=HEADERS)
+    assert response.status_code == 200, response.text
+    assert response.json()["processing_version"] == "text-v2"
+    assert response.json()["index_status"] == "pending"
+    assert response.json()["indexed_at"] is None
+    assert response.json()["published_at"] is None
+    new_chunks = client.get(f"{url}/chunks").json()["items"]
+    assert {c["id"] for c in old_chunks}.isdisjoint(c["id"] for c in new_chunks)

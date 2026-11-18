@@ -15,7 +15,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { NgOptionTemplateDirective, NgSelectComponent } from '@ng-select/ng-select';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { concatMap, from, Observable, of, Subscription, switchMap, tap, toArray } from 'rxjs';
+import { catchError, concatMap, from, map, Observable, of, Subscription, switchMap, tap, toArray } from 'rxjs';
 import { ViewAttention } from '../../compartido/atencion-vista.service';
 import { AuthService } from '../../inicio/sesion.service';
 import { CourseCatalogService, CourseOption } from './asignaturas.service';
@@ -63,6 +63,7 @@ export class DocumentsComponent implements OnInit {
 
   // Estado de biblioteca y procesos asíncronos
   private detailRequest?: Subscription;
+  private listRequest?: Subscription;
   readonly documents = signal<CourseDocument[]>([]);
   readonly selected = signal<CourseDocument | null>(null);
   readonly pendingDelete = signal<CourseDocument | null>(null);
@@ -70,12 +71,12 @@ export class DocumentsComponent implements OnInit {
   readonly busy = signal(false);
   readonly processingId = signal<string | null>(null);
   readonly indexingId = signal<string | null>(null);
-  readonly autoEnabling = signal(false);
+  readonly autoPreparing = signal(false);
   readonly detailLoading = signal(false);
   readonly locked = computed(
     () =>
       this.busy() ||
-      this.autoEnabling() ||
+      this.autoPreparing() ||
       this.processingId() !== null ||
       this.indexingId() !== null,
   );
@@ -84,6 +85,7 @@ export class DocumentsComponent implements OnInit {
       (doc) =>
         doc.status === 'uploaded' &&
         !doc.published_at &&
+        doc.index_status !== 'indexed' &&
         !!doc.permission_recorded_at &&
         !!doc.course,
     ),
@@ -107,7 +109,7 @@ export class DocumentsComponent implements OnInit {
   sourceReference = '';
   permissionNote = '';
   authorizationConfirmed = false;
-  autoEnableOnUpload = false;
+  autoPrepareOnUpload = false;
   previousVersionId: string | undefined;
 
   // Estado de búsqueda semántica y filtros
@@ -268,10 +270,11 @@ export class DocumentsComponent implements OnInit {
 
   // Listado paginado de documentos
   load(offset = this.offset(), reveal = false) {
+    this.listRequest?.unsubscribe();
     this.loading.set(true);
     this.error.set('');
     const course = this.filterCourse?.trim() ?? '';
-    this.service
+    this.listRequest = this.service
       .list(offset, course)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -381,11 +384,11 @@ export class DocumentsComponent implements OnInit {
       return;
     }
 
-    // Si ya había archivos cargados en la cola, permite acumular nuevos sin duplicar por nombre+tamaño
+    // No descartar archivos distintos solo por coincidir su nombre y tamaño.
     const existing = this.selectedFiles();
     const merged = [...existing];
     for (const item of valid) {
-      if (!merged.some((e) => e.name === item.name && e.size === item.size)) {
+      if (!merged.includes(item)) {
         merged.push(item);
       }
     }
@@ -459,9 +462,16 @@ export class DocumentsComponent implements OnInit {
             );
             this.load(0);
             this.loadCourseOptions();
-            this.view(saved);
-            if (this.autoEnableOnUpload) {
-              this.prepareAndPublish(saved);
+            if (this.autoPrepareOnUpload) {
+              this.detailRequest?.unsubscribe();
+              this.detailLoading.set(false);
+              this.openPanel('detail');
+              this.detailSection.set('content');
+              this.selectedChunk.set(null);
+              this.selected.set(saved);
+              this.prepareForReview(saved);
+            } else {
+              this.view(saved);
             }
           },
           error: (error) => {
@@ -474,6 +484,8 @@ export class DocumentsComponent implements OnInit {
     }
 
     const queue = [file, ...extras];
+    const failed: File[] = [];
+    const failures: string[] = [];
     from(queue.map((item, idx) => ({ item, idx })))
       .pipe(
         concatMap(({ item, idx }) => {
@@ -484,22 +496,39 @@ export class DocumentsComponent implements OnInit {
           return this.service.upload(item, derivedTitle, {
             ...meta,
             previous_version_id: undefined,
-          });
+          }).pipe(catchError((error: HttpErrorResponse) => {
+            failed.push(item);
+            failures.push(`«${item.name}»: ${this.message(error)}`);
+            return of(null);
+          }));
         }),
         toArray(),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
-        next: (savedList) => {
+        next: (results) => {
+          const savedList = results.filter((item): item is CourseDocument => item !== null);
           this.busy.set(false);
+          if (failed.length) {
+            this.file.set(failed[0]);
+            this.extraFiles.set(failed.slice(1));
+            this.title = failed[0].name.replace(/\.[^.]+$/, '').slice(0, 160);
+            input.value = '';
+            this.load(0);
+            this.loadCourseOptions();
+            this.success.set(`${savedList.length} documentos guardados. Prepara los guardados desde la biblioteca.`);
+            this.error.set(`${failures.join(' ')} Solo quedan seleccionados los archivos que fallaron.`);
+            this.showMessage();
+            return;
+          }
           this.file.set(null);
           this.extraFiles.set([]);
           this.title = '';
           this.previousVersionId = undefined;
           this.authorizationConfirmed = false;
           input.value = '';
-          if (this.autoEnableOnUpload) {
-            this.enableBatch(savedList, meta.course);
+          if (this.autoPrepareOnUpload) {
+            this.prepareBatch(savedList, meta.course);
             return;
           }
           this.success.set(
@@ -558,20 +587,23 @@ export class DocumentsComponent implements OnInit {
   }
 
   // Etapa 1: Extracción y segmentación de texto
-  process() {
+  process(rebuild = false) {
     const document = this.selected();
     if (
       !document ||
       this.locked() ||
-      document.processing_status === 'processed' ||
+      (document.processing_status === 'processed' && !rebuild) ||
+      (rebuild && (!!document.published_at || document.index_status === 'indexing')) ||
       (document.processing_status === 'processing' && !this.canRetryProcessing(document))
     )
       return;
+    this.reviewingFragments.set(false);
+    this.selectedChunk.set(null);
     this.processingId.set(document.id);
     this.error.set('');
     this.success.set('');
     this.service
-      .process(document.id)
+      .process(document.id, rebuild)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (item) => {
@@ -736,8 +768,8 @@ export class DocumentsComponent implements OnInit {
       });
   }
 
-  // Flujo automático en 1 paso: Procesar -> Indexar -> Habilitar como fuente
-  private ensureEnabled$(document: CourseDocument): Observable<CourseDocument> {
+  // Preparación automática: extraer e indexar; la publicación requiere revisión.
+  private ensurePrepared$(document: CourseDocument): Observable<CourseDocument> {
     const step1$: Observable<CourseDocument> =
       document.processing_status === 'processed'
         ? of(document)
@@ -749,71 +781,73 @@ export class DocumentsComponent implements OnInit {
           ? of(processed)
           : this.service.index(processed.id, false).pipe(tap((item) => this.updateDocument(item))),
       ),
-      switchMap((indexed) =>
-        indexed.published_at
-          ? of(indexed)
-          : this.service
-              .publication(indexed.id, true)
-              .pipe(tap((item) => this.updateDocument(item))),
-      ),
     );
   }
 
-  prepareAndPublish(target?: CourseDocument | null) {
+  prepareForReview(target?: CourseDocument | null) {
     const document = target ?? this.selected();
     if (!document || this.locked() || document.published_at) return;
-    this.autoEnabling.set(true);
+    this.autoPreparing.set(true);
     this.error.set('');
     this.success.set('');
-    this.ensureEnabled$(document)
+    this.ensurePrepared$(document)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (item) => {
-          this.autoEnabling.set(false);
+          this.autoPreparing.set(false);
           this.updateDocument(item);
           this.loadCourseOptions();
+          this.reviewingFragments.set(true);
           this.success.set(
-            `«${item.title}»: procesado, indexado y habilitado automáticamente como fuente.`,
+            `«${item.title}»: listo para revisar. Comprueba los fragmentos y habilita la fuente cuando estén correctos.`,
           );
           this.showMessage();
         },
         error: (error) => {
-          this.autoEnabling.set(false);
+          this.autoPreparing.set(false);
           this.error.set(this.message(error));
           this.showMessage();
         },
       });
   }
 
-  enableAllPending() {
+  prepareAllPending() {
     const list = this.pendingDocuments();
     if (!list.length || this.locked()) return;
-    this.enableBatch(list);
+    this.prepareBatch(list);
   }
 
-  private enableBatch(list: CourseDocument[], courseName?: string) {
-    this.autoEnabling.set(true);
+  private prepareBatch(list: CourseDocument[], courseName?: string) {
+    this.autoPreparing.set(true);
     this.error.set('');
     this.success.set('');
+    const failures: string[] = [];
     from(list)
       .pipe(
-        concatMap((doc) => this.ensureEnabled$(doc)),
+        concatMap((doc) => this.ensurePrepared$(doc).pipe(
+          map(() => true),
+          catchError((error: HttpErrorResponse) => {
+            failures.push(`«${doc.title}»: ${this.message(error)}`);
+            return of(false);
+          }),
+        )),
         toArray(),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: (enabledList) => {
-          this.autoEnabling.set(false);
+          this.autoPreparing.set(false);
           this.load(this.offset());
           this.loadCourseOptions();
           if (courseName) this.closePanel();
+          if (failures.length) this.error.set(failures.join(' '));
           this.success.set(
-            `Se procesaron, indexaron y habilitaron ${enabledList.length} ${enabledList.length === 1 ? 'documento' : 'documentos'} como fuente.`,
+            `Preparados para revisión: ${enabledList.filter(Boolean).length} de ${list.length}. Revisa y habilita cada fuente desde su detalle.`,
           );
           this.showMessage();
         },
         error: (error) => {
-          this.autoEnabling.set(false);
+          this.autoPreparing.set(false);
           this.load(this.offset());
           this.loadCourseOptions();
           this.error.set(this.message(error));

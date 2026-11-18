@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Subscription } from 'rxjs';
-import { DocumentChunk } from './documentos.model';
+import { DOCUMENT_PAGE_SIZE, DocumentChunk } from './documentos.model';
 import { DocumentService } from './documentos.service';
 
 @Component({
@@ -21,6 +21,7 @@ import { DocumentService } from './documentos.service';
   styleUrl: './fragmentos.scss',
 })
 export class DocumentChunksComponent implements OnChanges, OnDestroy {
+  readonly pageSize = DOCUMENT_PAGE_SIZE;
   readonly documentId = input.required<string>();
   readonly active = input(true);
   readonly targetChunk = input<DocumentChunk | null>(null);
@@ -45,7 +46,7 @@ export class DocumentChunksComponent implements OnChanges, OnDestroy {
     this.offset.set(0);
     const target = this.targetChunk();
     this.load(
-      target ? Math.floor(target.position / 10) * 10 : 0,
+      target ? Math.floor(target.position / this.pageSize) * this.pageSize : 0,
       !!target || (!!changes['active'] && !changes['active'].firstChange),
     );
   }

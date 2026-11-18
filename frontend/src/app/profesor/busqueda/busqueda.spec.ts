@@ -122,4 +122,25 @@ describe('Búsqueda de fuentes', () => {
     expect(component.loading()).toBe(false);
     expect(component.error()).toBeTruthy();
   });
+  it('pagina diez resultados en grupos de cinco y reinicia una nueva búsqueda', () => {
+    const fixture = TestBed.createComponent(SearchComponent);
+    const c = fixture.componentInstance;
+    c.course = 'Cálculo';
+    c.query = 'derivadas';
+    c.topK = 10;
+    c.search();
+    http.expectOne('/api/v1/rag/search').flush({...response, results: Array.from({length: 10}, (_, i) => ({...response.results[0], id: `c${i}`}))});
+    fixture.detectChanges();
+    expect(c.visibleResults().map(hit => hit.id)).toEqual(['c0', 'c1', 'c2', 'c3', 'c4']);
+    const nav = fixture.nativeElement.querySelector('nav[aria-label="Páginas de fuentes"]');
+    expect(nav.querySelectorAll('button')[0].disabled).toBe(true);
+    nav.querySelectorAll('button')[1].click();
+    fixture.detectChanges();
+    expect(c.visibleResults().map(hit => hit.id)).toEqual(['c5', 'c6', 'c7', 'c8', 'c9']);
+    expect(nav.querySelectorAll('button')[1].disabled).toBe(true);
+    c.search();
+    http.expectOne('/api/v1/rag/search').flush(response);
+    expect(c.resultOffset()).toBe(0);
+  });
+
 });

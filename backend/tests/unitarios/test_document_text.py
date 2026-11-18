@@ -195,9 +195,10 @@ def test_chunks_exact_offsets_overlap_and_full_coverage_with_source_boundaries()
         assert matching[-1].char_end == len(unit.text)
         rebuilt = matching[0].text
         for previous, current in zip(matching, matching[1:]):
-            assert current.char_start == previous.char_end - 7
-            assert previous.text[-7:] == current.text[:7]
-            rebuilt += current.text[7:]
+            assert previous.char_start < current.char_start <= previous.char_end
+            overlap = previous.char_end - current.char_start
+            assert current.text[:overlap] == unit.text[current.char_start:previous.char_end]
+            rebuilt += current.text[overlap:]
         assert rebuilt == unit.text
         for chunk in matching:
             assert chunk.source_kind == "page"
@@ -211,6 +212,20 @@ def test_chunking_progresses_for_unbroken_text_and_near_full_overlap():
     assert [(chunk.char_start, chunk.char_end) for chunk in chunks] == [
         (index, index + 5) for index in range(12)
     ]
+
+
+@pytest.mark.parametrize("size,overlap", [(1000, 150), (40, 0), (40, 39)])
+def test_overlap_never_starts_inside_normal_words(size, overlap):
+    text = "La filosofía estudia las causas esenciales de la realidad. " * 40
+    chunks = DocumentTextService().chunk([TextUnit("page", 1, text)], size, overlap)
+    covered = 0
+    for chunk in chunks:
+        assert chunk.char_start <= covered
+        assert chunk.char_start == 0 or text[chunk.char_start - 1].isspace()
+        assert chunk.text == text[chunk.char_start:chunk.char_end]
+        assert len(chunk.text) <= size
+        covered = max(covered, chunk.char_end)
+    assert covered == len(text)
 
 
 def test_sentence_boundary_is_preferred_to_an_interior_word():

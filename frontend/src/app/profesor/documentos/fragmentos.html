@@ -5,7 +5,7 @@
     <span class="count">{{ total() }} {{ total() === 1 ? 'fragmento' : 'fragmentos' }}</span>
   </div>
 
-  <p class="help">Cada fragmento conserva su referencia exacta al documento o diapositiva original.</p>
+  <p class="help">Extractos de páginas o párrafos; pueden continuar en otro fragmento. Comprueba el original si faltan letras, fórmulas o contexto.</p>
 
   <!-- Error de Carga -->
   @if (error()) {
@@ -53,7 +53,7 @@
     <nav class="pagination" aria-label="Páginas de fragmentos">
       <button
         class="interactive-button"
-        (click)="load(offset() - 10, true)"
+        (click)="load(offset() - pageSize, true)"
         [disabled]="offset() === 0 || loading()"
       >
         Anteriores
@@ -65,7 +65,7 @@
 
       <button
         class="interactive-button"
-        (click)="load(offset() + 10, true)"
+        (click)="load(offset() + pageSize, true)"
         [disabled]="offset() + chunks().length >= total() || loading()"
       >
         Siguientes

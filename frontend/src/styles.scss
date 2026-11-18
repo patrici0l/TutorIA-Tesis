@@ -353,3 +353,38 @@ main a.back-link:focus-visible {
 
 .course-select-panel .content-kind { display: block; margin-top: 4px; color: var(--muted); font-size: .72rem; }
 .assignment-content-select { display: block; margin-top: 6px; font-weight: 400; text-transform: none; letter-spacing: normal; }
+
+/* Shared select density: the chosen value and menu use the same type scale. */
+.course-select.ng-select,
+.resource-course-select.ng-select,
+.course-select-panel.ng-dropdown-panel,
+.resource-course-panel.ng-dropdown-panel {
+  font-family: inherit;
+  font-size: .875rem;
+  line-height: 1.4;
+  text-transform: none;
+  letter-spacing: normal;
+}
+.course-select.ng-select .ng-value-label,
+.resource-course-select.ng-select .ng-value-label,
+.course-select.ng-select .ng-input input {
+  font-size: .875rem;
+  font-weight: 400;
+}
+.course-select-panel .ng-dropdown-panel-items,
+.resource-course-panel .ng-dropdown-panel-items {
+  max-height: 240px;
+  overflow-y: auto;
+}
+.course-select-panel .ng-dropdown-panel-items .ng-option,
+.resource-course-panel .ng-dropdown-panel-items .ng-option {
+  box-sizing: border-box;
+  height: 48px;
+  padding: 5px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: .875rem;
+  line-height: 18px;
+}
+.course-select-panel .content-kind { margin-top: 0; font-size: .75rem; line-height: 16px; }

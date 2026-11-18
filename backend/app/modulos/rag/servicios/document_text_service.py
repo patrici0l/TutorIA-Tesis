@@ -15,7 +15,7 @@ from pathlib import PurePosixPath
 from defusedxml import ElementTree
 from pypdf import PdfReader
 
-EXTRACTOR_VERSION = "text-v1"
+EXTRACTOR_VERSION = "text-v2"
 MAX_TEXT_CHARS = 500_000
 MAX_CHUNKS = 1000
 MAX_PAGES = 200
@@ -125,7 +125,15 @@ class DocumentTextService:
                 )
                 if end == len(unit.text):
                     break
-                start = end - chunk_overlap
+                target = end - chunk_overlap
+                # Keep overlap on a word boundary, without gaps or stalled loops.
+                # An oversized unbroken token must still use a bounded hard cut.
+                boundaries = [
+                    i for i in range(start + 1, end + 1)
+                    if i < len(unit.text) and unit.text[i - 1].isspace()
+                    and not unit.text[i].isspace()
+                ]
+                start = min(boundaries, key=lambda i: abs(i - target)) if boundaries else target
         if not chunks:
             raise ExtractionError("empty_text")
         return chunks

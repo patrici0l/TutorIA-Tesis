@@ -389,7 +389,8 @@
         }
         <details class="source-review" [open]="!sent()">
           <summary>Fuentes del recurso · {{ prepared.sources.length }}</summary>
-          @for (source of prepared.sources; track source.id) {
+          <p>Ordenadas por relevancia, no por número de página. Cada cita conserva su identificador.</p>
+          @for (source of prepared.sources.slice(sourceOffset(), sourceOffset() + 5); track source.id) {
             <article class="panel source">
               <p class="eyebrow">
                 {{ source.citation_id }} ·
@@ -401,6 +402,10 @@
                 <p>{{ source.course }} · Versión {{ source.version_number }}</p>
               }
               <p>{{ source.filename }} · Fragmento {{ source.position + 1 }}</p>
+              @if (source.processing_version === 'text-v1') {
+                <p role="status">Esta cita procede de una extracción anterior que puede cortar palabras. Revisa el original; puedes regenerar los fragmentos desde Documentos y crear un recurso nuevo.</p>
+              }
+              <a [href]="'/api/v1/documents/' + source.document_id + '/original'" target="_blank" rel="noopener">Consultar original ↗</a>
               <blockquote>{{ source.text }}</blockquote>
               <details>
                 <summary>Referencia verificable</summary>
@@ -418,6 +423,13 @@
                 </dl>
               </details>
             </article>
+          }
+          @if (prepared.sources.length > 5) {
+            <nav aria-label="Páginas de citas" class="actions">
+              <button type="button" (click)="sourceOffset.set(sourceOffset() - 5)" [disabled]="sourceOffset() === 0">Anteriores</button>
+              <span>Página {{ sourceOffset() / 5 + 1 }}</span>
+              <button type="button" (click)="sourceOffset.set(sourceOffset() + 5)" [disabled]="sourceOffset() + 5 >= prepared.sources.length">Siguientes</button>
+            </nav>
           }
         </details>
         @if (!sent() || generating()) {

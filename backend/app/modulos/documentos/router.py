@@ -105,7 +105,7 @@ def upload(
 def list_documents(
     service: Service,
     user: Owner,
-    limit: Annotated[int, Query(ge=1, le=100)] = 20,
+    limit: Annotated[int, Query(ge=1, le=100)] = 5,
     offset: Annotated[int, Query(ge=0)] = 0,
     course: Annotated[str | None, Query(min_length=1, max_length=160)] = None,
 ):
@@ -125,7 +125,7 @@ def text_search(
     user: Owner,
     course: Annotated[str, Query(min_length=1, max_length=160)],
     q: Annotated[str, Query(min_length=1, max_length=200)],
-    limit: Annotated[int, Query(ge=1, le=50)] = 20,
+    limit: Annotated[int, Query(ge=1, le=50)] = 5,
     offset: Annotated[int, Query(ge=0)] = 0,
 ):
     if not course.strip() or not q.strip():
@@ -188,8 +188,8 @@ def delete_document(identifier: UUID, service: Service, user: Owner):
     response_model=DocumentResponse,
     dependencies=[Depends(require_client_header)],
 )
-def process_document(identifier: UUID, service: IngestService, user: Owner):
-    return service.process(identifier, user.id)
+def process_document(identifier: UUID, service: IngestService, user: Owner, rebuild: bool = False):
+    return service.process(identifier, user.id, rebuild=rebuild)
 
 
 @router.get("/{identifier}/chunks", response_model=DocumentChunkList)
@@ -197,7 +197,7 @@ def list_chunks(
     identifier: UUID,
     service: IngestService,
     user: Owner,
-    limit: Annotated[int, Query(ge=1, le=50)] = 10,
+    limit: Annotated[int, Query(ge=1, le=50)] = 5,
     offset: Annotated[int, Query(ge=0)] = 0,
 ):
     service.documents.get(identifier, user.id)

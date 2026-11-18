@@ -25,12 +25,14 @@ export class AssignmentPracticeComponent implements OnInit {
   private readonly destroy = inject(DestroyRef);
   readonly auth = inject(AuthService);
   readonly assignment = signal<Assignment | null>(null);
+  readonly sourceOffset = signal(0);
   readonly loading = signal(true);
   readonly statusLabels = ASSIGNMENT_STATUS_LABELS;
   ngOnInit() {
     this.route.paramMap
       .pipe(
         tap(() => {
+          this.sourceOffset.set(0);
           this.assignment.set(null);
           this.loading.set(true);
         }),

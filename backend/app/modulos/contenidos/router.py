@@ -65,7 +65,7 @@ def history(
     user: Owner,
     service: Annotated[HistoryService, Depends(get_history_service)],
     offset: Annotated[int, Query(ge=0, le=100000)] = 0,
-    limit: Annotated[int, Query(ge=1, le=20)] = 10,
+    limit: Annotated[int, Query(ge=1, le=20)] = 5,
 ):
     return service.page(user.id, offset, limit)
 

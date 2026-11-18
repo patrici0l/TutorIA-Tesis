@@ -52,7 +52,7 @@ describe('Perfiles sintéticos', () => {
       schema_version: 'performance-profile-v1',
     });
     http
-      .expectOne('/api/v1/profiles?offset=0&limit=10')
+      .expectOne('/api/v1/profiles?offset=0&limit=5')
       .flush({ items: [], total: 1, offset: 0, limit: 10 });
     expect(component.selected()?.id).toBe('saved');
     http.verify();

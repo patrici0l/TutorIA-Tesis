@@ -10,7 +10,7 @@ export class ProfileService {
     return this.http.post<ProfileResponse>('/api/v1/profiles', request);
   }
   page(offset = 0) {
-    return this.http.get<ProfilePage>('/api/v1/profiles', { params: { offset, limit: 10 } });
+    return this.http.get<ProfilePage>('/api/v1/profiles', { params: { offset, limit: 5 } });
   }
   detail(id: string) {
     return this.http.get<ProfileResponse>(`/api/v1/profiles/${id}`);

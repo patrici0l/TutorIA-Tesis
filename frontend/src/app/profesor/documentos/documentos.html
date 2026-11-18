@@ -5,7 +5,7 @@
     <span class="eyebrow">GESTIÓN ACADÉMICA</span>
     <h1 class="font-serif">Documentos</h1>
     <p class="lead-subtitle">
-      Consulta, organiza y supervisa la indexación analítica de los materiales de tus asignaturas.
+      Sube materiales, revisa su texto y habilítalos para crear recursos.
     </p>
   </div>
   @if (canManage()) {
@@ -21,13 +21,13 @@
         <button
           type="button"
           class="secondary interactive-button"
-          (click)="enableAllPending()"
+          (click)="prepareAllPending()"
           [disabled]="locked()"
         >
           {{
-            autoEnabling()
-              ? 'Habilitando…'
-              : 'Habilitar pendientes (' + pendingDocuments().length + ')'
+            autoPreparing()
+              ? 'Preparando…'
+              : 'Preparar pendientes de esta página (' + pendingDocuments().length + ')'
           }}
         </button>
       }
@@ -103,7 +103,7 @@
     </button>
 
     <div class="field-group search-field">
-      <label for="text-query">Buscar en el contenido indexado (OCR y fragmentos)</label>
+      <label for="text-query">Buscar en el texto extraído</label>
       <input
         id="text-query"
         [(ngModel)]="textQuery"
@@ -314,12 +314,12 @@
             id="document-auto-enable"
             type="checkbox"
             name="autoEnable"
-            [(ngModel)]="autoEnableOnUpload"
+            [(ngModel)]="autoPrepareOnUpload"
             [disabled]="locked()"
           />
           <span>
-            <strong>Preparar, indexar y habilitar automáticamente al guardar</strong>
-            <small>Ejecuta los 3 pasos automáticamente para dejar los documentos listos en Recursos.</small>
+            <strong>Preparar para revisión al guardar</strong>
+            <small>Extrae el texto y prepara la búsqueda. Revisa el resultado antes de habilitarlo como fuente.</small>
           </span>
         </label>
       </section>
@@ -450,7 +450,7 @@
           </svg>
           <span>
             Los documentos son privados. Después de guardarlos, podrás extraer su texto, indexarlos
-            y habilitar varios materiales por asignatura.
+            y preparar varios materiales por asignatura.
           </span>
         </p>
       </section>
@@ -524,23 +524,34 @@
           <li [class.complete]="!!document.published_at">3. Revisar y habilitar</li>
         </ol>
 
-        @if (!document.published_at && document.permission_recorded_at) {
+        @if (!document.published_at && document.permission_recorded_at && document.index_status !== 'indexed') {
           <div class="auto-prepare-bar">
             <div>
-              <strong>Preparación rápida en 1 paso</strong>
-              <p>Extrae el texto, genera el índice vectorial y habilita este material como fuente.</p>
+              <strong>Preparar material</strong>
+              <p>Prepara el texto y la búsqueda. Después podrás revisar los fragmentos y habilitar la fuente.</p>
             </div>
             <button
               type="button"
               class="auto-prepare-btn"
-              (click)="prepareAndPublish(document)"
+              (click)="prepareForReview(document)"
               [disabled]="locked()"
             >
-              {{ autoEnabling() ? 'Preparando y habilitando…' : 'Preparar y habilitar automáticamente' }}
+              {{ autoPreparing() ? 'Preparando…' : 'Preparar para revisión' }}
             </button>
           </div>
         }
 
+        @if (document.processing_status === 'processed' && document.processing_version !== 'text-v2') {
+          <p role="status">Este texto usa una extracción anterior y puede contener palabras cortadas.
+            Retira la fuente si está habilitada y regenera sus fragmentos. Los recursos guardados conservan sus citas originales; crea uno nuevo para usar el texto corregido.</p>
+        }
+        @if (document.processing_status === 'processed') {
+          <details class="vector-tools">
+            <summary>Corregir extracción anterior</summary>
+            <p>Vuelve a extraer el archivo original. Después deberás preparar la búsqueda, revisar y habilitar la fuente.</p>
+            <button class="secondary" (click)="process(true)" [disabled]="locked() || !!document.published_at || document.index_status === 'indexing'">Regenerar fragmentos</button>
+          </details>
+        }
         <!-- Etapa 1: Extracción de texto -->
         @if (document.processing_status !== 'processed') {
           <div class="processing">
@@ -578,7 +589,7 @@
           </div>
         } @else {
           <!-- Etapa 2: Indexación vectorial y revisión de fragmentos -->
-          <details class="vector-tools" [open]="document.index_status !== 'indexed'">
+          <details class="vector-tools">
             <summary>2. Preparar para buscar fuentes</summary>
             <div
               id="document-index"
@@ -645,6 +656,8 @@
             (toggle)="reviewingFragments.set(fragmentReview.open)"
           >
             <summary>Revisar fragmentos · {{ document.chunk_count }}</summary>
+            <a class="action-link" [href]="'/api/v1/documents/' + document.id + '/original'" target="_blank" rel="noopener">Consultar archivo original ↗</a>
+            <p class="help">Si el archivo está escaneado, aplica OCR fuera de la aplicación y carga una nueva versión. No se completan palabras ni fórmulas automáticamente.</p>
             <app-document-chunks
               [documentId]="document.id"
               [active]="reviewingFragments()"

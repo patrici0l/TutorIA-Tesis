@@ -128,7 +128,7 @@
           <a class="action-link" routerLink="/documentos">Ir a documentos ↗</a>
         </div>
       }
-      @for (hit of result.results; track hit.id) {
+      @for (hit of visibleResults(); track hit.id) {
         <article class="panel source">
           <div class="heading">
             <div>
@@ -164,6 +164,13 @@
         Recuperación local por distancia coseno. Estos fragmentos son citas del material, no una
         respuesta generada por IA.
       </p>
+      @if (result.results.length > 5) {
+        <nav aria-label="Páginas de fuentes" class="actions">
+          <button (click)="pageResults(resultOffset() - 5)" [disabled]="resultOffset() === 0">Anteriores</button>
+          <span>{{ resultOffset() + 1 }}–{{ resultOffset() + visibleResults().length }} de {{ result.results.length }}</span>
+          <button (click)="pageResults(resultOffset() + 5)" [disabled]="resultOffset() + 5 >= result.results.length">Siguientes</button>
+        </nav>
+      }
     </section>
   }
 }

@@ -13,7 +13,7 @@ class ChunkRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def claim(self, identifier: UUID, owner: UUID) -> UUID | None:
+    def claim(self, identifier: UUID, owner: UUID, rebuild: bool = False) -> UUID | None:
         now, token = datetime.now(UTC), uuid4()
         result = self.db.execute(
             update(Document)
@@ -23,6 +23,10 @@ class ChunkRepository:
                 Document.deleted_at.is_(None),
                 or_(
                     Document.processing_status.in_(["pending", "failed"]),
+                    (Document.processing_status == "processed")
+                    & Document.published_at.is_(None)
+                    & (Document.index_status != "indexing")
+                    & rebuild,
                     (Document.processing_status == "processing")
                     & (Document.processing_started_at < now - timedelta(minutes=2)),
                 ),
@@ -32,6 +36,14 @@ class ChunkRepository:
                 processing_token=token,
                 processing_started_at=now,
                 processing_error=None,
+                index_status="pending",
+                index_token=None,
+                index_error=None,
+                index_started_at=None,
+                indexed_at=None,
+                embedding_model=None,
+                embedding_revision=None,
+                embedding_version=None,
             )
             .execution_options(synchronize_session=False)
         )

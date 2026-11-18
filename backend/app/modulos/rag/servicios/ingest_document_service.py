@@ -39,9 +39,15 @@ class IngestDocumentService:
     def __init__(self, documents: DocumentService, repository: ChunkRepository, settings: Settings):
         self.documents, self.repository, self.settings = documents, repository, settings
 
-    def process(self, identifier: UUID, owner: UUID):
+    def process(self, identifier: UUID, owner: UUID, rebuild: bool = False):
         document = self.documents.get(identifier, owner)
-        if document.processing_status == "processed":
+        if rebuild and (document.published_at or document.index_status == "indexing"):
+            raise HTTPException(
+                409,
+                "Retira el material de recursos y espera a que termine la búsqueda "
+                "antes de regenerar el texto.",
+            )
+        if document.processing_status == "processed" and not rebuild:
             return document
         # Capture immutable file metadata before claiming. claim commits the read
         # transaction; extraction must not hold a database transaction open.
@@ -59,10 +65,10 @@ class IngestDocumentService:
                 429, "Hay dos documentos en procesamiento. Inténtalo en un momento."
             )
         try:
-            token = self.repository.claim(identifier, owner)
+            token = self.repository.claim(identifier, owner, rebuild=rebuild)
             if not token:
                 document = self.documents.get(identifier, owner)
-                if document.processing_status == "processed":
+                if document.processing_status == "processed" and not rebuild:
                     return document
                 raise HTTPException(
                     409, "El documento ya se está procesando. Actualiza su detalle."

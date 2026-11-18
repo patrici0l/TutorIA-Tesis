@@ -25,6 +25,12 @@ export class SearchComponent {
   readonly loading = signal(false);
   readonly error = signal('');
   readonly response = signal<SearchResponse | null>(null);
+  readonly resultOffset = signal(0);
+  readonly visibleResults = computed(() => this.response()?.results.slice(this.resultOffset(), this.resultOffset() + 5) ?? []);
+  pageResults(offset: number) {
+    this.resultOffset.set(offset);
+    this.attention.reveal('results-title');
+  }
   course = '';
   query = '';
   topK = 5;
@@ -52,6 +58,7 @@ export class SearchComponent {
     this.loading.set(true);
     this.error.set('');
     this.response.set(null);
+    this.resultOffset.set(0);
     this.service
       .search(query, this.topK, this.minSimilarity, this.course.trim())
       .pipe(takeUntilDestroyed(this.destroy))

@@ -159,10 +159,10 @@ describe('Documentos propios', () => {
       text_chars: 24,
     });
     fixture.detectChanges();
-    http.expectNone('/api/v1/documents/doc-1/chunks?limit=10&offset=0');
+    http.expectNone('/api/v1/documents/doc-1/chunks?limit=5&offset=0');
     component.reviewingFragments.set(true);
     fixture.detectChanges();
-    http.expectOne('/api/v1/documents/doc-1/chunks?limit=10&offset=0').flush({
+    http.expectOne('/api/v1/documents/doc-1/chunks?limit=5&offset=0').flush({
       items: [
         {
           id: 'chunk-1',
@@ -418,7 +418,7 @@ describe('Documentos propios', () => {
       .flush({ ...sampleDocument, processing_status: 'processed', chunk_count: 2 });
     fixture.detectChanges();
     const element: HTMLElement = fixture.nativeElement;
-    expect(element.querySelector<HTMLDetailsElement>('.vector-tools')!.open).toBe(true);
+    expect(element.querySelector<HTMLDetailsElement>('.vector-tools')!.open).toBe(false);
     expect(element.querySelector<HTMLDetailsElement>('.fragment-review')!.open).toBe(false);
     expect(element.querySelector('#document-publication button')!.hasAttribute('disabled')).toBe(
       true,
@@ -461,7 +461,7 @@ describe('Documentos propios', () => {
     expect(component.reviewingFragments()).toBe(true);
     expect(component.selectedChunk()?.id).toBe('found');
     http
-      .expectOne('/api/v1/documents/doc-1/chunks?limit=10&offset=10')
+      .expectOne('/api/v1/documents/doc-1/chunks?limit=5&offset=10')
       .flush({ items: [hit], total: 14, limit: 10, offset: 10 });
     component.closePanel();
   });
@@ -496,7 +496,7 @@ describe('Documentos propios', () => {
     expect(component.selectedFiles().length).toBe(0);
     expect(component.success()).toContain('Se guardaron 2 documentos');
   });
-  it('procesa, indexa y habilita automáticamente en un solo paso cuando se solicita', () => {
+  it('procesa e indexa sin omitir la revisión docente', () => {
     const fixture = setup();
     const component = fixture.componentInstance;
     const docWithPermission: CourseDocument = {
@@ -506,7 +506,7 @@ describe('Documentos propios', () => {
     };
     component.documents.set([docWithPermission]);
     component.selected.set(docWithPermission);
-    component.prepareAndPublish(docWithPermission);
+    component.prepareForReview(docWithPermission);
 
     http.expectOne('/api/v1/documents/doc-1/process').flush({
       ...docWithPermission,
@@ -519,14 +519,77 @@ describe('Documentos propios', () => {
       index_status: 'indexed',
       chunk_count: 3,
     });
-    http.expectOne('/api/v1/documents/doc-1/publish').flush({
-      ...docWithPermission,
-      processing_status: 'processed',
-      index_status: 'indexed',
-      published_at: '2026-11-17T22:00:00Z',
-      chunk_count: 3,
-    });
-    expect(component.selected()?.published_at).toBe('2026-11-17T22:00:00Z');
-    expect(component.success()).toContain('habilitado automáticamente como fuente');
+    http.expectNone('/api/v1/documents/doc-1/publish');
+    expect(component.selected()?.published_at).toBeFalsy();
+    expect(component.success()).toContain('listo para revisar');
   });
+  it('prepara para revisión sin publicar automáticamente', () => {
+    const fixture = setup();
+    const component = fixture.componentInstance;
+    component.selected.set(sampleDocument);
+    component.prepareForReview();
+    http.expectOne('/api/v1/documents/doc-1/process').flush({ ...sampleDocument, processing_status: 'processed' });
+    http.expectOne('/api/v1/documents/doc-1/index').flush({ ...sampleDocument, processing_status: 'processed', index_status: 'indexed' });
+    http.expectNone('/api/v1/documents/doc-1/publish');
+    expect(component.reviewingFragments()).toBe(true);
+    expect(component.success()).toContain('listo para revisar');
+    expect(component.locked()).toBe(false);
+  });
+
+  it('continúa una carga parcial y conserva solo los archivos fallidos para reintentar', () => {
+    const fixture = setup();
+    const component = fixture.componentInstance;
+    const files = ['uno.txt', 'dos.txt', 'tres.txt'].map(name => new File(['texto'], name));
+    component.file.set(files[0]);
+    component.extraFiles.set(files.slice(1));
+    component.title = 'Uno';
+    component.course = 'Filosofía';
+    component.sourceReference = 'Propio';
+    component.permissionNote = 'Autorizado';
+    component.authorizationConfirmed = true;
+    component.upload(fixture.nativeElement.querySelector('input[type=file]'));
+    http.expectOne('/api/v1/documents/upload').flush(sampleDocument);
+    http.expectOne('/api/v1/documents/upload').flush({detail: 'Error del segundo'}, {status: 500, statusText: 'Error'});
+    http.expectOne('/api/v1/documents/upload').flush({ ...sampleDocument, id: 'doc-3' });
+    http.expectOne('/api/v1/documents?limit=5&offset=0').flush({items: [], total: 2});
+    expect(component.selectedFiles()).toEqual([files[1]]);
+    expect(component.error()).toContain('dos.txt');
+    expect(component.success()).toContain('2 documentos guardados');
+    expect(component.locked()).toBe(false);
+  });
+
+  it('prepara el archivo recién cargado sin una lectura paralela que sobrescriba su estado', () => {
+    const fixture = setup();
+    const component = fixture.componentInstance;
+    component.file.set(new File(['texto'], 'uno.txt'));
+    component.title = 'Uno';
+    component.course = 'Filosofía';
+    component.sourceReference = 'Propio';
+    component.permissionNote = 'Autorizado';
+    component.authorizationConfirmed = true;
+    component.autoPrepareOnUpload = true;
+    component.upload(fixture.nativeElement.querySelector('input[type=file]'));
+    http.expectOne('/api/v1/documents/upload').flush(sampleDocument);
+    http.expectOne('/api/v1/documents?limit=5&offset=0').flush({items: [sampleDocument], total: 1});
+    http.expectNone('/api/v1/documents/doc-1');
+    http.expectOne('/api/v1/documents/doc-1/process').flush({ ...sampleDocument, processing_status: 'processed' });
+    http.expectOne('/api/v1/documents/doc-1/index').flush({ ...sampleDocument, processing_status: 'processed', index_status: 'indexed' });
+    expect(component.selected()?.index_status).toBe('indexed');
+    http.expectNone('/api/v1/documents/doc-1/publish');
+  });
+
+  it('prepara los demás documentos del lote aunque uno falle', () => {
+    const fixture = setup();
+    const component = fixture.componentInstance;
+    component.documents.set(['doc-1', 'doc-2'].map(id => ({...sampleDocument, id, course: 'Filosofía', permission_recorded_at: '2026-11-17'})));
+    component.prepareAllPending();
+    http.expectOne('/api/v1/documents/doc-1/process').flush({detail: 'Sin texto'}, {status: 422, statusText: 'Error'});
+    http.expectOne('/api/v1/documents/doc-2/process').flush({...sampleDocument, id: 'doc-2', processing_status: 'processed'});
+    http.expectOne('/api/v1/documents/doc-2/index').flush({...sampleDocument, id: 'doc-2', processing_status: 'processed', index_status: 'indexed'});
+    http.expectOne('/api/v1/documents?limit=5&offset=0').flush({items: [], total: 2});
+    expect(component.error()).toContain('Sin texto');
+    expect(component.success()).toContain('1 de 2');
+    expect(component.locked()).toBe(false);
+  });
+
 });

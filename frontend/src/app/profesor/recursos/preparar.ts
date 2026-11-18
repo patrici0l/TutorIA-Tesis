@@ -51,6 +51,8 @@ import { ProfilePage, ProfileSummary } from '../perfiles/perfiles.model';
   styleUrls: ['./preparar.scss', './compacto.scss'],
 })
 export class PreparationComponent implements OnInit {
+  readonly sourceOffset = signal(0);
+
   private readonly catalog = inject(CourseCatalogService);
   readonly courses = signal<CourseOption[]>([]);
   readonly coursesLoading = signal(false);
@@ -233,6 +235,7 @@ export class PreparationComponent implements OnInit {
     this.editing.set(true);
     this.historyDetail.set(null);
     this.restoredPending.set(false);
+    this.sourceOffset.set(0);
     this.result.set(null);
     this.generation.set(null);
     this.sent.set(false);
@@ -241,6 +244,7 @@ export class PreparationComponent implements OnInit {
   restore(detail: HistoryDetail) {
     if (this.loading() || this.generating()) return;
     this.clearResult();
+    this.sourceOffset.set(0);
     this.result.set(detail.preparation);
     this.historyDetail.set(detail);
     this.sent.set(detail.status !== 'prepared');
@@ -299,6 +303,7 @@ export class PreparationComponent implements OnInit {
   }
   prepare() {
     if (!this.canPrepare() || this.loading() || this.generating()) return;
+    this.sourceOffset.set(0);
     this.result.set(null);
     this.historyDetail.set(null);
     const topic = this.topic.trim(),
@@ -340,6 +345,7 @@ export class PreparationComponent implements OnInit {
         next: (response) => {
           this.generation.set(null);
           this.sent.set(false);
+          this.sourceOffset.set(0);
           this.result.set(response);
           this.loading.set(false);
           this.showResult();

@@ -10,7 +10,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class AssignmentService {
   private readonly http = inject(HttpClient);
-  list(offset = 0, limit = 10) {
+  list(offset = 0, limit = 5) {
     return this.http.get<AssignmentPage>('/api/v1/practice/assignments', {
       params: { offset, limit },
     });

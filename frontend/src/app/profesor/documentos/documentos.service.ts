@@ -32,14 +32,14 @@ export class DocumentService {
   }
   searchText(course: string, query: string, offset = 0) {
     return this.http.get<TextSearchPage>('/api/v1/documents/text-search', {
-      params: { course, q: query, limit: 20, offset },
+      params: { course, q: query, limit: 5, offset },
     });
   }
   delete(id: string) {
     return this.http.delete<void>(`/api/v1/documents/${id}`);
   }
-  process(id: string) {
-    return this.http.post<CourseDocument>(`/api/v1/documents/${id}/process`, null);
+  process(id: string, rebuild = false) {
+    return this.http.post<CourseDocument>(`/api/v1/documents/${id}/process${rebuild ? '?rebuild=true' : ''}`, null);
   }
   index(id: string, rebuild = false) {
     return this.http.post<CourseDocument>(
@@ -55,7 +55,7 @@ export class DocumentService {
   }
   chunks(id: string, offset = 0) {
     return this.http.get<DocumentChunkList>(
-      `/api/v1/documents/${id}/chunks?limit=10&offset=${offset}`,
+      `/api/v1/documents/${id}/chunks?limit=5&offset=${offset}`,
     );
   }
 }
