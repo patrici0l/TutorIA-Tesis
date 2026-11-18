@@ -32,7 +32,7 @@ export class PracticeService {
   }
   progress(offset = 0) {
     return this.http.get<PracticeProgress>('/api/v1/practice/attempts', {
-      params: { offset, limit: 10 },
+      params: { offset, limit: 5 },
     });
   }
 }

@@ -6,6 +6,22 @@ import { PracticeComponent } from './practica';
 
 describe('Práctica del estudiante', () => {
   const service = { progress: vi.fn(), save: vi.fn() };
+  it('permite consultar el historial y volver sin perder la respuesta actual', async () => {
+    const f = TestBed.createComponent(PracticeComponent);
+    await f.whenStable();
+    const c = f.componentInstance;
+    c.choose(1);
+    c.showHistory();
+    await f.whenStable();
+    expect(c.activeView()).toBe('history');
+    expect(f.nativeElement.querySelector('section[aria-labelledby="history-title"]').hidden).toBe(false);
+    expect(c.selected()).toBe(1);
+    c.activeView.set('practice');
+    await f.whenStable();
+    expect(c.selected()).toBe(1);
+    expect(c.answers()).toEqual([]);
+    expect(service.save).not.toHaveBeenCalled();
+  });
   it('explica el cierre durante una práctica sin perder las respuestas del alumno', async () => {
     const f = TestBed.createComponent(PracticeComponent);
     f.componentRef.setInput('assignment', { id: 'assigned', version: 'reglas-v1', status: 'open' });

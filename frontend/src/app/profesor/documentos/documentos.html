@@ -9,13 +9,29 @@
     </p>
   </div>
   @if (canManage()) {
-    <button
-      class="primary-upload-btn interactive-button"
-      (click)="openUpload()"
-      [disabled]="locked()"
-    >
-      + Subir documento
-    </button>
+    <div class="heading-actions">
+      <button
+        class="primary-upload-btn interactive-button"
+        (click)="openUpload()"
+        [disabled]="locked()"
+      >
+        + Subir documento
+      </button>
+      @if (pendingDocuments().length > 0) {
+        <button
+          type="button"
+          class="secondary interactive-button"
+          (click)="enableAllPending()"
+          [disabled]="locked()"
+        >
+          {{
+            autoEnabling()
+              ? 'Habilitando…'
+              : 'Habilitar pendientes (' + pendingDocuments().length + ')'
+          }}
+        </button>
+      }
+    </div>
   }
 </header>
 
@@ -46,39 +62,36 @@
 
   <!-- Barra de búsqueda semántica y filtro por asignatura -->
   <section class="panel search-bar fade-in" aria-label="Buscar materiales">
+    <div class="filter-heading"><h2>Explorar documentos</h2><span>{{ total() }} documentos · {{ courseOptions().length }} asignaturas</span></div>
     <div class="field-group">
       <label for="filter-course">Filtrar por asignatura</label>
-      <p-select
-        inputId="filter-course"
-        styleClass="course-select"
-        appendTo="body"
-        [options]="courseOptions()"
+      <ng-select
+        class="course-select"
+        panelClass="course-select-panel"
+        labelForId="filter-course"
+        [items]="courseOptions()"
         [(ngModel)]="filterCourse"
-        optionLabel="label"
-        optionValue="value"
+        bindLabel="label"
+        bindValue="value"
         placeholder="Todas las asignaturas"
-        [filter]="true"
-        filterBy="label"
-        filterPlaceholder="Buscar asignatura…"
-        [showClear]="true"
-        [resetFilterOnHide]="true"
-        emptyFilterMessage="No se encontraron asignaturas"
-        emptyMessage="No hay asignaturas disponibles"
+        typeToSearchText="Escribe para buscar…"
+        notFoundText="No se encontraron asignaturas"
+        loadingText="Cargando materias…"
         [loading]="loadingCourses()"
         [disabled]="loading() || loadingCourses()"
+        [searchable]="true"
+        [clearable]="true"
+        [fixedPlaceholder]="false"
         (ngModelChange)="resetTextSearch()"
-        (onClear)="clearCourse()"
+        (clear)="clearCourse()"
       >
-        <ng-template #item let-course>
+        <ng-template ng-option-tmp let-course="item">
           <div class="course-option">
             <span>{{ course.label }}</span>
             <small>{{ course.documents }} {{ course.documents === 1 ? 'documento' : 'documentos' }}</small>
           </div>
         </ng-template>
-        <ng-template #selectedItem let-course>
-          <span>{{ course.label }}</span>
-        </ng-template>
-      </p-select>
+      </ng-select>
     </div>
 
     <button
@@ -86,7 +99,7 @@
       (click)="load(0, true)"
       [disabled]="locked() || loading()"
     >
-      Filtrar
+      Aplicar filtro
     </button>
 
     <div class="field-group search-field">
@@ -210,147 +223,259 @@
 
   <!-- Formulario de subida / nueva versión -->
   <div [hidden]="panelMode() !== 'upload'" class="drawer-body">
-    <p>PDF, DOCX o TXT · Hasta 10 MiB.</p>
-    <form (ngSubmit)="upload(fileInput)">
-      <label for="document-title">Título</label>
-      <input
-        id="document-title"
-        name="title"
-        [(ngModel)]="title"
-        maxlength="160"
-        required
-        [disabled]="locked()"
-        placeholder="Ej. Introducción a las derivadas"
-      />
+    <div class="form-intro">
+      <span class="form-intro-icon" aria-hidden="true">DOC</span>
+      <p>Completa los datos del material y registra su procedencia antes de guardarlo.</p>
+    </div>
+    <form class="document-upload-form" (ngSubmit)="upload(fileInput)">
+      <section class="form-section" aria-labelledby="material-section-title">
+        <div class="form-section-heading">
+          <span class="form-step" aria-hidden="true">01</span>
+          <div>
+            <h3 id="material-section-title">Datos del material</h3>
+            <p>Identifica el documento y la asignatura a la que pertenece.</p>
+          </div>
+        </div>
 
-      <label for="document-course">Asignatura</label>
-      <input
-        id="document-course"
-        name="course"
-        [(ngModel)]="course"
-        list="course-options"
-        maxlength="160"
-        required
-        [disabled]="locked()"
-      />
+        <div class="form-fields">
+          <label class="form-field" for="document-title">
+            <span>
+              {{ selectedFiles().length > 1 ? 'Título principal (1.er archivo)' : 'Título' }}
+              <em>{{ selectedFiles().length > 1 ? 'Demás usan su nombre' : 'Requerido' }}</em>
+            </span>
+            <input
+              id="document-title"
+              name="title"
+              [(ngModel)]="title"
+              maxlength="160"
+              [required]="selectedFiles().length <= 1"
+              [disabled]="locked()"
+              placeholder="Ej. Introducción a las derivadas"
+            />
+          </label>
 
-      <label for="document-source">
-        Procedencia (autor, institución o referencia del material)
-      </label>
-      <input
-        id="document-source"
-        name="source"
-        [(ngModel)]="sourceReference"
-        maxlength="500"
-        required
-        [disabled]="locked()"
-      />
+          <label class="form-field" for="document-course">
+            <span>Asignatura <em>Requerido</em></span>
+            <input
+              id="document-course"
+              name="course"
+              [(ngModel)]="course"
+              list="course-options"
+              maxlength="160"
+              required
+              [disabled]="locked()"
+              placeholder="Ej. Cálculo Diferencial"
+            />
+          </label>
 
-      <label for="document-permission">
-        Permiso de uso (quién lo autoriza y evidencia o licencia)
-      </label>
-      <input
-        id="document-permission"
-        name="permission"
-        [(ngModel)]="permissionNote"
-        maxlength="500"
-        required
-        [disabled]="locked()"
-      />
+          <label class="form-field" for="document-source">
+            <span>Procedencia <em>Requerido</em></span>
+            <input
+              id="document-source"
+              name="source"
+              [(ngModel)]="sourceReference"
+              maxlength="500"
+              required
+              [disabled]="locked()"
+              placeholder="Autor, institución o referencia del material"
+            />
+          </label>
 
-      <label>
-        <input
-          type="checkbox"
-          name="authorized"
-          [(ngModel)]="authorizationConfirmed"
-          [disabled]="locked()"
-        />
-        Confirmo que dispongo de permiso para usar este material.
-      </label>
+          <label class="form-field" for="document-permission">
+            <span>Permiso de uso <em>Requerido</em></span>
+            <input
+              id="document-permission"
+              name="permission"
+              [(ngModel)]="permissionNote"
+              maxlength="500"
+              required
+              [disabled]="locked()"
+              placeholder="Quién lo autoriza y evidencia o licencia"
+            />
+          </label>
+        </div>
+
+        <label class="authorization-card" for="document-authorized">
+          <input
+            id="document-authorized"
+            type="checkbox"
+            name="authorized"
+            [(ngModel)]="authorizationConfirmed"
+            [disabled]="locked()"
+          />
+          <span>
+            <strong>Confirmo que tengo permiso para usar este material.</strong>
+            <small>La autorización debe estar respaldada por la procedencia indicada.</small>
+          </span>
+        </label>
+
+        <label class="authorization-card" for="document-auto-enable">
+          <input
+            id="document-auto-enable"
+            type="checkbox"
+            name="autoEnable"
+            [(ngModel)]="autoEnableOnUpload"
+            [disabled]="locked()"
+          />
+          <span>
+            <strong>Preparar, indexar y habilitar automáticamente al guardar</strong>
+            <small>Ejecuta los 3 pasos automáticamente para dejar los documentos listos en Recursos.</small>
+          </span>
+        </label>
+      </section>
 
       @if (previousVersionId) {
-        <p>Selecciona el archivo actualizado. Se conserva la versión anterior.</p>
-        <button type="button" (click)="previousVersionId = undefined" [disabled]="locked()">
-          Cargar como documento independiente
-        </button>
+        <div class="version-notice">
+          <p>Selecciona el archivo actualizado. Se conserva la versión anterior.</p>
+          <button type="button" class="secondary" (click)="previousVersionId = undefined" [disabled]="locked()">
+            Cargar como documento independiente
+          </button>
+        </div>
       }
 
-      <!-- Zona interactiva de selección y arrastre de archivo -->
-      <label for="document-file">Archivo del curso</label>
-      <div
-        class="upload-zone"
-        [class.is-dragging]="dragging()"
-        (dragover)="onDragOver($event)"
-        (dragleave)="onDragLeave($event)"
-        (drop)="onDrop($event, fileInput)"
-      >
-        <input
-          #fileInput
-          id="document-file"
-          class="visually-hidden-file"
-          type="file"
-          accept=".pdf,.docx,.txt"
-          (change)="choose($event)"
-          [disabled]="locked()"
-          aria-describedby="file-help"
-        />
-
-        @if (file(); as selectedFile) {
-          <!-- Vista previa del archivo cargado -->
-          <article class="selected-file-card" aria-label="Archivo seleccionado">
-            <div class="file-icon" [attr.data-type]="fileType(selectedFile)">
-              {{ fileType(selectedFile) }}
-            </div>
-
-            <div class="selected-file-info">
-              <strong [title]="selectedFile.name">{{ selectedFile.name }}</strong>
-              <span>{{ size(selectedFile.size) }} · Listo para guardar</span>
-            </div>
-
-            <button
-              type="button"
-              class="secondary"
-              (click)="fileInput.click()"
-              [disabled]="locked()"
-            >
-              Reemplazar
-            </button>
-            <button
-              type="button"
-              class="remove-file"
-              (click)="removeFile(fileInput)"
-              [disabled]="locked()"
-              aria-label="Quitar archivo"
-            >
-              ×
-            </button>
-          </article>
-        } @else {
-          <!-- Área de arrastre vacía -->
-          <div class="upload-prompt">
-            <span class="upload-icon" aria-hidden="true">↑</span>
-            <h3>Arrastra aquí el documento</h3>
-            <p>PDF, DOCX o TXT · hasta 10 MiB</p>
-            <button
-              type="button"
-              class="secondary"
-              (click)="fileInput.click()"
-              [disabled]="locked()"
-            >
-              Explorar archivos
-            </button>
+      <section class="form-section file-section" aria-labelledby="file-section-title">
+        <div class="form-section-heading">
+          <span class="form-step" aria-hidden="true">02</span>
+          <div>
+            <h3 id="file-section-title">
+              {{ previousVersionId ? 'Archivo actualizado' : 'Archivos de la asignatura' }}
+            </h3>
+            <p>
+              {{
+                previousVersionId
+                  ? 'PDF, DOCX o TXT · máximo 10 MiB'
+                  : 'Puedes seleccionar o arrastrar uno o varios archivos (PDF, DOCX o TXT · máx. 10 MiB c/u)'
+              }}
+            </p>
           </div>
-        }
+        </div>
+
+        <div
+          class="upload-zone"
+          [class.has-file]="!!file()"
+          [class.is-dragging]="dragging()"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event, fileInput)"
+        >
+          <input
+            #fileInput
+            id="document-file"
+            class="visually-hidden-file"
+            type="file"
+            accept=".pdf,.docx,.txt"
+            [multiple]="!previousVersionId"
+            (change)="choose($event)"
+            [disabled]="locked()"
+            aria-describedby="file-help"
+          />
+
+          @if (selectedFiles().length > 0) {
+            <div class="selected-files-list">
+              @for (selectedFile of selectedFiles(); track selectedFile.name + selectedFile.size; let idx = $index) {
+                <article class="selected-file-card" aria-label="Archivo seleccionado">
+                  <div class="file-icon" [attr.data-type]="fileType(selectedFile)">
+                    {{ fileType(selectedFile) }}
+                  </div>
+                  <div class="selected-file-info">
+                    <strong [title]="selectedFile.name">{{ selectedFile.name }}</strong>
+                    <span>{{ size(selectedFile.size) }} · Listo para guardar</span>
+                  </div>
+                  @if (selectedFiles().length === 1) {
+                    <button
+                      type="button"
+                      class="secondary replace-file"
+                      (click)="fileInput.click()"
+                      [disabled]="locked()"
+                    >
+                      {{ previousVersionId ? 'Reemplazar' : '+ Añadir más' }}
+                    </button>
+                  }
+                  <button
+                    type="button"
+                    class="remove-file"
+                    (click)="removeFile(fileInput, idx)"
+                    [disabled]="locked()"
+                    aria-label="Quitar archivo"
+                  >
+                    ×
+                  </button>
+                </article>
+              }
+              @if (selectedFiles().length > 1 && !previousVersionId) {
+                <div class="multi-file-toolbar">
+                  <span>{{ selectedFiles().length }} archivos seleccionados para «{{ course || 'la asignatura' }}»</span>
+                  <div class="actions">
+                    <button
+                      type="button"
+                      class="secondary"
+                      (click)="fileInput.click()"
+                      [disabled]="locked()"
+                    >
+                      + Añadir más archivos
+                    </button>
+                    <button
+                      type="button"
+                      class="secondary"
+                      (click)="clearAllFiles(fileInput)"
+                      [disabled]="locked()"
+                    >
+                      Vaciar lista
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="upload-prompt">
+              <span class="upload-icon" aria-hidden="true">↑</span>
+              <h3>{{ previousVersionId ? 'Arrastra aquí el documento' : 'Arrastra aquí uno o varios documentos' }}</h3>
+              <p>o selecciónalos desde tu equipo para esta asignatura</p>
+              <button
+                type="button"
+                class="secondary"
+                (click)="fileInput.click()"
+                [disabled]="locked()"
+              >
+                Explorar archivos
+              </button>
+            </div>
+          }
+        </div>
+
+        <p id="file-help" class="privacy-note">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="4.5" y="10" width="15" height="11" rx="2" />
+            <path d="M8 10V7a4 4 0 1 1 8 0v3m-4 4v3" />
+          </svg>
+          <span>
+            Los documentos son privados. Después de guardarlos, podrás extraer su texto, indexarlos
+            y habilitar varios materiales por asignatura.
+          </span>
+        </p>
+      </section>
+
+      <div class="form-actions">
+        <span>Los campos marcados como requeridos y la autorización son obligatorios.</span>
+        <button
+          type="submit"
+          class="save-document-button"
+          [disabled]="
+            locked() ||
+            !file() ||
+            (!title.trim() && selectedFiles().length <= 1) ||
+            !metadataReady()
+          "
+        >
+          {{
+            busy()
+              ? 'Guardando…'
+              : selectedFiles().length > 1
+                ? 'Guardar ' + selectedFiles().length + ' documentos'
+                : 'Guardar documento'
+          }}
+        </button>
       </div>
-
-      <p id="file-help">
-        Tu documento será privado. Después de guardarlo, abre sus detalles para extraer el texto y
-        prepararlo para la búsqueda.
-      </p>
-
-      <button type="submit" [disabled]="locked() || !file() || !title.trim() || !metadataReady()">
-        {{ busy() ? 'Guardando…' : 'Guardar documento' }}
-      </button>
     </form>
   </div>
 
@@ -398,6 +523,23 @@
           <li [class.complete]="document.index_status === 'indexed'">2. Preparar búsqueda</li>
           <li [class.complete]="!!document.published_at">3. Revisar y habilitar</li>
         </ol>
+
+        @if (!document.published_at && document.permission_recorded_at) {
+          <div class="auto-prepare-bar">
+            <div>
+              <strong>Preparación rápida en 1 paso</strong>
+              <p>Extrae el texto, genera el índice vectorial y habilita este material como fuente.</p>
+            </div>
+            <button
+              type="button"
+              class="auto-prepare-btn"
+              (click)="prepareAndPublish(document)"
+              [disabled]="locked()"
+            >
+              {{ autoEnabling() ? 'Preparando y habilitando…' : 'Preparar y habilitar automáticamente' }}
+            </button>
+          </div>
+        }
 
         <!-- Etapa 1: Extracción de texto -->
         @if (document.processing_status !== 'processed') {
@@ -568,10 +710,17 @@
               {{ (document.permission_recorded_at | date: 'dd/MM/yyyy HH:mm') || 'Sin registrar' }}
             </dd>
           </dl>
-          <button (click)="newVersion(document)" [disabled]="locked()">Cargar nueva versión</button>
-          @if (document.previous_version_id) {
-            <button class="secondary" (click)="openPrevious()">Ver versión anterior</button>
-          }
+          <div class="actions">
+            <button type="button" (click)="openUpload(document)" [disabled]="locked()">
+              + Subir otro documento a esta materia
+            </button>
+            <button class="secondary" (click)="newVersion(document)" [disabled]="locked()">
+              Cargar nueva versión de este archivo
+            </button>
+            @if (document.previous_version_id) {
+              <button class="secondary" (click)="openPrevious()">Ver versión anterior</button>
+            }
+          </div>
         </section>
       }
 

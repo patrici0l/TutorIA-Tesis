@@ -4,6 +4,6 @@ import { RouterLink } from '@angular/router';
   selector: 'app-student-home',
   imports: [RouterLink],
   templateUrl: './inicio.html',
-  styleUrl: './inicio.scss',
+  styleUrls: ['./inicio.scss', './inicio-ajustes.scss'],
 })
 export class StudentHomeComponent {}

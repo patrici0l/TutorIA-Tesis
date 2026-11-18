@@ -1,3 +1,4 @@
+import { NgSelectComponent, NgOptionTemplateDirective } from '@ng-select/ng-select';
 import { CourseCatalogService, CourseOption } from '../documentos/asignaturas.service';
 // Separa preparación revisable, envío único e historial para evitar generaciones duplicadas.
 import {
@@ -37,6 +38,8 @@ import { ProfilePage, ProfileSummary } from '../perfiles/perfiles.model';
   selector: 'app-resource-preparation',
   imports: [
     FormsModule,
+    NgSelectComponent,
+    NgOptionTemplateDirective,
     RouterLink,
     ResourceViewComponent,
     ResourceHistoryComponent,
@@ -45,7 +48,7 @@ import { ProfilePage, ProfileSummary } from '../perfiles/perfiles.model';
     GenerationQuotaComponent,
   ],
   templateUrl: './preparar.html',
-  styleUrl: './preparar.scss',
+  styleUrls: ['./preparar.scss', './compacto.scss'],
 })
 export class PreparationComponent implements OnInit {
   private readonly catalog = inject(CourseCatalogService);

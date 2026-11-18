@@ -1,0 +1,97 @@
+[hidden] {
+  display: none !important;
+}
+.practice-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0;
+}
+.practice-tabs [aria-pressed='true'] {
+  color: white;
+  background: var(--navy);
+  border-color: var(--navy);
+}
+.panel {
+  padding: 18px 20px;
+  margin-top: 14px;
+  box-shadow: none;
+}
+h2 {
+  font-size: 1.15rem;
+}
+fieldset label {
+  padding: 10px 12px;
+}
+.history-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+.history-heading p {
+  font-size: 0.8rem;
+  margin: 6px 0;
+}
+.history-totals {
+  font-size: 0.8rem;
+  color: var(--muted);
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.attempt-list > li {
+  padding: 10px 0;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  background: transparent;
+}
+.attempt-info h3 {
+  font-size: 0.9rem;
+  margin: 0 0 5px;
+}
+.attempt-info time {
+  font-size: 0.75rem;
+}
+.attempt-result {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.attempt-score {
+  display: grid;
+  gap: 4px;
+  font-size: 0.8rem;
+}
+meter {
+  width: 100px;
+  height: 9px;
+}
+.history-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.8rem;
+}
+.result-explanations summary {
+  cursor: pointer;
+  padding: 10px 0;
+  color: var(--blue);
+  font-size: 0.85rem;
+}
+#attempt-review > button:first-of-type {
+  margin-bottom: 14px;
+}
+@media (max-width: 600px) {
+  .panel {
+    padding: 16px;
+  }
+  .history-heading {
+    align-items: start;
+    flex-wrap: wrap;
+  }
+  .attempt-result {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}

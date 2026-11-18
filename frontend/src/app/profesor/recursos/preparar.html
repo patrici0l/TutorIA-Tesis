@@ -5,40 +5,45 @@
     <a class="action-link" routerLink="/inicio">Volver al inicio</a>
   </section>
 } @else {
-   <!-- Encabezado Editorial -->
+  <!-- Encabezado Editorial -->
   <header class="intro page-heading fade-in">
     <p class="eyebrow">DEL MATERIAL A LA PRÁCTICA</p>
     <h1 class="font-serif">Recursos</h1>
-    <p class="lead-subtitle">Elige una asignatura, indica qué necesitas y revisa las fuentes antes de generar.</p>
+    <p class="lead-subtitle">
+      Elige una asignatura, indica qué necesitas y revisa las fuentes antes de generar.
+    </p>
   </header>
 
   <!-- Pestañas del Espacio de Trabajo -->
-  <nav class="workspace-tabs fade-in" aria-label="Recursos">
-    <button
-      type="button"
-      class="secondary interactive-button"
-      [attr.aria-pressed]="workspaceMode() === 'create'"
-      [disabled]="loading() || generating()"
-      (click)="result() ? showResult() : showEditor()"
-    >
-      Crear recurso
-    </button>
-    <button
-      type="button"
-      class="secondary interactive-button"
-      [attr.aria-pressed]="workspaceMode() === 'saved'"
-      [disabled]="loading() || generating()"
-      (click)="showSaved()"
-    >
-      Mis recursos
-    </button>
-  </nav>
+  <div class="resource-tools">
+    <nav class="workspace-tabs fade-in" aria-label="Recursos">
+      <button
+        type="button"
+        class="secondary interactive-button"
+        [attr.aria-pressed]="workspaceMode() === 'create'"
+        [disabled]="loading() || generating()"
+        (click)="result() ? showResult() : showEditor()"
+      >
+        {{ historyDetail() && !editing() ? 'Recurso abierto' : 'Crear recurso' }}
+      </button>
+      <button
+        type="button"
+        class="secondary interactive-button"
+        [attr.aria-pressed]="workspaceMode() === 'saved'"
+        [disabled]="loading() || generating()"
+        (click)="showSaved()"
+      >
+        Mis recursos
+      </button>
+    </nav>
+    <app-generation-quota [refresh]="quotaRefresh()" />
+  </div>
 
   <!-- Pasos Guiados del Flujo Editorial -->
   <ol
     class="workflow fade-in"
     aria-label="Pasos para crear y asignar"
-    [hidden]="workspaceMode() !== 'create'"
+    [hidden]="workspaceMode() !== 'create' || !!historyDetail()"
   >
     <li>
       <button
@@ -92,34 +97,35 @@
     >
       <div [hidden]="inputStep() !== 'course'">
         <h2 id="course-title" tabindex="-1">1. Elige una asignatura</h2>
-        <p>
-          Estas son las asignaturas de tus documentos. Para continuar, necesitas al menos un
-          material habilitado.
-        </p>
+        <p>Selecciona una asignatura con fuentes habilitadas para crear tu recurso.</p>
         <label for="resource-course">Asignatura</label>
-        <select
-          id="resource-course"
+        <ng-select
+          class="resource-course-select"
+          panelClass="resource-course-panel"
+          labelForId="resource-course"
           name="course"
+          [items]="courses()"
+          bindLabel="label"
+          bindValue="value"
           [(ngModel)]="course"
           (ngModelChange)="chooseCourse()"
+          [clearable]="false"
+          [searchable]="true"
+          [loading]="coursesLoading()"
           [disabled]="coursesLoading() || loading() || generating()"
-          aria-describedby="course-availability"
+          placeholder="Busca una asignatura"
+          notFoundText="No se encontraron asignaturas"
         >
-          <option value="">
-            {{ coursesLoading() ? 'Consultando asignaturas…' : 'Selecciona una asignatura' }}
-          </option>
-          @for (item of courses(); track item.value) {
-            <option [value]="item.value">
-              {{ item.label }} ·
-              {{
-                item.enabled
-                  ? item.enabled +
-                    (item.enabled === 1 ? ' material habilitado' : ' materiales habilitados')
-                  : 'Falta habilitar material'
-              }}
-            </option>
-          }
-        </select>
+          <ng-template ng-option-tmp let-item="item"
+            ><span>{{ item.label }}</span
+            ><small class="course-count"
+              >{{ item.enabled }}
+              {{ item.enabled === 1 ? 'fuente habilitada' : 'fuentes habilitadas' }} ·
+              {{ item.documents }}
+              {{ item.documents === 1 ? 'documento' : 'documentos' }}</small
+            ></ng-template
+          >
+        </ng-select>
         <div id="course-availability" role="status">
           @if (coursesError()) {
             <p role="alert">{{ coursesError() }}</p>
@@ -264,89 +270,6 @@
                 preparación.
               </p>
             }
-            <details class="profile-options">
-              <summary>
-                Personalización opcional{{ selectedProfile() ? ' · Perfil seleccionado' : '' }}
-              </summary>
-              <p class="help">
-                Usa un perfil del mismo tema para ajustar la dificultad y el apoyo.
-              </p>
-              <button
-                type="button"
-                class="secondary"
-                (click)="loadProfiles()"
-                [disabled]="loadingProfiles()"
-              >
-                {{
-                  loadingProfiles()
-                    ? 'Consultando…'
-                    : profilePage()
-                      ? 'Actualizar perfiles'
-                      : 'Elegir perfil'
-                }}
-              </button>
-              @if (profilePage(); as page) {
-                <div id="profile-picker" tabindex="-1" class="profile-picker">
-                  <label for="profile-select">Perfil de aprendizaje</label>
-                  <select
-                    id="profile-select"
-                    name="profile"
-                    [ngModel]="selectedProfile()?.id ?? ''"
-                    (ngModelChange)="selectProfile($event)"
-                    [disabled]="loadingProfiles()"
-                  >
-                    <option value="">Sin perfil · Dificultad manual</option>
-                    @if (selectedProfile(); as chosen) {
-                      <option [value]="chosen.id">
-                        Seleccionado: {{ chosen.student_id }} · {{ chosen.topic }} ·
-                        {{ masteryLabel(chosen.mastery_level) }}
-                      </option>
-                    }
-                    @for (profile of page.items; track profile.id) {
-                      @if (profile.id !== selectedProfile()?.id) {
-                        <option [value]="profile.id">
-                          {{ profile.student_id }} · {{ profile.topic }} ·
-                          {{ masteryLabel(profile.mastery_level) }}
-                        </option>
-                      }
-                    }
-                  </select>
-                  @if (!page.total) {
-                    <p>
-                      No tienes perfiles.
-                      <a class="action-link" routerLink="/perfiles">Crear un perfil</a>
-                    </p>
-                  }
-                  @if (page.total > page.limit) {
-                    <div class="profile-pagination">
-                      <button
-                        type="button"
-                        class="secondary"
-                        (click)="loadProfiles(page.offset - page.limit)"
-                        [disabled]="loadingProfiles() || page.offset === 0"
-                      >
-                        Anteriores
-                      </button>
-                      <span
-                        >{{ page.offset + 1 }}–{{ page.offset + page.items.length }} de
-                        {{ page.total }}</span
-                      >
-                      <button
-                        type="button"
-                        class="secondary"
-                        (click)="loadProfiles(page.offset + page.limit)"
-                        [disabled]="loadingProfiles() || page.offset + page.limit >= page.total"
-                      >
-                        Siguientes
-                      </button>
-                    </div>
-                  }
-                </div>
-              }
-              <p id="profile-feedback" tabindex="-1" role="status" class="help">
-                {{ profileMessage() }}
-              </p>
-            </details>
             <p class="help">
               En el siguiente paso revisarás las fuentes encontradas. El recurso se generará solo
               cuando lo confirmes.
@@ -368,10 +291,6 @@
         </form>
       </div>
     </section>
-    <details class="panel">
-      <summary>Disponibilidad de generación</summary>
-      <app-generation-quota [refresh]="quotaRefresh()" />
-    </details>
   </div>
   @if (error()) {
     <p id="resource-error" tabindex="-1" class="notice error" role="alert">
@@ -383,7 +302,7 @@
   }
   @if (workspaceMode() === 'create' && !editing() && result(); as prepared) {
     <section class="results" aria-labelledby="sources-title" aria-live="polite">
-      <div class="panel confirmation">
+      <div class="panel resource-document">
         <p class="eyebrow">
           {{
             generation()?.status === 'succeeded'
@@ -396,14 +315,40 @@
         <h2 id="sources-title" tabindex="-1">
           {{ label(prepared.resource_type) }} · {{ prepared.topic }}
         </h2>
-        <p>{{ prepared.learning_objective }}</p>
-        <div class="result-actions">
-          <button type="button" class="secondary" [disabled]="generating()" (click)="showEditor()">
-            Volver al formulario</button
+        <details class="learning-objective">
+          <summary>Objetivo de aprendizaje</summary>
+          <p>{{ prepared.learning_objective }}</p>
+        </details>
+        <div class="result-actions document-actions">
+          @if (generation()?.resource) {
+            <a
+              class="action-link"
+              routerLink="/actividades"
+              [queryParams]="{ resource: prepared.id }"
+              >Asignar este recurso →</a
+            >
+          }
+
+          <button
+            type="button"
+            class="secondary"
+            [disabled]="generating()"
+            (click)="clearResult(); showEditor()"
+          >
+            Crear otro recurso</button
           ><button type="button" class="secondary" [disabled]="generating()" (click)="showSaved()">
-            Mis recursos
+            ← Volver a Mis recursos
           </button>
         </div>
+        @if (generation(); as generated) {
+          @if (generated.resource; as resource) {
+            <h2 id="generated-title" class="content-label" tabindex="-1">Contenido</h2>
+            <p role="status">{{ resource.resource_type === 'QUIZ' ? 'Vista previa del quiz · Responde o consulta el solucionario antes de asignarlo.' : 'Material de estudio · Revisa el contenido antes de asignarlo.' }}</p>
+            <app-resource-view [resource]="resource" [compact]="true" [teacherView]="true" />
+          } @else {
+            <p id="generation-feedback" tabindex="-1" role="alert">{{ generated.message }}</p>
+          }
+        }
         @if (prepared.adaptation; as adaptation) {
           <div class="status-note">
             <h3>Adaptación revisable</h3>
@@ -432,14 +377,16 @@
             </p>
           </div>
         }
-        <p>
-          3. Revisa que estas fuentes correspondan a tu tema. Si son adecuadas, pulsa Generar
-          recurso.
-        </p>
-        <p>
-          Si generas el recurso, revisa el resultado con tus materiales: la IA puede cometer
-          errores.
-        </p>
+        @if (!generation()?.resource) {
+          <p>
+            3. Revisa que estas fuentes correspondan a tu tema. Si son adecuadas, pulsa Generar
+            recurso.
+          </p>
+          <p>
+            Si generas el recurso, revisa el resultado con tus materiales: la IA puede cometer
+            errores.
+          </p>
+        }
         <details class="source-review" [open]="!sent()">
           <summary>Fuentes del recurso · {{ prepared.sources.length }}</summary>
           @for (source of prepared.sources; track source.id) {
@@ -490,24 +437,6 @@
             Esta solicitud está registrada como pendiente. Consulta de nuevo el historial para
             comprobar su resultado; no vuelvas a enviarla.
           </p>
-        }
-        @if (generation(); as generated) {
-          @if (generated.resource; as resource) {
-            <h2 id="generated-title" tabindex="-1">4. Revisa el recurso y asígnalo</h2>
-            <p role="status">
-              Revisa el contenido y sus soluciones antes de asignarlo. Se compartirá como material
-              de estudio, sin corrección automática.
-            </p>
-            <app-resource-view [resource]="resource" />
-            <a
-              class="action-link"
-              routerLink="/actividades"
-              [queryParams]="{ resource: prepared.id }"
-              >Asignar este recurso →</a
-            >
-          } @else {
-            <p id="generation-feedback" tabindex="-1" role="alert">{{ generated.message }}</p>
-          }
         }
         <details>
           <summary>Identificador de la preparación</summary>

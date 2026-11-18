@@ -25,6 +25,9 @@ describe('Disponibilidad de generación', () => {
     f.detectChanges();
     expect(f.nativeElement.textContent).toContain('3 de 5 solicitudes disponibles');
     expect(f.nativeElement.textContent).toContain('40% del cupo consumido');
+    expect(f.nativeElement.querySelector('svg').getAttribute('aria-label')).toBe('40% del cupo consumido');
+    expect(f.nativeElement.querySelector('.ring-used').getAttribute('stroke-dasharray')).toBe('40 100');
+    expect(f.componentInstance.usedPercent({ daily_limit: 0, used: 0 } as never)).toBe(0);
     f.componentRef.setInput('refresh', 1);
     f.detectChanges();
     http.expectOne('/api/v1/content/quota').flush({}, { status: 503, statusText: 'Unavailable' });

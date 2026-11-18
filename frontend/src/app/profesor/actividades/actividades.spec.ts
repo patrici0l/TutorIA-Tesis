@@ -1,3 +1,4 @@
+import { By } from '@angular/platform-browser';
 import { PreparationService } from '../recursos/recursos.service';
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
@@ -142,6 +143,12 @@ describe('Actividades asignadas', () => {
       Array.from(f.nativeElement.querySelectorAll('button') as NodeListOf<HTMLButtonElement>).find(
         (b) => b.textContent?.trim() === label,
       )!;
+    expect(c.activeView()).toBe('assign');
+    expect(f.nativeElement.querySelector('.activity-stats')).toBeNull();
+    c.activeView.set('tracking');
+    await f.whenStable();
+    button('Ver detalle').click();
+    await f.whenStable();
     button('Cerrar actividad').click();
     await f.whenStable();
     expect(service.changeStatus).not.toHaveBeenCalled();
@@ -178,7 +185,7 @@ describe('Actividades asignadas', () => {
     await student.whenStable();
     expect(student.nativeElement.textContent).not.toContain('Reactivar actividad');
     expect(student.nativeElement.querySelector('a[href="/actividades/abc"]').textContent).toContain(
-      'Ver actividad y resultados',
+      'Ver resultados',
     );
   });
   it('al cambiar un recurso por ejercicios muestra y envía solo el contenido elegido', async () => {
@@ -194,9 +201,8 @@ describe('Actividades asignadas', () => {
     const f = TestBed.createComponent(TeacherAssignmentsComponent);
     await f.whenStable();
     const c = f.componentInstance;
-    const content = f.nativeElement.querySelector('select[name="version"]') as HTMLSelectElement;
-    content.value = c.banks[0].version;
-    content.dispatchEvent(new Event('change', { bubbles: true }));
+    const content = f.debugElement.query(By.css('ng-select[name="version"]'));
+    content.triggerEventHandler('ngModelChange', c.banks[0].version);
     await f.whenStable();
     c.email = 'estudiante.demo@example.org';
     expect(f.nativeElement.textContent).not.toContain('Se comparte con sus fuentes y soluciones');

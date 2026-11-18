@@ -16,6 +16,7 @@ pytestmark = trace_marks
 def test_metrics_empty_preserves_unknown_instead_of_zero(trace_database):
     db, _, owners = trace_database
     summary = MetricsService(MetricsRepository(db)).summary(owners[0])
+    assert summary.daily == []
     assert summary.total_records == summary.execution_records == 0
     assert summary.input_tokens.known_sum is None
     assert summary.total_tokens.known_sum is None
@@ -69,6 +70,10 @@ def test_metrics_private_mixed_states_partial_usage_and_legacy(trace_database):
     service = MetricsService(MetricsRepository(db))
     for _ in range(2):
         summary = service.summary(owners[0])
+        assert sum(point.records for point in summary.daily) == 5
+        assert sum(point.input_tokens or 0 for point in summary.daily) == 20
+        assert sum(point.output_tokens or 0 for point in summary.daily) == 10
+        assert sum(point.latency_records for point in summary.daily) == 2
         assert summary.total_records == 5
         assert (summary.prepared, summary.generating, summary.succeeded, summary.failed) == (
             1,

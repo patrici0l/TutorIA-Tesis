@@ -1,3 +1,5 @@
+import { of } from 'rxjs';
+import { CourseCatalogService } from './asignaturas.service';
 import { ViewAttention } from '../../compartido/atencion-vista.service';
 import { provideRouter } from '@angular/router';
 import { TestBed } from '@angular/core/testing';
@@ -54,6 +56,7 @@ describe('Documentos propios', () => {
     await TestBed.configureTestingModule({
       imports: [DocumentsComponent],
       providers: [
+        { provide: CourseCatalogService, useValue: { load: () => of([]) } },
         provideRouter([]),
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -67,8 +70,8 @@ describe('Documentos propios', () => {
     const fixture = TestBed.createComponent(DocumentsComponent);
     fixture.detectChanges();
     http
-      .expectOne('/api/v1/documents?limit=20&offset=0')
-      .flush({ items: [], total: 0, limit: 20, offset: 0 });
+      .expectOne('/api/v1/documents?limit=5&offset=0')
+      .flush({ items: [], total: 0, limit: 5, offset: 0 });
     return fixture;
   }
   it('limita el espacio docente sin consultar documentos para estudiantes', () => {
@@ -76,7 +79,7 @@ describe('Documentos propios', () => {
     const fixture = TestBed.createComponent(DocumentsComponent);
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('Espacio docente');
-    http.expectNone('/api/v1/documents?limit=20&offset=0');
+    http.expectNone('/api/v1/documents?limit=5&offset=0');
   });
   it('carga multipart, actualiza la biblioteca y consulta detalles', () => {
     const fixture = setup();
@@ -95,8 +98,8 @@ describe('Documentos propios', () => {
     upload.flush(sampleDocument);
     http.expectOne('/api/v1/documents/doc-1').flush(sampleDocument);
     http
-      .expectOne('/api/v1/documents?limit=20&offset=0')
-      .flush({ items: [sampleDocument], total: 1, limit: 20, offset: 0 });
+      .expectOne('/api/v1/documents?limit=5&offset=0')
+      .flush({ items: [sampleDocument], total: 1, limit: 5, offset: 0 });
     expect(component.file()).toBeNull();
     component.view(component.documents()[0]);
     http.expectOne('/api/v1/documents/doc-1').flush(sampleDocument);
@@ -131,8 +134,8 @@ describe('Documentos propios', () => {
     expect(request.request.method).toBe('DELETE');
     request.flush(null);
     http
-      .expectOne('/api/v1/documents?limit=20&offset=0')
-      .flush({ items: [], total: 0, limit: 20, offset: 0 });
+      .expectOne('/api/v1/documents?limit=5&offset=0')
+      .flush({ items: [], total: 0, limit: 5, offset: 0 });
     expect(component.pendingDelete()).toBeNull();
     expect(component.success()).toBe('Documento eliminado.');
   });
@@ -323,7 +326,7 @@ describe('Documentos propios', () => {
     const request = http.expectOne((r) => r.url === '/api/v1/documents/text-search');
     expect(request.request.params.get('course')).toBe('Probabilidad y Estadística');
     expect(request.request.params.get('q')).toBe('media');
-    request.flush({ items: [], total: 0, limit: 20, offset: 0 });
+    request.flush({ items: [], total: 0, limit: 5, offset: 0 });
     expect(component.textResults()?.total).toBe(0);
   });
   it('cancela resultados pendientes cuando cambia el filtro', () => {
@@ -461,5 +464,69 @@ describe('Documentos propios', () => {
       .expectOne('/api/v1/documents/doc-1/chunks?limit=10&offset=10')
       .flush({ items: [hit], total: 14, limit: 10, offset: 10 });
     component.closePanel();
+  });
+  it('permite seleccionar y subir varios documentos seguidos para una misma asignatura', () => {
+    const fixture = setup();
+    const component = fixture.componentInstance;
+    const input = fixture.nativeElement.querySelector('input[type=file]') as HTMLInputElement;
+    component.file.set(new File(['tema 1'], 'sesion_01.pdf', { type: 'application/pdf' }));
+    component.extraFiles.set([
+      new File(['tema 2'], 'sesion_02.pdf', { type: 'application/pdf' }),
+    ]);
+    component.title = 'Sesión 1';
+    component.course = 'Cálculo Diferencial';
+    component.sourceReference = 'Material UPS';
+    component.permissionNote = 'Autorizado por cátedra';
+    component.authorizationConfirmed = true;
+    expect(component.selectedFiles().length).toBe(2);
+    component.upload(input);
+    const firstUpload = http.expectOne('/api/v1/documents/upload');
+    expect(firstUpload.request.body.get('title')).toBe('Sesión 1');
+    expect(firstUpload.request.body.get('course')).toBe('Cálculo Diferencial');
+    firstUpload.flush({ ...sampleDocument, id: 'doc-1', title: 'Sesión 1' });
+
+    const secondUpload = http.expectOne('/api/v1/documents/upload');
+    expect(secondUpload.request.body.get('title')).toBe('sesion_02');
+    expect(secondUpload.request.body.get('course')).toBe('Cálculo Diferencial');
+    secondUpload.flush({ ...sampleDocument, id: 'doc-2', title: 'sesion_02' });
+
+    http
+      .expectOne('/api/v1/documents?limit=5&offset=0')
+      .flush({ items: [sampleDocument], total: 2, limit: 5, offset: 0 });
+    expect(component.selectedFiles().length).toBe(0);
+    expect(component.success()).toContain('Se guardaron 2 documentos');
+  });
+  it('procesa, indexa y habilita automáticamente en un solo paso cuando se solicita', () => {
+    const fixture = setup();
+    const component = fixture.componentInstance;
+    const docWithPermission: CourseDocument = {
+      ...sampleDocument,
+      course: 'Cálculo Diferencial',
+      permission_recorded_at: '2026-11-12T22:00:00Z',
+    };
+    component.documents.set([docWithPermission]);
+    component.selected.set(docWithPermission);
+    component.prepareAndPublish(docWithPermission);
+
+    http.expectOne('/api/v1/documents/doc-1/process').flush({
+      ...docWithPermission,
+      processing_status: 'processed',
+      chunk_count: 3,
+    });
+    http.expectOne('/api/v1/documents/doc-1/index').flush({
+      ...docWithPermission,
+      processing_status: 'processed',
+      index_status: 'indexed',
+      chunk_count: 3,
+    });
+    http.expectOne('/api/v1/documents/doc-1/publish').flush({
+      ...docWithPermission,
+      processing_status: 'processed',
+      index_status: 'indexed',
+      published_at: '2026-11-17T22:00:00Z',
+      chunk_count: 3,
+    });
+    expect(component.selected()?.published_at).toBe('2026-11-17T22:00:00Z');
+    expect(component.success()).toContain('habilitado automáticamente como fuente');
   });
 });

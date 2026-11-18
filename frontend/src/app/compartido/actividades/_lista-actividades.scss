@@ -135,13 +135,13 @@ p {
 }
 
 .badge.inactive {
-  background: #f4f3ef;
+  background: var(--paper-warm);
   border-color: var(--border-dark);
   color: var(--caption);
 }
 
 .badge.type-badge {
-  background: #f0f5fc;
+  background: var(--blue-soft);
   border-color: #bad3f0;
   color: var(--blue-dark);
 }
@@ -235,7 +235,7 @@ p {
   gap: 6px;
   min-height: 42px;
   padding: 9px 18px;
-  background: var(--navy);
+  background: var(--blue);
   color: #ffffff;
   border-radius: var(--radius-md);
   font-size: 0.875rem;
@@ -247,7 +247,7 @@ p {
     transform 140ms var(--ease-editorial);
 
   &:hover {
-    background: var(--navy-hover);
+    background: var(--navy);
     transform: translateY(-1px);
     box-shadow: var(--shadow-lifted);
   }
@@ -271,6 +271,22 @@ p {
     font-weight: 600;
     color: var(--navy);
     margin: 18px 0 8px;
+  }
+
+  .resource-actions {
+    margin: 12px 0 0;
+  }
+
+  fieldset {
+    margin: 18px 0 0;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: #fff;
+  }
+
+  fieldset > label:first-child {
+    margin-top: 0;
   }
 
   label {
@@ -322,7 +338,7 @@ p {
    ========================================================================== */
 
 button {
-  background: var(--navy);
+  background: var(--blue);
   color: #ffffff;
   border: 1px solid transparent;
   border-radius: var(--radius-md);
@@ -342,7 +358,7 @@ button {
     transform 140ms var(--ease-editorial);
 
   &:hover:not(:disabled) {
-    background: var(--navy-hover);
+    background: var(--navy);
     transform: translateY(-1px);
     box-shadow: var(--shadow-lifted);
   }
@@ -370,7 +386,7 @@ button.secondary {
 
   &:hover:not(:disabled) {
     background: var(--paper-warm);
-    border-color: #cac5b8;
+    border-color: var(--blue);
     color: var(--navy);
   }
 }

@@ -1,45 +1,150 @@
+@use '@angular/cdk/overlay-prebuilt.css';
+@use '@ng-select/ng-select/themes/default.theme.css';
 @use './app/compartido/estilos/movimiento';
 
 :root {
   color-scheme: light;
 
-  /* Identidad Institucional UPS & Editorial Académica */
-  --navy: #0a2540;
-  --navy-hover: #06182a;
-  --blue: #004b93;
-  --blue-dark: #003370;
-  --gold: #b8860b;
-  --gold-warm: #c27803;
+  /* Identidad Institucional UPS (Portal Web & CAS) */
+  --navy: #003672;
+  --navy-hover: #002855;
+  --blue: #0065b2;
+  --blue-dark: #12457a;
+  --gold: #f2b705;
+  --gold-warm: #d49a00;
 
-  /* Superficies Táctiles de Papel & Contenedores */
-  --surface: #faf9f5;
+  /* Superficies Institucionales Limpias */
+  --surface: #f3f6fb;
   --surface-card: #ffffff;
-  --paper-warm: #f5f3eb;
-  --blue-soft: #eef4fc;
+  --paper-warm: #f5f7fa;
+  --blue-soft: #e3effd;
 
-  /* Tintas Tipográficas de Alta Legibilidad */
-  --ink: #1a1e23;
-  --muted: #5a626f;
-  --caption: #7d8594;
+  /* Tintas de Texto (Portal UPS) */
+  --ink: #2c2c2c;
+  --text-main: #2c2c2c;
+  --muted: #55606e;
+  --text-muted: #55606e;
+  --caption: #717d8a;
 
-  /* Filetes y Bordes Archivísticos */
-  --border: #e6e4dc;
-  --border-dark: #dcd8ce;
+  /* ng-select, alineado con la paleta clara de la aplicación */
+  --ng-select-highlight: var(--blue);
+  --ng-select-primary-text: var(--ink);
+  --ng-select-border: var(--border-dark);
+  --ng-select-border-dark: #aebcd0;
+  --ng-select-border-light: var(--border);
+  --ng-select-border-lighter: var(--border);
+  --ng-select-border-radius: var(--radius-md);
+  --ng-select-bg: var(--surface-card);
+  --ng-select-selected: var(--blue-soft);
+  --ng-select-selected-text: var(--navy);
+  --ng-select-marked: var(--paper-warm);
+  --ng-select-marked-text: var(--navy);
+  --ng-select-placeholder: var(--caption);
+  --ng-select-height: 42px;
+  --ng-select-value-text: var(--ink);
+  --ng-select-dropdown-bg: var(--surface-card);
+  --ng-select-dropdown-border: var(--border);
+  --ng-select-dropdown-option-bg: var(--surface-card);
+  --ng-select-dropdown-option-text: var(--ink);
+  --ng-select-input-text: var(--ink);
+
+  /* Filetes y Bordes Institucionales */
+  --border: #dce3ec;
+  --border-subtle: #e5ebf3;
+  --border-dark: #c5d0de;
 
   /* Tipografías Oficiales */
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-serif: 'Newsreader', Georgia, serif;
 
-  /* Sombras Difusas Naturales (pigmentadas con tinta navy) */
-  --shadow-resting: 0 2px 6px rgba(10, 37, 64, 0.04), 0 8px 16px rgba(10, 37, 64, 0.02);
-  --shadow-lifted: 0 4px 16px rgba(10, 37, 64, 0.08), 0 16px 32px rgba(10, 37, 64, 0.04);
-  --shadow-dropdown: 0 10px 25px -5px rgba(10, 37, 64, 0.08), 0 8px 10px -6px rgba(10, 37, 64, 0.04);
+  /* Sombras Difusas Naturales (pigmentadas con azul UPS) */
+  --shadow-resting: 0 2px 6px rgba(0, 54, 114, 0.05), 0 8px 16px rgba(0, 54, 114, 0.03);
+  --shadow-lifted: 0 4px 16px rgba(0, 54, 114, 0.1), 0 16px 32px rgba(0, 54, 114, 0.05);
+  --shadow-dropdown: 0 10px 25px -5px rgba(0, 54, 114, 0.1), 0 8px 10px -6px rgba(0, 54, 114, 0.05);
 
   /* Curvaturas Armónicas */
   --radius-sm: 6px;
   --radius-md: 8px;
   --radius-lg: 14px;
   --radius-full: 9999px;
+}
+
+/* ng-select renders its menu in the CDK overlay, outside the component tree. */
+.course-select.ng-select .ng-select-container {
+  min-height: 42px;
+  border: 1px solid var(--border-dark) !important;
+  border-radius: var(--radius-md);
+  background: var(--surface-card) !important;
+  color: var(--ink) !important;
+  box-shadow: none !important;
+}
+
+.course-select.ng-select.ng-select-focused .ng-select-container {
+  border-color: var(--blue) !important;
+  box-shadow: 0 0 0 3px rgba(0, 101, 178, 0.14) !important;
+}
+
+.course-select.ng-select .ng-value-label,
+.course-select.ng-select .ng-input input {
+  color: var(--ink) !important;
+}
+
+.course-select.ng-select .ng-placeholder {
+  color: var(--caption) !important;
+}
+
+.course-select-panel.ng-dropdown-panel {
+  --ng-select-dropdown-bg: #ffffff;
+  --ng-select-dropdown-option-bg: #ffffff;
+  --ng-select-dropdown-option-text: #2c2c2c;
+  --ng-select-primary-text: #2c2c2c;
+  --ng-select-input-text: #2c2c2c;
+  --ng-select-marked: #f3f6fb;
+  --ng-select-marked-text: #003672;
+  --ng-select-selected: #e3effd;
+  --ng-select-selected-text: #003672;
+  --ng-select-dropdown-border: #dce3ec;
+  overflow: hidden;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-md);
+  background: #ffffff !important;
+  color: var(--ink) !important;
+  box-shadow: var(--shadow-dropdown);
+  color-scheme: light;
+}
+
+.course-select-panel .ng-dropdown-header,
+.course-select-panel .ng-dropdown-panel-items {
+  background: #ffffff !important;
+  color: var(--ink) !important;
+}
+
+.course-select-panel .ng-dropdown-header input {
+  border: 1px solid var(--border-dark) !important;
+  border-radius: var(--radius-sm);
+  background: #ffffff !important;
+  color: var(--ink) !important;
+  box-shadow: none !important;
+}
+
+.course-select-panel .ng-dropdown-header input:focus {
+  border-color: var(--blue) !important;
+  box-shadow: 0 0 0 3px rgba(0, 101, 178, 0.14) !important;
+}
+
+.course-select-panel .ng-dropdown-panel-items .ng-option {
+  background: #ffffff !important;
+  color: var(--ink) !important;
+}
+
+.course-select-panel .ng-dropdown-panel-items .ng-option.ng-option-marked {
+  background: var(--paper-warm) !important;
+  color: var(--navy) !important;
+}
+
+.course-select-panel .ng-dropdown-panel-items .ng-option.ng-option-selected {
+  background: var(--blue-soft) !important;
+  color: var(--navy) !important;
 }
 
 * {
@@ -99,7 +204,7 @@ svg {
 }
 
 ::selection {
-  background: #e6edf8;
+  background: var(--blue-soft);
   color: var(--navy);
 }
 // Controles y límites compartidos; evita duplicarlos en cada pantalla.
@@ -235,3 +340,16 @@ main a.back-link:focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 3px;
 }
+
+.resource-course-select.ng-select { display: block; width: 100%; }
+.resource-course-select.ng-select .ng-select-container { display: flex; min-height: 42px; border: 1px solid var(--border-dark); border-radius: 8px; background: white; }
+.resource-course-select.ng-select .ng-input input { padding: 0 !important; border: 0 !important; min-height: 0; background: transparent; box-shadow: none !important; }
+.resource-course-select.ng-select.ng-select-focused .ng-select-container { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0, 101, 178, 0.14); }
+.resource-course-panel.ng-dropdown-panel { background: white; border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 8px 24px rgba(0, 54, 114, 0.12); overflow: hidden; }
+.resource-course-panel .ng-option { padding: 10px 12px; color: var(--navy); }
+.resource-course-panel .ng-option-marked { background: var(--surface); }
+.resource-course-panel .ng-option-selected { background: var(--blue-soft); }
+.resource-course-panel .course-count { display: block; color: var(--muted); font-size: .72rem; margin-top: 3px; }
+
+.course-select-panel .content-kind { display: block; margin-top: 4px; color: var(--muted); font-size: .72rem; }
+.assignment-content-select { display: block; margin-top: 6px; font-weight: 400; text-transform: none; letter-spacing: normal; }

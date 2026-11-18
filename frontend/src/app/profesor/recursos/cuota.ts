@@ -17,6 +17,9 @@ export class GenerationQuotaComponent implements OnChanges {
   readonly quota = signal<GenerationQuota | null>(null);
   readonly loading = signal(false);
   readonly error = signal(false);
+  usedPercent(q: GenerationQuota) {
+    return q.daily_limit > 0 ? Math.min(100, Math.max(0, q.used / q.daily_limit * 100)) : 0;
+  }
   ngOnChanges() {
     this.load();
   }

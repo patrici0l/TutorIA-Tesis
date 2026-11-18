@@ -83,7 +83,7 @@ button.secondary {
 
   &:hover:not(:disabled) {
     background: var(--paper-warm);
-    border-color: #cac5b8;
+    border-color: var(--blue);
     color: var(--navy);
     transform: translateY(-1px);
   }
@@ -150,7 +150,7 @@ button.secondary {
   }
 
   &:hover {
-    background-color: #faf9f5;
+    background-color: var(--surface);
   }
 }
 

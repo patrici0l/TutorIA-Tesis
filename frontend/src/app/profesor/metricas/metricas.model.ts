@@ -4,6 +4,14 @@ export interface KnownTokenSum {
   unknown_records: number;
 }
 export interface MetricsSummary {
+  daily?: {
+    day: string;
+    records: number;
+    input_tokens: number | null;
+    output_tokens: number | null;
+    latency_ms: string | null;
+    latency_records: number;
+  }[];
   scope: 'own_all_time';
   observed_at: string;
   total_records: number;

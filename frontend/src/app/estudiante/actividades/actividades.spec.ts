@@ -38,5 +38,17 @@ it('el alumno consulta recursos cerrados sin servicio de generación ni operacio
   expect(f.nativeElement.querySelector('a[href="/actividades/material"]').textContent).toContain(
     'Ver recurso',
   );
-  expect(list).toHaveBeenCalledWith(0);
+  expect(list).toHaveBeenCalledWith(0, 5);
+  const c = f.componentInstance;
+  c.search.set('inexistente');
+  expect(c.filtered()).toHaveLength(0);
+  c.search.set('lectura');
+  expect(c.filtered()).toHaveLength(1);
+  c.status.set('open');
+  expect(c.filtered()).toHaveLength(0);
+  c.status.set('closed');
+  c.content.set('practice');
+  expect(c.filtered()).toHaveLength(0);
+  c.content.set('material');
+  expect(c.filtered()).toHaveLength(1);
 });

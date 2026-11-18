@@ -1,11 +1,12 @@
 :host {
   display: block;
   border-top: 1px solid var(--border);
+  background: var(--surface-card);
 }
 .navigation-bar {
-  max-width: 1250px;
+  max-width: 1200px;
   margin: auto;
-  padding: 10px 48px;
+  padding: 8px 28px;
 }
 button {
   font: inherit;

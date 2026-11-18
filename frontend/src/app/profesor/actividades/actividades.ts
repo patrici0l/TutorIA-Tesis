@@ -1,8 +1,10 @@
+import { NgSelectComponent, NgOptionTemplateDirective } from '@ng-select/ng-select';
 import { ViewAttention } from '../../compartido/atencion-vista.service';
 import { AssignmentCardComponent } from '../../compartido/actividades/tarjeta';
 import { AssignmentListState } from '../../compartido/actividades/lista-actividades.state';
 // Gestiona asignaciones docentes y distingue bancos corregibles de material de estudio.
 import { Component, DestroyRef, computed, inject, OnInit, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { PreparationService } from '../recursos/recursos.service';
@@ -20,10 +22,17 @@ import { PRACTICE_BANKS } from '../../compartido/practica/bancos';
 
 @Component({
   selector: 'app-teacher-assignments',
-  imports: [FormsModule, RouterLink, AssignmentCardComponent],
+  imports: [
+    NgSelectComponent,
+    NgOptionTemplateDirective,
+    DatePipe,
+    FormsModule,
+    RouterLink,
+    AssignmentCardComponent,
+  ],
   providers: [AssignmentListState],
   templateUrl: './actividades.html',
-  styleUrl: './actividades.scss',
+  styleUrls: ['./actividades.scss', './seguimiento.scss'],
 })
 export class TeacherAssignmentsComponent implements OnInit {
   private readonly attention = inject(ViewAttention);
@@ -36,6 +45,25 @@ export class TeacherAssignmentsComponent implements OnInit {
   readonly resourceError = signal('');
   private readonly destroy = inject(DestroyRef);
   readonly teacher = computed(() => ['teacher', 'admin'].includes(this.auth.user()?.rol ?? ''));
+  readonly contentOptions = computed(() => [
+    ...(this.selectedResource()
+      ? [
+          {
+            value: 'resource-v1',
+            label: this.selectedResource()!.resource!.title,
+            kind:
+              this.selectedResource()!.resource!.resource_type === 'QUIZ'
+                ? 'Quiz interactivo · autoevaluación'
+                : 'Material de estudio',
+          },
+        ]
+      : []),
+    ...PRACTICE_BANKS.map((bank) => ({
+      value: bank.version,
+      label: bank.title,
+      kind: 'Ejercicios autocorregidos · resultado guardado',
+    })),
+  ]);
   readonly banks = PRACTICE_BANKS;
   private readonly listing = inject(AssignmentListState);
   readonly page = this.listing.page;
@@ -49,6 +77,27 @@ export class TeacherAssignmentsComponent implements OnInit {
   readonly changing = signal(false);
   readonly statusError = signal('');
   readonly statusSuccess = signal('');
+  readonly activeView = signal<'assign' | 'tracking'>('assign');
+  readonly search = signal('');
+  readonly statusFilter = signal('');
+  readonly typeFilter = signal('');
+  readonly selectedId = signal<string | null>(null);
+  readonly detailTab = signal<'overview' | 'results'>('overview');
+  readonly filtered = computed(() =>
+    (this.page()?.items ?? []).filter(
+      (item) =>
+        (!this.statusFilter() || item.status === this.statusFilter()) &&
+        (!this.typeFilter() || (this.typeFilter() === 'resource') === !!item.resource_id) &&
+        `${item.title} ${item.student_email}`
+          .toLocaleLowerCase()
+          .includes(this.search().trim().toLocaleLowerCase()),
+    ),
+  );
+  selectActivity(id: string) {
+    this.selectedId.set(this.selectedId() === id ? null : id);
+    this.detailTab.set('overview');
+    this.pendingChange.set(null);
+  }
   title = '';
   email = '';
   instructions = '';
@@ -88,6 +137,7 @@ export class TeacherAssignmentsComponent implements OnInit {
   load(offset = 0) {
     if (this.loading() || this.changing() || this.saving()) return;
     this.pendingChange.set(null);
+    this.selectedId.set(null);
     this.listing.load(offset);
   }
   create() {

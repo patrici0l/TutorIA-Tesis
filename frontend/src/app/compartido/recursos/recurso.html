@@ -13,33 +13,116 @@
   }
   @if (resource(); as r) {
     @if (r.resource_type === 'QUIZ') {
-      <p class="reading-note">
-        Preguntas de repaso con soluciones. Las opciones son de consulta; no necesitas marcar
-        respuestas.
-      </p>
-      @for (question of r.questions; track $index) {
-        <section>
-          <h4>Pregunta {{ $index + 1 }}</h4>
-          <p>
-            <span [appMathText]="question.statement.text"></span>
-            <small>Fuentes: {{ question.statement.citations.join(', ') }}</small>
-          </p>
-          <ol type="A">
-            @for (option of question.options; track $index) {
-              <li><span [appMathText]="option"></span></li>
+      <div class="quiz-toolbar">
+        <span>Autoevaluación · {{ r.questions.length }} preguntas</span>
+        @if (teacherView()) {
+          <button
+            type="button"
+            class="quiz-secondary"
+            (click)="solutionsVisible.set(!solutionsVisible())"
+            [attr.aria-pressed]="solutionsVisible()"
+          >
+            {{ solutionsVisible() ? 'Vista del estudiante' : 'Ver solucionario docente' }}
+          </button>
+        }
+      </div>
+      @if (quizSubmitted() || (teacherView() && solutionsVisible())) {
+        @if (quizSubmitted()) {
+          <div class="quiz-result" [id]="quizId + '-result'" tabindex="-1" role="status">
+            <strong>{{ quizScore() }} de {{ r.questions.length }} respuestas correctas</strong
+            ><span>Resultado de esta sesión; no se guarda como entrega al profesor.</span>
+          </div>
+          <button type="button" class="quiz-secondary" (click)="resetQuiz()">
+            Volver a intentarlo
+          </button>
+        }
+        @for (question of r.questions; track $index) {
+          <details class="quiz-review">
+            <summary>
+              Pregunta {{ $index + 1 }}
+              @if (quizSubmitted()) {
+                ·
+                {{
+                  quizAnswers()[$index] === question.correct_option ? 'Correcta' : 'Para repasar'
+                }}
+              }
+            </summary>
+            <p><span [appMathText]="question.statement.text"></span></p>
+            @if (quizSubmitted()) {
+              <p>
+                Tu respuesta: <span [appMathText]="question.options[quizAnswers()[$index]]"></span>
+              </p>
             }
-          </ol>
-          <details>
-            <summary>Ver respuesta y explicación</summary>
             <p>
               Respuesta: <span [appMathText]="question.options[question.correct_option]"></span>
             </p>
             <p>
-              <span [appMathText]="question.explanation.text"></span>
-              <small>Fuentes: {{ question.explanation.citations.join(', ') }}</small>
+              <span [appMathText]="question.explanation.text"></span
+              ><small>Fuentes: {{ question.explanation.citations.join(', ') }}</small>
             </p>
           </details>
-        </section>
+        }
+      } @else {
+        @for (question of r.questions; track $index; let questionIndex = $index) {
+          @if (quizIndex() === questionIndex) {
+            <section class="quiz-question">
+              <div class="quiz-position">
+                <span>Pregunta {{ questionIndex + 1 }} de {{ r.questions.length }}</span
+                ><span>Elige una respuesta</span>
+              </div>
+              <progress
+                [value]="questionIndex"
+                [max]="r.questions.length"
+                aria-label="Avance del quiz"
+              ></progress>
+              <h4 [id]="quizId + '-question'" tabindex="-1">
+                <span [appMathText]="question.statement.text"></span>
+              </h4>
+              <fieldset [attr.aria-labelledby]="quizId + '-question'">
+                <legend class="quiz-sr">Opciones de respuesta</legend>
+                @for (option of question.options; track $index) {
+                  <label
+                    class="quiz-option"
+                    [class.chosen]="quizAnswers()[questionIndex] === $index"
+                    ><input
+                      type="radio"
+                      [name]="quizId + '-' + questionIndex"
+                      [checked]="quizAnswers()[questionIndex] === $index"
+                      (change)="chooseQuiz(questionIndex, $index)" /><span
+                      [appMathText]="option"
+                    ></span
+                  ></label>
+                }
+              </fieldset>
+              <small>Fuentes: {{ question.statement.citations.join(', ') }}</small>
+              <div class="quiz-navigation">
+                <button
+                  type="button"
+                  class="quiz-secondary"
+                  (click)="quizIndex.set(quizIndex() - 1)"
+                  [disabled]="quizIndex() === 0"
+                >
+                  Anterior
+                </button>
+                <button
+                  type="button"
+                  class="quiz-primary"
+                  (click)="nextQuiz()"
+                  [disabled]="quizAnswers()[questionIndex] === undefined"
+                >
+                  {{
+                    questionIndex === r.questions.length - 1
+                      ? 'Comprobar respuestas'
+                      : 'Siguiente pregunta'
+                  }}
+                </button>
+              </div>
+              <p class="quiz-note">
+                Las explicaciones se muestran después de responder todas las preguntas.
+              </p>
+            </section>
+          }
+        }
       }
     }
   }

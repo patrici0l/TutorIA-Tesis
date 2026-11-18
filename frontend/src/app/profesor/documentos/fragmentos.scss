@@ -159,7 +159,7 @@ button {
 
   &:hover:not(:disabled) {
     background: var(--paper-warm);
-    border-color: #cac5b8;
+    border-color: var(--blue);
     transform: translateY(-1px);
   }
 

@@ -16,13 +16,13 @@ describe('Historial privado', () => {
     component.selected.subscribe((detail) => (selected = detail.preparation.id));
     component.load();
     component.load();
-    const page = http.expectOne('/api/v1/content/history?offset=0&limit=10');
+    const page = http.expectOne('/api/v1/content/history?offset=0&limit=5');
     expect(page.request.method).toBe('GET');
-    page.flush({ items: [], total: 12, offset: 0, limit: 10 });
-    component.load(10);
+    page.flush({ items: [], total: 12, offset: 0, limit: 5 });
+    component.load(5);
     http
-      .expectOne('/api/v1/content/history?offset=10&limit=10')
-      .flush({ items: [], total: 12, offset: 10, limit: 10 });
+      .expectOne('/api/v1/content/history?offset=5&limit=5')
+      .flush({ items: [], total: 12, offset: 5, limit: 5 });
     component.open('saved');
     const detail = http.expectOne('/api/v1/content/history/saved');
     expect(detail.request.method).toBe('GET');
@@ -44,17 +44,17 @@ describe('Historial privado', () => {
     const http = TestBed.inject(HttpTestingController);
     fixture.componentRef.setInput('locked', true);
     fixture.componentInstance.load();
-    http.expectNone('/api/v1/content/history?offset=0&limit=10');
+    http.expectNone('/api/v1/content/history?offset=0&limit=5');
     fixture.componentRef.setInput('locked', false);
     fixture.componentInstance.load();
     http
-      .expectOne('/api/v1/content/history?offset=0&limit=10')
+      .expectOne('/api/v1/content/history?offset=0&limit=5')
       .flush({}, { status: 503, statusText: 'Unavailable' });
     expect(fixture.componentInstance.error()).toContain('No se pudo cargar');
     fixture.componentInstance.load();
     http
-      .expectOne('/api/v1/content/history?offset=0&limit=10')
-      .flush({ items: [], total: 0, offset: 0, limit: 10 });
+      .expectOne('/api/v1/content/history?offset=0&limit=5')
+      .flush({ items: [], total: 0, offset: 0, limit: 5 });
     expect(fixture.componentInstance.error()).toBe('');
     http.verify();
   });
@@ -76,7 +76,7 @@ describe('Historial privado', () => {
       })),
       total: 3,
       offset: 0,
-      limit: 10,
+      limit: 5,
     });
     fixture.detectChanges();
     const links = fixture.nativeElement.querySelectorAll('a.action-link');

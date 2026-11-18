@@ -1,32 +1,79 @@
 :host {
   display: block;
 }
-h3 {
-  font-size: 16px;
-  margin-top: 0;
+.quota-widget {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 12px;
+  background: var(--surface-card);
 }
-p,
-summary {
-  font-size: 13px;
-  line-height: 1.6;
+.quota-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+}
+.quota-ring {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+}
+circle {
+  fill: none;
+  stroke-width: 4;
+}
+.ring-track {
+  stroke: #e8edf2;
+}
+.ring-used {
+  stroke: var(--blue);
+  stroke-linecap: round;
+}
+.ring-used.exhausted {
+  stroke: #a85b65;
+}
+text {
+  fill: var(--navy);
+  font: 700 15px sans-serif;
+}
+.quota-copy {
+  display: grid;
+  gap: 3px;
+}
+.quota-copy strong {
+  font-size: 0.78rem;
+  color: var(--navy);
+}
+.quota-copy span,
+.quota-state {
+  font-size: 0.72rem;
   color: var(--muted);
 }
-.balance {
-  color: var(--ink);
-}
-.balance strong {
-  font-size: 24px;
-}
-progress {
-  width: 100%;
-  accent-color: var(--blue-dark);
-}
-button {
+.refresh-quota {
+  margin-left: auto;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 4px;
   border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 8px 12px;
+  border-radius: 7px;
+  color: var(--navy);
   background: white;
-  color: var(--blue-dark);
+  font-size: 20px;
   cursor: pointer;
-  margin-top: 12px;
+}
+.refresh-quota:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+.quota-info {
+  margin: 2px 0 0 58px;
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+.quota-info summary {
+  cursor: pointer;
+}
+.quota-info p {
+  line-height: 1.5;
+  margin: 8px 0;
 }

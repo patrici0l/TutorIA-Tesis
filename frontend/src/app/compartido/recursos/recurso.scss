@@ -72,3 +72,11 @@ h4 {
     padding: 14px;
   }
 }
+
+:host.compact { margin-block: 12px; color: var(--navy); }
+:host.compact article { border-top: 1px solid var(--border); padding-top: 16px; }
+:host.compact section { padding: 12px 0; margin-block: 8px; border: 0; border-bottom: 1px solid var(--border); border-radius: 0; background: transparent; }
+:host.compact p { margin: 10px 0 4px; line-height: 1.65; }
+:host.compact h3 { margin: 0 0 12px; font-size: 1.2rem; color: var(--navy); }
+:host.compact h4 { margin: 0 0 8px; font-size: .95rem; color: var(--navy); }
+:host.compact small { font-size: .72rem; }

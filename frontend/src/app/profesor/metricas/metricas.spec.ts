@@ -1,10 +1,16 @@
-import { signal } from '@angular/core';
+import { NgxEchartsDirective } from 'ngx-echarts';
+import { Directive, input, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 import { AuthService } from '../../inicio/sesion.service';
 import { MetricsComponent } from './metricas';
+
+@Directive({ selector: '[echarts]' })
+class ChartStub {
+  readonly options = input<unknown>();
+}
 
 describe('Métricas privadas', () => {
   const user = signal({ rol: 'teacher' });
@@ -17,6 +23,10 @@ describe('Métricas privadas', () => {
         provideRouter([]),
         { provide: AuthService, useValue: { user } },
       ],
+    });
+    TestBed.overrideComponent(MetricsComponent, {
+      remove: { imports: [NgxEchartsDirective] },
+      add: { imports: [ChartStub] },
     });
     return {
       fixture: TestBed.createComponent(MetricsComponent),
@@ -31,6 +41,16 @@ describe('Métricas privadas', () => {
     const call = http.expectOne('/api/v1/metrics');
     expect(call.request.method).toBe('GET');
     call.flush({
+      daily: [
+        {
+          day: '2026-10-08',
+          records: 1,
+          input_tokens: 0,
+          output_tokens: null,
+          latency_ms: '1500',
+          latency_records: 1,
+        },
+      ],
       scope: 'own_all_time',
       observed_at: '2026-10-08T23:00:00Z',
       total_records: 2,
@@ -58,6 +78,17 @@ describe('Métricas privadas', () => {
     expect(fixture.nativeElement.textContent).toContain('Sin datos');
     expect(fixture.nativeElement.textContent).toContain('1 sin dato');
     expect(fixture.nativeElement.textContent).toContain('no verifica facturación');
+    const charts = fixture.componentInstance.charts()!;
+    expect(charts.hasTokens).toBe(true);
+    expect(charts.hasLatency).toBe(true);
+    const tokenSeries = charts.tokens['series'] as { data: (number | null)[] }[];
+    const latencySeries = charts.latency['series'] as { data: (number | null)[] }[];
+    expect(tokenSeries[0].data).toHaveLength(30);
+    expect(tokenSeries[0].data[29]).toBe(0);
+    expect(tokenSeries[0].data[28]).toBeNull();
+    expect(tokenSeries[1].data[29]).toBeNull();
+    expect(latencySeries[0].data[29]).toBe(1.5);
+    expect(fixture.nativeElement.querySelector('.states')).toBeNull();
     http.expectNone((req) => req.method === 'POST');
     http.verify();
   });

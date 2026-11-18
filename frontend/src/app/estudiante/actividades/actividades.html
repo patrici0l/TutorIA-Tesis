@@ -1,75 +1,143 @@
 <a class="back-link" routerLink="/inicio">← Volver al inicio</a>
 <header class="page-heading">
   <p class="eyebrow">TU ESPACIO DE ESTUDIO</p>
-  <h1>Actividades asignadas</h1>
-  <p>Ejercicios y materiales de tu profesor. La práctica libre es un repaso voluntario separado.</p>
+  <h1>Mis actividades</h1>
+  <p>Consulta los materiales de tu profesor y resuelve tus ejercicios.</p>
 </header>
-<div class="assignment-layout">
-  <section
-    class="assignment-list"
-    aria-labelledby="activity-list-title"
-    [attr.aria-busy]="loading()"
-  >
-    <div class="list-heading">
-      <div>
-        <h2 id="activity-list-title">Tus actividades</h2>
-        @if (page(); as results) {
-          <p class="help">
-            {{ results.total }} {{ results.total === 1 ? 'actividad' : 'actividades' }}
-          </p>
-        }
-      </div>
-      <button type="button" class="secondary" (click)="load()" [disabled]="loading()">
-        {{ loading() ? 'Cargando…' : 'Actualizar actividades' }}
-      </button>
+<section class="assignment-list" aria-labelledby="activity-list-title" [attr.aria-busy]="loading()">
+  <div class="list-heading">
+    <h2 id="activity-list-title">{{ page()?.total ?? 0 }} actividades</h2>
+    <button type="button" class="secondary" (click)="load()" [disabled]="loading()">
+      {{ loading() ? 'Cargando…' : 'Actualizar' }}
+    </button>
+  </div>
+  <div class="student-filters">
+    <label
+      >Buscar en esta página<input
+        type="search"
+        placeholder="Nombre de la actividad"
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+    /></label>
+    <label
+      >Estado<select [ngModel]="status()" (ngModelChange)="status.set($event)">
+        <option value="">Todos</option>
+        <option value="open">Abiertas</option>
+        <option value="closed">Cerradas</option>
+        <option value="cancelled">Canceladas</option>
+      </select></label
+    >
+    <label
+      >Contenido<select [ngModel]="content()" (ngModelChange)="content.set($event)">
+        <option value="">Todo el contenido</option>
+        <option value="material">Materiales y quizzes</option>
+        <option value="practice">Ejercicios</option>
+      </select></label
+    >
+    <button
+      type="button"
+      class="secondary"
+      (click)="search.set(''); status.set(''); content.set('')"
+    >
+      Limpiar
+    </button>
+  </div>
+  @if (error()) {
+    <p class="message error" role="alert">{{ error() }}</p>
+  }
+  @if (page(); as results) {
+    <p class="list-scope" role="status">
+      {{ filtered().length }} de {{ results.items.length }} actividades de esta página
+    </p>
+    <div class="student-table" tabindex="0" role="region" aria-label="Actividades asignadas">
+      <table>
+        <thead>
+          <tr>
+            <th>Actividad</th>
+            <th>Estado</th>
+            <th>Mi resultado</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of filtered(); track item.id) {
+            <tr>
+              <td>
+                <strong>{{ item.title }}</strong
+                ><small
+                  >{{
+                    item.resource_type === 'QUIZ'
+                      ? 'Quiz interactivo'
+                      : item.resource_id
+                        ? 'Material de estudio'
+                        : 'Ejercicios'
+                  }}
+                  · {{ item.created_at | date: 'dd/MM/yyyy' }}</small
+                >
+              </td>
+              <td>
+                <span class="status-badge" [class.open]="item.status === 'open'">{{
+                  statusLabels[item.status]
+                }}</span>
+              </td>
+              <td>
+                {{
+                  item.resource_id
+                    ? item.resource_type === 'QUIZ'
+                      ? 'Autoevaluación de sesión'
+                      : 'Sin calificación'
+                    : item.best_score === null
+                      ? 'Sin resultados'
+                      : item.best_score + ' de 3'
+                }}
+                @if (!item.resource_id) {
+                  <small>{{ item.attempts }} intentos guardados</small>
+                }
+              </td>
+              <td>
+                <a
+                  class="action-link"
+                  [routerLink]="['/actividades', item.id]"
+                  [attr.aria-label]="actionLabel(item) + ': ' + item.title"
+                  >{{ actionLabel(item) }} →</a
+                >
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4">
+                {{
+                  results.total
+                    ? 'No hay coincidencias en esta página. Cambia los filtros o consulta otra página.'
+                    : 'Tu profesor aún no te ha asignado actividades.'
+                }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
     </div>
-    @if (error()) {
-      <p class="message error" role="alert">{{ error() }}</p>
+    @if (results.total > results.limit) {
+      <nav class="student-pagination" aria-label="Páginas de actividades">
+        <button
+          type="button"
+          class="secondary"
+          (click)="load(results.offset - results.limit)"
+          [disabled]="loading() || results.offset === 0"
+        >
+          Anterior</button
+        ><span
+          >{{ results.offset + 1 }}–{{ results.offset + results.items.length }} de
+          {{ results.total }}</span
+        ><button
+          type="button"
+          class="secondary"
+          (click)="load(results.offset + results.limit)"
+          [disabled]="loading() || results.offset + results.limit >= results.total"
+        >
+          Siguiente
+        </button>
+      </nav>
     }
-
-    @if (page(); as results) {
-      <p class="help scope-note">
-        Abre tus materiales de estudio o resuelve las prácticas asignadas.
-      </p>
-      @for (item of results.items; track item.id) {
-        <app-assignment-card [item]="item" [showRecipient]="false">
-          <a class="activity-link action-link" [routerLink]="['/actividades', item.id]"
-            >{{
-              item.resource_id
-                ? 'Ver recurso'
-                : item.status !== 'open'
-                  ? 'Ver actividad y resultados'
-                  : item.attempts
-                    ? 'Volver a practicar'
-                    : 'Resolver actividad'
-            }}
-            →</a
-          >
-        </app-assignment-card>
-      } @empty {
-        <div class="panel empty-state">
-          <h3>Todavía no hay actividades</h3>
-          <p>Cuando tu profesor te asigne ejercicios o un material de estudio, aparecerán aquí.</p>
-
-          <a class="activity-link action-link" routerLink="/practica">Ir a la práctica libre →</a>
-        </div>
-      }
-      @if (results.total > results.limit) {
-        <div class="buttons">
-          <button
-            (click)="load(results.offset - results.limit)"
-            [disabled]="loading() || results.offset === 0"
-          >
-            Más recientes
-          </button>
-          <button
-            (click)="load(results.offset + results.limit)"
-            [disabled]="loading() || results.offset + results.limit >= results.total"
-          >
-            Anteriores
-          </button>
-        </div>
-      }
-    }
-  </section>
-</div>
+  }
+</section>

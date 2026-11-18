@@ -1,4 +1,4 @@
-import { EducationalResource, PreparationResponse } from '../recursos/recursos.model';
+import { EducationalResource, PreparationResponse, ResourceType } from '../recursos/recursos.model';
 export type AssignmentStatus = 'open' | 'closed' | 'cancelled';
 export const ASSIGNMENT_STATUS_LABELS: Record<AssignmentStatus, string> = {
   open: 'Abierta',
@@ -17,6 +17,7 @@ export interface Assignment {
   status_changed_at: string | null;
   attempts: number;
   best_score: number | null;
+  resource_type?: ResourceType | null;
   resource_id?: string | null;
   resource?: EducationalResource | null;
   sources?: PreparationResponse['sources'];

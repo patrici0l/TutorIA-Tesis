@@ -41,11 +41,64 @@ describe('Recurso generado', () => {
     expect(content).toContain('2x');
     expect(content).toContain('Fuentes: S1');
     if (kind === 'QUIZ') {
-      expect(fixture.nativeElement.querySelectorAll('li').length).toBe(4);
-      expect(content).toContain('Respuesta: 2x');
-      expect(fixture.nativeElement.querySelector('details')).not.toBeNull();
+      expect(fixture.nativeElement.querySelectorAll('input[type=radio]').length).toBe(4);
+      expect(content).not.toContain('Respuesta: 2x');
+      expect(fixture.nativeElement.querySelector('.quiz-review')).toBeNull();
+      const option = fixture.nativeElement.querySelectorAll('input[type=radio]')[1];
+      option.checked = true;
+      option.dispatchEvent(new Event('change'));
+      fixture.detectChanges();
+      fixture.nativeElement.querySelector('.quiz-primary').click();
+      fixture.detectChanges();
+      expect(fixture.nativeElement.textContent).toContain('1 de 1 respuestas correctas');
+      expect(fixture.nativeElement.textContent).toContain('Respuesta: 2x');
     }
     if (kind === 'FEEDBACK') expect(content).toContain('Comprueba la regla');
+  });
+  it('exige responder cada pregunta, conserva elecciones al volver y reinicia al cambiar de recurso', () => {
+    const f = TestBed.createComponent(ResourceViewComponent);
+    const question = {
+      statement: { text: 'Selecciona', citations: ['S1'] },
+      options: ['A', 'B', 'C', 'D'],
+      correct_option: 1,
+      explanation: { text: 'Explicación reservada', citations: ['S1'] },
+    };
+    f.componentRef.setInput('resource', {
+      resource_type: 'QUIZ',
+      title: 'Quiz',
+      questions: [question, question],
+    });
+    f.detectChanges();
+    const c = f.componentInstance;
+    c.nextQuiz();
+    expect(c.quizIndex()).toBe(0);
+    expect(f.nativeElement.textContent).not.toContain('Explicación reservada');
+    expect(f.nativeElement.querySelector('.quiz-toolbar button')).toBeNull();
+    c.chooseQuiz(0, 0);
+    c.nextQuiz();
+    expect(c.quizIndex()).toBe(1);
+    c.nextQuiz();
+    expect(c.quizSubmitted()).toBe(false);
+    c.quizIndex.set(0);
+    expect(c.quizAnswers()[0]).toBe(0);
+    c.nextQuiz();
+    c.chooseQuiz(1, 1);
+    c.nextQuiz();
+    f.detectChanges();
+    expect(c.quizScore()).toBe(1);
+    expect(f.nativeElement.textContent).toContain('Explicación reservada');
+    c.chooseQuiz(0, 1);
+    expect(c.quizAnswers()[0]).toBe(0);
+    f.componentRef.setInput('resource', {
+      resource_type: 'QUIZ',
+      title: 'Otro quiz',
+      questions: [question],
+    });
+    f.detectChanges();
+    expect(c.quizAnswers()).toEqual({});
+    expect(c.quizSubmitted()).toBe(false);
+    expect(c.quizIndex()).toBe(0);
+    expect(f.nativeElement.textContent).not.toContain('Explicación reservada');
   });
   it('renderiza texto y citas sin activar HTML', async () => {
     const fixture = TestBed.createComponent(ResourceViewComponent);
@@ -78,7 +131,7 @@ describe('Recurso generado', () => {
       ],
     });
     fixture.detectChanges();
-    expect(fixture.nativeElement.querySelectorAll('.katex').length).toBe(4);
+    expect(fixture.nativeElement.querySelectorAll('.katex').length).toBe(2);
     expect(fixture.nativeElement.textContent).toContain('Fuentes: S1');
     const block = { text: 'Nuevo recurso sin fórmulas', citations: ['S2'] };
     fixture.componentRef.setInput('resource', {

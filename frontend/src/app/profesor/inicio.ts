@@ -10,7 +10,7 @@ import { HealthResponse, isHealthResponse } from '../compartido/salud.model';
   selector: 'app-teacher-home',
   imports: [RouterLink],
   templateUrl: './inicio.html',
-  styleUrl: './inicio.scss',
+  styleUrls: ['./inicio.scss', './inicio-conexion.scss'],
 })
 export class TeacherHomeComponent implements OnInit {
   private readonly healthService = inject(HealthService);

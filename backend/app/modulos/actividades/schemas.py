@@ -44,6 +44,7 @@ class AssignmentResult(BaseModel):
     attempts: int
     best_score: int | None
     resource_id: UUID | None = None
+    resource_type: Literal["EXPLANATION", "EXERCISE", "QUIZ", "FEEDBACK"] | None = None
 
 
 class AssignmentDetail(AssignmentResult):

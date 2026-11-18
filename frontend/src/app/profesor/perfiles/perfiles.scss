@@ -42,8 +42,8 @@ header.page-heading {
 // Avisos de estado
 .notice {
   padding: 14px 18px;
-  border: 1px solid rgba(184, 134, 11, 0.25);
-  background: #fdfbf7;
+  border: 1px solid var(--border);
+  background: var(--blue-soft);
   border-radius: var(--radius-md, 10px);
   color: var(--navy);
   font-size: 0.875rem;
@@ -140,9 +140,9 @@ textarea {
 
 button {
   padding: 10px 18px;
-  background: var(--navy);
+  background: var(--blue);
   color: #ffffff;
-  border: 1px solid var(--navy);
+  border: 1px solid var(--blue);
   border-radius: var(--radius-md, 10px);
   font-family: var(--font-sans);
   font-size: 0.875rem;
@@ -155,9 +155,10 @@ button {
   transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
 
   &:hover:enabled {
-    background: #07192b;
+    background: var(--navy);
+    border-color: var(--navy);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(10, 37, 64, 0.15);
+    box-shadow: 0 4px 12px rgba(0, 54, 114, 0.15);
   }
 
   &:active:enabled {
@@ -240,9 +241,9 @@ li {
     font-size: 0.8125rem;
 
     &:hover:enabled {
-      background: #faf9f6;
-      border-color: rgba(10, 37, 64, 0.3);
-      box-shadow: 0 2px 6px rgba(10, 37, 64, 0.05);
+      background: var(--paper-warm);
+      border-color: var(--blue);
+      box-shadow: 0 2px 6px rgba(0, 54, 114, 0.05);
     }
   }
 }

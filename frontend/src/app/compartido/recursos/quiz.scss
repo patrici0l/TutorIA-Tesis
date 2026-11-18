@@ -1,0 +1,118 @@
+.quiz-toolbar,
+.quiz-position,
+.quiz-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.quiz-toolbar {
+  padding: 8px 0 12px;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.quiz-question {
+  max-width: 820px;
+}
+.quiz-position {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+progress {
+  width: 100%;
+  height: 5px;
+  accent-color: var(--blue);
+  margin-bottom: 16px;
+}
+.quiz-question fieldset {
+  border: 0;
+  padding: 0;
+  margin: 16px 0 10px;
+  display: grid;
+  gap: 8px;
+}
+.quiz-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  background: white;
+  line-height: 1.5;
+}
+.quiz-option.chosen {
+  border-color: var(--blue);
+  background: var(--blue-soft);
+}
+.quiz-option input {
+  accent-color: var(--blue);
+  flex: 0 0 auto;
+}
+.quiz-option:focus-within {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+.quiz-primary,
+.quiz-secondary {
+  padding: 9px 14px;
+  min-height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.quiz-primary {
+  background: var(--blue);
+  color: white;
+  border-color: var(--blue);
+}
+.quiz-secondary {
+  background: white;
+  color: var(--navy);
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.quiz-navigation {
+  margin-top: 16px;
+}
+.quiz-note {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.quiz-result {
+  display: grid;
+  gap: 6px;
+  margin: 14px 0;
+  border-left: 3px solid var(--blue);
+  padding: 10px 14px;
+  background: var(--blue-soft);
+}
+.quiz-result span {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.quiz-review {
+  margin: 10px 0;
+  border-bottom: 1px solid var(--border);
+  padding: 8px 0;
+}
+.quiz-review summary {
+  padding: 8px 0;
+  background: transparent;
+  border: 0;
+  min-height: 0;
+}
+.quiz-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}

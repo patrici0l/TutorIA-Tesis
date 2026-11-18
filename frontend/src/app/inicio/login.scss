@@ -208,13 +208,13 @@
 }
 
 .login-button.primary {
-  background: var(--navy);
+  background: var(--blue);
   color: #ffffff;
-  box-shadow: 0 2px 5px rgba(10, 37, 64, 0.15);
+  box-shadow: 0 2px 5px rgba(0, 54, 114, 0.15);
 
   &:hover {
-    background: var(--navy-hover);
-    box-shadow: 0 4px 12px rgba(10, 37, 64, 0.22);
+    background: var(--navy);
+    box-shadow: 0 4px 12px rgba(0, 54, 114, 0.22);
   }
 }
 
@@ -224,8 +224,8 @@
   color: var(--navy);
 
   &:hover {
-    background: var(--paper-warm);
-    border-color: #c4c0b6;
+    background: var(--blue-soft);
+    border-color: var(--blue);
     color: var(--navy);
   }
 }
@@ -272,7 +272,7 @@
 }
 
 .retry-button {
-  background: var(--navy);
+  background: var(--blue);
   color: #ffffff;
   border: 0;
   padding: 8px 16px;

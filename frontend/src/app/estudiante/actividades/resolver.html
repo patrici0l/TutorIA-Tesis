@@ -7,7 +7,10 @@
       <p class="eyebrow">ACTIVIDAD ASIGNADA · {{ statusLabels[item.status] }}</p>
       <h1>{{ item.title }}</h1>
       @if (item.instructions) {
-        <p class="instructions">{{ item.instructions }}</p>
+        <details class="activity-instructions">
+          <summary>Indicaciones del profesor</summary>
+          <p class="instructions">{{ item.instructions }}</p>
+        </details>
       }
       @if (item.status === 'open' && !item.resource_id) {
         <p class="sharing-note">
@@ -17,20 +20,14 @@
       }
     </header>
     @if (item.resource; as resource) {
-      <aside class="material-notice" aria-label="Cómo usar este material">
-        <h2>Material de consulta</h2>
-        <p>
-          Lee el contenido y abre las soluciones para repasar. Aquí no se envían respuestas. Esta
-          actividad no registra una calificación.
-        </p>
+      <p class="reading-guide">
+        {{ resource.resource_type === 'QUIZ' ? 'Quiz de repaso · Elige tus respuestas para comprobarlas al finalizar.' : 'Material de consulta · No se envían respuestas y no registra una calificación.' }}
         @if (item.status !== 'open') {
-          <p>
-            La asignación está {{ statusLabels[item.status].toLowerCase() }}. El material sigue
-            disponible para consulta.
-          </p>
+          La asignación está {{ statusLabels[item.status].toLowerCase() }}; puedes seguir
+          consultando el material.
         }
-      </aside>
-      <app-resource-view [resource]="resource" />
+      </p>
+      <app-resource-view [resource]="resource" [compact]="true" />
       <details class="panel source-details" aria-label="Fuentes del recurso">
         <summary>Consultar fuentes del material · {{ item.sources?.length ?? 0 }}</summary>
         @for (source of item.sources; track source.citation_id) {

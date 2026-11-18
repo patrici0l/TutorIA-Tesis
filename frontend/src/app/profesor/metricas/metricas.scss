@@ -1,168 +1,109 @@
-@use '../../compartido/estilos/espacio-trabajo' as workspace;
-
 :host {
   display: block;
+  max-width: 1200px;
+  margin: auto;
 }
-header {
-  margin-bottom: 1.5rem;
-}
-.eyebrow {
-  color: var(--blue-dark);
-  letter-spacing: 0.13em;
-  font-size: 0.75rem;
-}
-.heading {
+.metrics-heading {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
 }
 h1 {
+  margin: 0 0 6px;
   color: var(--navy);
-  font-size: clamp(1.8rem, 4vw, 2.6rem);
-  margin: 0.5rem 0;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
 }
-h2 {
-  color: var(--navy);
-  font-size: 1.2rem;
-  margin-top: 0;
-}
-p {
-  line-height: 1.65;
-}
-button {
-  background: var(--navy);
-  color: white;
-  border: 0;
-  border-radius: 9px;
-  padding: 0.8rem 1.1rem;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-button:hover:enabled {
-  background: var(--blue-dark);
-}
-button:disabled {
-  opacity: 0.6;
-  cursor: default;
-}
-.scope,
-.muted,
-small,
-.footnote {
+.metrics-heading p {
+  margin: 0;
   color: var(--muted);
-}
-.scope,
-.footnote,
-small {
   font-size: 0.85rem;
 }
-.states {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 1rem;
-  margin: 1.5rem 0;
+button {
+  background: var(--blue);
+  color: white;
+  padding: 11px 16px;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
 }
-article,
-.panel {
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  background: white;
-  padding: 1.4rem;
-  min-width: 0;
+button:disabled {
+  opacity: 0.5;
+  cursor: wait;
 }
-article {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  border-top: 3px solid var(--blue-soft);
-}
-article strong {
-  font-size: 2rem;
-  color: var(--navy);
-}
-article.success {
-  border-top-color: var(--gold);
-}
-article span {
-  font-size: 0.9rem;
-}
-.details {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-dl {
-  margin: 1.5rem 0 0;
-}
-dl > div {
+.scope {
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 1rem 0;
-  border-top: 1px solid var(--border);
-}
-dd {
-  margin: 0;
-  text-align: right;
-}
-dd small {
-  display: block;
-  margin-top: 0.4rem;
-}
-.audit {
-  margin-top: 1rem;
-  border-left: 3px solid var(--gold);
-}
-.notice {
-  padding: 1rem;
-  border: 1px solid #e7d59c;
-  background: #fff9e9;
-  border-radius: 8px;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-bottom: 18px;
 }
 a {
-  color: var(--blue-dark);
-  text-underline-offset: 0.2rem;
+  color: var(--blue);
 }
-@media (max-width: 1000px) {
-  .states {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 28px;
+}
+.analytics-grid section {
+  min-width: 0;
+  padding: 16px 0 8px;
+  border-top: 1px solid var(--border);
+}
+h2 {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+  font: 600 0.95rem var(--font-sans);
+  color: var(--navy);
+  margin: 0 0 8px;
+}
+h2 span {
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+.chart {
+  height: 195px;
+  width: 100%;
+}
+.empty {
+  height: 195px;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.data-note {
+  border-top: 1px solid var(--border);
+  padding: 12px 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+.data-note summary {
+  cursor: pointer;
+}
+.data-note p {
+  line-height: 1.6;
+  max-width: 900px;
 }
 @media (max-width: 650px) {
-  .states {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .analytics-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
-  .details {
-    grid-template-columns: 1fr;
+  .metrics-heading {
+    align-items: start;
+    flex-wrap: wrap;
   }
-  article,
-  .panel {
-    padding: 1rem;
+  .chart,
+  .empty {
+    height: 180px;
   }
-  dl > div {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  dd {
-    text-align: left;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  button {
-    transition: none;
-  }
-}
-
-@include workspace.readable-page;
-.page-heading.metrics-heading {
-  max-width: none;
-}
-.states article span {
-  min-height: 2.8em;
-}
-.states article small {
-  font-size: 0.8125rem;
-  line-height: 1.5;
 }

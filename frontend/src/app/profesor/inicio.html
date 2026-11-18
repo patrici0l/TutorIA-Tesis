@@ -1,5 +1,4 @@
 <section class="intro page-heading fade-in">
-  <div class="heading-badge"></div>
   <h1 class="font-serif">Materiales y recursos</h1>
   <p class="lead">Prepara tus materiales, crea un recurso y asígnalo a tus estudiantes.</p>
 </section>
@@ -19,9 +18,9 @@
   </a>
 
   <!-- Módulo 02: Recursos -->
-  <a class="action-card interactive-card stagger-2 featured-card" routerLink="/recursos">
+  <a class="action-card interactive-card stagger-2" routerLink="/recursos">
     <div class="card-header">
-      <span class="step-tag highlight">02 · RECURSOS</span>
+      <span class="step-tag">02 · RECURSOS</span>
     </div>
     <h2 class="font-serif">Prepara un recurso</h2>
     <p>
@@ -49,47 +48,9 @@
   </a>
 </section>
 
-<!-- Panel de Disponibilidad y Estado de Servicios -->
-<section
-  class="connection-panel fade-in stagger-4"
-  aria-label="Disponibilidad"
-  [attr.aria-busy]="loading()"
->
-  <div class="status-indicator-wrapper">
-    <span
-      class="status-dot"
-      [class.pulse-indicator]="loading()"
-      [class.status-ok]="!loading() && !error() && health()?.status === 'ok'"
-      [class.status-warning]="
-        !loading() && !error() && health()?.status && health()?.status !== 'ok'
-      "
-      [class.status-error]="!loading() && error()"
-      aria-hidden="true"
-    ></span>
-    <p role="status" aria-live="polite">
-      @if (loading()) {
-        Verificando la conexión...
-      } @else if (error()) {
-        Sin conexión. Inténtalo de nuevo en un momento.
-      } @else if (health()?.status === 'ok') {
-      } @else {
-        Algunos servicios presentan intermitencias. Vuelve a comprobar.
-      }
-    </p>
-
-  </div>
-
-  <div class="connection-controls">
-    <button
-      type="button"
-      class="refresh-button interactive-button"
-      (click)="refresh()"
-      [disabled]="loading()"
-    >
-      {{ loading() ? 'Verificando…' : 'Comprobar conexión' }}
-    </button>
-    @if (checkedAt()) {
-      <small class="checked-time">Última comprobación: {{ checkedAt() }}</small>
-    }
-  </div>
-</section>
+<div class="connection-status" [attr.aria-busy]="loading()" aria-label="Estado de conexión">
+  <span class="connection-dot" [class.ok]="!loading() && health()?.status === 'ok'" [class.failed]="!loading() && error()" aria-hidden="true"></span>
+  <span role="status">@if (loading()) { Comprobando la conexión… } @else if (error()) { No se pudo conectar } @else if (health()?.status === 'ok') { Todo listo para trabajar } @else { Algunas funciones no están disponibles }</span>
+  @if (checkedAt()) { <small>Revisado {{ checkedAt() }}</small> }
+  <button type="button" (click)="refresh()" [disabled]="loading()" aria-label="Comprobar conexión">↻ Comprobar</button>
+</div>

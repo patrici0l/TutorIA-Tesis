@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 from typing import Literal
 
@@ -21,6 +21,15 @@ class LatencySummary(BaseModel):
     unknown_records: int = Field(ge=0)
 
 
+class DailyMetrics(BaseModel):
+    day: date
+    records: int
+    input_tokens: int | None
+    output_tokens: int | None
+    latency_ms: Decimal | None
+    latency_records: int
+
+
 class MetricsSummary(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
     scope: Literal["own_all_time"] = "own_all_time"
@@ -38,3 +47,5 @@ class MetricsSummary(BaseModel):
     latency: LatencySummary
     cost_known_records: int = Field(ge=0)
     cost_unknown_records: int = Field(ge=0)
+
+    daily: list[DailyMetrics] = Field(default_factory=list)

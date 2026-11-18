@@ -37,6 +37,12 @@ export class ResourceHistoryComponent {
     succeeded: 'Generado',
     failed: 'Sin resultado',
   };
+  readonly actionLabels: Record<GenerationStatus, string> = {
+    prepared: 'Continuar preparación',
+    generating: 'Consultar estado',
+    succeeded: 'Abrir recurso',
+    failed: 'Ver detalle del fallo',
+  };
   load(offset = 0) {
     if (this.busy() || this.locked()) return;
     this.busy.set(true);

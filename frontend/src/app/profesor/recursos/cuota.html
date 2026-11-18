@@ -1,45 +1,68 @@
-<section aria-labelledby="quota-title" [attr.aria-busy]="loading()">
-  <h3 id="quota-title">Disponibilidad de generación</h3>
+<section
+  class="quota-widget"
+  aria-label="Disponibilidad de generación"
+  [attr.aria-busy]="loading()"
+>
+  <div class="quota-row">
+    @if (quota(); as q) {
+      <svg
+        class="quota-ring"
+        viewBox="0 0 48 48"
+        role="img"
+        [attr.aria-label]="usedPercent(q).toFixed(0) + '% del cupo consumido'"
+      >
+        <circle class="ring-track" cx="24" cy="24" r="19" />
+        <circle
+          class="ring-used"
+          [class.exhausted]="q.remaining === 0"
+          cx="24"
+          cy="24"
+          r="19"
+          pathLength="100"
+          [attr.stroke-dasharray]="usedPercent(q) + ' 100'"
+          transform="rotate(-90 24 24)"
+        />
+        <text x="24" y="29" text-anchor="middle">{{ q.remaining }}</text>
+      </svg>
+      <div class="quota-copy">
+        <strong>Generación diaria</strong
+        ><span>{{ q.remaining }} de {{ q.daily_limit }} solicitudes disponibles</span>
+        @if (!q.enabled) {
+          <span role="status">Generación no habilitada</span>
+        } @else if (q.remaining === 0) {
+          <span role="status">Cupo diario agotado</span>
+        }
+      </div>
+    }
+    @if (loading()) {
+      <span class="quota-state" role="status">Consultando disponibilidad…</span>
+    }
+    @if (error()) {
+      <span class="quota-state" role="status">No pudimos consultar el cupo.</span>
+    }
+    <button
+      type="button"
+      class="refresh-quota"
+      (click)="load()"
+      [disabled]="loading()"
+      aria-label="Actualizar disponibilidad"
+      title="Actualizar disponibilidad"
+    >
+      ↻
+    </button>
+  </div>
   @if (quota(); as q) {
-    <p class="balance">
-      <strong>{{ q.remaining }}</strong> de {{ q.daily_limit }} solicitudes disponibles
-    </p>
-    <progress
-      [value]="q.used"
-      [max]="q.daily_limit"
-      aria-label="Solicitudes diarias utilizadas"
-    ></progress>
-    <p>
-      {{ q.used }} utilizadas · {{ ((q.used * 100) / q.daily_limit).toFixed(0) }}% del cupo
-      consumido
-    </p>
-    @if (!q.enabled) {
-      <p role="status">La generación no está habilitada.</p>
-    }
-    @if (q.remaining === 0) {
-      <p role="status">Cupo diario agotado.</p>
-    }
-    <p class="help">
-      Cupo compartido. Incluye envíos fallidos. Se renueva el
-      {{ q.resets_at | date: 'dd/MM/yyyy HH:mm' }}.
-    </p>
-    <details>
-      <summary>Límites por solicitud</summary>
+    <details class="quota-info">
+      <summary>Detalles del cupo</summary>
+      <p>{{ q.used }} utilizadas · {{ usedPercent(q).toFixed(0) }}% del cupo consumido.</p>
       <p>
-        Hasta {{ q.max_output_tokens }} tokens de salida · {{ q.timeout_seconds }} segundos de
-        espera.
+        Cupo compartido; incluye envíos fallidos. Se renueva el
+        {{ q.resets_at | date: 'dd/MM HH:mm' }}.
       </p>
       <p>
-        El proveedor puede aplicar límites adicionales. Su saldo de tokens no está disponible aquí;
-        el consumo registrado se consulta en la trazabilidad de cada recurso.
+        Hasta {{ q.max_output_tokens }} tokens de salida por solicitud · {{ q.timeout_seconds }} s
+        de espera. El cupo mide solicitudes, no el saldo del proveedor.
       </p>
     </details>
   }
-  @if (loading()) {
-    <p role="status">Consultando solicitudes disponibles…</p>
-  }
-  @if (error()) {
-    <p role="status">No pudimos consultar el cupo disponible.</p>
-  }
-  <button type="button" (click)="load()" [disabled]="loading()">Actualizar disponibilidad</button>
 </section>

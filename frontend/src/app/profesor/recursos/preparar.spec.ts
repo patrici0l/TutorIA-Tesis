@@ -143,7 +143,7 @@ describe('Preparación docente', () => {
     fixture.componentInstance.objective = 'Practicar';
     fixture.detectChanges();
     http.expectOne('/api/v1/content/quota').flush(quota);
-    http.expectOne('/api/v1/documents?limit=20&offset=0').flush({
+    http.expectOne('/api/v1/documents?limit=5&offset=0').flush({
       items: [
         {
           course: 'Cálculo Diferencial',
@@ -155,7 +155,7 @@ describe('Preparación docente', () => {
         },
       ],
       total: 1,
-      limit: 20,
+      limit: 5,
       offset: 0,
     });
     return fixture;
@@ -416,7 +416,7 @@ describe('Preparación docente', () => {
     const attention = vi.spyOn(TestBed.inject(ViewAttention), 'reveal');
     component.showSaved();
     http
-      .expectOne('/api/v1/content/history?offset=0&limit=10')
+      .expectOne('/api/v1/content/history?offset=0&limit=5')
       .flush({ items: [], total: 0, offset: 0, limit: 10 });
     expect(component.workspaceMode()).toBe('saved');
     component.restore({
@@ -447,7 +447,8 @@ describe('Preparación docente', () => {
     const component = fixture.componentInstance;
     fixture.detectChanges();
     const root: HTMLElement = fixture.nativeElement;
-    expect(root.querySelector('#resource-course')!.tagName).toBe('SELECT');
+    expect(root.querySelector('#resource-course')!.getAttribute('role')).toBe('combobox');
+    expect(root.querySelector('.profile-options')).toBeNull();
     expect(component.inputStep()).toBe('course');
     component.continueWithCourse();
     fixture.detectChanges();
@@ -472,14 +473,14 @@ describe('Preparación docente', () => {
     fixture.detectChanges();
     http.expectOne('/api/v1/content/quota').flush(quota);
     http
-      .expectOne('/api/v1/documents?limit=20&offset=0')
+      .expectOne('/api/v1/documents?limit=5&offset=0')
       .flush({ detail: 'Error' }, { status: 500, statusText: 'Error' });
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('No se pudieron consultar tus asignaturas');
     fixture.componentInstance.loadCourses();
     http
-      .expectOne('/api/v1/documents?limit=20&offset=0')
-      .flush({ items: [], total: 0, limit: 20, offset: 0 });
+      .expectOne('/api/v1/documents?limit=5&offset=0')
+      .flush({ items: [], total: 0, limit: 5, offset: 0 });
     fixture.detectChanges();
     expect(fixture.componentInstance.courses()).toEqual([]);
     expect(fixture.nativeElement.textContent).toContain('Subir mi primer documento');
@@ -492,7 +493,7 @@ describe('Preparación docente', () => {
     const fixture = setup();
     await fixture.whenStable();
     http
-      .expectOne('/api/v1/content/history?offset=0&limit=10')
+      .expectOne('/api/v1/content/history?offset=0&limit=5')
       .flush({ items: [], total: 0, offset: 0, limit: 10 });
     fixture.detectChanges();
     expect(fixture.componentInstance.workspaceMode()).toBe('saved');

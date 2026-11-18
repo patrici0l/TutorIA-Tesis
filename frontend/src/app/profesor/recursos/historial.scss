@@ -93,3 +93,50 @@ li.selected {
   gap: 10px;
   align-items: center;
 }
+
+:host {
+  margin-top: 18px;
+}
+section {
+  padding: 18px 20px;
+  border-radius: 12px;
+}
+.header h2 {
+  font-size: 1.2rem;
+}
+section > p {
+  font-size: 0.8rem;
+  margin: 8px 0 12px;
+}
+ul {
+  margin: 0 0 12px;
+}
+li {
+  padding: 10px 0;
+  gap: 12px;
+}
+li p {
+  font-size: 0.78rem;
+  margin: 3px 0;
+}
+button {
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  min-height: 38px;
+}
+li strong {
+  font-size: 0.9rem;
+}
+nav {
+  font-size: 0.8rem;
+}
+@media (max-width: 600px) {
+  li {
+    flex-direction: row;
+    align-items: center;
+  }
+  .resource-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

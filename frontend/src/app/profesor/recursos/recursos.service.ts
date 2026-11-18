@@ -25,7 +25,7 @@ export class PreparationService {
     return this.http.get<GenerationQuota>('/api/v1/content/quota');
   }
   history(offset = 0) {
-    return this.http.get<HistoryPage>('/api/v1/content/history', { params: { offset, limit: 10 } });
+    return this.http.get<HistoryPage>('/api/v1/content/history', { params: { offset, limit: 5 } });
   }
   detail(id: string) {
     return this.http.get<HistoryDetail>(`/api/v1/content/history/${id}`);

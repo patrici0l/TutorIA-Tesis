@@ -22,6 +22,7 @@ class MetricsService:
         }
         return MetricsSummary(
             observed_at=values["observed_at"],
+            daily=values.get("daily", []),
             total_records=values["total_records"],
             prepared=values["prepared"],
             generating=values["generating"],

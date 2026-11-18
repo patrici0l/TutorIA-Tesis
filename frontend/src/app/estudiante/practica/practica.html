@@ -8,140 +8,172 @@
     </p>
   </header>
 }
-@if (!assignment) {
-  <section class="panel" aria-labelledby="bank-title">
-    <h2 id="bank-title">Elige una práctica</h2>
-    <div class="buttons">
-      @for (bank of banks; track bank.version) {
-        <button
-          type="button"
-          class="secondary"
-          [attr.aria-pressed]="version() === bank.version"
-          [disabled]="saving() || selected() !== null || answers().length > 0"
-          (click)="selectBank(bank.version)"
-        >
-          {{ bank.title }}
-        </button>
-      }
-    </div>
-    <p>
-      Práctica actual: <strong>{{ bankTitle(version()) }}</strong> · 3 ejercicios.
-    </p>
-    @if (!complete() && (selected() !== null || answers().length > 0)) {
-      <p>Termina esta práctica para cambiar de bloque sin perder tus respuestas.</p>
-    }
-  </section>
-}
-@if (complete()) {
-  <section class="panel" aria-labelledby="result-title">
-    <p class="eyebrow">PRÁCTICA COMPLETADA</p>
-    <h2 id="result-title">{{ score() }} de {{ questions.length }} respuestas correctas</h2>
-    <p>
-      {{
-        score() === questions.length
-          ? 'Aplicaste correctamente las reglas de esta práctica.'
-          : 'Revisa los conceptos que necesitas reforzar y vuelve a intentarlo cuando quieras.'
-      }}
-    </p>
-    <ul class="result-list">
-      @for (item of questions; track $index) {
-        <li>
-          <div class="result-row">
-            <strong>{{ item.topic }}</strong>
-            <span>{{
-              answers()[$index] === item.correctOption ? 'Respuesta correcta' : 'Para repasar'
-            }}</span>
-          </div>
-          <p><span [appMathText]="item.explanation"></span></p>
-        </li>
-      }
-    </ul>
-    @if (saved(); as result) {
-      <p class="save-note" role="status">
-        Resultado guardado: {{ result.score }} de {{ questions.length }} aciertos. Puedes
-        consultarlo en tu historial.
-      </p>
-    } @else {
-      <p class="save-note">Guarda el resultado antes de empezar otro intento o salir.</p>
-    }
-    <div class="buttons result-actions">
-      @if (!saved()) {
-        <button type="button" (click)="saveResult()" [disabled]="saving()">
-          {{ saving() ? 'Guardando…' : 'Guardar resultado' }}
-        </button>
-      }
-      <button type="button" class="secondary" (click)="restart()" [disabled]="saving()">
-        Volver a practicar
-      </button>
-    </div>
-    @if (saveError()) {
-      <p class="save-error" role="alert">{{ saveError() }}</p>
-    }
-  </section>
-} @else {
-  <section class="panel" aria-labelledby="question-title">
-    <div class="progress">
-      <span>Pregunta {{ index() + 1 }} de {{ questions.length }}</span
-      ><span>{{ question().topic }}</span>
-    </div>
-    <progress
-      [value]="answers().length"
-      [max]="questions.length"
-      aria-label="Preguntas completadas"
-    ></progress>
-    <h2 id="question-title" aria-live="polite">
-      <span [appMathText]="question().statement"></span>
-    </h2>
-    <fieldset [disabled]="submitted()">
-      <legend>Selecciona una respuesta</legend>
-      @for (option of question().options; track $index) {
-        <label [class.selected]="selected() === $index"
-          ><input
-            type="radio"
-            name="answer"
-            [value]="$index"
-            [checked]="selected() === $index"
-            (change)="choose($index)" /><span><span [appMathText]="option"></span></span
-        ></label>
-      }
-    </fieldset>
-    @if (!submitted()) {
+<nav class="practice-tabs" aria-label="Práctica y resultados">
+  <button
+    type="button"
+    class="secondary"
+    [attr.aria-pressed]="activeView() === 'practice'"
+    (click)="activeView.set('practice'); reviewing.set(null)"
+  >
+    {{ complete() ? 'Mi resultado' : 'Practicar' }}
+  </button>
+  <button
+    type="button"
+    class="secondary"
+    [attr.aria-pressed]="activeView() === 'history'"
+    (click)="showHistory(); reviewing.set(null)"
+  >
+    Mi historial
+  </button>
+</nav>
+<div [hidden]="activeView() !== 'practice' || !!reviewing()">
+  @if (!assignment) {
+    <section class="panel" aria-labelledby="bank-title">
+      <h2 id="bank-title">Elige una práctica</h2>
       <div class="buttons">
-        <button type="button" [disabled]="selected() === null" (click)="check()">
-          Comprobar respuesta</button
-        ><button
-          class="secondary"
-          type="button"
-          (click)="hintVisible.set(!hintVisible())"
-          [attr.aria-expanded]="hintVisible()"
-          aria-controls="practice-hint"
-        >
-          {{ hintVisible() ? 'Ocultar pista' : 'Ver una pista' }}
-        </button>
+        @for (bank of banks; track bank.version) {
+          <button
+            type="button"
+            class="secondary"
+            [attr.aria-pressed]="version() === bank.version"
+            [disabled]="saving() || selected() !== null || answers().length > 0"
+            (click)="selectBank(bank.version)"
+          >
+            {{ bank.title }}
+          </button>
+        }
       </div>
-      @if (hintVisible()) {
-        <p id="practice-hint" class="hint"><span [appMathText]="question().hint"></span></p>
+      <p>
+        Práctica actual: <strong>{{ bankTitle(version()) }}</strong> · 3 ejercicios.
+      </p>
+      @if (!complete() && (selected() !== null || answers().length > 0)) {
+        <p>Termina esta práctica para cambiar de bloque sin perder tus respuestas.</p>
       }
-    }
-    @if (submitted()) {
-      <div class="feedback" [class.correct]="correct()" role="status">
-        <h3>{{ correct() ? '¡Correcto!' : 'Revisemos el procedimiento' }}</h3>
-        <p><span [appMathText]="question().feedback[selected()!]"></span></p>
-        <p><span [appMathText]="question().explanation"></span></p>
+    </section>
+  }
+  @if (complete()) {
+    <section class="panel" aria-labelledby="result-title">
+      <p class="eyebrow">PRÁCTICA COMPLETADA</p>
+      <h2 id="result-title">{{ score() }} de {{ questions.length }} respuestas correctas</h2>
+      <p>
+        {{
+          score() === questions.length
+            ? 'Aplicaste correctamente las reglas de esta práctica.'
+            : 'Revisa los conceptos que necesitas reforzar y vuelve a intentarlo cuando quieras.'
+        }}
+      </p>
+      <details class="result-explanations">
+        <summary>Revisar las respuestas de este intento</summary>
+        <ul class="result-list">
+          @for (item of questions; track $index) {
+            <li>
+              <div class="result-row">
+                <strong>{{ item.topic }}</strong>
+                <span>{{
+                  answers()[$index] === item.correctOption ? 'Respuesta correcta' : 'Para repasar'
+                }}</span>
+              </div>
+              <p><span [appMathText]="item.explanation"></span></p>
+            </li>
+          }
+        </ul>
+      </details>
+      @if (saved(); as result) {
+        <p class="save-note" role="status">
+          Resultado guardado: {{ result.score }} de {{ questions.length }} aciertos. Puedes
+          consultarlo en tu historial.
+        </p>
+      } @else {
+        <p class="save-note">Guarda el resultado antes de empezar otro intento o salir.</p>
+      }
+      <div class="buttons result-actions">
+        @if (!saved()) {
+          <button type="button" (click)="saveResult()" [disabled]="saving()">
+            {{ saving() ? 'Guardando…' : 'Guardar resultado' }}
+          </button>
+        }
+        <button type="button" class="secondary" (click)="restart()" [disabled]="saving()">
+          Volver a practicar
+        </button>
+        @if (saved()) {
+          <button type="button" class="secondary" (click)="showHistory()">Ver mi historial</button>
+        }
       </div>
-      <button type="button" (click)="next()">
-        {{ index() === questions.length - 1 ? 'Ver mi resultado' : 'Siguiente pregunta' }}
-      </button>
-    }
-  </section>
-}
-<p class="session-note">
-  Práctica de repaso, sin calificación oficial. Guarda tus respuestas al terminar para conservarlas.
-</p>
-<section class="panel history" aria-labelledby="history-title" [attr.aria-busy]="historyLoading()">
+      @if (saveError()) {
+        <p class="save-error" role="alert">{{ saveError() }}</p>
+      }
+    </section>
+  } @else {
+    <section class="panel" aria-labelledby="question-title">
+      <div class="progress">
+        <span>Pregunta {{ index() + 1 }} de {{ questions.length }}</span
+        ><span>{{ question().topic }}</span>
+      </div>
+      <progress
+        [value]="answers().length"
+        [max]="questions.length"
+        aria-label="Preguntas completadas"
+      ></progress>
+      <h2 id="question-title" aria-live="polite">
+        <span [appMathText]="question().statement"></span>
+      </h2>
+      <fieldset [disabled]="submitted()">
+        <legend>Selecciona una respuesta</legend>
+        @for (option of question().options; track $index) {
+          <label [class.selected]="selected() === $index"
+            ><input
+              type="radio"
+              name="answer"
+              [value]="$index"
+              [checked]="selected() === $index"
+              (change)="choose($index)" /><span><span [appMathText]="option"></span></span
+          ></label>
+        }
+      </fieldset>
+      @if (!submitted()) {
+        <div class="buttons">
+          <button type="button" [disabled]="selected() === null" (click)="check()">
+            Comprobar respuesta</button
+          ><button
+            class="secondary"
+            type="button"
+            (click)="hintVisible.set(!hintVisible())"
+            [attr.aria-expanded]="hintVisible()"
+            aria-controls="practice-hint"
+          >
+            {{ hintVisible() ? 'Ocultar pista' : 'Ver una pista' }}
+          </button>
+        </div>
+        @if (hintVisible()) {
+          <p id="practice-hint" class="hint"><span [appMathText]="question().hint"></span></p>
+        }
+      }
+      @if (submitted()) {
+        <div class="feedback" [class.correct]="correct()" role="status">
+          <h3>{{ correct() ? '¡Correcto!' : 'Revisemos el procedimiento' }}</h3>
+          <p><span [appMathText]="question().feedback[selected()!]"></span></p>
+          <p><span [appMathText]="question().explanation"></span></p>
+        </div>
+        <button type="button" (click)="next()">
+          {{ index() === questions.length - 1 ? 'Ver mi resultado' : 'Siguiente pregunta' }}
+        </button>
+      }
+    </section>
+  }
+  <p class="session-note">
+    Práctica de repaso, sin calificación oficial. Guarda tus respuestas al terminar para
+    conservarlas.
+  </p>
+</div>
+<section
+  [hidden]="activeView() !== 'history' || !!reviewing()"
+  class="panel history"
+  aria-labelledby="history-title"
+  [attr.aria-busy]="historyLoading()"
+>
   <div class="history-heading">
     <div>
-      <h2 id="history-title">Mi historial de práctica</h2>
+      <h2 id="history-title" tabindex="-1">Mi historial de práctica</h2>
       <p>Consulta tus intentos y vuelve a revisar las explicaciones.</p>
     </div>
     <button type="button" class="secondary" (click)="loadHistory()" [disabled]="historyLoading()">
@@ -154,17 +186,10 @@
     </p>
   }
   @if (history(); as page) {
-    <dl class="history-summary">
-      <div>
-        <dt>Intentos guardados</dt>
-        <dd>{{ page.total }}</dd>
-      </div>
-      <div>
-        <dt>Mejor resultado entre los bloques</dt>
-        <dd>{{ page.best_score === null ? 'Sin resultados' : page.best_score + ' de 3' }}</dd>
-      </div>
-    </dl>
-    <p class="session-note">Este resumen reúne ambos bloques; no mide el dominio de un tema.</p>
+    <p class="history-totals">
+      {{ page.total }} intentos guardados · Mejor resultado:
+      {{ page.best_score === null ? 'Sin resultados' : page.best_score + ' de 3' }}
+    </p>
     <ol class="attempt-list">
       @for (attempt of page.items; track attempt.id) {
         <li>
@@ -178,11 +203,19 @@
             }
           </div>
           <div class="attempt-result">
-            <strong>{{ attempt.score }} de 3 aciertos</strong>
+            <span class="attempt-score"
+              ><strong>{{ attempt.score }} de 3 aciertos</strong
+              ><meter
+                min="0"
+                max="3"
+                [value]="attempt.score"
+                [attr.aria-label]="attempt.score + ' de 3 aciertos'"
+              ></meter
+            ></span>
             <button
               type="button"
               class="secondary review-button"
-              (click)="reviewing.set(reviewing()?.id === attempt.id ? null : attempt)"
+              (click)="openReview(attempt)"
               [attr.aria-expanded]="reviewing()?.id === attempt.id"
               aria-controls="attempt-review"
               [attr.aria-label]="
@@ -200,20 +233,21 @@
       }
     </ol>
     @if (page.total > page.limit) {
-      <div class="buttons">
+      <div class="buttons history-pagination">
         <button
           type="button"
           (click)="loadHistory(page.offset - page.limit)"
           [disabled]="historyLoading() || page.offset === 0"
         >
-          Más recientes
+          Anterior
         </button>
+        <span>{{ page.offset + 1 }}–{{ page.offset + page.items.length }} de {{ page.total }}</span>
         <button
           type="button"
           (click)="loadHistory(page.offset + page.limit)"
           [disabled]="historyLoading() || page.offset + page.limit >= page.total"
         >
-          Anteriores
+          Siguiente
         </button>
       </div>
     }
@@ -222,7 +256,8 @@
 @if (reviewing(); as attempt) {
   <section class="panel history" id="attempt-review" aria-labelledby="review-title">
     <p class="eyebrow">INTENTO GUARDADO · {{ attempt.created_at | date: 'dd/MM/yyyy HH:mm' }}</p>
-    <h2 id="review-title">Revisa tus respuestas</h2>
+    <button type="button" class="secondary" (click)="closeReview()">← Volver al historial</button>
+    <h2 id="review-title" tabindex="-1">Revisa tus respuestas</h2>
     <p>{{ bankTitle(attempt.version) }}</p>
     <p>Resultado guardado: {{ attempt.score }} de {{ attempt.answers.length }} aciertos.</p>
     @if (reviewAvailable()) {
@@ -263,6 +298,6 @@
       </p>
     }
     <p class="session-note">Esta revisión no modifica tu práctica actual ni crea otro intento.</p>
-    <button type="button" class="secondary" (click)="reviewing.set(null)">Cerrar revisión</button>
+    <button type="button" class="secondary" (click)="closeReview()">Cerrar revisión</button>
   </section>
 }

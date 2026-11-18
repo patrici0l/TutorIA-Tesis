@@ -223,8 +223,8 @@ h1 {
   font-weight: 600;
 
   &:hover {
-    background: #eae6da;
-    border-color: #cac5b8;
+    background: var(--blue-soft);
+    border-color: var(--blue);
   }
 
   &:disabled {
@@ -360,13 +360,13 @@ h1 {
     align-items: center;
     gap: 8px;
     padding: 11px 22px;
-    background: var(--navy);
+    background: var(--blue);
     color: #ffffff;
     border-radius: var(--radius-md);
     font-size: 0.875rem;
     font-weight: 600;
     text-decoration: none;
-    box-shadow: 0 2px 5px rgba(10, 37, 64, 0.15);
+    box-shadow: 0 2px 5px rgba(0, 54, 114, 0.15);
 
     .arrow-icon {
       font-size: 1.1rem;
@@ -374,8 +374,8 @@ h1 {
     }
 
     &:hover {
-      background: var(--navy-hover);
-      box-shadow: 0 4px 12px rgba(10, 37, 64, 0.22);
+      background: var(--navy);
+      box-shadow: 0 4px 12px rgba(0, 54, 114, 0.22);
 
       .arrow-icon {
         transform: translate(3px, -2px);

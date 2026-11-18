@@ -78,6 +78,10 @@ class AssignmentRepository:
                 PracticeAssignment.id,
                 PracticeAssignment.version,
                 PracticeAssignment.resource_id,
+                select(ContentGeneration.resource["resource_type"].as_string())
+                .where(ContentGeneration.id == PracticeAssignment.resource_id)
+                .scalar_subquery()
+                .label("resource_type"),
                 PracticeAssignment.title,
                 PracticeAssignment.instructions,
                 PracticeAssignment.created_at,

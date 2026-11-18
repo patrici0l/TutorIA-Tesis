@@ -10,16 +10,35 @@ import {
   PracticeService,
   PRACTICE_VERSION,
 } from './practica.service';
-import { RouterLink } from '@angular/router';
+import { ViewAttention } from '../../compartido/atencion-vista.service';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { PRACTICE_BANKS } from '../../compartido/practica/bancos';
 
 @Component({
   selector: 'app-practice',
   imports: [MathTextDirective, RouterLink, DatePipe],
   templateUrl: './practica.html',
-  styleUrl: './practica.scss',
+  styleUrls: ['./practica.scss', './compacto.scss'],
 })
 export class PracticeComponent implements OnInit {
+  private readonly attention = inject(ViewAttention);
+  private readonly route = inject(ActivatedRoute);
+  readonly activeView = signal<'practice' | 'history'>(
+    this.route.snapshot?.fragment === 'history-title' ? 'history' : 'practice',
+  );
+  showHistory() {
+    this.activeView.set('history');
+    this.attention.reveal('history-title');
+  }
+  openReview(attempt: PracticeResult) {
+    this.activeView.set('history');
+    this.reviewing.set(attempt);
+    this.attention.reveal('review-title');
+  }
+  closeReview() {
+    this.reviewing.set(null);
+    this.attention.reveal('history-title');
+  }
   @Input() assignment: Assignment | null = null;
   private readonly service = inject(PracticeService);
   private readonly destroyRef = inject(DestroyRef);

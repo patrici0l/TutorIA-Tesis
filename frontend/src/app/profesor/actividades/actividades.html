@@ -4,108 +4,154 @@
   <h1>Actividades asignadas</h1>
   <p>Asigna ejercicios o materiales de estudio y gestiona las entregas.</p>
 </header>
+<nav class="assignment-tabs" aria-label="Gestión de actividades">
+  <button
+    type="button"
+    [attr.aria-pressed]="activeView() === 'assign'"
+    (click)="activeView.set('assign')"
+  >
+    Asignar actividad
+  </button>
+  <button
+    type="button"
+    class="secondary"
+    [attr.aria-pressed]="activeView() === 'tracking'"
+    (click)="activeView.set('tracking')"
+  >
+    Seguimiento
+    @if (page(); as results) {
+      <span>({{ results.total }})</span>
+    }
+  </button>
+</nav>
 <div class="assignment-layout with-form">
-  <form (ngSubmit)="create()" class="panel assignment-form">
-    <h2>Asignar una actividad</h2>
-    <p class="help">
-      Los bloques de ejercicios registran intentos y aciertos. Los recursos generados se comparten
-      como material de estudio, con sus soluciones.
-    </p>
-    <h3>1. Elige el contenido</h3>
-    <div class="buttons resource-actions">
-      <a
-        class="action-link"
-        routerLink="/recursos"
-        [queryParams]="{ view: 'saved', action: 'assign' }"
-        >{{ selectedResource() ? 'Cambiar recurso' : 'Elegir recurso guardado' }}</a
+  <section [hidden]="activeView() !== 'assign'">
+    <form (ngSubmit)="create()" class="panel assignment-form">
+      <h2>Asignar una actividad</h2>
+      <p class="help">Comparte material de estudio o asigna ejercicios autocorregidos.</p>
+
+      <div class="buttons resource-actions">
+        <a
+          class="action-link"
+          routerLink="/recursos"
+          [queryParams]="{ view: 'saved', action: 'assign' }"
+          >{{ selectedResource() ? 'Cambiar recurso' : 'Elegir recurso guardado' }}</a
+        >
+        <a class="action-link secondary" routerLink="/recursos">Crear recurso nuevo</a>
+      </div>
+      @if (resourceLoading()) {
+        <p role="status">Cargando recurso…</p>
+      }
+      @if (resourceError()) {
+        <p id="assignment-resource-error" tabindex="-1" role="alert">{{ resourceError() }}</p>
+        <a
+          class="action-link secondary"
+          routerLink="/recursos"
+          [queryParams]="{ view: 'saved', action: 'assign' }"
+          >Elegir otro recurso</a
+        >
+      }
+      @if (selectedResource(); as detail) {
+        @if (version === 'resource-v1') {
+          <p>
+            {{
+              detail.resource?.resource_type === 'QUIZ'
+                ? 'Quiz interactivo'
+                : 'Material de estudio'
+            }}: <strong>{{ detail.resource?.title }}</strong
+            >.
+            {{
+              detail.resource?.resource_type === 'QUIZ'
+                ? 'El estudiante elegirá sus respuestas y después verá las explicaciones. Autoevaluación de sesión, sin entrega guardada.'
+                : 'Se comparte con sus fuentes y soluciones, sin calificación automática.'
+            }}
+          </p>
+        }
+      }
+      <fieldset
+        [disabled]="saving() || loading() || changing() || resourceLoading() || !!resourceError()"
       >
-      <a class="action-link secondary" routerLink="/recursos">Crear recurso nuevo</a>
-    </div>
-    @if (resourceLoading()) {
-      <p role="status">Cargando recurso…</p>
-    }
-    @if (resourceError()) {
-      <p id="assignment-resource-error" tabindex="-1" role="alert">{{ resourceError() }}</p>
-      <a
-        class="action-link secondary"
-        routerLink="/recursos"
-        [queryParams]="{ view: 'saved', action: 'assign' }"
-        >Elegir otro recurso</a
-      >
-    }
-    @if (selectedResource(); as detail) {
-      @if (version === 'resource-v1') {
-        <p>
-          Material de estudio: <strong>{{ detail.resource?.title }}</strong
-          >. Se comparte con sus fuentes y soluciones, sin calificación automática.
+        <label
+          >Contenido de la actividad
+          <ng-select
+            name="version"
+            class="course-select assignment-content-select"
+            panelClass="course-select-panel"
+            [items]="contentOptions()"
+            bindLabel="label"
+            bindValue="value"
+            [(ngModel)]="version"
+            [clearable]="false"
+            [searchable]="true"
+            [disabled]="
+              saving() || loading() || changing() || resourceLoading() || !!resourceError()
+            "
+            notFoundText="No hay contenido con ese nombre"
+          >
+            <ng-template ng-option-tmp let-option="item"
+              ><span>{{ option.label }}</span
+              ><small class="content-kind">{{ option.kind }}</small></ng-template
+            >
+          </ng-select></label
+        >
+        <h3 id="assignment-recipient-title" tabindex="-1">Destinatario y actividad</h3>
+        <label
+          >Título
+          <input
+            name="title"
+            [(ngModel)]="title"
+            required
+            maxlength="120"
+            placeholder="Ej. Repaso de reglas de derivación"
+        /></label>
+        <label
+          >Correo del estudiante
+          <input
+            name="email"
+            type="email"
+            [(ngModel)]="email"
+            required
+            maxlength="254"
+            aria-describedby="student-email-help"
+        /></label>
+        <p id="student-email-help" class="help form-note">
+          La cuenta debe haber iniciado sesión antes.
+          @if (auth.mode() === 'mock') {
+            <span class="demo-email"
+              >Correo disponible: <strong>estudiante.demo&#64;example.org</strong></span
+            >
+          }
+        </p>
+        <label class="instructions-field"
+          >Instrucciones (opcional)
+          <textarea
+            name="instructions"
+            [(ngModel)]="instructions"
+            maxlength="2000"
+            rows="2"
+          ></textarea>
+        </label>
+        <button type="submit">{{ saving() ? 'Asignando…' : 'Asignar actividad' }}</button>
+      </fieldset>
+      @if (formError()) {
+        <p id="assignment-form-error" tabindex="-1" class="message error" role="alert">
+          {{ formError() }}
         </p>
       }
-    }
-    <fieldset
-      [disabled]="saving() || loading() || changing() || resourceLoading() || !!resourceError()"
-    >
-      <label
-        >Contenido de la actividad
-        <select name="version" [(ngModel)]="version">
-          @if (selectedResource()) {
-            <option value="resource-v1">
-              {{ selectedResource()?.resource?.title }} · material de estudio
-            </option>
-          }
-          @for (bank of banks; track bank.version) {
-            <option [value]="bank.version">{{ bank.title }} · ejercicios autocorregidos</option>
-          }
-        </select></label
-      >
-      <h3 id="assignment-recipient-title" tabindex="-1">2. Completa la asignación</h3>
-      <label
-        >Título
-        <input
-          name="title"
-          [(ngModel)]="title"
-          required
-          maxlength="120"
-          placeholder="Ej. Repaso de reglas de derivación"
-      /></label>
-      <label
-        >Correo del estudiante
-        <input
-          name="email"
-          type="email"
-          [(ngModel)]="email"
-          required
-          maxlength="254"
-          aria-describedby="student-email-help"
-      /></label>
-      <p id="student-email-help" class="help">
-        La cuenta debe haber iniciado sesión antes.
-        @if (auth.mode() === 'mock') {
-          <span class="demo-email"
-            >Correo disponible: <strong>estudiante.demo&#64;example.org</strong></span
-          >
-        }
-      </p>
-      <label
-        >Instrucciones (opcional)
-        <textarea
-          name="instructions"
-          [(ngModel)]="instructions"
-          maxlength="2000"
-          rows="3"
-        ></textarea>
-      </label>
-      <button type="submit">{{ saving() ? 'Asignando…' : 'Asignar actividad' }}</button>
-    </fieldset>
-    @if (formError()) {
-      <p id="assignment-form-error" tabindex="-1" class="message error" role="alert">{{ formError() }}</p>
-    }
-    @if (success()) {
-      <p id="assignment-success" tabindex="-1" class="message" role="status">{{ success() }}</p>
-    }
-  </form>
+      @if (success()) {
+        <p id="assignment-success" tabindex="-1" class="message" role="status">
+          {{ success() }}
+          <button type="button" class="secondary" (click)="activeView.set('tracking')">
+            Ver seguimiento
+          </button>
+        </p>
+      }
+    </form>
+  </section>
 
   <section
     class="assignment-list"
+    [hidden]="activeView() !== 'tracking'"
     aria-labelledby="activity-list-title"
     [attr.aria-busy]="loading()"
   >
@@ -134,77 +180,215 @@
       <p class="message" role="status">{{ statusSuccess() }}</p>
     }
     @if (page(); as results) {
-      <p class="help scope-note">
-        Consulta el material asignado o los resultados de cada práctica.
+      <div class="activity-filters">
+        <label
+          >Buscar en esta página<input
+            type="search"
+            placeholder="Actividad o correo"
+            [ngModel]="search()"
+            (ngModelChange)="search.set($event)"
+        /></label>
+        <label
+          >Estado<select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)">
+            <option value="">Todos los estados</option>
+            <option value="open">Abiertas</option>
+            <option value="closed">Cerradas</option>
+            <option value="cancelled">Canceladas</option>
+          </select></label
+        >
+        <label
+          >Contenido<select [ngModel]="typeFilter()" (ngModelChange)="typeFilter.set($event)">
+            <option value="">Todos los contenidos</option>
+            <option value="resource">Material de estudio</option>
+            <option value="practice">Ejercicios</option>
+          </select></label
+        >
+        <button
+          class="secondary"
+          type="button"
+          (click)="search.set(''); statusFilter.set(''); typeFilter.set('')"
+        >
+          Limpiar filtros
+        </button>
+      </div>
+      <p class="help" role="status">
+        {{ filtered().length }} de {{ results.items.length }} actividades de esta página. Abre una
+        fila para consultar sus detalles.
       </p>
-      @for (item of results.items; track item.id) {
-        <app-assignment-card [item]="item" [showRecipient]="true">
-          <div class="buttons">
-            @if (item.status === 'open') {
-              <button
-                type="button"
-                (click)="requestStatus(item, 'closed')"
-                [disabled]="changing() || saving() || loading()"
-              >
-                Cerrar actividad
-              </button>
-            } @else {
-              <button
-                type="button"
-                (click)="requestStatus(item, 'open')"
-                [disabled]="changing() || saving() || loading()"
-              >
-                Reactivar actividad
-              </button>
+      <div
+        class="table-scroll"
+        tabindex="0"
+        role="region"
+        aria-label="Tabla de actividades asignadas"
+      >
+        <table>
+          <thead>
+            <tr>
+              <th>Actividad / estudiante</th>
+              <th>Estado</th>
+              <th>Contenido</th>
+              <th>Intentos</th>
+              <th>Fecha</th>
+              <th>Detalle</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of filtered(); track item.id) {
+              <tr [class.selected-row]="selectedId() === item.id">
+                <td>
+                  <strong>{{ item.title }}</strong
+                  ><small>{{ item.student_email }}</small>
+                </td>
+                <td>
+                  <span class="status-pill" [class.open]="item.status === 'open'">{{
+                    statusLabels[item.status]
+                  }}</span>
+                </td>
+                <td>
+                  {{
+                    item.resource_type === 'QUIZ'
+                      ? 'Quiz interactivo'
+                      : item.resource_id
+                        ? 'Material de estudio'
+                        : 'Ejercicios'
+                  }}
+                </td>
+                <td>{{ item.resource_id ? 'No aplica' : item.attempts }}</td>
+                <td>{{ item.created_at | date: 'dd/MM/yyyy' }}</td>
+                <td>
+                  <button
+                    class="secondary"
+                    type="button"
+                    (click)="selectActivity(item.id)"
+                    [attr.aria-expanded]="selectedId() === item.id"
+                    [attr.aria-label]="'Ver detalle de ' + item.title"
+                  >
+                    {{ selectedId() === item.id ? 'Ocultar' : 'Ver detalle' }}
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6">
+                  No hay actividades que coincidan con los filtros de esta página.
+                </td>
+              </tr>
             }
-            @if (item.status !== 'cancelled') {
+          </tbody>
+        </table>
+      </div>
+      @for (item of filtered(); track item.id) {
+        @if (selectedId() === item.id) {
+          <section class="selected-detail" aria-label="Detalle de la actividad">
+            <div class="detail-tabs">
               <button
                 type="button"
                 class="secondary"
-                (click)="requestStatus(item, 'cancelled')"
-                [disabled]="changing() || saving() || loading()"
+                [attr.aria-pressed]="detailTab() === 'overview'"
+                (click)="detailTab.set('overview')"
               >
-                Cancelar actividad
+                Contenido y gestión</button
+              ><button
+                type="button"
+                class="secondary"
+                [attr.aria-pressed]="detailTab() === 'results'"
+                (click)="detailTab.set('results')"
+              >
+                Resultados</button
+              ><button type="button" class="secondary" (click)="selectedId.set(null)">
+                Cerrar detalle
               </button>
-            }
-          </div>
-          @if (pendingChange(); as change) {
-            @if (change.item.id === item.id) {
-              <section class="confirmation" [id]="'change-' + item.id" tabindex="-1" aria-label="Confirmar cambio de estado">
-                <p>
-                  {{
-                    change.item.resource_id
-                      ? 'Se actualizará el estado de la actividad; el material seguirá disponible para consulta.'
-                      : change.status === 'open'
-                        ? 'El estudiante podrá guardar nuevos intentos.'
-                        : change.status === 'closed'
-                          ? 'Se detendrán las entregas de esta actividad.'
-                          : 'La actividad quedará marcada como cancelada y no recibirá nuevas entregas.'
-                  }}
-                </p>
-                <p class="help">
-                  Los resultados guardados se conservan. Puedes cambiar el estado después.
-                </p>
+            </div>
+            @if (detailTab() === 'results') {
+              <p>
+                {{
+                  item.resource_id
+                    ? item.resource_type === 'QUIZ'
+                      ? 'Autoevaluación: el resultado se muestra en la sesión del estudiante y no se guarda como entrega.'
+                      : 'Material de estudio sin calificación automática.'
+                    : 'Intentos registrados: ' + item.attempts
+                }}
+              </p>
+              <p>
+                Mejor puntuación:
+                {{ item.best_score === null ? 'Sin dato registrado' : item.best_score }}
+              </p>
+            } @else {
+              <app-assignment-card [item]="item" [showRecipient]="true">
                 <div class="buttons">
-                  <button type="button" (click)="confirmStatus()" [disabled]="changing()">
-                    {{ changing() ? 'Guardando…' : 'Confirmar cambio' }}
-                  </button>
-                  <button
-                    type="button"
-                    class="secondary"
-                    (click)="pendingChange.set(null)"
-                    [disabled]="changing()"
-                  >
-                    Volver
-                  </button>
+                  @if (item.status === 'open') {
+                    <button
+                      type="button"
+                      (click)="requestStatus(item, 'closed')"
+                      [disabled]="changing() || saving() || loading()"
+                    >
+                      Cerrar actividad
+                    </button>
+                  } @else {
+                    <button
+                      type="button"
+                      (click)="requestStatus(item, 'open')"
+                      [disabled]="changing() || saving() || loading()"
+                    >
+                      Reactivar actividad
+                    </button>
+                  }
+                  @if (item.status !== 'cancelled') {
+                    <button
+                      type="button"
+                      class="secondary"
+                      (click)="requestStatus(item, 'cancelled')"
+                      [disabled]="changing() || saving() || loading()"
+                    >
+                      Cancelar actividad
+                    </button>
+                  }
                 </div>
-                @if (statusError()) {
-                  <p role="alert">{{ statusError() }}</p>
+                @if (pendingChange(); as change) {
+                  @if (change.item.id === item.id) {
+                    <section
+                      class="confirmation"
+                      [id]="'change-' + item.id"
+                      tabindex="-1"
+                      aria-label="Confirmar cambio de estado"
+                    >
+                      <p>
+                        {{
+                          change.item.resource_id
+                            ? 'Se actualizará el estado de la actividad; el material seguirá disponible para consulta.'
+                            : change.status === 'open'
+                              ? 'El estudiante podrá guardar nuevos intentos.'
+                              : change.status === 'closed'
+                                ? 'Se detendrán las entregas de esta actividad.'
+                                : 'La actividad quedará marcada como cancelada y no recibirá nuevas entregas.'
+                        }}
+                      </p>
+                      <p class="help">
+                        Los resultados guardados se conservan. Puedes cambiar el estado después.
+                      </p>
+                      <div class="buttons">
+                        <button type="button" (click)="confirmStatus()" [disabled]="changing()">
+                          {{ changing() ? 'Guardando…' : 'Confirmar cambio' }}
+                        </button>
+                        <button
+                          type="button"
+                          class="secondary"
+                          (click)="pendingChange.set(null)"
+                          [disabled]="changing()"
+                        >
+                          Volver
+                        </button>
+                      </div>
+                      @if (statusError()) {
+                        <p role="alert">{{ statusError() }}</p>
+                      }
+                    </section>
+                  }
                 }
-              </section>
+              </app-assignment-card>
             }
-          }
-        </app-assignment-card>
+          </section>
+        }
       } @empty {
         <div class="panel empty-state">
           <h3>Tu primera actividad empieza aquí</h3>

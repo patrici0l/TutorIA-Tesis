@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { DocumentLibraryComponent } from './biblioteca';
-import { CourseDocument } from './documentos.model';
+import { CourseDocument, DOCUMENT_PAGE_SIZE } from './documentos.model';
 it('conserva documento seleccionado y límites al delegar apertura y paginación', async () => {
   await TestBed.configureTestingModule({ imports: [DocumentLibraryComponent] }).compileComponents();
   const f = TestBed.createComponent(DocumentLibraryComponent);
@@ -23,5 +23,5 @@ it('conserva documento seleccionado y límites al delegar apertura y paginación
   const buttons = f.nativeElement.querySelectorAll('.pagination button');
   expect(buttons[0].disabled).toBe(true);
   buttons[1].click();
-  expect(reload).toHaveBeenCalledWith(20);
+  expect(reload).toHaveBeenCalledWith(DOCUMENT_PAGE_SIZE);
 });

@@ -12,7 +12,9 @@
     <span class="badge type-badge">
       {{
         item().resource_id
-          ? 'Material de estudio'
+          ? item().resource_type === 'QUIZ' || item().resource?.resource_type === 'QUIZ'
+            ? 'Quiz interactivo'
+            : 'Material de estudio'
           : item().attempts
             ? 'Con resultados'
             : 'Sin entregas'
@@ -50,7 +52,11 @@
   <!-- Resumen de Resultados / Material de Consulta -->
   @if (item().resource_id) {
     <p class="help study-note">
-      Material de consulta con soluciones. No registra intentos ni confirma la lectura del estudiante.
+      {{
+        item().resource_type === 'QUIZ' || item().resource?.resource_type === 'QUIZ'
+          ? 'Quiz de autoevaluación: las explicaciones se muestran al terminar. El resultado de sesión no se guarda como entrega.'
+          : 'Material de consulta con soluciones. No registra intentos ni confirma la lectura del estudiante.'
+      }}
     </p>
   } @else {
     <dl class="result-summary">

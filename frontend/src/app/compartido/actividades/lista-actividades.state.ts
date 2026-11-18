@@ -11,12 +11,11 @@ export class AssignmentListState {
   readonly page = signal<AssignmentPage | null>(null);
   readonly loading = signal(false);
   readonly error = signal('');
-  load(offset = 0) {
+  load(offset = 0, limit?: number) {
     if (this.loading()) return;
     this.loading.set(true);
     this.error.set('');
-    this.service
-      .list(offset)
+    (limit === undefined ? this.service.list(offset) : this.service.list(offset, limit))
       .pipe(takeUntilDestroyed(this.destroy))
       .subscribe({
         next: (page) => {
