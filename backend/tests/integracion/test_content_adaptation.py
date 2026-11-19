@@ -6,6 +6,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.base_datos.session import get_session
+from app.configuracion.settings import Settings
 from app.main import create_app
 from app.modulos.contenidos.models import ContentGeneration
 from app.modulos.contenidos.repositorios.generation_claim_repository import (
@@ -18,7 +19,6 @@ from app.modulos.contenidos.servicios.generation_trace_service import Generation
 from app.modulos.contenidos.servicios.preparation_service import PreparationService
 from app.modulos.contenidos.servicios.prepare_content_service import PrepareContentService
 from app.modulos.contenidos.servicios.resource_validation_service import ResourceValidationService
-from app.modulos.documentos.models import Document
 from app.modulos.perfiles.repositorios.profile_repository import ProfileRepository
 from app.modulos.perfiles.schemas import ProfileRequest
 from app.modulos.rag.prompts.educational_prompt import EducationalPromptBuilder
@@ -30,6 +30,7 @@ from tests.integracion.test_content_trace_database import pytestmark as trace_ma
 from tests.integracion.test_content_trace_database import response
 from tests.integracion.test_content_trace_database import trace_database as trace_database
 from tests.integracion.test_generation_claim import claim_database as claim_database
+from tests.integracion.test_generation_claim import published_source
 from tests.unitarios.test_profile_validation import SAMPLE
 
 pytestmark = trace_marks
@@ -50,20 +51,7 @@ def test_saved_adaptation_is_sent_once_with_fake_provider(
             "guidance": "Refuerza los prerrequisitos presentes en las fuentes, "
                         "explica paso a paso y ofrece pistas.",
         })
-    found = retrieval()
-    hit = found.results[0]
-    db.add(
-        Document(
-            id=hit.document_id,
-            owner_id=owners[0],
-            filename=hit.filename,
-            title=hit.document_title,
-            mime_type="text/plain",
-            size_bytes=10,
-            sha256=hit.document_sha256,
-        )
-    )
-    db.commit()
+    found = published_source(db, owners[0])
     prepared = EducationalPromptBuilder().build(effective, found, adaptation=adaptation)
     if policy_version == "profile-adaptation-v1":
         prepared = prepared.model_copy(update={"prompt_version": "educational-rag-profile-v3"})
@@ -84,7 +72,7 @@ def test_saved_adaptation_is_sent_once_with_fake_provider(
         "app.modulos.contenidos.servicios.generate_preparation_service.create_provider",
         lambda _: provider,
     )
-    settings = SimpleNamespace(
+    settings = Settings(
         llm_enabled=True,
         llm_free_tier_confirmed=True,
         llm_default_provider="gemini",

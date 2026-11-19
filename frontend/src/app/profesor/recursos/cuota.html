@@ -26,7 +26,7 @@
       </svg>
       <div class="quota-copy">
         <strong>Generación diaria</strong
-        ><span>{{ q.remaining }} de {{ q.daily_limit }} solicitudes disponibles</span>
+        ><span>{{ q.remaining }} de {{ q.daily_limit }} {{ q.enabled ? 'solicitudes disponibles' : 'solicitudes restantes del cupo' }}</span>
         @if (!q.enabled) {
           <span role="status">Generación no habilitada</span>
         } @else if (q.remaining === 0) {

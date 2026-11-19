@@ -43,7 +43,7 @@ def claim_database(trace_database):
     return trace_database
 
 
-def preparation(db, repository, owner):
+def published_source(db, owner):
     found = retrieval()
     hit = found.results[0]
     hit.course = "cálculo diferencial"
@@ -90,6 +90,11 @@ def preparation(db, repository, owner):
         )
     )
     db.commit()
+    return found
+
+
+def preparation(db, repository, owner):
+    found = published_source(db, owner)
     return repository.prepare(owner, EducationalPromptBuilder().build(request(), found))
 
 

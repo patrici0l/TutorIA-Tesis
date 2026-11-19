@@ -78,6 +78,8 @@
 .brand-text {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .brand-title {
@@ -261,6 +263,18 @@ main {
   .masthead {
     padding: 10px 16px;
     min-height: 64px;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+  }
+
+  .brand {
+    flex: 1 1 220px;
+    min-width: 0;
+  }
+
+  .account {
+    flex-shrink: 0;
+    margin-left: auto;
   }
 
   .brand-sub {

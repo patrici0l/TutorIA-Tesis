@@ -108,6 +108,13 @@ button.secondary {
   flex-shrink: 0;
 }
 
+.document-states {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
 .open-btn {
   padding: 8px 18px;
 

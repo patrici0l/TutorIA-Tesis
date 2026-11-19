@@ -23,6 +23,9 @@ logs
 backend/models
 
 documentacion-local
+docs/qa
+output/pdf
+tmp/pdfs
 versionesDM
 AGENTS.md
 

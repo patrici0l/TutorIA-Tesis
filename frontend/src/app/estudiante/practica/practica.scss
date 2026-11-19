@@ -9,6 +9,33 @@
 
 @include workspace.readable-page;
 
+.pending-practice-dialog {
+  box-sizing: border-box;
+  width: min(34rem, calc(100% - 2rem));
+  max-height: calc(100dvh - 2rem);
+  overflow: auto;
+  padding: 1.5rem;
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-lg);
+  color: var(--ink);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-lifted);
+
+  &::backdrop {
+    background: rgba(0, 30, 65, 0.4);
+  }
+
+  h2 {
+    margin-top: 0;
+    color: var(--navy);
+  }
+
+  .buttons {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+}
+
 // Encabezado de página
 header.page-heading {
   margin: 1.5rem 0 2rem;
@@ -132,6 +159,7 @@ button {
 // Barra de progreso de la práctica
 .progress {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: baseline;
   font-size: 0.8125rem;
@@ -189,7 +217,7 @@ fieldset {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: var(--gold);
+    color: var(--navy);
     margin-bottom: 0.75rem;
   }
 }

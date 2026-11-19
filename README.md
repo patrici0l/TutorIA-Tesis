@@ -86,6 +86,11 @@ Se conservan identificadores existentes de base de datos, proyecto Compose y res
 Backend: pytest y Ruff. Frontend: `npm test -- --watch=false` y `npm run build`.
 Sin commits automáticos. Las evidencias de pruebas anteriores se conservan como registros históricos.
 
+La [revisión de UI/UX del 19 de noviembre de 2026](docs/qa/ui-ux-2026-11-19/informe-ui-ux.md)
+explica los 10 hallazgos corregidos, su valor agregado y sus comprobaciones funcionales.
+El [PDF adjunto](docs/qa/ui-ux-2026-11-19/informe-ui-ux-2026-11-19.pdf) contiene las
+12 comparativas antes/después con las capturas incrustadas.
+
 ## Respaldo y recuperación
 
 Los volúmenes postgres_data, document_data y embedding_data conservan base de datos, documentos y modelo. No cambiar sus identificadores ni borrarlos para reparar el arranque.

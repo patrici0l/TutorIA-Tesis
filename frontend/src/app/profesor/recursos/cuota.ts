@@ -1,8 +1,14 @@
 // Muestra cupo compartido de solicitudes; no representa saldo de tokens del proveedor.
-import { Component, DestroyRef, inject, Input, OnChanges, signal } from '@angular/core';
+import { Component, DestroyRef, inject, Input, OnChanges, output, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { GenerationQuota, PreparationService } from './recursos.service';
+
+export interface GenerationAvailability {
+  quota: GenerationQuota | null;
+  loading: boolean;
+  error: boolean;
+}
 
 @Component({
   selector: 'app-generation-quota',
@@ -12,6 +18,7 @@ import { GenerationQuota, PreparationService } from './recursos.service';
 })
 export class GenerationQuotaComponent implements OnChanges {
   @Input() refresh = 0;
+  readonly statusChange = output<GenerationAvailability>();
   private readonly service = inject(PreparationService);
   private readonly destroy = inject(DestroyRef);
   readonly quota = signal<GenerationQuota | null>(null);
@@ -28,6 +35,7 @@ export class GenerationQuotaComponent implements OnChanges {
     this.loading.set(true);
     this.error.set(false);
     this.quota.set(null);
+    this.statusChange.emit({ quota: null, loading: true, error: false });
     this.service
       .quota()
       .pipe(takeUntilDestroyed(this.destroy))
@@ -35,10 +43,12 @@ export class GenerationQuotaComponent implements OnChanges {
         next: (quota) => {
           this.quota.set(quota);
           this.loading.set(false);
+          this.statusChange.emit({ quota, loading: false, error: false });
         },
         error: () => {
           this.error.set(true);
           this.loading.set(false);
+          this.statusChange.emit({ quota: null, loading: false, error: true });
         },
       });
   }

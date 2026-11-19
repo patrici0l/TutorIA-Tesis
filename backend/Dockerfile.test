@@ -5,5 +5,7 @@ COPY requirements/ requirements/
 RUN pip install --no-cache-dir -r requirements/dev.txt
 COPY app app
 COPY tests tests
+COPY alembic alembic
+COPY alembic.ini .
 COPY pyproject.toml .
 CMD ["python", "-m", "pytest", "-q"]

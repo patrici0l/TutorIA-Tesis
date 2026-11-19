@@ -54,7 +54,7 @@
   @if (complete()) {
     <section class="panel" aria-labelledby="result-title">
       <p class="eyebrow">PRÁCTICA COMPLETADA</p>
-      <h2 id="result-title">{{ score() }} de {{ questions.length }} respuestas correctas</h2>
+      <h2 id="result-title" tabindex="-1">{{ score() }} de {{ questions.length }} respuestas correctas</h2>
       <p>
         {{
           score() === questions.length
@@ -114,7 +114,7 @@
         [max]="questions.length"
         aria-label="Preguntas completadas"
       ></progress>
-      <h2 id="question-title" aria-live="polite">
+      <h2 id="question-title" tabindex="-1" aria-live="polite">
         <span [appMathText]="question().statement"></span>
       </h2>
       <fieldset [disabled]="submitted()">
@@ -149,7 +149,7 @@
         }
       }
       @if (submitted()) {
-        <div class="feedback" [class.correct]="correct()" role="status">
+        <div id="practice-feedback" tabindex="-1" class="feedback" [class.correct]="correct()" role="status">
           <h3>{{ correct() ? '¡Correcto!' : 'Revisemos el procedimiento' }}</h3>
           <p><span [appMathText]="question().feedback[selected()!]"></span></p>
           <p><span [appMathText]="question().explanation"></span></p>
@@ -165,6 +165,46 @@
     conservarlas.
   </p>
 </div>
+<dialog
+  #pendingDialog
+  class="pending-practice-dialog"
+  aria-labelledby="pending-practice-title"
+  aria-describedby="pending-practice-description"
+  (cancel)="$event.preventDefault(); cancelPending()"
+>
+  <h2 id="pending-practice-title" tabindex="-1">
+    {{ complete() ? 'Resultado sin guardar' : 'Práctica en curso' }}
+  </h2>
+  <p id="pending-practice-description">
+    {{ pendingAction() === 'restart' ? 'Antes de empezar otro intento:' : 'Antes de salir:' }}
+    @if (complete()) {
+      Tu resultado todavía no está guardado. Puedes guardarlo antes de continuar,
+      seguir aquí o descartar este intento.
+    } @else {
+      Ya comprobaste respuestas de esta práctica. Termínala para guardar el resultado,
+      sigue aquí o descarta el intento para continuar.
+    }
+  </p>
+  @if (saveError()) {
+    <p role="alert">{{ saveError() }}</p>
+  }
+  @if (saving()) {
+    <p role="status">Guardando el resultado antes de continuar…</p>
+  }
+  <div class="buttons">
+    @if (complete()) {
+      <button type="button" (click)="savePending()" [disabled]="saving()">
+        {{ saving() ? 'Guardando…' : 'Guardar y continuar' }}
+      </button>
+    }
+    <button type="button" class="secondary" (click)="cancelPending()" [disabled]="saving()">
+      Seguir aquí
+    </button>
+    <button type="button" class="secondary" (click)="discardPending()" [disabled]="saving()">
+      Descartar y continuar
+    </button>
+  </div>
+</dialog>
 <section
   [hidden]="activeView() !== 'history' || !!reviewing()"
   class="panel history"

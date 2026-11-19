@@ -12,6 +12,10 @@ import { CourseDocument } from './documentos.model';
 
 describe('Documentos propios', () => {
   let http: HttpTestingController;
+  const dialogDescriptors = {
+    showModal: Object.getOwnPropertyDescriptor(HTMLDialogElement.prototype, 'showModal'),
+    close: Object.getOwnPropertyDescriptor(HTMLDialogElement.prototype, 'close'),
+  };
   const user = signal({ rol: 'teacher' });
   const sampleDocument: CourseDocument = {
     id: 'doc-1',
@@ -42,12 +46,14 @@ describe('Documentos propios', () => {
   beforeEach(async () => {
     Object.defineProperty(HTMLDialogElement.prototype, 'showModal', {
       configurable: true,
+      writable: true,
       value() {
         this.setAttribute('open', '');
       },
     });
     Object.defineProperty(HTMLDialogElement.prototype, 'close', {
       configurable: true,
+      writable: true,
       value() {
         this.removeAttribute('open');
       },
@@ -66,6 +72,12 @@ describe('Documentos propios', () => {
     http = TestBed.inject(HttpTestingController);
   });
   afterEach(() => http.verify());
+  afterAll(() => {
+    for (const [method, descriptor] of Object.entries(dialogDescriptors)) {
+      if (descriptor) Object.defineProperty(HTMLDialogElement.prototype, method, descriptor);
+      else Reflect.deleteProperty(HTMLDialogElement.prototype, method);
+    }
+  });
   function setup() {
     const fixture = TestBed.createComponent(DocumentsComponent);
     fixture.detectChanges();
@@ -576,6 +588,14 @@ describe('Documentos propios', () => {
     http.expectOne('/api/v1/documents/doc-1/index').flush({ ...sampleDocument, processing_status: 'processed', index_status: 'indexed' });
     expect(component.selected()?.index_status).toBe('indexed');
     http.expectNone('/api/v1/documents/doc-1/publish');
+  });
+
+  it('diferencia la búsqueda literal del acceso a fuentes por significado', () => {
+    const fixture = setup();
+    const hint = fixture.nativeElement.querySelector('.search-hint') as HTMLElement;
+    expect(hint.textContent).toContain('coincidencias de texto');
+    expect(hint.textContent).not.toContain('búsqueda semántica');
+    expect(hint.querySelector('a')?.getAttribute('href')).toBe('/busqueda');
   });
 
   it('prepara los demás documentos del lote aunque uno falle', () => {

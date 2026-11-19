@@ -10,9 +10,12 @@ describe('Disponibilidad de generación', () => {
       providers: [provideHttpClient(), provideHttpClientTesting()],
     }).compileComponents();
     const f = TestBed.createComponent(GenerationQuotaComponent);
+    const changes = vi.fn();
+    f.componentInstance.statusChange.subscribe(changes);
     const http = TestBed.inject(HttpTestingController);
     f.componentRef.setInput('refresh', 0);
     f.detectChanges();
+    expect(changes).toHaveBeenLastCalledWith({ quota: null, loading: true, error: false });
     http.expectOne('/api/v1/content/quota').flush({
       enabled: true,
       used: 2,
@@ -23,6 +26,7 @@ describe('Disponibilidad de generación', () => {
       timeout_seconds: 30,
     });
     f.detectChanges();
+    expect(changes.mock.lastCall?.[0].quota.enabled).toBe(true);
     expect(f.nativeElement.textContent).toContain('3 de 5 solicitudes disponibles');
     expect(f.nativeElement.textContent).toContain('40% del cupo consumido');
     expect(f.nativeElement.querySelector('svg').getAttribute('aria-label')).toBe('40% del cupo consumido');
@@ -33,6 +37,7 @@ describe('Disponibilidad de generación', () => {
     http.expectOne('/api/v1/content/quota').flush({}, { status: 503, statusText: 'Unavailable' });
     f.detectChanges();
     expect(f.nativeElement.textContent).toContain('No pudimos consultar');
+    expect(changes).toHaveBeenLastCalledWith({ quota: null, loading: false, error: true });
     expect(f.nativeElement.textContent).not.toContain('3 de 5');
     f.nativeElement.querySelector('button').click();
     http.expectOne('/api/v1/content/quota').flush({

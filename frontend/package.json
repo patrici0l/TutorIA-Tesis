@@ -6,7 +6,8 @@
     "start": "ng serve --host 127.0.0.1 --proxy-config proxy.conf.json",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "test:e2e": "playwright test"
   },
   "private": true,
   "packageManager": "npm@11.12.1",
@@ -34,6 +35,7 @@
     "@angular/build": "^22.2.1",
     "@angular/cli": "^22.2.1",
     "@angular/compiler-cli": "^22.2.0",
+    "@playwright/test": "^1.65.1",
     "@types/katex": "^0.16.8",
     "jsdom": "^30.0.0",
     "prettier": "^3.8.1",

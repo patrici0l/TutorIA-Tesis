@@ -36,7 +36,7 @@
         Mis recursos
       </button>
     </nav>
-    <app-generation-quota [refresh]="quotaRefresh()" />
+    <app-generation-quota [refresh]="quotaRefresh()" (statusChange)="generationAvailability.set($event)" />
   </div>
 
   <!-- Pasos Guiados del Flujo Editorial -->
@@ -98,6 +98,15 @@
       <div [hidden]="inputStep() !== 'course'">
         <h2 id="course-title" tabindex="-1">1. Elige una asignatura</h2>
         <p>Selecciona una asignatura con fuentes habilitadas para crear tu recurso.</p>
+        @if (selectedProfile(); as profile) {
+          <p role="status">Perfil seleccionado: {{ profile.student_id }} · {{ profile.topic }}. Se conservará al elegir la asignatura.</p>
+        }
+        @if (loadingProfiles()) { <p role="status">Consultando el perfil indicado…</p> }
+        @if (profilesError()) {
+          <p class="notice" role="alert">{{ profilesError() }}</p>
+          <button type="button" class="secondary" (click)="retryProfiles()">Reintentar perfil indicado</button>
+          <button type="button" class="secondary" (click)="chooseProfile(null)">Continuar sin perfil</button>
+        }
         <label for="resource-course">Asignatura</label>
         <ng-select
           class="resource-course-select"
@@ -181,16 +190,68 @@
         </p>
         <form (ngSubmit)="prepare()" #form="ngForm">
           <fieldset [disabled]="loading() || generating() || loadingProfiles()">
+            <section class="profile-options" aria-labelledby="profile-options-title">
+              <h3 id="profile-options-title">Personalización por perfil · opcional</h3>
+              <p>Elige una observación ficticia para ajustar el apoyo. Sin perfil, puedes elegir la dificultad.</p>
+              <button type="button" class="secondary" (click)="openProfilePicker()" [disabled]="loadingProfiles()">
+                {{ selectedProfile() ? 'Cambiar perfil' : 'Elegir perfil de aprendizaje' }}
+              </button>
+              <a class="action-link" routerLink="/perfiles">Gestionar perfiles</a>
+              @if (profilePickerOpen()) {
+                <div id="profile-picker" tabindex="-1" class="profile-picker">
+                  <label for="resource-profile">Perfil de aprendizaje</label>
+                  <select id="resource-profile" name="profileId" [ngModel]="selectedProfile()?.id ?? ''" (ngModelChange)="selectProfile($event)" [disabled]="loadingProfiles()">
+                    <option value="">Sin perfil · elegir dificultad manualmente</option>
+                    @if (selectedProfile(); as selected) {
+                      @if (!selectedProfileOnPage()) {
+                        <option [value]="selected.id">{{ selected.student_id }} · {{ selected.topic }} · seleccionado</option>
+                      }
+                    }
+                    @for (profile of profilePage()?.items ?? []; track profile.id) {
+                      <option [value]="profile.id">{{ profile.student_id }} · {{ profile.topic }} · dominio {{ masteryLabel(profile.mastery_level) }}</option>
+                    }
+                  </select>
+                  @if (profilePage(); as page) {
+                    @if (!page.total) { <p>Aún no tienes perfiles guardados. Puedes preparar sin perfil o registrar una observación.</p> }
+                    @if (page.total) {
+                      <nav class="profile-pagination" aria-label="Páginas de perfiles disponibles">
+                        <button type="button" class="secondary" (click)="loadProfiles(page.offset - page.limit)" [disabled]="loadingProfiles() || page.offset === 0">Perfiles anteriores</button>
+                        <span>{{ page.offset + 1 }}–{{ page.offset + page.items.length }} de {{ page.total }}</span>
+                        <button type="button" class="secondary" (click)="loadProfiles(page.offset + page.limit)" [disabled]="loadingProfiles() || page.offset + page.limit >= page.total">Más perfiles</button>
+                      </nav>
+                    }
+                  }
+                </div>
+              }
+              @if (loadingProfiles()) { <p role="status">Consultando perfiles…</p> }
+              @if (profilesError()) {
+                <p id="profile-picker-error" tabindex="-1" role="alert">{{ profilesError() }}</p>
+                <button type="button" class="secondary" (click)="retryProfiles()">Reintentar perfiles</button>
+                <button type="button" class="secondary" (click)="chooseProfile(null)">Preparar sin perfil</button>
+              }
+              <p id="profile-feedback" tabindex="-1" role="status">
+                {{ profileMessage() }}
+                @if (selectedProfile(); as profile) {
+                  Dominio {{ masteryLabel(profile.mastery_level) }}. Dificultad aplicada: {{ difficultyLabel(effectiveDifficulty()) }}.
+                }
+              </p>
+              @if (selectedProfile()) { <button type="button" class="secondary" (click)="chooseProfile(null)">Quitar perfil</button> }
+            </section>
             <label for="topic">Tema</label>
             <input
               id="topic"
               name="topic"
               [(ngModel)]="topic"
               (ngModelChange)="clearResult()"
+              [readOnly]="!!selectedProfile()"
+              [attr.aria-describedby]="selectedProfile() ? 'profile-topic-help' : null"
               required
               maxlength="160"
               placeholder="Por ejemplo: la derivada y la tasa de cambio"
             />
+            @if (selectedProfile()) {
+              <p class="help" id="profile-topic-help">El tema corresponde al perfil seleccionado. Para editarlo, pulsa Quitar perfil; para usar otro tema con personalización, pulsa Cambiar perfil.</p>
+            }
             <label for="objective">¿Qué debería comprender o practicar?</label>
             <textarea
               id="objective"
@@ -221,8 +282,8 @@
                 ><select
                   id="difficulty"
                   name="difficulty"
-                  [(ngModel)]="difficulty"
-                  (ngModelChange)="clearResult()"
+                  [ngModel]="effectiveDifficulty()"
+                  (ngModelChange)="difficulty = $event; clearResult()"
                   [disabled]="!!selectedProfile()"
                 >
                   <option value="basic">Básica</option>
@@ -433,7 +494,8 @@
           }
         </details>
         @if (!sent() || generating()) {
-          <button type="button" [disabled]="generating()" (click)="generate()">
+          <p id="generation-availability" tabindex="-1" role="status">{{ generationUnavailableReason() || 'Generación disponible. Revisa las fuentes antes de enviar.' }}</p>
+          <button id="generate-resource" type="button" [disabled]="generating() || !canGenerate()" aria-describedby="generation-availability" (click)="generate()">
             {{ generating() ? 'Generando…' : 'Generar recurso con estas fuentes' }}
           </button>
         }
