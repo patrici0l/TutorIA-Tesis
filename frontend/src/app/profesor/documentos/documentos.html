@@ -60,7 +60,7 @@
     }
   </datalist>
 
-  <!-- Barra de búsqueda semántica y filtro por asignatura -->
+  <!-- Filtro por asignatura y búsqueda literal del texto extraído -->
   <section class="panel search-bar fade-in" aria-label="Buscar materiales">
     <div class="filter-heading"><h2>Explorar documentos</h2><span>{{ total() }} documentos · {{ courseOptions().length }} asignaturas</span></div>
     <div class="field-group">
@@ -110,7 +110,7 @@
         (ngModelChange)="resetTextSearch()"
         (keydown.enter)="searchText()"
         maxlength="200"
-        placeholder="Buscar por conceptos, palabras clave o fragmentos…"
+        placeholder="Escribe palabras o un fragmento del documento…"
       />
     </div>
 
@@ -123,7 +123,9 @@
     </button>
 
     <small class="search-hint">
-      Selecciona una asignatura para realizar la búsqueda semántica en el texto.
+      Selecciona una asignatura para buscar coincidencias de texto, sin distinguir mayúsculas.
+      Para encontrar conceptos relacionados,
+      <a routerLink="/busqueda">busca fuentes por significado →</a>
     </small>
   </section>
 

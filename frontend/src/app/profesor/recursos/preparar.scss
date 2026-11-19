@@ -372,6 +372,8 @@ dd {
   border-radius: var(--radius-md);
   padding: 16px;
   background: var(--paper-warm);
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .profile-picker {
@@ -382,6 +384,8 @@ dd {
 
 .profile-pagination {
   display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   justify-content: space-between;
   align-items: center;
   font-size: 0.78rem;

@@ -12,27 +12,35 @@
   <div class="workspace">
     <section class="panel" aria-labelledby="profile-form-title">
       <h2 id="profile-form-title">Nueva observación</h2>
-      <form (ngSubmit)="save()" #form="ngForm">
+      <form (ngSubmit)="save()" #form="ngForm" novalidate>
         <fieldset [disabled]="busy()">
           <label for="studentId">Identificador ficticio</label
           ><input
             id="studentId"
             name="studentId"
             [(ngModel)]="studentId"
+            (ngModelChange)="validateAfterEdit()"
+            [attr.aria-invalid]="fieldError('studentId') ? 'true' : null"
+            [attr.aria-describedby]="fieldError('studentId') ? 'studentId-error' : null"
             placeholder="SYN-001"
             required
             maxlength="64"
             pattern="[A-Za-z0-9_-]+"
           />
+          @if (fieldError('studentId')) { <p class="field-error" id="studentId-error">{{ fieldError('studentId') }}</p> }
           <label for="profileTopic">Tema</label
           ><input
             id="profileTopic"
             name="topic"
             [(ngModel)]="topic"
+            (ngModelChange)="validateAfterEdit()"
+            [attr.aria-invalid]="fieldError('profileTopic') ? 'true' : null"
+            [attr.aria-describedby]="fieldError('profileTopic') ? 'profileTopic-error' : null"
             placeholder="Derivadas"
             required
             maxlength="160"
           />
+          @if (fieldError('profileTopic')) { <p class="field-error" id="profileTopic-error">{{ fieldError('profileTopic') }}</p> }
           <div class="options">
             <div>
               <label for="performance">Desempeño (%)</label
@@ -41,11 +49,15 @@
                 id="performance"
                 name="performance"
                 [(ngModel)]="performance"
+                (ngModelChange)="validateAfterEdit()"
+                [attr.aria-invalid]="fieldError('performance') ? 'true' : null"
+                [attr.aria-describedby]="fieldError('performance') ? 'performance-error' : null"
                 required
                 min="0"
                 max="100"
                 step="any"
               />
+              @if (fieldError('performance')) { <p class="field-error" id="performance-error">{{ fieldError('performance') }}</p> }
             </div>
             <div>
               <label for="attempts">Intentos</label
@@ -54,11 +66,15 @@
                 id="attempts"
                 name="attempts"
                 [(ngModel)]="attempts"
+                (ngModelChange)="validateAfterEdit()"
+                [attr.aria-invalid]="fieldError('attempts') ? 'true' : null"
+                [attr.aria-describedby]="fieldError('attempts') ? 'attempts-error' : null"
                 required
                 min="1"
                 max="10000"
                 step="1"
               />
+              @if (fieldError('attempts')) { <p class="field-error" id="attempts-error">{{ fieldError('attempts') }}</p> }
             </div>
             <div>
               <label for="mastery">Nivel de dominio informado</label
@@ -86,12 +102,16 @@
             id="frequentErrors"
             name="errors"
             [(ngModel)]="errorsText"
+            (ngModelChange)="validateAfterEdit()"
+            [attr.aria-invalid]="fieldError('frequentErrors') ? 'true' : null"
+            [attr.aria-describedby]="fieldError('frequentErrors') ? 'frequent-errors-help frequentErrors-error' : 'frequent-errors-help'"
             rows="3"
             maxlength="1010"
             placeholder="regla_potencia"
           ></textarea>
-          <p class="help">Hasta diez etiquetas diferentes, de 100 caracteres como máximo.</p>
-          <details>
+          <p class="help" id="frequent-errors-help">Hasta diez etiquetas diferentes, de 100 caracteres como máximo.</p>
+          @if (fieldError('frequentErrors')) { <p class="field-error" id="frequentErrors-error">{{ fieldError('frequentErrors') }}</p> }
+          <details [open]="!!fieldError('time')">
             <summary>Datos adicionales, opcionales</summary>
             <label for="time">Tiempo de resolución (segundos)</label
             ><input
@@ -99,10 +119,15 @@
               id="time"
               name="time"
               [(ngModel)]="resolutionTime"
+              (ngModelChange)="validateAfterEdit()"
+              [attr.aria-invalid]="fieldError('time') ? 'true' : null"
+              [attr.aria-describedby]="fieldError('time') ? 'time-error' : null"
               min="0"
               max="86400"
               step="any"
-            /><label for="trend">Tendencia informada</label
+            />
+            @if (fieldError('time')) { <p class="field-error" id="time-error">{{ fieldError('time') }}</p> }
+            <label for="trend">Tendencia informada</label
             ><select id="trend" name="trend" [(ngModel)]="trend">
               <option value="">Sin informar</option>
               <option value="improving">Mejora</option>
@@ -111,10 +136,11 @@
             </select>
           </details>
           <label class="check"
-            ><input type="checkbox" name="confirmed" [(ngModel)]="confirmed" required />Confirmo que
+            ><input id="profile-confirmed" type="checkbox" name="confirmed" [(ngModel)]="confirmed" (ngModelChange)="validateAfterEdit()" [attr.aria-invalid]="fieldError('profile-confirmed') ? 'true' : null" [attr.aria-describedby]="fieldError('profile-confirmed') ? 'profile-confirmed-error' : null" required />Confirmo que
             son datos ficticios</label
           >
-          <button type="submit" [disabled]="form.invalid || !confirmed">Guardar perfil ↗</button>
+          @if (fieldError('profile-confirmed')) { <p class="field-error" id="profile-confirmed-error">{{ fieldError('profile-confirmed') }}</p> }
+          <button type="submit" [disabled]="busy()">Guardar perfil ↗</button>
         </fieldset>
       </form>
     </section>
@@ -216,6 +242,7 @@
       <p>
         Esta instantánea se conserva sin sobrescribirla. Una nueva observación crea otro registro.
       </p>
+      <a class="use-profile" routerLink="/recursos" [queryParams]="{ profile_id: profile.id }">Usar este perfil</a>
     </section>
   }
 }

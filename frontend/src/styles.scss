@@ -189,13 +189,7 @@ svg {
 }
 
 [id] {
-  scroll-margin-top: 180px;
-}
-
-@media (max-width: 600px) {
-  [id] {
-    scroll-margin-top: 155px;
-  }
+  scroll-margin-top: calc(var(--site-header-height, 0px) + 16px);
 }
 
 :focus-visible {

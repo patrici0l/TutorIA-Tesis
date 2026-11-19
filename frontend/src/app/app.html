@@ -1,7 +1,7 @@
 <a class="skip-link" [href]="router.url.split('?')[0] + '#contenido'"> Saltar al contenido </a>
 
 <div class="shell">
-  <header class="site-header">
+  <header #siteHeader class="site-header">
     <div class="masthead">
       <!-- Identidad UPS y Acceso al Inicio -->
       <a class="brand group" routerLink="/inicio" aria-label="Ir al inicio de Recursos educativos">
@@ -36,7 +36,7 @@
             type="button"
             class="logout-button interactive-button"
             (click)="logout()"
-            [disabled]="signingOut()"
+            [disabled]="signingOut() || checkingExit()"
             aria-label="Cerrar sesión"
           >
             {{ signingOut() ? 'Cerrando…' : 'Cerrar sesión' }}

@@ -12,7 +12,7 @@ import {
   afterNextRender,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ViewAttention } from '../../compartido/atencion-vista.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -20,7 +20,7 @@ import { ResourceViewComponent } from '../../compartido/recursos/recurso';
 import { ResourceHistoryComponent } from './historial';
 import { ResourceAuditComponent } from './auditoria';
 import { ResourceExportComponent } from './exportar';
-import { GenerationQuotaComponent } from './cuota';
+import { GenerationAvailability, GenerationQuotaComponent } from './cuota';
 import { HistoryDetail } from './historial.model';
 import { AuthService } from '../../inicio/sesion.service';
 import {
@@ -59,7 +59,11 @@ export class PreparationComponent implements OnInit {
   readonly coursesError = signal('');
   readonly inputStep = signal<'course' | 'details'>('course');
   ngOnInit() {
-    if (this.canPrepare()) this.loadCourses();
+    if (this.canPrepare()) {
+      this.loadCourses();
+      const profileId = this.route.snapshot.queryParamMap.get('profile_id');
+      if (profileId) this.loadLinkedProfile(profileId);
+    }
   }
   loadCourses() {
     if (this.coursesLoading()) return;
@@ -92,8 +96,6 @@ export class PreparationComponent implements OnInit {
   chooseCourse() {
     this.clearResult();
     this.inputStep.set('course');
-    this.selectedProfile.set(null);
-    this.profileMessage.set('');
   }
   showCourse() {
     this.workspaceMode.set('create');
@@ -108,6 +110,7 @@ export class PreparationComponent implements OnInit {
 
   private readonly attention = inject(ViewAttention);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   readonly choosingAssignment = this.route.snapshot.queryParamMap.get('action') === 'assign';
   constructor() {
     afterNextRender(() => {
@@ -119,6 +122,20 @@ export class PreparationComponent implements OnInit {
   readonly workspaceMode = signal<'create' | 'saved'>('create');
   readonly editing = signal(true);
   readonly profileMessage = signal('');
+  readonly profilePickerOpen = signal(false);
+  readonly profilesError = signal('');
+  readonly linkedProfileId = signal<string | null>(null);
+  readonly requestedProfileOffset = signal(0);
+  readonly generationAvailability = signal<GenerationAvailability>({ quota: null, loading: true, error: false });
+  readonly generationUnavailableReason = computed(() => {
+    const state = this.generationAvailability();
+    if (state.loading) return 'Comprobando si puedes generar. La preparación y las fuentes se conservan.';
+    if (state.error || !state.quota) return 'No pudimos comprobar la disponibilidad. Pulsa Actualizar disponibilidad para volver a consultar.';
+    if (!state.quota.enabled) return 'La generación no está habilitada. Puedes revisar y conservar esta preparación; consulta al responsable de la plataforma para habilitarla.';
+    if (state.quota.remaining <= 0) return 'El cupo diario está agotado. La preparación se conserva para que puedas retomarla cuando se renueve.';
+    return '';
+  });
+  readonly canGenerate = computed(() => this.generationUnavailableReason() === '');
   readonly currentStep = computed(() =>
     this.generation()?.resource ? 4 : this.result() ? 3 : this.inputStep() === 'details' ? 2 : 1,
   );
@@ -145,12 +162,43 @@ export class PreparationComponent implements OnInit {
   selectProfile(id: string) {
     this.chooseProfile(this.profilePage()?.items.find((profile) => profile.id === id) ?? null);
   }
+  openProfilePicker() {
+    this.profilePickerOpen.set(true);
+    if (!this.profilePage() && !this.loadingProfiles()) this.loadProfiles();
+  }
+  loadLinkedProfile(id: string) {
+    if (!this.canPrepare() || this.loadingProfiles()) return;
+    this.linkedProfileId.set(id);
+    this.loadingProfiles.set(true);
+    this.profilesError.set('');
+    this.profiles.detail(id).pipe(takeUntilDestroyed(this.destroy)).subscribe({
+      next: (profile) => {
+        this.loadingProfiles.set(false);
+        this.linkedProfileId.set(null);
+        this.chooseProfile(profile);
+      },
+      error: () => {
+        this.loadingProfiles.set(false);
+        this.profilesError.set('No se pudo abrir el perfil indicado. Comprueba que pertenece a tu cuenta o elige otro perfil.');
+      },
+    });
+  }
+  retryProfiles() {
+    const id = this.linkedProfileId();
+    if (id) this.loadLinkedProfile(id);
+    else this.loadProfiles(this.requestedProfileOffset());
+  }
+  effectiveDifficulty(): Difficulty {
+    const level = this.selectedProfile()?.mastery_level;
+    return level ? ({ low: 'basic', medium: 'intermediate', high: 'advanced' } as const)[level] : this.difficulty;
+  }
   private readonly service = inject(PreparationService);
   private readonly auth = inject(AuthService);
   private readonly destroy = inject(DestroyRef);
   private readonly profiles = inject(ProfileService);
   readonly profilePage = signal<ProfilePage | null>(null);
   readonly selectedProfile = signal<ProfileSummary | null>(null);
+  readonly selectedProfileOnPage = computed(() => this.profilePage()?.items.some(profile => profile.id === this.selectedProfile()?.id) ?? false);
   readonly loadingProfiles = signal(false);
   readonly canPrepare = computed(() => ['teacher', 'admin'].includes(this.auth.user()?.rol ?? ''));
   readonly loading = signal(false);
@@ -194,8 +242,11 @@ export class PreparationComponent implements OnInit {
 
   loadProfiles(offset = 0) {
     if (!this.canPrepare() || this.loadingProfiles() || this.loading() || this.generating()) return;
+    this.requestedProfileOffset.set(offset);
+    this.linkedProfileId.set(null);
     this.loadingProfiles.set(true);
-    this.error.set('');
+    this.profilesError.set('');
+    this.profilePickerOpen.set(true);
     this.profiles
       .page(offset)
       .pipe(takeUntilDestroyed(this.destroy))
@@ -206,15 +257,25 @@ export class PreparationComponent implements OnInit {
           this.attention.reveal('profile-picker');
         },
         error: () => {
-          this.error.set('No se pudieron consultar los perfiles.');
+          this.profilesError.set('No se pudieron consultar los perfiles. Puedes volver a intentarlo o preparar sin perfil.');
           this.loadingProfiles.set(false);
-          this.attention.reveal('resource-error');
+          this.attention.reveal('profile-picker-error');
         },
       });
   }
   chooseProfile(profile: ProfileSummary | null) {
     if (this.loading() || this.generating() || this.loadingProfiles()) return;
     this.selectedProfile.set(profile);
+    this.linkedProfileId.set(null);
+    this.profilesError.set('');
+    if (this.route.snapshot.queryParamMap.get('profile_id') !== (profile?.id ?? null)) {
+      void this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { profile_id: profile?.id ?? null },
+        queryParamsHandling: 'merge',
+        replaceUrl: true,
+      });
+    }
     if (profile) this.topic = profile.topic;
     this.clearResult();
     this.profileMessage.set(
@@ -272,6 +333,11 @@ export class PreparationComponent implements OnInit {
   generate() {
     const prepared = this.result();
     if (!prepared || this.generating() || this.sent() || !this.canPrepare()) return;
+    if (!this.canGenerate()) {
+      this.error.set(this.generationUnavailableReason());
+      this.attention.reveal('generation-availability');
+      return;
+    }
     this.sent.set(true);
     this.historyDetail.set(null);
     this.generating.set(true);

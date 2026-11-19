@@ -62,6 +62,8 @@
           <div class="document-meta">
             <div class="meta-header">
               <h3>{{ document.title }} · v{{ document.version_number ?? 1 }}</h3>
+            </div>
+            <div class="document-states" aria-label="Estado del material">
               <span
                 class="badge"
                 [class.badge-ok]="document.processing_status === 'processed'"
@@ -72,6 +74,18 @@
                 "
               >
                 {{ processingLabel(document) }}
+              </span>
+              <span
+                class="badge index-state"
+                [class.badge-error]="document.index_status === 'failed'"
+              >
+                {{ indexLabel(document) }}
+              </span>
+              <span
+                class="badge publication-state"
+                [class.badge-ok]="!!document.published_at"
+              >
+                {{ document.published_at ? 'Habilitado para recursos' : 'Sin habilitar' }}
               </span>
             </div>
             <p class="course-text">

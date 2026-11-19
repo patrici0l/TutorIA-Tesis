@@ -1,6 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { CourseDocument, DOCUMENT_PAGE_SIZE } from './documentos.model';
-import { processingLabel } from './documentos-etiquetas';
+import { indexLabel, processingLabel } from './documentos-etiquetas';
 
 // Presentación y paginación; las operaciones de documentos permanecen en el coordinador.
 @Component({
@@ -22,6 +22,7 @@ export class DocumentLibraryComponent {
   readonly reload = output<number>();
   readonly openDocument = output<CourseDocument>();
   readonly clearCourseFilter = output<void>();
+  readonly indexLabel = indexLabel;
   processingLabel(document: CourseDocument) {
     return processingLabel(document, this.processingId());
   }

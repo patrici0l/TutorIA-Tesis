@@ -1,6 +1,7 @@
 // Carga pantallas bajo demanda y aplica el acceso por sesión y rol.
 import { Routes } from '@angular/router';
 import { authGuard } from './inicio/sesion.guard';
+import { practiceExitGuard } from './compartido/practica/salida-practica.service';
 
 export const routes: Routes = [
   {
@@ -14,6 +15,7 @@ export const routes: Routes = [
     path: 'actividades/:id',
     title: 'Resolver actividad',
     canActivate: [authGuard],
+    canDeactivate: [practiceExitGuard],
     loadComponent: () =>
       import('./estudiante/actividades/resolver').then((m) => m.AssignmentPracticeComponent),
   },
@@ -21,6 +23,7 @@ export const routes: Routes = [
     path: 'practica',
     title: 'Práctica libre',
     canActivate: [authGuard],
+    canDeactivate: [practiceExitGuard],
     loadComponent: () => import('./estudiante/practica/practica').then((m) => m.PracticeComponent),
   },
   {

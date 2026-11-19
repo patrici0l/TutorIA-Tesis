@@ -1,6 +1,9 @@
 // Gestiona respuestas e intentos; la corrección persistida la calcula el servidor.
 import { MathTextDirective } from '../../compartido/texto-matematico.directive';
-import { Component, computed, DestroyRef, inject, Input, OnInit, signal } from '@angular/core';
+import {
+  afterNextRender, Component, computed, DestroyRef, ElementRef, HostListener,
+  inject, Injector, Input, OnInit, signal, viewChild,
+} from '@angular/core';
 import { Assignment } from '../../compartido/actividades/actividades.model';
 import { DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -13,6 +16,7 @@ import {
 import { ViewAttention } from '../../compartido/atencion-vista.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { PRACTICE_BANKS } from '../../compartido/practica/bancos';
+import { PracticeExitService } from '../../compartido/practica/salida-practica.service';
 
 @Component({
   selector: 'app-practice',
@@ -22,6 +26,14 @@ import { PRACTICE_BANKS } from '../../compartido/practica/bancos';
 })
 export class PracticeComponent implements OnInit {
   private readonly attention = inject(ViewAttention);
+  private readonly injector = inject(Injector);
+  private readonly exit = inject(PracticeExitService);
+  private readonly pendingDialog = viewChild<ElementRef<HTMLDialogElement>>('pendingDialog');
+  private pendingDecision: Promise<boolean> | null = null;
+  private resolveDecision: ((confirmed: boolean) => void) | null = null;
+  private decisionTrigger: HTMLElement | null = null;
+  private leaveApproved = false;
+  readonly pendingAction = signal<'restart' | 'leave' | null>(null);
   private readonly route = inject(ActivatedRoute);
   readonly activeView = signal<'practice' | 'history'>(
     this.route.snapshot?.fragment === 'history-title' ? 'history' : 'practice',
@@ -100,6 +112,9 @@ export class PracticeComponent implements OnInit {
   readonly hintVisible = signal(false);
   readonly answers = signal<number[]>([]);
   readonly complete = signal(false);
+  readonly hasPendingResult = computed(() =>
+    !this.saved() && (this.answers().length > 0 || this.saving()),
+  );
   readonly question = computed(() => this.questions[this.index()]);
   readonly correct = computed(() => this.selected() === this.question().correctOption);
   readonly score = computed(
@@ -108,7 +123,63 @@ export class PracticeComponent implements OnInit {
 
   ngOnInit() {
     if (this.assignment) this.version.set(this.assignment.version);
+    const unregister = this.exit.register(() => this.canLeavePractice());
+    this.destroyRef.onDestroy(() => {
+      unregister();
+      this.finishDecision(false, false);
+    });
     this.loadHistory();
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  beforeUnload(event: BeforeUnloadEvent) {
+    if (!this.hasPendingResult() || this.leaveApproved) return;
+    event.preventDefault();
+    event.returnValue = '';
+  }
+
+  canLeavePractice(): boolean | Promise<boolean> {
+    if (!this.hasPendingResult() || this.leaveApproved) return true;
+    return this.askBeforeLosingResult('leave');
+  }
+
+  private askBeforeLosingResult(action: 'restart' | 'leave'): Promise<boolean> {
+    if (this.pendingDecision) return this.pendingDecision;
+    this.decisionTrigger = document.activeElement instanceof HTMLElement
+      ? document.activeElement : null;
+    this.pendingAction.set(action);
+    this.pendingDecision = new Promise((resolve) => { this.resolveDecision = resolve; });
+    afterNextRender(() => this.pendingDialog()?.nativeElement.showModal(), {
+      injector: this.injector,
+    });
+    this.attention.reveal('pending-practice-title');
+    return this.pendingDecision;
+  }
+
+  cancelPending() {
+    if (!this.saving()) this.finishDecision(false);
+  }
+
+  discardPending() {
+    if (this.saving()) return;
+    this.leaveApproved = this.pendingAction() === 'leave';
+    this.finishDecision(true);
+  }
+
+  savePending() {
+    if (this.complete()) this.saveResult();
+  }
+
+  private finishDecision(confirmed: boolean, restoreFocus = true) {
+    const resolve = this.resolveDecision;
+    this.resolveDecision = null;
+    this.pendingDecision = null;
+    this.pendingAction.set(null);
+    const dialog = this.pendingDialog()?.nativeElement;
+    if (dialog?.open) dialog.close();
+    if (!confirmed && restoreFocus) this.decisionTrigger?.focus();
+    this.decisionTrigger = null;
+    resolve?.(confirmed);
   }
 
   loadHistory(offset = 0) {
@@ -142,6 +213,7 @@ export class PracticeComponent implements OnInit {
           this.saved.set(result);
           this.saving.set(false);
           this.loadHistory();
+          if (this.pendingAction()) this.finishDecision(true);
         },
         error: (error) => {
           this.saving.set(false);
@@ -155,6 +227,7 @@ export class PracticeComponent implements OnInit {
   }
 
   choose(option: number) {
+    this.leaveApproved = false;
     if (
       !this.submitted() &&
       Number.isInteger(option) &&
@@ -168,20 +241,27 @@ export class PracticeComponent implements OnInit {
     if (answer === null || this.submitted() || this.complete()) return;
     this.submitted.set(true);
     this.answers.update((answers) => [...answers, answer]);
+    this.attention.reveal('practice-feedback');
   }
   next() {
     if (!this.submitted()) return;
     if (this.index() === this.questions.length - 1) {
       this.complete.set(true);
+      this.attention.reveal('result-title');
       return;
     }
     this.index.update((index) => index + 1);
     this.selected.set(null);
     this.submitted.set(false);
     this.hintVisible.set(false);
+    this.attention.reveal('question-title');
   }
-  restart() {
+  async restart() {
     if (this.saving()) return;
+    if (this.hasPendingResult() && !(await this.askBeforeLosingResult('restart'))) return;
+    this.leaveApproved = false;
+    this.activeView.set('practice');
+    this.reviewing.set(null);
     this.attemptId = crypto.randomUUID();
     this.saved.set(null);
     this.saveError.set('');
@@ -191,5 +271,6 @@ export class PracticeComponent implements OnInit {
     this.hintVisible.set(false);
     this.answers.set([]);
     this.complete.set(false);
+    this.attention.reveal('question-title');
   }
 }

@@ -13,3 +13,16 @@ export function processingLabel(document: CourseDocument, processingId: string |
       return 'Guardado · Pendiente de procesamiento';
   }
 }
+
+export function indexLabel(document: CourseDocument) {
+  switch (document.index_status) {
+    case 'indexed':
+      return 'Índice preparado';
+    case 'indexing':
+      return 'Preparando índice…';
+    case 'failed':
+      return 'Índice con error';
+    default:
+      return 'Índice pendiente';
+  }
+}

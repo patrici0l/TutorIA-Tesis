@@ -3,9 +3,33 @@ import { PracticeService, PracticeResult } from './practica.service';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { PracticeComponent } from './practica';
+import { ViewAttention } from '../../compartido/atencion-vista.service';
+import { PracticeExitService } from '../../compartido/practica/salida-practica.service';
 
 describe('Práctica del estudiante', () => {
   const service = { progress: vi.fn(), save: vi.fn() };
+  const dialogDescriptors = {
+    showModal: Object.getOwnPropertyDescriptor(HTMLDialogElement.prototype, 'showModal'),
+    close: Object.getOwnPropertyDescriptor(HTMLDialogElement.prototype, 'close'),
+  };
+  beforeEach(() => {
+    Object.defineProperty(HTMLDialogElement.prototype, 'showModal', {
+      configurable: true,
+      writable: true,
+      value() { this.setAttribute('open', ''); },
+    });
+    Object.defineProperty(HTMLDialogElement.prototype, 'close', {
+      configurable: true,
+      writable: true,
+      value() { this.removeAttribute('open'); },
+    });
+  });
+  afterAll(() => {
+    for (const [method, descriptor] of Object.entries(dialogDescriptors)) {
+      if (descriptor) Object.defineProperty(HTMLDialogElement.prototype, method, descriptor);
+      else Reflect.deleteProperty(HTMLDialogElement.prototype, method);
+    }
+  });
   it('permite consultar el historial y volver sin perder la respuesta actual', async () => {
     const f = TestBed.createComponent(PracticeComponent);
     await f.whenStable();
@@ -150,7 +174,7 @@ describe('Práctica del estudiante', () => {
     expect(fixture.componentInstance.score()).toBe(0);
     expect(fixture.nativeElement.querySelector('progress').value).toBe(1);
   });
-  it('completa una sesión, resume aciertos y reinicia sin conservar respuestas', async () => {
+  it('confirma el descarte antes de reiniciar una sesión completa sin guardar', async () => {
     const fixture = TestBed.createComponent(PracticeComponent);
     const component = fixture.componentInstance;
     for (const answer of [0, 0, 3]) {
@@ -167,10 +191,116 @@ describe('Práctica del estudiante', () => {
       .querySelector('section[aria-labelledby=result-title] button.secondary')
       .click();
     await fixture.whenStable();
+    expect(component.answers()).toEqual([0, 0, 3]);
+    expect(component.pendingAction()).toBe('restart');
+    expect(fixture.nativeElement.querySelector('dialog').open).toBe(true);
+    component.discardPending();
+    await fixture.whenStable();
     expect(component.answers()).toEqual([]);
     expect(component.complete()).toBe(false);
     expect(component.selected()).toBeNull();
     expect(fixture.nativeElement.querySelectorAll('input:checked').length).toBe(0);
+  });
+
+  it('cancelar reinicio conserva las respuestas y no envía guardados', async () => {
+    const fixture = TestBed.createComponent(PracticeComponent);
+    await fixture.whenStable();
+    const c = fixture.componentInstance;
+    for (const answer of [0, 2, 3]) {
+      c.choose(answer);
+      c.check();
+      c.next();
+    }
+    const restart = c.restart();
+    await fixture.whenStable();
+    c.cancelPending();
+    await restart;
+    expect(c.answers()).toEqual([0, 2, 3]);
+    expect(c.complete()).toBe(true);
+    expect(service.save).not.toHaveBeenCalled();
+  });
+
+  it('guarda antes de continuar y conserva el intento si el servidor falla', async () => {
+    const fixture = TestBed.createComponent(PracticeComponent);
+    await fixture.whenStable();
+    const c = fixture.componentInstance;
+    for (const answer of [0, 2, 3]) {
+      c.choose(answer);
+      c.check();
+      c.next();
+    }
+    const decision = TestBed.inject(PracticeExitService).canLeave() as Promise<boolean>;
+    await fixture.whenStable();
+    service.save.mockReturnValueOnce(throwError(() => new Error('offline')));
+    c.savePending();
+    await fixture.whenStable();
+    const firstId = service.save.mock.calls[0][0];
+    expect(c.pendingAction()).toBe('leave');
+    expect(c.answers()).toEqual([0, 2, 3]);
+    expect(fixture.nativeElement.querySelector('dialog').textContent).toContain('No pudimos confirmar');
+    const pending = new Subject<PracticeResult>();
+    service.save.mockReturnValue(pending);
+    c.savePending();
+    c.savePending();
+    expect(service.save).toHaveBeenCalledTimes(2);
+    expect(service.save.mock.calls[1][0]).toBe(firstId);
+    expect(c.pendingAction()).toBe('leave');
+    pending.next({ id: firstId, version: 'derivadas-v1', answers: [0, 2, 3], score: 3,
+      created_at: '2026-11-19T12:00:00Z' });
+    pending.complete();
+    expect(await decision).toBe(true);
+    expect(c.saved()?.id).toBe(firstId);
+    expect(c.canLeavePractice()).toBe(true);
+  });
+
+  it('protege salida y recarga solo después de comprobar respuestas', async () => {
+    const fixture = TestBed.createComponent(PracticeComponent);
+    await fixture.whenStable();
+    const c = fixture.componentInstance;
+    const exit = TestBed.inject(PracticeExitService);
+    c.choose(1);
+    expect(exit.canLeave()).toBe(true);
+    const clean = new Event('beforeunload', { cancelable: true }) as BeforeUnloadEvent;
+    c.beforeUnload(clean);
+    expect(clean.defaultPrevented).toBe(false);
+    c.check();
+    const dirty = new Event('beforeunload', { cancelable: true }) as BeforeUnloadEvent;
+    c.beforeUnload(dirty);
+    expect(dirty.defaultPrevented).toBe(true);
+    const cancelled = exit.canLeave() as Promise<boolean>;
+    await fixture.whenStable();
+    c.cancelPending();
+    expect(await cancelled).toBe(false);
+    expect(c.answers()).toEqual([1]);
+    const discarded = exit.canLeave() as Promise<boolean>;
+    await fixture.whenStable();
+    c.discardPending();
+    expect(await discarded).toBe(true);
+    expect(exit.canLeave()).toBe(true);
+    const approved = new Event('beforeunload', { cancelable: true }) as BeforeUnloadEvent;
+    c.beforeUnload(approved);
+    expect(approved.defaultPrevented).toBe(false);
+  });
+
+  it('lleva el foco a retroalimentación, nueva pregunta y resultado tras renderizar', async () => {
+    const attention = vi.spyOn(TestBed.inject(ViewAttention), 'reveal');
+    const fixture = TestBed.createComponent(PracticeComponent);
+    await fixture.whenStable();
+    const c = fixture.componentInstance;
+    c.choose(0);
+    c.check();
+    expect(attention).toHaveBeenLastCalledWith('practice-feedback');
+    c.next();
+    expect(attention).toHaveBeenLastCalledWith('question-title');
+    for (const answer of [2, 3]) {
+      c.choose(answer);
+      c.check();
+      c.next();
+    }
+    await fixture.whenStable();
+    expect(attention).toHaveBeenLastCalledWith('result-title');
+    expect(fixture.nativeElement.querySelector('#result-title').getAttribute('tabindex')).toBe('-1');
+    attention.mockRestore();
   });
 
   it('reintenta guardado con el mismo identificador y bloquea duplicados y reinicio durante envío', async () => {
