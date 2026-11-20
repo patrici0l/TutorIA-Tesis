@@ -18,6 +18,8 @@ export class ResourceHistoryComponent {
   readonly selectedId = signal<string | null>(null);
   readonly types = {
     EXPLANATION: 'Explicación',
+    EXAMPLE: 'Ejemplo resuelto',
+    HINT: 'Pista',
     EXERCISE: 'Ejercicio',
     QUIZ: 'Quiz',
     FEEDBACK: 'Retroalimentación',

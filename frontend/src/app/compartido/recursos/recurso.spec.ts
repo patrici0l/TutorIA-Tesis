@@ -146,3 +146,32 @@ describe('Recurso generado', () => {
     expect(fixture.nativeElement.textContent).not.toContain('Integrales');
   });
 });
+
+
+describe('Ejemplo y pista independientes', () => {
+  it.each(['EXAMPLE', 'HINT'])('presenta %s con sus fuentes', (kind) => {
+    const fixture = TestBed.createComponent(ResourceViewComponent);
+    const block = (text: string) => ({ text, citations: ['S1'] });
+    const common = { title: 'Derivar una potencia', statement: block('Deriva x²') };
+    fixture.componentRef.setInput('resource', {
+      ...common,
+      ...(kindResource()),
+    });
+    function kindResource() {
+      return kind === 'EXAMPLE'
+        ? { resource_type: kind, solution_steps: [block('Aplica la regla de la potencia')], answer: block('2x') }
+        : { resource_type: kind, hints: [block('Identifica el exponente antes de derivar')] };
+    }
+    fixture.detectChanges();
+    const text = fixture.nativeElement.textContent;
+    expect(text).toContain('Fuentes: S1');
+    if (kind === 'EXAMPLE') {
+      expect(text).toContain('Solución paso a paso');
+      expect(text).toContain('2x');
+    } else {
+      expect(text).toContain('Pistas para continuar');
+      expect(text).not.toContain('Resultado');
+      expect(text).not.toContain('2x');
+    }
+  });
+});

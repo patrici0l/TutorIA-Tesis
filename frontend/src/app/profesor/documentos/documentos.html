@@ -10,6 +10,13 @@
   </div>
   @if (canManage()) {
     <div class="heading-actions">
+      <a routerLink="/fuentes-externas" class="action-link secondary external-sources-btn interactive-button">
+        <svg class="btn-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+        </svg>
+        <span>Buscar fuentes externas</span>
+      </a>
       <button
         class="primary-upload-btn interactive-button"
         (click)="openUpload()"
@@ -715,6 +722,27 @@
           aria-label="Origen y versiones"
         >
           <h3>Origen y versiones</h3>
+          @if (document.external_source; as source) {
+            <div class="external-origin-card">
+              <div class="external-origin-header">
+                <span class="badge badge-external">Fuente externa · Wikipedia en español</span>
+                <span class="badge">{{ source.license_name }}</span>
+              </div>
+              <p class="external-attribution">{{ source.attribution }}</p>
+              <p class="external-revision">
+                Versión <strong>{{ source.revision_id }}</strong> · Consultada el {{ source.retrieved_at | date:'dd/MM/yyyy HH:mm' }}
+              </p>
+              <div class="external-origin-actions">
+                <a class="action-link secondary" [href]="source.url" target="_blank" rel="noopener noreferrer">
+                  <span>Ver versión consultada</span>
+                  <span aria-hidden="true">↗</span>
+                </a>
+                <a class="action-link secondary" [href]="'/api/v1/documents/external/wikipedia/snapshot/' + document.id">
+                  <span>Descargar captura original de la fuente</span>
+                </a>
+              </div>
+            </div>
+          }
           <dl>
             <dt>Procedencia</dt>
             <dd>{{ document.source_reference || 'Sin registrar' }}</dd>

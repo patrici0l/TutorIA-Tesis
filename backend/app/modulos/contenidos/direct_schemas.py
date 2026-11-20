@@ -21,6 +21,21 @@ class DirectExplanation(ContentModel):
     worked_example: DirectText
 
 
+class DirectWorkedExample(ContentModel):
+    resource_type: Literal["EXAMPLE"]
+    title: str = Field(min_length=1, max_length=160)
+    statement: DirectText
+    solution_steps: list[DirectText] = Field(min_length=1, max_length=8)
+    answer: DirectText
+
+
+class DirectHint(ContentModel):
+    resource_type: Literal["HINT"]
+    title: str = Field(min_length=1, max_length=160)
+    statement: DirectText
+    hints: list[DirectText] = Field(min_length=1, max_length=3)
+
+
 class DirectExercise(ContentModel):
     resource_type: Literal["EXERCISE"]
     title: str = Field(min_length=1, max_length=160)
@@ -59,12 +74,19 @@ class DirectFeedback(ContentModel):
 
 
 DirectResource = Annotated[
-    DirectExplanation | DirectExercise | DirectQuiz | DirectFeedback,
+    DirectExplanation
+    | DirectWorkedExample
+    | DirectHint
+    | DirectExercise
+    | DirectQuiz
+    | DirectFeedback,
     Field(discriminator="resource_type"),
 ]
 DIRECT_RESOURCE_ADAPTER = TypeAdapter(DirectResource)
 DIRECT_RESOURCE_SCHEMAS = {
     "EXPLANATION": DirectExplanation,
+    "EXAMPLE": DirectWorkedExample,
+    "HINT": DirectHint,
     "EXERCISE": DirectExercise,
     "QUIZ": DirectQuiz,
     "FEEDBACK": DirectFeedback,

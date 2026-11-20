@@ -1,0 +1,35 @@
+{
+  "id": "11111111-1111-4111-8111-111111111111",
+  "status": "succeeded",
+  "resource": {
+    "resource_type": "EXPLANATION",
+    "title": "La derivada de x²",
+    "summary": {
+      "text": "La derivada expresa la tasa de cambio instantánea.",
+      "citations": [
+        "S1"
+      ]
+    },
+    "steps": [
+      {
+        "text": "Partimos de la función f(x)=x².",
+        "citations": [
+          "S1"
+        ]
+      },
+      {
+        "text": "Según el material, su derivada es f'(x)=2x.",
+        "citations": [
+          "S1"
+        ]
+      }
+    ],
+    "worked_example": {
+      "text": "Para f(x)=x², la tasa de cambio instantánea se expresa como f'(x)=2x.",
+      "citations": [
+        "S1"
+      ]
+    }
+  },
+  "message": null
+}

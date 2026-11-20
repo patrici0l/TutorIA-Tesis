@@ -61,6 +61,7 @@
         <li class="document-row" [class.selected]="selectedId() === document.id">
           <div class="document-meta">
             <div class="meta-header">
+              @if (document.external_source) { <span class="badge">Fuente externa · Wikipedia</span> }
               <h3>{{ document.title }} · v{{ document.version_number ?? 1 }}</h3>
             </div>
             <div class="document-states" aria-label="Estado del material">

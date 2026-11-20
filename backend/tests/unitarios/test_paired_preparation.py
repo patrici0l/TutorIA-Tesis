@@ -22,7 +22,7 @@ def pair_input(kind="EXPLANATION"):
     }
 
 
-@pytest.mark.parametrize("kind", ["EXPLANATION", "EXERCISE", "QUIZ", "FEEDBACK"])
+@pytest.mark.parametrize("kind", ["EXPLANATION", "EXAMPLE", "HINT", "EXERCISE", "QUIZ", "FEEDBACK"])
 def test_pairs_share_controls_and_isolate_reference_context(kind):
     spec = pair_input(kind)
     result = prepare_pair(spec)

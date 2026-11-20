@@ -26,7 +26,8 @@ class DocumentService:
         return document
 
     def upload(
-        self, file: UploadFile, title: str, owner: UUID, metadata: DocumentMetadata | None = None
+        self, file: UploadFile, title: str, owner: UUID, metadata: DocumentMetadata | None = None,
+        *, external_source: dict | None = None, source_snapshot: bytes | None = None
     ):
         title = title.strip()
         if (
@@ -55,6 +56,7 @@ class DocumentService:
         directory.mkdir(parents=True, exist_ok=True)
         path = directory / str(identifier)
         document = Document(
+            external_source=external_source,
             id=identifier,
             owner_id=owner,
             filename=filename,
@@ -73,14 +75,18 @@ class DocumentService:
         try:
             with path.open("xb") as target:
                 target.write(payload)
+            if source_snapshot is not None:
+                path.with_suffix(".source.json").write_bytes(source_snapshot)
             self.repository.save(document)
         except IntegrityError:
             self.repository.rollback()
             path.unlink(missing_ok=True)
+            path.with_suffix(".source.json").unlink(missing_ok=True)
             raise HTTPException(409, "Conflicto de versión; actualiza la biblioteca.") from None
         except Exception:
             self.repository.rollback()
             path.unlink(missing_ok=True)
+            path.with_suffix(".source.json").unlink(missing_ok=True)
             raise
         return document
 
@@ -89,6 +95,9 @@ class DocumentService:
             raise HTTPException(404, "Documento no encontrado.")
         try:
             (self.settings.document_storage_path.resolve() / str(identifier)).unlink(
+                missing_ok=True
+            )
+            (self.settings.document_storage_path.resolve() / f"{identifier}.source.json").unlink(
                 missing_ok=True
             )
         except OSError:

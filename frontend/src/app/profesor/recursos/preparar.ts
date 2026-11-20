@@ -217,6 +217,16 @@ export class PreparationComponent implements OnInit {
       description: 'Un concepto paso a paso, con un ejemplo resuelto.',
     },
     {
+      value: 'EXAMPLE',
+      label: 'Ejemplo resuelto',
+      description: 'Un problema concreto con sus pasos y resultado.',
+    },
+    {
+      value: 'HINT',
+      label: 'Pista',
+      description: 'Ayuda para continuar sin revelar la solución. Indica el problema en el objetivo.',
+    },
+    {
       value: 'EXERCISE',
       label: 'Ejercicio',
       description: 'Una práctica con pistas y una solución guiada.',

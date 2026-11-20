@@ -23,7 +23,7 @@ from tests.integracion.test_content_trace_database import (
 )
 
 
-@pytest.mark.parametrize("kind", ["EXPLANATION", "EXERCISE", "QUIZ", "FEEDBACK"])
+@pytest.mark.parametrize("kind", ["EXPLANATION", "EXAMPLE", "HINT", "EXERCISE", "QUIZ", "FEEDBACK"])
 def test_generated_integrals_can_be_assigned_privately_and_reopened(trace_database, kind):
     db, repository, owners = trace_database
     teacher, other = (db.get(User, owner) for owner in owners)

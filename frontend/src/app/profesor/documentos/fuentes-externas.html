@@ -1,0 +1,195 @@
+<header class="page-heading external-heading fade-in">
+  <div>
+    <span class="eyebrow">MATERIALES COMPLEMENTARIOS</span>
+    <h1 class="font-serif">Fuentes externas</h1>
+    <p class="lead-subtitle">Busca en Wikipedia en español y revisa el contenido antes de añadirlo a tu materia.</p>
+  </div>
+  <a routerLink="/documentos" class="action-link secondary back-docs-btn interactive-button">
+    <span aria-hidden="true">←</span>
+    <span>Volver a mis documentos</span>
+  </a>
+</header>
+
+@if (!canManage()) {
+  <section class="panel fade-in">
+    <h2 class="font-serif">Espacio docente</h2>
+    <p>Solo el profesor puede incorporar fuentes.</p>
+  </section>
+} @else {
+  @if (error()) {
+    <p id="external-error" tabindex="-1" role="alert" class="notice error fade-in">{{ error() }}</p>
+  }
+
+  <section class="panel search-panel fade-in" [attr.aria-busy]="busy()">
+    <div class="panel-header">
+      <div class="source-badge" aria-hidden="true">
+        <span class="badge badge-external">Wikipedia en español</span>
+        <span class="badge">Licencia CC BY-SA 4.0</span>
+      </div>
+    </div>
+
+    <form (ngSubmit)="search()" class="search-form">
+      <label for="external-query">Tema que quieres buscar</label>
+      <div class="search-row">
+        <input
+          id="external-query"
+          name="query"
+          [(ngModel)]="query"
+          maxlength="160"
+          placeholder="Por ejemplo, derivada o distribución normal"
+          [disabled]="busy()"
+          required
+          minlength="2"
+        />
+        <button type="submit" class="primary-btn interactive-button" [disabled]="busy()">
+          <svg class="btn-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
+          <span>Buscar en Wikipedia</span>
+        </button>
+      </div>
+    </form>
+
+    @if (busy()) {
+      <div class="loading-banner fade-in" role="status">
+        <span class="spinner" aria-hidden="true"></span>
+        <span>Consultando la fuente…</span>
+      </div>
+    }
+
+    @if (searched()) {
+      <div class="results-block fade-in">
+        <div class="results-header">
+          <h2 id="external-results" class="font-serif" tabindex="-1">Resultados de búsqueda</h2>
+          <span class="results-count">{{ results().length }} {{ results().length === 1 ? 'artículo' : 'artículos' }}</span>
+        </div>
+
+        @if (!results().length) {
+          <p class="empty-results">No se encontraron artículos. Prueba con otro tema.</p>
+        } @else {
+          <ul class="results">
+            @for (item of results(); track item.page_id) {
+              <li>
+                <div class="result-meta">
+                  <span class="wiki-pill" aria-hidden="true">WIKIPEDIA ES</span>
+                  <span class="result-title">{{ item.title }}</span>
+                </div>
+                <button
+                  type="button"
+                  class="secondary review-btn interactive-button"
+                  (click)="review(item)"
+                  [disabled]="busy()"
+                >
+                  <span>Revisar artículo</span>
+                  <span class="arrow-icon" aria-hidden="true">→</span>
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    }
+  </section>
+
+  @if (preview(); as item) {
+    <section class="panel preview-panel fade-in">
+      <div class="preview-heading">
+        <div>
+          <span class="eyebrow">REVISIÓN DE ARTÍCULO</span>
+          <h2 id="external-preview" class="font-serif" tabindex="-1">{{ item.source.title }}</h2>
+        </div>
+        <a
+          class="action-link secondary wiki-external-btn interactive-button"
+          [href]="item.source.url"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span>Consultar esta versión en Wikipedia</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+
+      <div class="source-meta-card">
+        <p class="attribution-text">{{ item.source.attribution }}</p>
+        <dl class="meta-grid">
+          <div>
+            <dt>Versión del artículo</dt>
+            <dd>{{ item.source.revision_id }} · {{ item.source.revision_at | date:'dd/MM/yyyy HH:mm' }}</dd>
+          </div>
+          <div>
+            <dt>Consultado</dt>
+            <dd>{{ item.source.retrieved_at | date:'dd/MM/yyyy HH:mm' }}</dd>
+          </div>
+          <div>
+            <dt>Licencia indicada por la fuente</dt>
+            <dd>{{ item.source.license_name }} · {{ item.source.license_url }}</dd>
+          </div>
+        </dl>
+      </div>
+
+      @for (warning of item.warnings; track warning) {
+        <p class="warning-note help">{{ warning }}</p>
+      }
+
+      <details class="article-preview-details">
+        <summary>Leer el texto que se incorporará</summary>
+        <pre>{{ item.text }}</pre>
+      </details>
+
+      @if (imported(); as doc) {
+        <div id="external-success" class="success-card fade-in" tabindex="-1" role="status">
+          <div>
+            <h3 class="font-serif">Material añadido a {{ doc.course }}</h3>
+            <p>Está guardado, pero todavía no se utiliza para generar recursos. En Documentos, procesa el texto, prepara su búsqueda, revisa los fragmentos y habilítalo como fuente.</p>
+          </div>
+          <a
+            class="action-link primary-cta interactive-button"
+            routerLink="/documentos"
+            [queryParams]="{ course: doc.course }"
+          >
+            <span>Continuar en Documentos</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      } @else {
+        <form (ngSubmit)="importArticle()" class="import-form">
+          <div class="field-group">
+            <label for="external-course">Asignatura</label>
+            <input
+              id="external-course"
+              name="course"
+              [(ngModel)]="course"
+              list="external-courses"
+              maxlength="160"
+              placeholder="Ej. Cálculo Diferencial"
+              required
+              [disabled]="busy()"
+            />
+            <datalist id="external-courses">
+              <option value="Cálculo Diferencial"></option>
+              <option value="Probabilidad y Estadística"></option>
+            </datalist>
+          </div>
+
+          <label class="confirmation authorization-card">
+            <input type="checkbox" name="confirmed" [(ngModel)]="confirmed" [disabled]="busy()" required />
+            <span>
+              <strong>He revisado la fuente y su licencia y confirmo que puedo incorporarla a esta asignatura.</strong>
+            </span>
+          </label>
+
+          <div class="import-actions">
+            <button
+              type="submit"
+              class="primary-btn import-submit-btn interactive-button"
+              [disabled]="busy() || !confirmed || !course.trim()"
+            >
+              <span>Añadir a mis documentos</span>
+            </button>
+          </div>
+        </form>
+      }
+    </section>
+  }
+}

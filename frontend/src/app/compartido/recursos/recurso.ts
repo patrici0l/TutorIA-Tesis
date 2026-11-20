@@ -80,6 +80,17 @@ export class ResourceViewComponent implements OnChanges {
           { heading: 'Paso a paso', blocks: r.steps },
           { heading: 'Ejemplo resuelto', blocks: [r.worked_example] },
         ];
+      case 'EXAMPLE':
+        return [
+          { heading: 'Enunciado', blocks: [r.statement] },
+          { heading: 'Solución paso a paso', blocks: r.solution_steps },
+          { heading: 'Resultado', blocks: [r.answer] },
+        ];
+      case 'HINT':
+        return [
+          { heading: 'Enunciado', blocks: [r.statement] },
+          { heading: 'Pistas para continuar', blocks: r.hints },
+        ];
       case 'EXERCISE':
         return [
           { heading: 'Enunciado', blocks: [r.statement] },

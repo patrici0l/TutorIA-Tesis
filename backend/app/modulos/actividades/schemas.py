@@ -5,7 +5,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
 
 from app.modulos.contenidos.preparation_schemas import PreparationSource
-from app.modulos.contenidos.schemas import EducationalResource
+from app.modulos.contenidos.schemas import EducationalResource, ResourceType
 
 AssignmentStatus = Literal["open", "closed", "cancelled"]
 
@@ -44,7 +44,7 @@ class AssignmentResult(BaseModel):
     attempts: int
     best_score: int | None
     resource_id: UUID | None = None
-    resource_type: Literal["EXPLANATION", "EXERCISE", "QUIZ", "FEEDBACK"] | None = None
+    resource_type: ResourceType | None = None
 
 
 class AssignmentDetail(AssignmentResult):

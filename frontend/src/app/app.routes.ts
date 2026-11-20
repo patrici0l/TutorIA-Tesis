@@ -4,6 +4,8 @@ import { authGuard } from './inicio/sesion.guard';
 import { practiceExitGuard } from './compartido/practica/salida-practica.service';
 
 export const routes: Routes = [
+  { path: 'fuentes-externas', title: 'Fuentes externas', canActivate: [authGuard],
+    loadComponent: () => import('./profesor/documentos/fuentes-externas').then(m => m.ExternalSourcesComponent) },
   {
     path: 'actividades',
     title: 'Actividades asignadas',

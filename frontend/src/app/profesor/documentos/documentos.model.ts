@@ -1,5 +1,8 @@
 
+import { ExternalSource } from './fuentes-externas.model';
+
 export interface CourseDocument {
+  external_source?: ExternalSource | null;
   published_at?: string | null;
   course?: string | null;
   source_reference?: string | null;

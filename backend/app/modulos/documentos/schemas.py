@@ -5,11 +5,13 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, field_validator
 
+from app.modulos.documentos.external_schemas import ExternalSource
 from app.modulos.rag.schemas import DocumentChunkResponse
 
 
 class DocumentResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
+    external_source: ExternalSource | None = None
     course: str | None = None
     published_at: datetime | None = None
     source_reference: str | None = None

@@ -49,6 +49,7 @@ class SearchRequest(BaseModel):
 
 
 class SearchHit(DocumentChunkResponse):
+    external_source: dict | None = None
     # Opcionales para poder consultar las trazas guardadas antes de v0.2.
     course: str | None = None
     version_number: int | None = None

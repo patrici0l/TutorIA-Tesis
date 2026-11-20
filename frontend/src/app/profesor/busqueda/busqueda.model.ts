@@ -1,4 +1,7 @@
+import { ExternalSource } from '../documentos/fuentes-externas.model';
+
 export interface SearchHit {
+  external_source?: ExternalSource | null;
   course?: string | null;
   version_number?: number | null;
   source_reference?: string | null;

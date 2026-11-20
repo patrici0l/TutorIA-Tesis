@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import UUID, uuid4
 
-from sqlalchemy import DateTime, ForeignKey, String, UniqueConstraint, func
+from sqlalchemy import JSON, DateTime, ForeignKey, String, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.base_datos.models.base import Base
@@ -10,6 +10,7 @@ from app.base_datos.models.base import Base
 class Document(Base):
     __tablename__ = "documentos"
     __table_args__ = (UniqueConstraint("previous_version_id", name="uq_document_previous"),)
+    external_source: Mapped[dict | None] = mapped_column(JSON(none_as_null=True))
     course: Mapped[str | None] = mapped_column(String(160), index=True)
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     source_reference: Mapped[str | None] = mapped_column(String(500))

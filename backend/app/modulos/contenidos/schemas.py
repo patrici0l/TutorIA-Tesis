@@ -3,7 +3,7 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, field_validator, model_validator
 
-ResourceType = Literal["EXPLANATION", "EXERCISE", "QUIZ", "FEEDBACK"]
+ResourceType = Literal["EXPLANATION", "EXAMPLE", "HINT", "EXERCISE", "QUIZ", "FEEDBACK"]
 Difficulty = Literal["basic", "intermediate", "advanced"]
 CitationId = Annotated[str, Field(pattern=r"^S[1-9][0-9]?$", max_length=3)]
 
@@ -76,6 +76,21 @@ class Explanation(ContentModel):
     worked_example: CitedText
 
 
+class WorkedExample(ContentModel):
+    resource_type: Literal["EXAMPLE"]
+    title: str = Field(min_length=1, max_length=160)
+    statement: CitedText
+    solution_steps: list[CitedText] = Field(min_length=1, max_length=8)
+    answer: CitedText
+
+
+class Hint(ContentModel):
+    resource_type: Literal["HINT"]
+    title: str = Field(min_length=1, max_length=160)
+    statement: CitedText
+    hints: list[CitedText] = Field(min_length=1, max_length=3)
+
+
 class Exercise(ContentModel):
     resource_type: Literal["EXERCISE"]
     title: str = Field(min_length=1, max_length=160)
@@ -117,11 +132,14 @@ class Feedback(ContentModel):
 
 
 EducationalResource = Annotated[
-    Explanation | Exercise | Quiz | Feedback, Field(discriminator="resource_type")
+    Explanation | WorkedExample | Hint | Exercise | Quiz | Feedback,
+    Field(discriminator="resource_type"),
 ]
 RESOURCE_ADAPTER = TypeAdapter(EducationalResource)
 RESOURCE_SCHEMAS = {
     "EXPLANATION": Explanation,
+    "EXAMPLE": WorkedExample,
+    "HINT": Hint,
     "EXERCISE": Exercise,
     "QUIZ": Quiz,
     "FEEDBACK": Feedback,

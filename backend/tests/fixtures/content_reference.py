@@ -58,6 +58,10 @@ def resource(kind="EXPLANATION"):
     values = dict(resource_type=kind, title="Recurso sintético de prueba")
     if kind == "EXPLANATION":
         values.update(summary=cited(), steps=[cited()], worked_example=cited())
+    elif kind == "EXAMPLE":
+        values.update(statement=cited(), solution_steps=[cited()], answer=cited())
+    elif kind == "HINT":
+        values.update(statement=cited(), hints=[cited()])
     elif kind == "EXERCISE":
         values.update(statement=cited(), hints=[cited()], solution_steps=[cited()], answer=cited())
     elif kind == "QUIZ":

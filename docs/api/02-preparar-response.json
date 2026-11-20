@@ -1,0 +1,33 @@
+{
+  "id": "11111111-1111-4111-8111-111111111111",
+  "status": "prepared",
+  "topic": "Derivada de x²",
+  "learning_objective": "Explicar la derivada de f(x)=x² como tasa de cambio instantánea, usando ese ejemplo.",
+  "resource_type": "EXPLANATION",
+  "difficulty": "basic",
+  "question_count": null,
+  "sources": [
+    {
+      "id": "22222222-2222-4222-8222-222222222222",
+      "document_id": "33333333-3333-4333-8333-333333333333",
+      "document_title": "Derivadas — material sintético",
+      "filename": "derivadas-demo.txt",
+      "document_sha256": "32bfc661803fb90b6e2b1a47432be9558d83188aafe4e037c458457dab36a407",
+      "source_sha256": "32bfc661803fb90b6e2b1a47432be9558d83188aafe4e037c458457dab36a407",
+      "processing_version": "demo-sintetica-v1",
+      "similarity": 0.85,
+      "position": 0,
+      "source_kind": "paragraph",
+      "source_index": 1,
+      "char_start": 0,
+      "char_end": 89,
+      "text": "La derivada de f(x)=x² es f'(x)=2x. La derivada representa la tasa de cambio instantánea.",
+      "course": "cálculo diferencial",
+      "version_number": 1,
+      "source_reference": "Material ficticio para simular el contrato",
+      "published_at": "2026-11-19T20:00:00Z",
+      "citation_id": "S1"
+    }
+  ],
+  "adaptation": null
+}

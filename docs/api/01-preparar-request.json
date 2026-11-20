@@ -1,0 +1,7 @@
+{
+  "course": "Cálculo Diferencial",
+  "topic": "Derivada de x²",
+  "learning_objective": "Explicar la derivada de f(x)=x² como tasa de cambio instantánea, usando ese ejemplo.",
+  "resource_type": "EXPLANATION",
+  "difficulty": "basic"
+}

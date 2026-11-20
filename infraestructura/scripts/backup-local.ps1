@@ -21,6 +21,15 @@ try {
     if ($LASTEXITCODE -ne 0 -or -not $backendId) { throw 'Debe existir el contenedor backend con sus volúmenes.' }
     $backendImage = & docker inspect --format '{{.Image}}' $backendId
     if ($LASTEXITCODE -ne 0) { throw 'No se pudo identificar la imagen del backend.' }
+    # La imagen original puede haberse retirado tras una reconstrucción. El ayudante
+    # solo lee el volumen y crea el archivo; puede usar la imagen local recién creada.
+    & docker image inspect $backendImage *> $null
+    if ($LASTEXITCODE -ne 0) {
+        $backendImage = 'prototipo-backend:local'
+        & docker image inspect $backendImage *> $null
+        if ($LASTEXITCODE -ne 0) { throw 'Construye la imagen backend antes de respaldar.' }
+    }
+
 
     $identifier = [Guid]::NewGuid().ToString('N')
     $backupDirectory = Join-Path $projectRoot "documentacion-local/respaldos/$identifier"

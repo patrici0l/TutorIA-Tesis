@@ -29,7 +29,7 @@ def direct_resource(kind="EXPLANATION"):
     return remove_citations(resource(kind))
 
 
-@pytest.mark.parametrize("kind", ["EXPLANATION", "EXERCISE", "QUIZ", "FEEDBACK"])
+@pytest.mark.parametrize("kind", ["EXPLANATION", "EXAMPLE", "HINT", "EXERCISE", "QUIZ", "FEEDBACK"])
 @pytest.mark.parametrize("difficulty", ["basic", "intermediate", "advanced"])
 def test_direct_preparation_and_validation_without_retrieval(kind, difficulty):
     asked = request(kind, difficulty=difficulty)
@@ -38,7 +38,7 @@ def test_direct_preparation_and_validation_without_retrieval(kind, difficulty):
     assert set(payload) == {"mode", "request", "output_schema"}
     assert payload["mode"] == prepared.mode == "direct"
     assert payload["request"] == asked.model_dump(mode="json", exclude_none=True)
-    assert prepared.prompt_version == "educational-direct-v1"
+    assert prepared.prompt_version == "educational-direct-v2"
     assert not hasattr(prepared, "sources_json")
     assert payload["output_schema"]["additionalProperties"] is False
     assert (

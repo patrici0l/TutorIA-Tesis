@@ -22,7 +22,7 @@ from tests.integracion.test_content_trace_database import (
 pytestmark = trace_marks
 
 
-@pytest.mark.parametrize("kind", ["EXPLANATION", "EXERCISE", "QUIZ", "FEEDBACK"])
+@pytest.mark.parametrize("kind", ["EXPLANATION", "EXAMPLE", "HINT", "EXERCISE", "QUIZ", "FEEDBACK"])
 def test_coordinator_commits_before_network_and_validates_each_resource(trace_database, kind):
     db, repository, owners = trace_database
     prepared = EducationalPromptBuilder().build(request(kind), retrieval())

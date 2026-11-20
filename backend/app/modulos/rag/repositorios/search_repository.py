@@ -64,6 +64,7 @@ class SearchRepository:
             Document.version_number,
             Document.source_reference,
             Document.published_at,
+            Document.external_source,
         )
         eligible = select(*columns).join(Document).where(*self.eligibility(owner, course))
         if exact:

@@ -87,6 +87,20 @@ describe('Preparación docente', () => {
     http = TestBed.inject(HttpTestingController);
   });
   afterEach(() => http.verify());
+  it.each(['EXAMPLE', 'HINT'] as const)('prepara %s como recurso independiente', (kind) => {
+    const fixture = setup();
+    const component = fixture.componentInstance;
+    expect(component.resources.some((item) => item.value === kind)).toBe(true);
+    component.resourceType = kind;
+    component.prepare();
+    const call = http.expectOne('/api/v1/content/prepare');
+    expect(call.request.body.resource_type).toBe(kind);
+    expect(call.request.body.student_answer).toBeUndefined();
+    expect(call.request.body.question_count).toBeUndefined();
+    call.flush({ ...response, resource_type: kind });
+    expect(component.result()?.resource_type).toBe(kind);
+  });
+
   it('permite reintentar tras un rechazo de cupo sin marcar la preparación como enviada', () => {
     const fixture = setup();
     const component = fixture.componentInstance;

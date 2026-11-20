@@ -14,7 +14,7 @@ from app.modulos.rag.prompts.educational_prompt import EducationalPromptBuilder,
 from tests.fixtures.content_reference import request, resource, retrieval
 
 
-@pytest.mark.parametrize("kind", ["EXPLANATION", "EXERCISE", "QUIZ", "FEEDBACK"])
+@pytest.mark.parametrize("kind", ["EXPLANATION", "EXAMPLE", "HINT", "EXERCISE", "QUIZ", "FEEDBACK"])
 def test_contract_builds_and_validates_all_initial_resources(kind):
     asked = request(kind)
     prepared = EducationalPromptBuilder().build(asked, retrieval())
@@ -90,7 +90,7 @@ def test_prepare_uses_authenticated_owner_and_local_retrieval():
     assert received_owner == owner
     assert query.top_k == 3
     assert "Derivadas" in query.query and "tasa de cambio" in query.query
-    assert result.prompt_version == "educational-rag-v2"
+    assert result.prompt_version == "educational-rag-v3"
 
 
 def test_context_without_sources_or_with_invalid_sources_fails():
@@ -161,3 +161,16 @@ def test_quiz_validates_count_and_answers(change):
         data["questions"][0]["options"] = ["A", "a", "B", "C"]
     with pytest.raises(ContentError):
         ResourceValidationService().validate(json.dumps(data), request("QUIZ"), {"S1"})
+
+
+@pytest.mark.parametrize("kind", ["EXAMPLE", "HINT"])
+def test_new_resources_reject_unknown_citations(kind):
+    with pytest.raises(ContentError, match="content_invalid_citations"):
+        ResourceValidationService().validate(json.dumps(resource(kind)), request(kind), {"S2"})
+
+
+def test_hint_rejects_solution_fields_and_empty_help():
+    for changes in ({"answer": {"text": "2x", "citations": ["S1"]}}, {"hints": []}):
+        payload = resource("HINT") | changes
+        with pytest.raises(ContentError, match="content_invalid_output"):
+            ResourceValidationService().validate(json.dumps(payload), request("HINT"), {"S1"})

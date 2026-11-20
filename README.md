@@ -1,5 +1,10 @@
 # Generación de contenidos educativos
 
+Avance local de [v0.3: ejemplos, pistas y fuentes externas](versionesDM/Version-0.3.md).
+Para simular el consumo: [guía y JSON de la API](docs/api/README.md).
+La conexión con Wikipedia se abre desde **Documentos → Buscar fuentes externas**;
+requiere la migración `0018_external_sources` y reconstruir la aplicación local.
+
  Generación, consulta y trazabilidad de recursos mediante IA y RAG.
 
 ## Componentes
@@ -29,6 +34,80 @@ Docker Desktop debe estar iniciado y usar contenedores Linux. La preparación de
 verifica los artefactos existentes y descarga únicamente los que falten o no sean válidos.
 Los datos se conservan en los volúmenes de Compose; no uses `down -v` para actualizar.
 Comprueba el arranque con `docker compose --env-file licencias/secure_data.env ps` y `./infraestructura/scripts/check-health.ps1`.
+
+## Iniciar sin Docker (Windows)
+
+En este equipo ya están preparados Python, las dependencias, el modelo y PostgreSQL
+18 con pgvector. La base nativa `tutoria_localdev` usa el puerto 5432 y está migrada
+a `0018_external_sources`. Es independiente de la base de Docker: los documentos y
+recursos de un entorno no aparecen automáticamente en el otro.
+
+Abre PowerShell en `C:\C_PROJECTS\TESIS COMPUTACION\TutorIA-Lucero`.
+Si Docker está ejecutando el proyecto, detén sus contenedores para liberar los puertos
+(esto conserva los datos):
+
+```powershell
+docker compose --env-file licencias/secure_data.env stop
+```
+
+PostgreSQL de Windows debe estar activo. Compruébalo con
+`Get-Service postgresql-x64-18`; si está detenido, inicia ese servicio desde Servicios
+de Windows o con `Start-Service postgresql-x64-18` en PowerShell como administrador.
+Después inicia el servidor en una terminal:
+
+```powershell
+./infraestructura/scripts/start-backend-local.ps1
+```
+
+Y la interfaz en otra terminal, desde la misma carpeta:
+
+```powershell
+./infraestructura/scripts/start-frontend-local.ps1
+```
+
+Abre http://localhost:4200. Mantén ambas terminales abiertas y usa `Ctrl+C` en cada
+una para detenerlas. La API está en http://localhost:8000/api/v1/docs.
+Puedes comprobar la conexión con `./infraestructura/scripts/check-health.ps1`.
+Estos dos scripts no usan Docker ni cambian la configuración privada.
+
+### Preparación y actualizaciones del entorno nativo
+
+Solo si faltan las dependencias, crea `.venv` con `py -3.12 -m venv .venv` y ejecuta:
+
+```powershell
+./.venv/Scripts/python.exe -m pip install -e './backend[dev]'
+Push-Location frontend
+npm ci
+Pop-Location
+```
+
+En otro equipo también necesitas PostgreSQL con pgvector y una base propia. Copia
+`.env.example` a `licencias/backend.env` **solo si ese archivo no existe** y configura
+`DB_HOST=localhost`, `DB_PORT=5432`, el nombre de base, usuario y contraseña.
+Si `DATABASE_URL` tiene un valor, este prevalece sobre los campos `DB_*`.
+No copies los valores de conexión internos de Docker. Conserva las rutas locales
+de documentos y del modelo; no uses las rutas `/app/...` del contenedor.
+
+Cuando existan nuevas migraciones, respalda primero la base nativa y, con el servidor
+detenido, ejecuta desde la raíz:
+
+```powershell
+Push-Location backend
+../.venv/Scripts/python.exe -m alembic upgrade head
+../.venv/Scripts/python.exe -m app.modulos.rag.servicios.prepare_model
+Pop-Location
+```
+
+La preparación del modelo verifica los archivos y descarga los que falten. Internet
+también se necesita para Wikipedia y para el proveedor de IA que hayas configurado.
+El login sigue siendo el de demostración; el login institucional y el despliegue
+se revisarán con el tutor.
+
+Para volver a Docker, detén las dos terminales y ejecuta:
+
+```powershell
+docker compose --env-file licencias/secure_data.env up -d --build --wait
+```
 
 ## Prueba remota con el tutor
 

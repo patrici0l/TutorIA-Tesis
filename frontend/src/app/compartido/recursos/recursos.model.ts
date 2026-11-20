@@ -1,7 +1,7 @@
 import { SearchHit } from '../../profesor/busqueda/busqueda.model';
 import { ProfileResponse } from '../../profesor/perfiles/perfiles.model';
 
-export type ResourceType = 'EXPLANATION' | 'EXERCISE' | 'QUIZ' | 'FEEDBACK';
+export type ResourceType = 'EXPLANATION' | 'EXAMPLE' | 'HINT' | 'EXERCISE' | 'QUIZ' | 'FEEDBACK';
 export type Difficulty = 'basic' | 'intermediate' | 'advanced';
 export interface PreparationRequest {
   course: string;
@@ -40,6 +40,19 @@ export interface CitedText {
   citations: string[];
 }
 export type EducationalResource =
+  | {
+      resource_type: 'EXAMPLE';
+      title: string;
+      statement: CitedText;
+      solution_steps: CitedText[];
+      answer: CitedText;
+    }
+  | {
+      resource_type: 'HINT';
+      title: string;
+      statement: CitedText;
+      hints: CitedText[];
+    }
   | {
       resource_type: 'EXPLANATION';
       title: string;
