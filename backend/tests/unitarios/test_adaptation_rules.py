@@ -2,9 +2,11 @@ from types import SimpleNamespace
 from unittest.mock import Mock
 
 import pytest
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from app.main import create_app
+from app.modulos.contenidos.rules_router import router
 from app.modulos.contenidos.servicios.adaptation_service import POLICY_VERSION, RULES
 from app.nucleo.dependencias.auth import get_current_user, get_repository
 
@@ -69,10 +71,11 @@ def test_unknown_version_and_invalid_filter_are_not_silently_accepted(client):
     ).status_code == 422
 
 
-def test_swagger_documents_the_actual_contract(client):
-    browser, _ = client
-    spec = browser.get("/api/v1/openapi.json").json()
-    assert spec["info"]["title"].startswith("TutorIA")
+def test_router_preserves_its_contract_outside_adaptia_swagger():
+    app = FastAPI()
+    app.include_router(router, prefix="/api/v1")
+    with TestClient(app) as browser:
+        spec = browser.get("/openapi.json").json()
     operation = spec["paths"]["/api/v1/adaptation/rules"]["get"]
     assert operation["tags"] == ["Reglas de adaptación"]
     assert {"401", "403", "404", "422"}.issubset(operation["responses"])

@@ -1,0 +1,13 @@
+# Activar junto con docker-compose.yml para recibir llamadas del backend Moodle.
+services:
+  backend:
+    networks:
+      default:
+      adaptia_link:
+        aliases:
+          - tutoria-api
+
+networks:
+  adaptia_link:
+    external: true
+    name: adaptia-tutoria

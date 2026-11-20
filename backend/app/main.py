@@ -16,6 +16,7 @@ from app.modulos.autenticacion.router import router as auth_router
 from app.modulos.contenidos.router import router as content_router
 from app.modulos.contenidos.rules_router import router as rules_router
 from app.modulos.documentos.router import router as documents_router
+from app.modulos.integracion_adaptia.router import router as adaptia_router
 from app.modulos.metricas.router import router as metrics_router
 from app.modulos.perfiles.router import router as profiles_router
 from app.modulos.practica.router import router as practice_router
@@ -29,6 +30,7 @@ async def lifespan(app: FastAPI):
     configure_logging()
     get_settings().validate_auth()
     get_settings().validate_llm()
+    get_settings().validate_adaptia()
     yield
     if get_engine.cache_info().currsize:
         get_engine().dispose()
@@ -37,49 +39,55 @@ async def lifespan(app: FastAPI):
 
 def create_app() -> FastAPI:
     app = FastAPI(
-        title="TutorIA — API de recursos educativos",
+        title="TutorIA — Integración ADAPTIA",
         description=(
-            "API de documentos, recuperación de fuentes y generación de recursos educativos.\n\n"
-            "### Cómo probar\n"
-            "1. Abre [la aplicación](/login) en otra pestaña de este mismo navegador "
-            "e inicia sesión como **Profesor**.\n"
-            "2. Regresa a esta página y utiliza **Try it out**. La sesión se envía "
-            "mediante una cookie HttpOnly; no se pega un token Bearer.\n"
-            "3. En las escrituras protegidas envía `x-prototipo-client: web` "
-            "cuando el endpoint lo solicite. Las operaciones pueden modificar datos "
-            "y la generación puede consumir cuota del proveedor.\n\n"
-            "### Reglas de adaptación\n"
-            "`GET /api/v1/adaptation/rules` permite consultar la política local vigente "
-            "y filtrar por dominio. Su consulta no genera recursos ni consume cuota.\n\n"
-            "Los perfiles de aprendizaje son sintéticos y el nivel de dominio lo informa "
-            "el docente. El contrato de integración Bearer y el formato de respuesta "
-            "ADAPTIA siguen pendientes de acuerdo e implementación."
+            "Contrato de servicio para que ADAPTIA solicite contenido educativo a TutorIA.\n\n"
+            "### Probar la integración\n"
+            "1. Pulsa **Authorize** e introduce solo el token de servicio en "
+            "**ADAPTIABearer**. Swagger añade `Authorization: Bearer …`.\n"
+            "2. Abre **POST /api/v1/tutoria/generate-content** y pulsa **Try it out**.\n"
+            "3. Asigna un `X-Request-ID` único y utiliza el perfil sintético de ejemplo. "
+            "Conserva ese ID si reintentas exactamente el mismo cuerpo.\n"
+            "4. Pulsa **Execute** y revisa `success`, `data`, `metadata` y `tracking`.\n\n"
+            "### Resultado esperado\n"
+            "Con proveedor habilitado: **200**, texto con explicación, ejemplo y ejercicio. "
+            "Con el LLM apagado: **503 / AI_SERVICE_UNAVAILABLE**; no es una generación exitosa. "
+            "Token ausente o incorrecto: **401**. Campos inválidos: **422**.\n\n"
+            "La dificultad de **1 a 10** la decide ADAPTIA. Esta versión genera texto directo; "
+            "la modalidad orienta su presentación. La generación comparte cuota con la web. "
+            "Un éxito repetido con el mismo ID y cuerpo devuelve el resultado guardado "
+            "sin llamar otra vez al proveedor."
         ),
         version=APP_VERSION,
         servers=[{"url": "/", "description": "Este servidor"}],
         openapi_tags=[
             {
-                "name": "Reglas de adaptación",
-                "description": (
-                    "Catálogo versionado de la política local aplicada a perfiles sintéticos."
-                ),
+                "name": "Integración ADAPTIA",
+                "description": "Perfil y contexto → contenido estructurado y trazabilidad.",
             },
         ],
+        swagger_ui_parameters={
+            "docExpansion": "list",
+            "defaultModelsExpandDepth": -1,
+            "displayRequestDuration": True,
+            "persistAuthorization": False,
+        },
         lifespan=lifespan,
         docs_url=f"{API_PREFIX}/docs",
         redoc_url=f"{API_PREFIX}/redoc",
         openapi_url=f"{API_PREFIX}/openapi.json",
     )
-    app.include_router(router, prefix=API_PREFIX)
-    app.include_router(rules_router, prefix=API_PREFIX)
-    app.include_router(auth_router, prefix=API_PREFIX)
-    app.include_router(documents_router, prefix=API_PREFIX)
-    app.include_router(rag_router, prefix=API_PREFIX)
-    app.include_router(content_router, prefix=API_PREFIX)
-    app.include_router(profiles_router, prefix=API_PREFIX)
-    app.include_router(metrics_router, prefix=API_PREFIX)
-    app.include_router(practice_router, prefix=API_PREFIX)
-    app.include_router(assignment_router, prefix=API_PREFIX)
+    app.include_router(router, prefix=API_PREFIX, include_in_schema=False)
+    app.include_router(rules_router, prefix=API_PREFIX, include_in_schema=False)
+    app.include_router(auth_router, prefix=API_PREFIX, include_in_schema=False)
+    app.include_router(documents_router, prefix=API_PREFIX, include_in_schema=False)
+    app.include_router(rag_router, prefix=API_PREFIX, include_in_schema=False)
+    app.include_router(content_router, prefix=API_PREFIX, include_in_schema=False)
+    app.include_router(profiles_router, prefix=API_PREFIX, include_in_schema=False)
+    app.include_router(metrics_router, prefix=API_PREFIX, include_in_schema=False)
+    app.include_router(practice_router, prefix=API_PREFIX, include_in_schema=False)
+    app.include_router(assignment_router, prefix=API_PREFIX, include_in_schema=False)
+    app.include_router(adaptia_router, prefix=API_PREFIX)
     app.add_middleware(UploadLimitMiddleware)
     limiter = AuthRateLimiter()
 
@@ -97,6 +105,16 @@ def create_app() -> FastAPI:
             response = await call_next(request)
         except Exception:
             logging.getLogger(__name__).error("Request failed; sensitive details omitted")
+            if request.url.path == f"{API_PREFIX}/tutoria/generate-content":
+                from app.modulos.integracion_adaptia.errors import (
+                    IntegrationError,
+                    failure_response,
+                    request_context,
+                )
+
+                return failure_response(request_context(request.headers), IntegrationError(
+                    500, "INTERNAL_SERVER_ERROR", "No se pudo completar la solicitud."
+                ))
             response = JSONResponse(
                 status_code=500, content={"detail": "No se pudo completar la solicitud."}
             )
@@ -112,6 +130,7 @@ def create_app() -> FastAPI:
                 f"{API_PREFIX}/metrics",
                 f"{API_PREFIX}/practice",
                 f"{API_PREFIX}/adaptation",
+                f"{API_PREFIX}/tutoria",
             )
         ):
             response.headers["Cache-Control"] = "no-store"

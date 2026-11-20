@@ -1,10 +1,11 @@
 from unittest.mock import Mock
 
 import pytest
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from sqlalchemy.exc import OperationalError
 
-from app.api.v1.health_router import get_health_service
+from app.api.v1.health_router import get_health_service, router
 from app.main import create_app
 from app.nucleo.utilidades.health_service import HealthService
 
@@ -35,6 +36,9 @@ def test_database_failure_does_not_expose_credentials(caplog):
 
 
 def test_openapi_documents_unavailability():
-    with TestClient(create_app()) as client:
-        schema = client.get("/api/v1/openapi.json").json()
+    # El contrato del router se conserva fuera del Swagger dedicado a ADAPTIA.
+    app = FastAPI()
+    app.include_router(router, prefix="/api/v1")
+    with TestClient(app) as client:
+        schema = client.get("/openapi.json").json()
     assert "503" in schema["paths"]["/api/v1/health"]["get"]["responses"]

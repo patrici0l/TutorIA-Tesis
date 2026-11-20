@@ -43,6 +43,8 @@ class Settings(BaseSettings):
     llm_max_output_tokens: int = Field(default=4096, ge=128, le=4096)
     llm_requests_per_minute: int = Field(default=5, ge=1, le=10)
     auth_mode: Literal["mock", "cas"] = "mock"
+    adaptia_enabled: bool = False
+    adaptia_service_token: SecretStr = Field(default=SecretStr(""), repr=False)
     auth_mock_user: Literal["student", "teacher"] = "student"
     auth_cookie_secure: bool = False
     auth_demo_public_origin: str = ""
@@ -155,6 +157,15 @@ class Settings(BaseSettings):
         return [
             value.strip().lower() for value in self.auth_allowed_domains.split(",") if value.strip()
         ]
+
+    def validate_adaptia(self) -> None:
+        if not self.adaptia_enabled:
+            return
+        token = self.adaptia_service_token.get_secret_value()
+        if not 32 <= len(token) <= 512 or any(ord(char) < 33 or ord(char) > 126 for char in token):
+            raise ValueError(
+                "ADAPTIA_SERVICE_TOKEN requiere entre 32 y 512 caracteres ASCII sin espacios"
+            )
 
     def get_database_url(self) -> URL:
         if self.database_url.get_secret_value():

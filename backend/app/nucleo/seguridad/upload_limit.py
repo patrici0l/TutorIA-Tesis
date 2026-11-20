@@ -27,6 +27,7 @@ class UploadLimitMiddleware:
                 "/api/v1/profiles",
                 "/api/v1/practice/attempts",
                 "/api/v1/practice/assignments",
+                "/api/v1/tutoria/generate-content",
             }
         ):
             return await self.app(scope, receive, send)
@@ -37,6 +38,19 @@ class UploadLimitMiddleware:
         except ValueError:
             size = maximum + 1
         if size < 0 or size > maximum:
+            if scope["path"] == "/api/v1/tutoria/generate-content":
+                from starlette.datastructures import Headers
+
+                from app.modulos.integracion_adaptia.errors import (
+                    IntegrationError,
+                    failure_response,
+                    request_context,
+                )
+
+                return await failure_response(
+                    request_context(Headers(scope=scope)),
+                    IntegrationError(413, "INVALID_REQUEST", "La solicitud supera 16384 bytes."),
+                )(scope, receive, send)
             return await JSONResponse(
                 {"detail": "La solicitud supera el límite de tamaño."}, status_code=413
             )(scope, receive, send)

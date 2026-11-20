@@ -3,12 +3,17 @@ from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
 from fastapi import HTTPException
-from sqlalchemy import func, select, text, update
+from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 
 from app.modulos.contenidos.cost_schemas import CostBasis
 from app.modulos.contenidos.execution_schemas import ExecutionConfiguration
 from app.modulos.contenidos.models import ContentGeneration
+from app.modulos.contenidos.repositorios.generation_usage import (
+    active_generations,
+    expire_interrupted,
+    started_generations,
+)
 from app.modulos.documentos.models import Document
 from app.modulos.proveedores_ia.schemas import GenerationRequest, GenerationTarget
 from app.modulos.rag.models import DocumentChunk
@@ -22,11 +27,7 @@ class GenerationClaimRepository:
     def daily_usage(self):
         now = self.db.scalar(select(func.clock_timestamp())).astimezone(UTC)
         day_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
-        used = self.db.scalar(
-            select(func.count())
-            .select_from(ContentGeneration)
-            .where(ContentGeneration.generation_started_at >= day_start)
-        )
+        used = started_generations(self.db, day_start)
         return used, day_start + timedelta(days=1)
 
     def claim(
@@ -42,14 +43,7 @@ class GenerationClaimRepository:
             # Serializa reservas de todos los docentes para respetar el cupo compartido.
             self.db.execute(text("SELECT pg_advisory_xact_lock(739117)"))
             now = self.db.scalar(select(func.clock_timestamp())).astimezone(UTC)
-            self.db.execute(
-                update(ContentGeneration)
-                .where(
-                    ContentGeneration.status == "generating",
-                    ContentGeneration.generation_started_at < now - timedelta(seconds=90),
-                )
-                .values(status="failed", error_code="generation_interrupted", completed_at=now)
-            )
+            expire_interrupted(self.db, now)
             record = self.db.scalar(
                 select(ContentGeneration).where(
                     ContentGeneration.id == identifier,
@@ -101,31 +95,13 @@ class GenerationClaimRepository:
                 ):
                     raise HTTPException(422, "Las fuentes cambiaron. Vuelve a preparar el recurso.")
             day_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
-            count = self.db.scalar(
-                select(func.count())
-                .select_from(ContentGeneration)
-                .where(
-                    ContentGeneration.generation_started_at >= day_start,
-                )
-            )
+            count = started_generations(self.db, day_start)
             if count >= daily_limit:
                 raise HTTPException(
                     429, "Se alcanzó el límite diario de generación. Continúa mañana."
                 )
-            recent = self.db.scalar(
-                select(func.count())
-                .select_from(ContentGeneration)
-                .where(
-                    ContentGeneration.generation_started_at > now - timedelta(seconds=60),
-                )
-            )
-            busy = self.db.scalar(
-                select(func.count())
-                .select_from(ContentGeneration)
-                .where(
-                    ContentGeneration.status == "generating",
-                )
-            )
+            recent = started_generations(self.db, now - timedelta(seconds=60))
+            busy = active_generations(self.db)
             if recent or busy:
                 raise HTTPException(
                     429,

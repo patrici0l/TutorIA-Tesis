@@ -1,6 +1,8 @@
 import os
 
 import pytest
+from alembic.config import Config
+from alembic.script import ScriptDirectory
 from fastapi.testclient import TestClient
 from sqlalchemy import text
 
@@ -22,4 +24,5 @@ def test_real_database_and_vector():
             distance = connection.execute(text("SELECT '[1,2]'::vector <-> '[1,2]'::vector"))
             assert distance.scalar_one() == 0
             revision = connection.execute(text("SELECT version_num FROM alembic_version"))
-            assert revision.scalar_one() == "0009_content_adaptation"
+            expected = set(ScriptDirectory.from_config(Config("alembic.ini")).get_heads())
+            assert set(revision.scalars()) == expected

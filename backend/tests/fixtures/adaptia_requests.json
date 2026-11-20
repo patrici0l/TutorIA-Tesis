@@ -1,0 +1,74 @@
+[
+  {
+    "case": "avance",
+    "request": {
+      "student_id": "stud_hash_abc123xyz",
+      "topic": "ecuaciones_cuadraticas",
+      "difficulty": 7,
+      "preferred_modality": "visual",
+      "context": "Explicar el tema con un ejemplo guiado y una práctica breve.",
+      "performance_history": [
+        {
+          "topic": "ecuaciones_lineales",
+          "score": 95,
+          "time": "2026-10-30T10:15:00Z"
+        }
+      ],
+      "known_concepts": [
+        "ecuaciones_lineales",
+        "polinomios"
+      ],
+      "gaps": [
+        "ecuaciones_cuadraticas"
+      ]
+    }
+  },
+  {
+    "case": "refuerzo",
+    "request": {
+      "student_id": "stud_hash_abc123xyz",
+      "topic": "ecuaciones_cuadraticas",
+      "difficulty": 4,
+      "preferred_modality": "visual",
+      "context": "Explicar el tema con un ejemplo guiado y una práctica breve.",
+      "performance_history": [
+        {
+          "topic": "ecuaciones_lineales",
+          "score": 35,
+          "time": "2026-10-30T10:15:00Z"
+        }
+      ],
+      "known_concepts": [
+        "ecuaciones_lineales",
+        "polinomios"
+      ],
+      "gaps": [
+        "ecuaciones_cuadraticas"
+      ]
+    }
+  },
+  {
+    "case": "apoyo_down",
+    "request": {
+      "student_id": "stud_abc123xyz",
+      "topic": "reconocimiento_objetos",
+      "difficulty": 1,
+      "preferred_modality": "visual",
+      "context": "Explicar el tema con un ejemplo guiado y una práctica breve.",
+      "performance_history": [
+        {
+          "topic": "ecuaciones_lineales",
+          "score": 95,
+          "time": "2026-10-30T10:15:00Z"
+        }
+      ],
+      "known_concepts": [
+        "ecuaciones_lineales",
+        "polinomios"
+      ],
+      "gaps": [
+        "ecuaciones_cuadraticas"
+      ]
+    }
+  }
+]

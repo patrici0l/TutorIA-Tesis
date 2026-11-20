@@ -4,6 +4,10 @@
 
 ## Componentes
 
+Para retomar la conexión de este proyecto con ADAPTIA, leer
+[INTEGRACION-ADAPTIA.md](INTEGRACION-ADAPTIA.md): contrato, evidencia y pendientes
+propios de TutorIA.
+
 | Área | Tecnología | Responsabilidad |
 |---|---|---|
 | Interfaz | Angular, TypeScript, SCSS y KaTeX | Materiales, solicitudes, resultados e historial. |
@@ -63,19 +67,66 @@ No ejecutar `docker compose up` con solo la configuración base durante la demo:
 restauraría las redirecciones de autenticación a localhost. Para volver a construir y
 publicar cambios, cerrar la demo e iniciarla de nuevo; compartir el nuevo enlace.
 
-### Swagger y reglas de adaptación
+## Configurar Gemini para ADAPTIA y Moodle
 
-La documentación interactiva está en `/api/v1/docs` y el contrato JSON en
-`/api/v1/openapi.json`. Para probar operaciones protegidas, abrir `/login` en otra
-pestaña del mismo navegador e iniciar sesión como Profesor; Swagger utiliza esa cookie.
-Las escrituras protegidas requieren además `x-prototipo-client: web`.
+El [manual visual de Moodle](docs/api/manual-moodle-tutoria.md) contiene el PDF con
+diagramas, capturas de Playwright señaladas y el ejemplo completo paso a paso. También
+explica qué está comprobado y qué falta para la primera generación externa.
 
-`GET /api/v1/adaptation/rules` consulta la política local vigente sin generar contenido
-ni consumir cuota. Requiere docente o administrador. Admite `version` (actualmente
-`profile-adaptation-v2`) y `mastery_level` (`low`, `medium`, `high`). Sin filtros devuelve
-las tres reglas con dificultad, orientación, tipos sugeridos y motivo. Una versión no
-disponible devuelve 404; un filtro inválido, 422. El dominio lo informa el docente:
-este catálogo no calcula el perfil ni sustituye el contrato del motor de ADAPTIA.
+La conexión ya está preparada. Estado local: proveedor `gemini`, modelo inicial
+`gemini-3.1-flash-lite`, máximo5 solicitudes diarias y generación apagada. La API key
+todavía está vacía; falta guardarla para poder probar una generación real.
+
+1. Crear la clave en [Google AI Studio → API keys](https://aistudio.google.com/api-keys).
+2. En este repositorio, editar **`licencias/secure_data.env`**, archivo privado e ignorado
+   por Git. Completar `GEMINI_API_KEY` con la clave obtenida. La configuración preparada es:
+
+   ```dotenv
+   GEMINI_API_KEY=<TU_API_KEY_PRIVADA>
+   LLM_DEFAULT_PROVIDER=gemini
+   LLM_MODEL=gemini-3.1-flash-lite
+   LLM_DAILY_REQUEST_LIMIT=5
+   LLM_ENABLED=false
+   LLM_FREE_TIER_CONFIRMED=false
+   LLM_PAID_USAGE_CONFIRMED=false
+   ```
+
+3. Confirmar que el proyecto de Google y el modelo tienen cuota gratuita disponible.
+   Solo entonces cambiar `LLM_FREE_TIER_CONFIRMED=true` y `LLM_ENABLED=true` en el archivo
+   privado. La confirmación local registra esa decisión; no cambia la facturación de Google.
+4. Aplicar la configuración desde la raíz de TutorIA:
+
+   ```sh
+   docker compose --env-file licencias/secure_data.env up -d --no-deps --wait backend
+   ```
+
+5. Entrar a Moodle, abrir el curso y elegir **Más → TutorIA · Contenido**. Completar
+   tema, dificultad y contexto con datos ficticios, y pulsar **Solicitar contenido**.
+   También se puede probar desde [Swagger](http://localhost:4200/api/v1/docs).
+
+La clave de Gemini pertenece al backend de **TutorIA**. Moodle y el campo **Authorize**
+de Swagger utilizan credenciales internas de servicio independientes, ya configuradas.
+En este README se muestran nombres y ejemplos; la clave real se guarda en el archivo privado.
+
+Con el LLM apagado, la solicitud devuelve503 y Moodle conserva el fallo en el historial.
+Con clave válida, acceso al modelo y cuota disponible, el primer envío debe verificarse
+con su respuesta y traza reales. Esa generación externa todavía no se ha ejecutado.
+
+El modelo inicial figura en la [documentación oficial de Gemini](https://aistudio.google.com/docs/models/gemini-3.1-flash-lite),
+que incluye ejemplos de `generate_content`. Consultar también
+[precios y cuota gratuita](https://aistudio.google.com/docs/pricing#gemini-3.1-flash-lite)
+antes de habilitarlo; el acceso y los límites dependen de la cuenta.
+
+### Swagger de ADAPTIA
+
+La documentación interactiva en `/api/v1/docs` y el contrato JSON en
+`/api/v1/openapi.json` muestran únicamente `POST /api/v1/tutoria/generate-content`.
+Autorizar **ADAPTIABearer** con el token de servicio y probar el perfil sintético.
+El contrato, configuración, respuestas, idempotencia y pendientes para Patricio están
+consolidados en [docs/api/adaptia.md](docs/api/adaptia.md).
+
+Con el LLM apagado, una petición válida devuelve `503 / AI_SERVICE_UNAVAILABLE`.
+Las rutas de la aplicación siguen disponibles, fuera de este Swagger.
 
 ## Compatibilidad
 
