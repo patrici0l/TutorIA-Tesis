@@ -67,14 +67,47 @@ permiten identificar qué texto se usó aunque Wikipedia cambie.
 
 Se consultó Wikipedia realmente; no se hicieron llamadas a modelos generativos. La
 prueba utilizó una asignatura de prueba y retiró/eliminó el material al finalizar.
-La aplicación habitual y sus datos no se actualizaron: las verificaciones se ejecutaron
-en servicios temporales separados. La migración y reconstrucción local quedan pendientes
-para ver el cambio en la instalación habitual; no se realizó despliegue público.
+La primera verificación se hizo en servicios temporales. El 19 de noviembre se actualizaron
+los contenedores habituales y la base nativa hasta `0018_external_sources`, con respaldo.
+No se realizó despliegue público.
+
+## Solicitudes del estudiante y revisión UX del 20 de noviembre
+
+- **C1 implementado y probado técnicamente:** seis recursos solicitables por el estudiante,
+  preparación sin llamada LLM, envío explícito, cupo compartido, historial privado por cuenta.
+- Nuevo permiso local por docente, estudiante y asignatura (`0019_student_content`).
+  El profesor lo concede por correo desde **Acceso de estudiantes**. No se infiere la
+  matrícula ni se comparte todo el corpus por coincidir el nombre de una materia.
+- Fuentes recuperadas solo del docente concedente y la materia autorizada; la preparación
+  pertenece al estudiante. El servidor rechaza cambios de docente, materia o perfil en
+  el JSON. Revalida permiso y fuentes al enviar, incluso en preparaciones anteriores.
+- Retirar permiso o fuente bloquea nuevas solicitudes; el historial ya guardado se conserva.
+  Ejercicios/cuestionarios son de autoestudio: no se promete secreto de sus soluciones.
+- **UX de Wikipedia revisada:** pasos de incorporación visibles, mensajes diferentes al
+  buscar/revisar/guardar, licencia consultable del artículo real y botones identificables
+  por lectores de pantalla. Se conservaron los ajustes visuales existentes del usuario.
+- Pantallas de estudiante y acceso docente adaptadas a escritorio/móvil. La cuenta de
+  demostración avisa que se comparte por rol y muestra el correo que se necesita para dar acceso.
+- **Word actualizado:** filas 2 y 6 como cumplidas técnicamente, fila 1 implementada y
+  filas pendientes conservadas. Incluye una tercera página con instrucciones y límites.
+
+Verificación: 590 unitarias backend aprobadas y 1 omitida; 82 de integración PostgreSQL
+aprobadas y 2 omitidas; 172 frontend aprobadas. Ruff y compilación Angular correctos.
+Dos E2E: Wikipedia real (importar, indexar, publicar, recuperar y retirar) y estudiante
+(conceder acceso, preparar con E5 real, reabrir y retirar acceso), sobre una base temporal.
+Los seis tipos recorrieron generación y persistencia con un proveedor simulado en tests:
+no se consumió cuota de IA ni se acredita calidad pedagógica con esas pruebas.
+
+Instalación habitual actualizada el 20 de noviembre: Docker reconstruido y saludable,
+base Docker y base nativa en `0019_student_content`. Respaldo previo completo de Docker
+verificado mediante restauración temporal; también se respaldó la base nativa antes
+de migrarla. Las claves y la habilitación del proveedor se conservaron. No se publicaron
+servicios en Internet ni se concedieron accesos de estudiantes automáticamente.
 
 ## Pendiente
 
 Login institucional y despliegue se revisarán con el tutor. Continúan pendientes los
-acuerdos ADAPTIA, acceso del estudiante a solicitudes de generación, ejecuciones
+acuerdos ADAPTIA, vinculación del perfil del estudiante y matrícula institucional, ejecuciones
 comparables de tres modelos, selección y aceptación del corpus externo y piloto de ambas
 asignaturas. Falta el selector experimental entre fuentes docentes y docentes más externas;
 por ahora RAG usa todas las fuentes propias habilitadas de la materia. CORE, OpenAlex y

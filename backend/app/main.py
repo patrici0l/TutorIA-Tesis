@@ -15,6 +15,7 @@ from app.modulos.actividades.router import router as assignment_router
 from app.modulos.autenticacion.router import router as auth_router
 from app.modulos.contenidos.router import router as content_router
 from app.modulos.contenidos.rules_router import router as rules_router
+from app.modulos.contenidos.student_router import router as student_router
 from app.modulos.documentos.external_router import router as external_router
 from app.modulos.documentos.router import router as documents_router
 from app.modulos.metricas.router import router as metrics_router
@@ -78,6 +79,7 @@ def create_app() -> FastAPI:
     app.include_router(documents_router, prefix=API_PREFIX)
     app.include_router(rag_router, prefix=API_PREFIX)
     app.include_router(content_router, prefix=API_PREFIX)
+    app.include_router(student_router, prefix=API_PREFIX)
     app.include_router(profiles_router, prefix=API_PREFIX)
     app.include_router(metrics_router, prefix=API_PREFIX)
     app.include_router(practice_router, prefix=API_PREFIX)
@@ -110,6 +112,7 @@ def create_app() -> FastAPI:
                 f"{API_PREFIX}/documents",
                 f"{API_PREFIX}/rag",
                 f"{API_PREFIX}/content",
+                f"{API_PREFIX}/learning",
                 f"{API_PREFIX}/profiles",
                 f"{API_PREFIX}/metrics",
                 f"{API_PREFIX}/practice",

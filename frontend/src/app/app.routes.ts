@@ -4,6 +4,10 @@ import { authGuard } from './inicio/sesion.guard';
 import { practiceExitGuard } from './compartido/practica/salida-practica.service';
 
 export const routes: Routes = [
+  { path: 'solicitar', title: 'Solicitar contenido', canActivate: [authGuard],
+    loadComponent: () => import('./estudiante/solicitar').then(m => m.StudentContentComponent) },
+  { path: 'accesos', title: 'Acceso de estudiantes', canActivate: [authGuard],
+    loadComponent: () => import('./profesor/accesos').then(m => m.LearningAccessComponent) },
   { path: 'fuentes-externas', title: 'Fuentes externas', canActivate: [authGuard],
     loadComponent: () => import('./profesor/documentos/fuentes-externas').then(m => m.ExternalSourcesComponent) },
   {

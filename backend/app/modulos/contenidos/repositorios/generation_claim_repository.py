@@ -6,6 +6,7 @@ from fastapi import HTTPException
 from sqlalchemy import func, select, text, update
 from sqlalchemy.orm import Session
 
+from app.modulos.contenidos.access_models import LearningAccess
 from app.modulos.contenidos.cost_schemas import CostBasis
 from app.modulos.contenidos.execution_schemas import ExecutionConfiguration
 from app.modulos.contenidos.models import ContentGeneration
@@ -13,6 +14,7 @@ from app.modulos.documentos.models import Document
 from app.modulos.proveedores_ia.schemas import GenerationRequest, GenerationTarget
 from app.modulos.rag.models import DocumentChunk
 from app.modulos.rag.repositorios.search_repository import SearchRepository
+from app.modulos.usuarios.models import User
 
 
 class GenerationClaimRepository:
@@ -67,6 +69,22 @@ class GenerationClaimRepository:
             if len(courses) != 1 or None in courses:
                 raise HTTPException(422, "Vuelve a preparar el recurso indicando su asignatura.")
             course = next(iter(courses))
+            corpus_owner = owner
+            if record.learning_access_id is not None:
+                access = self.db.scalar(
+                    select(LearningAccess)
+                    .where(
+                        LearningAccess.id == record.learning_access_id,
+                        LearningAccess.student_id == owner,
+                        LearningAccess.course == course,
+                        LearningAccess.revoked_at.is_(None),
+                    )
+                    .with_for_update()
+                )
+                teacher = self.db.get(User, access.teacher_id) if access else None
+                if teacher is None or not teacher.activo or teacher.rol not in {"teacher", "admin"}:
+                    raise HTTPException(403, "Tu acceso a esta asignatura ya no está disponible.")
+                corpus_owner = access.teacher_id
             sources = {UUID(source["document_id"]) for source in snapshots}
             available = set(
                 self.db.scalars(
@@ -74,7 +92,7 @@ class GenerationClaimRepository:
                     .join(DocumentChunk)
                     .where(
                         Document.id.in_(sources),
-                        *SearchRepository.eligibility(owner, course),
+                        *SearchRepository.eligibility(corpus_owner, course),
                     )
                 )
             )
@@ -88,7 +106,7 @@ class GenerationClaimRepository:
                     .where(
                         Document.id == UUID(source["document_id"]),
                         DocumentChunk.id == UUID(source["id"]),
-                        *SearchRepository.eligibility(owner, course),
+                        *SearchRepository.eligibility(corpus_owner, course),
                     )
                 ).first()
                 if current is None or (

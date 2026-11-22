@@ -24,10 +24,11 @@
     <div class="panel-header">
       <div class="source-badge" aria-hidden="true">
         <span class="badge badge-external">Wikipedia en español</span>
-        <span class="badge">Licencia CC BY-SA 4.0</span>
+        <span class="badge">Revisión antes de incorporar</span>
       </div>
     </div>
 
+    <p class="help">1. Busca un tema. 2. Revisa el artículo. 3. Añádelo a tus documentos. Después podrás habilitarlo como fuente.</p>
     <form (ngSubmit)="search()" class="search-form">
       <label for="external-query">Tema que quieres buscar</label>
       <div class="search-row">
@@ -54,7 +55,7 @@
     @if (busy()) {
       <div class="loading-banner fade-in" role="status">
         <span class="spinner" aria-hidden="true"></span>
-        <span>Consultando la fuente…</span>
+        <span>{{ loadingMessage() }}</span>
       </div>
     }
 
@@ -79,6 +80,7 @@
                   type="button"
                   class="secondary review-btn interactive-button"
                   (click)="review(item)"
+                  [attr.aria-label]="'Revisar artículo ' + item.title"
                   [disabled]="busy()"
                 >
                   <span>Revisar artículo</span>
@@ -123,7 +125,7 @@
           </div>
           <div>
             <dt>Licencia indicada por la fuente</dt>
-            <dd>{{ item.source.license_name }} · {{ item.source.license_url }}</dd>
+            <dd><a [href]="item.source.license_url" target="_blank" rel="noopener noreferrer">{{ item.source.license_name }} <span class="sr-only">(abre en otra pestaña)</span></a></dd>
           </div>
         </dl>
       </div>

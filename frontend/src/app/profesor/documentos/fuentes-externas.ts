@@ -23,6 +23,7 @@ export class ExternalSourcesComponent {
   readonly auth = inject(AuthService);
   readonly canManage = computed(() => ['teacher', 'admin'].includes(this.auth.user()?.rol ?? ''));
   readonly busy = signal(false);
+  readonly loadingMessage = signal('');
   readonly error = signal('');
   readonly results = signal<WikiResult[]>([]);
   readonly searched = signal(false);
@@ -36,6 +37,7 @@ export class ExternalSourcesComponent {
   search() {
     if (this.busy() || !this.canManage()) return;
     if (this.query.trim().length < 2) { this.fail('Escribe un tema de al menos dos caracteres.'); return; }
+    this.loadingMessage.set('Buscando artículos en Wikipedia…');
     this.error.set(''); this.preview.set(null); this.imported.set(null);
     this.confirmed = false; this.results.set([]); this.searched.set(false); this.busy.set(true);
     this.http.get<WikiResult[]>(this.base + '/search', { params: { q: this.query.trim() } })
@@ -46,6 +48,7 @@ export class ExternalSourcesComponent {
   }
   review(item: WikiResult) {
     if (this.busy() || !this.canManage()) return;
+    this.loadingMessage.set('Cargando el artículo para que puedas revisarlo…');
     this.busy.set(true); this.error.set(''); this.preview.set(null);
     this.imported.set(null); this.confirmed = false;
     this.http.get<WikiPreview>(this.base + '/preview/' + item.page_id)
@@ -60,6 +63,7 @@ export class ExternalSourcesComponent {
     if (!this.course.trim() || !this.confirmed) {
       this.fail('Indica la asignatura y confirma la revisión de la fuente y su licencia.'); return;
     }
+    this.loadingMessage.set('Guardando esta versión en tus documentos…');
     this.busy.set(true); this.error.set('');
     this.http.post<CourseDocument>(this.base + '/import', {
       page_id: preview.source.page_id, revision_id: preview.source.revision_id,

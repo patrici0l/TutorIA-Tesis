@@ -1,4 +1,5 @@
 """Preserve provenance of imported external sources without classifying old uploads."""
+
 import sqlalchemy as sa
 
 from alembic import op
@@ -14,8 +15,10 @@ def upgrade():
 
 
 def downgrade():
-    if op.get_bind().scalar(sa.text(
-        "SELECT count(*) FROM documentos WHERE external_source IS NOT NULL"
-    )):
-        raise RuntimeError("Conserva la procedencia externa; no se puede revertir con importaciones.")
+    if op.get_bind().scalar(
+        sa.text("SELECT count(*) FROM documentos WHERE external_source IS NOT NULL")
+    ):
+        raise RuntimeError(
+            "Conserva la procedencia externa; no se puede revertir con importaciones."
+        )
     op.drop_column("documentos", "external_source")

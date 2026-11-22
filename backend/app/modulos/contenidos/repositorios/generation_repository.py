@@ -16,12 +16,18 @@ class GenerationRepository:
         self.db = db
 
     def prepare(
-        self, owner: UUID, prepared: PreparedContent, target: GenerationTarget | None = None
+        self,
+        owner: UUID,
+        prepared: PreparedContent,
+        target: GenerationTarget | None = None,
+        *,
+        learning_access_id: UUID | None = None,
     ):
         record = ContentGeneration(
             provider=target.provider if target else None,
             requested_model=target.requested_model if target else None,
             owner_id=owner,
+            learning_access_id=learning_access_id,
             request_snapshot=prepared.request.model_dump(mode="json", exclude_none=True),
             sources_snapshot=json.loads(prepared.sources_json),
             retrieval_snapshot=json.loads(prepared.retrieval_json),

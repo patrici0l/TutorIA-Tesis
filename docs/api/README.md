@@ -119,3 +119,37 @@ Prueba E2E externa opcional: establecer `WIKIPEDIA_LIVE_TEST=1` y `E2E_BASE_URL`
 un entorno de prueba, y ejecutar `npm run test:e2e -- fuentes-externas.spec.ts` desde
 frontend. Consulta Wikipedia, crea un documento de prueba, lo procesa e indexa y lo
 retira/elimina al finalizar; no solicita generación LLM. No ejecutarla sobre producción.
+# Solicitudes del estudiante
+
+Desde el 20 de noviembre existe el flujo local `/api/v1/learning` con la misma sesión
+y cabecera `X-Prototipo-Client: web`. No sustituye el contrato pendiente de ADAPTIA.
+
+1. Profesor: `POST /learning/access` con `student_email` y `course` de sus documentos.
+2. Estudiante: `GET /learning/courses` lista los accesos concedidos y sus identificadores.
+3. Estudiante: `POST /learning/prepare` con el `access_id` elegido y el recurso solicitado:
+
+```json
+{
+  "access_id": "UUID obtenido de /learning/courses",
+  "topic": "Regla de la cadena",
+  "learning_objective": "Comprender cómo derivar una función compuesta",
+  "resource_type": "EXAMPLE",
+  "difficulty": "basic"
+}
+```
+
+El UUID del ejemplo es un marcador: debe sustituirse por uno real. El servidor resuelve
+materia y docente desde el permiso; no acepta `course`, `owner_id` o `profile_id` enviados
+para cambiarlos. Para `FEEDBACK`, añadir `student_answer`; para `QUIZ`, `question_count`
+entre 1 y 5. Los demás tipos son `EXPLANATION`, `HINT` y `EXERCISE`.
+
+4. Revisar fuentes y confirmar `POST /learning/{id}/generate` con `{}`. Consulta a un
+   proveedor real solo si está habilitado y hay cupo; no se reintenta automáticamente.
+5. `GET /learning/history?offset=0` y `GET /learning/history/{id}` recuperan lo propio.
+   `GET /learning/quota` informa el cupo compartido.
+6. Profesor: `GET /learning/access` lista sus permisos; `DELETE /learning/access/{id}`
+   los retira. Revocar impide nuevas preparaciones y envíos pendientes, no borra el historial.
+
+Generación deshabilitada: 503; acceso retirado: 403; preparación ajena: 404; envío repetido:
+409; fuentes retiradas: 422; cupo agotado: 429. Documentos y gestión de fuentes siguen
+restringidos a docentes. La identidad demo es compartida por rol.

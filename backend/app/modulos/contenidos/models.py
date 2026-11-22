@@ -7,6 +7,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.base_datos.models.base import Base
+from app.modulos.contenidos.access_models import LearningAccess  # noqa: F401
 
 
 class ContentGeneration(Base):
@@ -44,6 +45,7 @@ class ContentGeneration(Base):
     )
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     owner_id: Mapped[UUID] = mapped_column(ForeignKey("usuarios.id"), index=True)
+    learning_access_id: Mapped[UUID | None] = mapped_column(ForeignKey("accesos_aprendizaje.id"))
     request_snapshot: Mapped[dict] = mapped_column(JSONB)
     sources_snapshot: Mapped[list] = mapped_column(JSONB)
     retrieval_snapshot: Mapped[dict] = mapped_column(JSONB)

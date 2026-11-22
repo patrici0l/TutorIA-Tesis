@@ -1,0 +1,601 @@
+<header class="page-heading student-heading fade-in">
+  <div>
+    <span class="eyebrow">APRENDE CON TUS MATERIALES</span>
+    <h1 class="font-serif">Solicitar contenido</h1>
+    <p class="lead-subtitle">
+      Elige una asignatura, revisa las fuentes habilitadas por tu profesor y genera apoyo paso a paso.
+    </p>
+  </div>
+
+  @if (auth.user()?.rol === 'student') {
+    <div class="quota-chip" aria-label="Disponibilidad de generación">
+      @if (quota(); as q) {
+        <span
+          class="quota-dot"
+          [class.dot-ok]="q.enabled && q.remaining > 0"
+          [class.dot-empty]="q.enabled && q.remaining < 1"
+          [class.dot-off]="!q.enabled"
+          aria-hidden="true"
+        ></span>
+        <div class="quota-copy">
+          <span class="quota-label">Cupo compartido</span>
+          <strong class="quota-value">
+            @if (!q.enabled) {
+              Generación no habilitada
+            } @else if (q.remaining < 1) {
+              Cupo agotado hoy
+            } @else if (q.daily_limit) {
+              {{ q.remaining }} de {{ q.daily_limit }} disponibles
+            } @else {
+              {{ q.remaining }} disponibles
+            }
+          </strong>
+        </div>
+      } @else {
+        <span class="quota-dot dot-off" aria-hidden="true"></span>
+        <div class="quota-copy">
+          <span class="quota-label">Cupo compartido</span>
+          <strong class="quota-value">Disponibilidad sin confirmar</strong>
+        </div>
+      }
+      <button
+        type="button"
+        class="quota-refresh"
+        (click)="loadQuota()"
+        [disabled]="busy()"
+        aria-label="Actualizar cupo"
+        title="Actualizar disponibilidad"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          width="15"
+          height="15"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+          <path d="M21 3v6h-6" />
+        </svg>
+      </button>
+    </div>
+  }
+</header>
+
+@if (auth.user()?.rol !== 'student') {
+  <section class="panel fade-in">
+    <h2 class="font-serif">Espacio de estudiante</h2>
+    <p>Este espacio es para estudiantes.</p>
+  </section>
+} @else {
+  <div class="context-strip fade-in">
+    @if (auth.user()?.institutional_email; as email) {
+      <div class="account-strip">
+        <div class="account-meta">
+          <span class="account-line">
+            Tu cuenta: <strong>{{ email }}</strong>
+          </span>
+          <span class="account-hint">
+            Comparte este correo con tu profesor para que te dé acceso.
+          </span>
+        </div>
+        <button type="button" class="secondary compact-btn" (click)="copyEmail()">
+          {{ copiedEmail() ? 'Correo copiado' : 'Copiar correo' }}
+        </button>
+      </div>
+    }
+
+    @if (auth.mode() === 'mock') {
+      <p class="demo-banner">
+        <strong>Cuenta de demostración:</strong> Estás usando la cuenta de demostración compartida
+        del rol Estudiante. Sus solicitudes e historial son comunes a quienes entren con ese rol.
+      </p>
+    }
+  </div>
+
+  @if (error()) {
+    <p id="student-error" tabindex="-1" role="alert" class="notice error fade-in">{{ error() }}</p>
+  }
+
+  <div class="student-workspace">
+    <div class="workspace-main">
+      @if (courses().length || prepared()) {
+        <ol class="workflow-steps fade-in" aria-label="Pasos de tu solicitud">
+          <li>
+            <button
+              type="button"
+              class="step-btn"
+              [attr.aria-current]="currentStep() === 1 ? 'step' : null"
+              [class.completed]="currentStep() > 1"
+              [disabled]="busy()"
+              (click)="showForm()"
+            >
+              1. Solicitud
+            </button>
+          </li>
+          <li>
+            <button
+              type="button"
+              class="step-btn"
+              [attr.aria-current]="currentStep() === 2 ? 'step' : null"
+              [class.completed]="currentStep() === 3"
+              [disabled]="busy() || !prepared()"
+              (click)="showDetail()"
+            >
+              2. Fuentes
+            </button>
+          </li>
+          <li>
+            <button
+              type="button"
+              class="step-btn"
+              [attr.aria-current]="currentStep() === 3 ? 'step' : null"
+              [disabled]="busy() || !resource()"
+              (click)="showDetail()"
+            >
+              3. Contenido
+            </button>
+          </li>
+        </ol>
+      }
+
+      @if (activeView() === 'detail' && prepared(); as p) {
+        <section class="panel detail-panel fade-in">
+          <div class="detail-toolbar">
+            <div class="toolbar-actions">
+              <button
+                type="button"
+                class="secondary compact-btn"
+                (click)="startNewRequest()"
+                [disabled]="busy()"
+              >
+                ← Nueva solicitud
+              </button>
+              @if (courses().length) {
+                <button
+                  type="button"
+                  class="secondary compact-btn"
+                  (click)="editCurrentRequest()"
+                  [disabled]="busy()"
+                >
+                  Editar y buscar otra vez
+                </button>
+              }
+            </div>
+            @if (openedStatus(); as st) {
+              <span class="status-badge" [class]="'status-badge status-' + st">
+                {{ statuses[st] }}
+              </span>
+            }
+          </div>
+
+          <div class="detail-header">
+            <div class="meta-pills">
+              @if (p.resource_type) {
+                <span class="meta-pill">{{ typeLabel(p.resource_type) }}</span>
+              }
+              @if (difficultyLabel(p.difficulty); as levelLabel) {
+                <span class="meta-pill">{{ levelLabel }}</span>
+              }
+              <span class="meta-pill">
+                {{ p.sources?.length ?? 0 }}
+                {{ (p.sources?.length ?? 0) === 1 ? 'fuente' : 'fuentes' }}
+              </span>
+            </div>
+
+            <h2 id="student-sources" class="font-serif" tabindex="-1">
+              {{ resource() ? (p.topic || 'Contenido generado') : 'Fuentes para ' + (p.topic || 'tu solicitud') }}
+            </h2>
+
+            @if (p.learning_objective) {
+              <p class="objective-quote">
+                <span class="objective-label">Tu consulta:</span> {{ p.learning_objective }}
+              </p>
+            }
+          </div>
+
+          @if (busy() && sent()) {
+            <div class="generating-box" role="status">
+              <div class="loading-inline">
+                <span class="spinner" aria-hidden="true"></span>
+                <p id="student-result" tabindex="-1">{{ message() }}</p>
+              </div>
+              <progress aria-label="Generación en curso"></progress>
+              <p class="help">Conserva esta página abierta hasta que termine.</p>
+            </div>
+          }
+
+          @if (resource(); as r) {
+            <div class="result-banner">
+              <p id="student-result" tabindex="-1" role="status" class="result-status">
+                {{ message() }}
+              </p>
+              <p class="ai-disclaimer">
+                Contenido generado con IA para practicar. Puede contener errores; contrástalo con
+                las fuentes y consulta a tu profesor.
+              </p>
+            </div>
+
+            <div class="resource-body">
+              <app-resource-view [resource]="r" />
+            </div>
+
+            <details class="sources-drawer">
+              <summary>Fuentes consultadas ({{ p.sources?.length ?? 0 }})</summary>
+              <div class="sources-list">
+                @for (s of p.sources ?? []; track s.citation_id) {
+                  <article class="source-card static">
+                    <div class="source-head">
+                      <span class="citation-pill">{{ s.citation_id }}</span>
+                      <strong class="source-title">{{ s.document_title }}</strong>
+                      @if (sourceLocation(s); as loc) {
+                        <span class="source-loc">{{ loc }}</span>
+                      }
+                    </div>
+                    <blockquote class="source-excerpt">{{ s.text }}</blockquote>
+                    @if (s.source_reference) {
+                      <p class="source-ref">{{ s.source_reference }}</p>
+                    }
+                  </article>
+                } @empty {
+                  <p class="help">No se registraron fragmentos para esta solicitud.</p>
+                }
+              </div>
+            </details>
+          } @else {
+            @if (!busy() && message()) {
+              <p id="student-result" tabindex="-1" role="status" class="notice">{{ message() }}</p>
+            }
+
+            @if (!sent()) {
+              <div class="generate-box">
+                <div class="generate-copy">
+                  <span class="eyebrow">SIGUIENTE PASO</span>
+                  <h3>Generar contenido</h3>
+                  @if (!quota()) {
+                    <p>No pudimos confirmar la disponibilidad de la generación.</p>
+                  } @else if (!quota()!.enabled) {
+                    <p>
+                      La generación todavía no está habilitada. Tu solicitud queda guardada;
+                      consulta a tu profesor.
+                    </p>
+                  } @else if (quota()!.remaining < 1) {
+                    <p>
+                      Se agotó el cupo compartido de hoy. Podrás retomar esta solicitud cuando se
+                      renueve.
+                    </p>
+                  } @else {
+                    <p class="help">
+                      Quedan {{ quota()!.remaining }} solicitudes en el cupo compartido. Generar
+                      consultará al proveedor de IA configurado.
+                    </p>
+                  }
+                </div>
+                <div class="generate-actions">
+                  @if (!quota()) {
+                    <button type="button" class="secondary" (click)="loadQuota()">
+                      Actualizar disponibilidad
+                    </button>
+                  }
+                  <button
+                    type="button"
+                    class="primary"
+                    (click)="generate()"
+                    [disabled]="busy() || !quota()?.enabled || !quota()?.remaining"
+                  >
+                    Generar contenido
+                  </button>
+                </div>
+              </div>
+            }
+
+            <div class="sources-section">
+              <div class="sources-heading">
+                <h3>Fuentes encontradas</h3>
+                <span class="count-pill">{{ p.sources?.length ?? 0 }}</span>
+              </div>
+              <p class="help">
+                Revisa que los fragmentos correspondan a tu tema antes de generar el contenido.
+              </p>
+
+              <div class="sources-list">
+                @for (s of p.sources ?? []; track s.citation_id; let first = $first) {
+                  <details class="source-card" [open]="first">
+                    <summary>
+                      <span class="citation-pill">{{ s.citation_id }}</span>
+                      <span class="source-title">{{ s.document_title }}</span>
+                      @if (sourceLocation(s); as loc) {
+                        <span class="source-loc">{{ loc }}</span>
+                      }
+                    </summary>
+                    <blockquote class="source-excerpt">{{ s.text }}</blockquote>
+                    @if (s.source_reference) {
+                      <p class="source-ref">{{ s.source_reference }}</p>
+                    }
+                  </details>
+                } @empty {
+                  <p class="help">No se encontraron fragmentos para esta solicitud.</p>
+                }
+              </div>
+            </div>
+          }
+        </section>
+      } @else {
+        @if (loadingCourses()) {
+          <section class="panel state-panel">
+            <div class="loading-inline">
+              <span class="spinner" aria-hidden="true"></span>
+              <p role="status">Cargando tus asignaturas…</p>
+            </div>
+          </section>
+        } @else if (coursesError()) {
+          <section class="panel state-panel">
+            <p role="alert">No pudimos cargar tus asignaturas.</p>
+            <button type="button" class="secondary" (click)="loadCourses()">Volver a intentar</button>
+          </section>
+        } @else if (!courses().length) {
+          <section class="panel state-panel">
+            <h2 class="font-serif">Aún no tienes asignaturas habilitadas</h2>
+            <p>
+              Pide a tu profesor que te dé acceso con el correo de tu cuenta. Después podrás
+              solicitar explicaciones, ejemplos, ejercicios y más.
+            </p>
+            <button type="button" class="secondary" (click)="loadCourses()">
+              Actualizar asignaturas
+            </button>
+          </section>
+        } @else {
+          <section class="panel form-panel fade-in">
+            <div class="form-header">
+              <h2 id="student-form-title" class="font-serif" tabindex="-1">
+                ¿Qué necesitas aprender?
+              </h2>
+              <p class="form-intro">
+                Define tu tema y objetivo. Primero buscaremos fragmentos relevantes en los materiales
+                de tu curso.
+              </p>
+            </div>
+
+            <form (ngSubmit)="prepare()">
+              <fieldset [disabled]="busy()">
+                <legend class="sr-only">Tu solicitud</legend>
+
+                <div class="field-group">
+                  <label for="learn-course">Asignatura y profesor</label>
+                  <select
+                    id="learn-course"
+                    name="access"
+                    [(ngModel)]="accessId"
+                    (ngModelChange)="clearError()"
+                    required
+                  >
+                    <option value="">Selecciona una asignatura</option>
+                    @for (c of courses(); track c.id) {
+                      <option [value]="c.id">{{ c.course }} · {{ c.teacher }}</option>
+                    }
+                  </select>
+                </div>
+
+                <div class="field-row">
+                  <div class="field-group">
+                    <label for="learn-type">Quiero pedir</label>
+                    <select
+                      id="learn-type"
+                      name="kind"
+                      [(ngModel)]="kind"
+                      (ngModelChange)="clearError()"
+                    >
+                      @for (t of types; track t.value) {
+                        <option [value]="t.value">{{ t.label }}</option>
+                      }
+                    </select>
+                  </div>
+
+                  <div class="field-group">
+                    <label for="learn-level">Nivel de dificultad</label>
+                    <select
+                      id="learn-level"
+                      name="difficulty"
+                      [(ngModel)]="difficulty"
+                      (ngModelChange)="clearError()"
+                    >
+                      <option value="basic">Básico</option>
+                      <option value="intermediate">Intermedio</option>
+                      <option value="advanced">Avanzado</option>
+                    </select>
+                  </div>
+                </div>
+
+                <p class="type-hint">{{ selectedType().description }}</p>
+
+                <div class="field-group">
+                  <label for="learn-topic">Tema</label>
+                  <input
+                    id="learn-topic"
+                    name="topic"
+                    [(ngModel)]="topic"
+                    (ngModelChange)="clearError()"
+                    maxlength="160"
+                    placeholder="Por ejemplo, espacio muestral o regla de la cadena"
+                    required
+                  />
+                </div>
+
+                <div class="field-group">
+                  <div class="label-row">
+                    <label for="learn-objective">¿Qué quieres entender o resolver?</label>
+                    <span class="char-count" aria-hidden="true">{{ objective.length }}/400</span>
+                  </div>
+                  <textarea
+                    id="learn-objective"
+                    name="objective"
+                    [(ngModel)]="objective"
+                    (ngModelChange)="clearError()"
+                    maxlength="400"
+                    rows="3"
+                    [placeholder]="selectedType().placeholder"
+                    required
+                  ></textarea>
+                </div>
+
+                @if (kind === 'QUIZ') {
+                  <div class="field-group conditional-box">
+                    <label for="learn-count">Número de preguntas</label>
+                    <input
+                      id="learn-count"
+                      type="number"
+                      name="count"
+                      [(ngModel)]="questionCount"
+                      (ngModelChange)="clearError()"
+                      min="1"
+                      max="5"
+                      step="1"
+                      required
+                    />
+                    <p class="help">Elige entre 1 y 5 preguntas de práctica.</p>
+                  </div>
+                }
+
+                @if (kind === 'FEEDBACK') {
+                  <div class="field-group conditional-box">
+                    <div class="label-row">
+                      <label for="learn-answer">Tu respuesta y los pasos que seguiste</label>
+                      <span class="char-count" aria-hidden="true">{{ answer.length }}/2000</span>
+                    </div>
+                    <textarea
+                      id="learn-answer"
+                      name="answer"
+                      [(ngModel)]="answer"
+                      (ngModelChange)="clearError()"
+                      maxlength="2000"
+                      rows="4"
+                      placeholder="Escribe tu desarrollo sin datos personales para recibir una corrección guiada."
+                      required
+                    ></textarea>
+                  </div>
+                }
+
+                <div class="form-footer">
+                  <p class="help">
+                    Primero buscaremos las fuentes. La IA solo se consulta cuando pulses Generar
+                    contenido.
+                  </p>
+                  <button
+                    class="primary submit-btn"
+                    type="submit"
+                    [disabled]="busy() || !accessId || !topic.trim() || !objective.trim()"
+                  >
+                    {{ busy() ? 'Buscando fuentes…' : 'Buscar apoyo en mis materiales' }}
+                  </button>
+                </div>
+              </fieldset>
+            </form>
+
+            @if (busy()) {
+              <div class="loading-inline" role="status">
+                <span class="spinner" aria-hidden="true"></span>
+                <span>Procesando tu solicitud…</span>
+              </div>
+            }
+          </section>
+        }
+      }
+    </div>
+
+    <aside class="history-sidebar fade-in" aria-labelledby="history-heading">
+      <section class="panel history-panel">
+        <div class="history-header">
+          <div class="history-title-wrap">
+            <h2 id="history-heading" class="font-serif">Mis solicitudes</h2>
+            @if (history(); as h) {
+              <span class="count-pill">{{ h.total }}</span>
+            }
+          </div>
+          <button
+            type="button"
+            class="secondary compact-btn"
+            (click)="loadHistory()"
+            [disabled]="historyLoading() || busy()"
+          >
+            Actualizar historial
+          </button>
+        </div>
+
+        <p class="help">
+          Este historial pertenece a tu cuenta. Conserva también las solicitudes que aún no has
+          generado.
+        </p>
+
+        @if (historyError()) {
+          <p role="alert" class="notice error">
+            No pudimos cargar el historial. Vuelve a intentarlo.
+          </p>
+        }
+
+        @if (historyLoading() && !history()) {
+          <p role="status" class="help">Cargando historial…</p>
+        }
+
+        @if (history(); as h) {
+          @if (!h.total) {
+            <p class="empty-history">Aquí aparecerá tu primera solicitud.</p>
+          } @else {
+            <ul class="history-list">
+              @for (item of h.items; track item.id) {
+                <li [class.active]="prepared()?.id === item.id">
+                  <div class="history-item-body">
+                    <div class="history-item-top">
+                      <strong class="history-topic">{{ item.topic }}</strong>
+                      <span class="status-badge" [class]="'status-badge status-' + item.status">
+                        {{ statuses[item.status] }}
+                      </span>
+                    </div>
+                    <p class="history-meta">
+                      {{ typeLabel(item.resource_type) }} ·
+                      {{ item.created_at | date: 'dd/MM/yyyy HH:mm' }}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    class="secondary open-btn"
+                    (click)="open(item.id)"
+                    [disabled]="busy()"
+                  >
+                    Abrir<span class="sr-only"> {{ item.topic }}</span>
+                  </button>
+                </li>
+              }
+            </ul>
+
+            @if (h.total > (h.limit || 10)) {
+              <nav class="history-pagination" aria-label="Páginas del historial">
+                <button
+                  type="button"
+                  class="secondary compact-btn"
+                  (click)="loadHistory((h.offset ?? 0) - (h.limit || 10))"
+                  [disabled]="!(h.offset ?? 0) || historyLoading()"
+                >
+                  Anterior
+                </button>
+                <span>
+                  {{ (h.offset ?? 0) + 1 }}–{{ (h.offset ?? 0) + h.items.length }} de {{ h.total }}
+                </span>
+                <button
+                  type="button"
+                  class="secondary compact-btn"
+                  (click)="loadHistory((h.offset ?? 0) + (h.limit || 10))"
+                  [disabled]="(h.offset ?? 0) + (h.limit || 10) >= h.total || historyLoading()"
+                >
+                  Siguiente
+                </button>
+              </nav>
+            }
+          }
+        }
+      </section>
+    </aside>
+  </div>
+}

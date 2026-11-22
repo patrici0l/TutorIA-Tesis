@@ -7,6 +7,7 @@ const common: NavigationItem[] = [
   { path: '/inicio', label: 'Inicio', description: 'Tu espacio de trabajo' },
 ];
 const student: NavigationItem[] = [
+  { path: '/solicitar', label: 'Solicitar contenido', description: 'Explicaciones, ejemplos y ayuda con tus materiales' },
   {
     path: '/actividades',
     label: 'Actividades asignadas',
@@ -19,6 +20,7 @@ const student: NavigationItem[] = [
   },
 ];
 const teacher: NavigationItem[] = [
+  { path: '/accesos', label: 'Acceso de estudiantes', description: 'Habilita asignaturas para solicitar contenido' },
   {
     path: '/documentos',
     label: 'Mis documentos',

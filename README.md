@@ -5,6 +5,30 @@ Para simular el consumo: [guía y JSON de la API](docs/api/README.md).
 La conexión con Wikipedia se abre desde **Documentos → Buscar fuentes externas**;
 requiere la migración `0018_external_sources` y reconstruir la aplicación local.
 
+El estudiante ya puede **Solicitar contenido**. Requiere la migración
+`0019_student_content`. El profesor habilita primero la asignatura en
+**Explorar → Acceso de estudiantes**, indicando el correo de una cuenta que ya haya
+iniciado sesión. Se comparten únicamente los materiales habilitados de ese profesor
+y esa materia, incluidos los que habilite después; no se publican documentos por dar acceso.
+
+El estudiante elige asignatura y profesor, tipo de ayuda, tema y objetivo. **Buscar apoyo
+en mis materiales** guarda una preparación con fuentes sin llamar al LLM. **Generar
+contenido** realiza el envío explícito si está habilitado y hay cupo. **Mis solicitudes**
+permite reabrir preparaciones y resultados. Para feedback debe escribir su respuesta;
+para una pista debe incluir el enunciado. Los ejercicios y cuestionarios solicitados
+son de autoestudio y permiten consultar soluciones, no son exámenes con claves ocultas.
+
+Retirar el acceso bloquea nuevas preparaciones y el envío de las pendientes; conserva
+el historial anterior. Retirar un documento también invalida preparaciones que lo usan.
+Los permisos se verifican en servidor, no solo en la pantalla. El cupo de IA sigue
+siendo compartido. No hay adaptación automática al perfil del estudiante ni matrícula
+institucional: esas integraciones siguen pendientes.
+
+En modo demo las cuentas se comparten por rol. El correo del estudiante se muestra en
+**Solicitar contenido** (por defecto `estudiante.demo@example.org`); su historial también
+es compartido entre quienes usen ese rol. Login institucional y despliegue continúan
+pendientes con el tutor.
+
  Generación, consulta y trazabilidad de recursos mediante IA y RAG.
 
 ## Componentes
@@ -39,7 +63,7 @@ Comprueba el arranque con `docker compose --env-file licencias/secure_data.env p
 
 En este equipo ya están preparados Python, las dependencias, el modelo y PostgreSQL
 18 con pgvector. La base nativa `tutoria_localdev` usa el puerto 5432 y está migrada
-a `0018_external_sources`. Es independiente de la base de Docker: los documentos y
+a `0019_student_content`. Es independiente de la base de Docker: los documentos y
 recursos de un entorno no aparecen automáticamente en el otro.
 
 Abre PowerShell en `C:\C_PROJECTS\TESIS COMPUTACION\TutorIA-Lucero`.

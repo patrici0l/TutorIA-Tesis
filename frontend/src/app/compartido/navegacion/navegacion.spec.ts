@@ -62,6 +62,7 @@ describe('Navegación superior', () => {
     await fixture.whenStable();
     expect(fixture.componentInstance.items().map((item) => item.path)).toEqual([
       '/inicio',
+      '/solicitar',
       '/actividades',
       '/practica',
     ]);
