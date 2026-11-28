@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HistoryPage, HistoryDetail } from './historial.model';
 import {
+  ComparisonCase,
   PreparationRequest,
   PreparationResponse,
   GenerationResponse,
@@ -32,6 +33,9 @@ export class PreparationService {
   }
   generate(id: string) {
     return this.http.post<GenerationResponse>(`/api/v1/content/${id}/generate`, {});
+  }
+  compare(request: PreparationRequest) {
+    return this.http.post<ComparisonCase[]>('/api/v1/content/compare', request);
   }
   prepare(request: PreparationRequest) {
     return this.http.post<PreparationResponse>('/api/v1/content/prepare', request);

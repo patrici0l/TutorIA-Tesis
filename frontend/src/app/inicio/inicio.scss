@@ -1,3 +1,13 @@
 :host {
   display: block;
 }
+
+.welcome {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+  gap: .85rem; margin-bottom: 1.25rem; padding: clamp(1rem, 2vw, 1.65rem);
+  border-radius: 1rem; background: var(--navy, #142f4c); color: white;
+}
+.welcome p { margin: 0 0 .5rem; font-weight: 600; color: #d7e8f4; }
+.welcome h1 { margin: 0; color: white; font-size: clamp(1.45rem, 2vw, 2rem); }
+.welcome a { background: white; color: #183853; padding: .8rem 1.15rem; border-radius: .5rem; font-weight: 650; }
+

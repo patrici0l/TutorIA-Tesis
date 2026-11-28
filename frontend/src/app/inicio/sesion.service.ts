@@ -17,8 +17,15 @@ export class AuthService {
     this.currentUser.set(null);
     this.mode.set(null);
   }
+  login(email: string, password: string) {
+    return this.http.post<void>('/api/v1/auth/accounts/login', {email, password},
+      {headers: {'X-Prototipo-Client': 'web'}});
+  }
+  students() {
+    return this.http.get<{email: string; group: string; nombre: string; apellido: string}[]>('/api/v1/auth/accounts/students');
+  }
   configuration() {
-    return this.http.get<{ auth_mode: 'mock' | 'cas' }>('/api/v1/auth/config');
+    return this.http.get<{ accounts?: boolean; auth_mode: 'mock' | 'cas' }>('/api/v1/auth/config');
   }
   check(): Observable<SessionResponse> {
     return this.http.get<SessionResponse>('/api/v1/auth/me').pipe(

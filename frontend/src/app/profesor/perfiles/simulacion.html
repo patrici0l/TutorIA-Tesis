@@ -1,0 +1,54 @@
+@if (auth.user()?.rol === 'teacher' || auth.user()?.rol === 'admin') {
+  <a routerLink="/inicio">← Volver al inicio</a>
+  <header class="page-heading"><h1>Simulación de perfiles por clase</h1>
+    <p>Prueba una actividad para tu grupo o para un estudiante. La selección es hipotética y conserva el perfil académico original.</p>
+  </header>
+  <section class="panel">
+    <h2>1. Elegir destinatario</h2>
+    <label for="group">Paralelo</label>
+    <select #parallel id="group" [(ngModel)]="group" (ngModelChange)="resetRecipient()">
+      <option value="G3">G3 · Matutino</option><option value="G24">G24 · Vespertino</option>
+    </select>
+    <fieldset><legend>¿Para quién es la práctica?</legend>
+      <label><input type="radio" name="scope" [checked]="!individual" (change)="individual = false; resetRecipient()"> Todo el grupo</label>
+      @if (auth.mode() === 'mock') {
+        <label><input type="radio" name="scope" [checked]="individual" (change)="individual = true; resetRecipient()"> Un estudiante</label>
+      }
+    </fieldset>
+    @if (individual) {
+      @if (rosterStatus() === 'loading') { <p role="status">Cargando estudiantes…</p> }
+      @else if (rosterStatus() === 'error') {
+        <p role="alert">No se pudo cargar la lista de estudiantes.</p><button (click)="loadStudents()">Reintentar</button>
+      } @else {
+        <label for="search">Buscar por correo</label>
+        <input id="search" type="search" [(ngModel)]="query" (ngModelChange)="student = ''; preview = false">
+        <label for="person">Estudiante de {{ group }}</label>
+        <select id="person" [(ngModel)]="student" (ngModelChange)="preview = false">
+          <option value="">Selecciona un estudiante</option>
+          @for (p of matches; track p.email) { <option [value]="p.email">{{ p.email }}</option> }
+        </select>
+        @if (!matches.length) { <p role="status">Sin coincidencias en este paralelo.</p> }
+      }
+    }
+  </section>
+  <section class="panel"><h2 id="support">2. Elegir el apoyo</h2>
+    <div class="choices" role="radiogroup" aria-labelledby="support">
+      @for (s of supports; track s.id) {
+        <label class="choice"><input type="radio" name="support" [value]="s.id" [(ngModel)]="scenario" (ngModelChange)="preview = false">
+          <span><strong>{{ s.label }}</strong><small>{{ s.hint }}</small></span></label>
+      }
+    </div>
+    <button class="primary" [disabled]="!scenario || (individual && !student)" (click)="preview = true; resultHeading.focus()">Ver propuesta</button>
+  </section>
+  <section class="panel result" [hidden]="!preview">
+    <h2 #resultHeading tabindex="-1">3. Revisar la propuesta</h2>
+    @if (preview && scenario) {
+      <p><strong>{{ recipient }}</strong> · {{ group }} · {{ supportLabel }}</p>
+      <p>{{ activities[scenario] }}</p><blockquote>{{ exercise }}</blockquote>
+      <p>Podrás editar esta actividad antes de asignarla.</p>
+      <div class="actions"><button (click)="preview = false; parallel.focus()">Cambiar selección</button>
+        <a class="primary" routerLink="/recursos" [state]="{ simulationRecipient: recipient }"
+          [queryParams]="{course: 'Cálculo Diferencial', group, scenario, topic: groups[group].topic, objective: activities[scenario] + ' ' + exercise}">Preparar actividad →</a></div>
+    }
+  </section>
+} @else { <p>Disponible para el equipo docente.</p> }

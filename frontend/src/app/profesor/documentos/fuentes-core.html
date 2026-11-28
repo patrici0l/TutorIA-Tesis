@@ -1,0 +1,44 @@
+<header class="page-heading external-heading"><div><span class="eyebrow">MATERIALES COMPLEMENTARIOS</span>
+  <h1 class="font-serif">Fuentes académicas</h1><p class="lead-subtitle">Encuentra publicaciones en CORE y revisa el original antes de incorporarlo a tu materia.</p></div>
+  <a class="action-link secondary" routerLink="/documentos">Volver a mis documentos</a></header>
+<nav class="provider-tabs" aria-label="Proveedor de fuentes externas"><a routerLink="/fuentes-externas">Wikipedia · conceptos</a><a routerLink="/fuentes-core" aria-current="page">CORE · publicaciones</a></nav>
+@if (!canManage()) { <section class="panel"><h2>Espacio docente</h2><p>Solo el profesor puede incorporar fuentes.</p></section> } @else {
+  @if (error()) { <p id="core-error" tabindex="-1" role="alert" class="notice error">{{ error() }}</p> }
+  <section class="panel" [attr.aria-busy]="busy()">
+    <p class="help">Busca → revisa la ficha → adjunta el original. Guardarlo no lo habilita automáticamente para generar recursos.</p>
+    <form (ngSubmit)="search()" class="search-form"><label for="core-query">Tema de la publicación</label><div class="search-row">
+      <input id="core-query" name="query" [(ngModel)]="query" placeholder="Por ejemplo, enseñanza de probabilidad" minlength="2" maxlength="160" required [disabled]="busy()" />
+      <button type="submit" class="primary-btn" [disabled]="busy()">Buscar en CORE</button></div>
+      <p class="help">Prueba también en inglés: probability education. El idioma y el nivel de cada publicación pueden variar.</p>
+    </form>
+    @if (busy()) { <p role="status" class="loading-banner">{{ status() }}</p> }
+    @if (searched()) {
+      <h2 id="core-results" tabindex="-1" class="font-serif">Publicaciones encontradas</h2>
+      @if (!results().length) { <p>No se encontraron publicaciones. Prueba con un tema más amplio.</p> }
+      <ul class="results">@for (item of results(); track item.work_id) {
+        <li><div class="result-meta"><strong>{{ item.title }}</strong><span>{{ item.authors.join('; ') || 'Autores no informados' }}</span><small>{{ item.year || 'Año no informado' }} · {{ item.language || 'Idioma no informado' }}</small></div>
+          <button type="button" class="secondary" [attr.aria-label]="'Revisar publicación ' + item.title" (click)="review(item)" [disabled]="busy()">Revisar publicación</button></li>
+      }</ul>
+    }
+  </section>
+  @if (preview(); as p) {
+    <section class="panel preview-panel"><span class="eyebrow">REVISIÓN DE LA PUBLICACIÓN</span><h2 id="core-preview" tabindex="-1" class="font-serif">{{ p.title }}</h2>
+      <p>{{ p.authors.join('; ') || 'Autores no informados' }} · {{ p.year || 'Año no informado' }}</p>
+      <a [href]="p.url" target="_blank" rel="noopener noreferrer" class="action-link secondary">Abrir ficha y enlaces al original en CORE ↗</a>
+      <p class="help">Ficha consultada el {{ p.retrieved_at | date:'dd/MM/yyyy HH:mm' }}. {{ p.license_statement }}</p>
+      <details><summary>Leer el resumen bibliográfico</summary><p class="abstract">{{ p.abstract || 'Esta ficha no incluye resumen.' }}</p></details>
+      <p class="warning-note">{{ p.full_text_available ? 'CORE informa texto completo, pero este flujo conserva el archivo original que revises y adjuntes.' : 'El texto completo no está disponible en esta consulta pública. Puedes obtener el original desde los enlaces de la ficha, si está disponible para ti.' }} El resumen no se importará como material de estudio.</p>
+      @if (imported(); as doc) {
+        <div id="core-success" tabindex="-1" role="status" class="success-card"><div><h3>Original guardado en {{ doc.course }}</h3><p>Continúa en Documentos: prepara el texto y la búsqueda, revisa los fragmentos y habilítalo como fuente.</p></div><a routerLink="/documentos" [queryParams]="{course: doc.course}" class="action-link primary-cta">Revisar y habilitar material →</a></div>
+      } @else {
+        <form (ngSubmit)="importOriginal()" class="import-form"><fieldset [disabled]="busy()"><legend>Incorporar el original revisado</legend>
+          <label for="core-file">Archivo original de esta publicación</label><input id="core-file" type="file" accept=".pdf,.docx,.txt" (change)="chooseFile($event)" required /><p class="help">PDF con texto, DOCX o TXT, hasta 10 MB. Comprueba que autores y título coincidan con la ficha.</p>
+          <label for="core-course">Asignatura</label><input id="core-course" name="course" [(ngModel)]="course" list="core-courses" required maxlength="160" placeholder="Selecciona o escribe una asignatura" /><datalist id="core-courses">@for(c of courses(); track c.value) { <option [value]="c.value">{{ c.label }}</option> }</datalist>
+          <label for="core-permission">¿Qué permiso permite utilizar este archivo?</label><textarea id="core-permission" name="permission" [(ngModel)]="permission" minlength="10" maxlength="500" rows="3" placeholder="Indica la licencia del original o la autorización recibida y dónde comprobarla." required></textarea>
+          <label class="confirmation"><input type="checkbox" name="confirmed" [(ngModel)]="confirmed" required /><span>He revisado el original, corresponde a esta publicación y tengo permiso para incorporarlo a la asignatura.</span></label>
+          <button type="submit" class="primary-btn" [disabled]="!file() || !confirmed || !course.trim() || permission.trim().length < 10">Guardar original con su procedencia</button>
+        </fieldset></form>
+      }
+    </section>
+  }
+}

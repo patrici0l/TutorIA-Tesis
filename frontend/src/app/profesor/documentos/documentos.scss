@@ -582,3 +582,10 @@ dd {
     white-space: nowrap;
   }
 }
+
+.approval-panel { background:var(--paper-warm); border:1px solid var(--border-dark); padding:1.2rem; border-radius:12px; }
+.approval-checklist { list-style:none; padding:0; display:grid; gap:.6rem; }
+.approval-checklist li { padding:.65rem; background:white; border-radius:6px; }
+.approval-confirm { display:flex; align-items:flex-start; gap:.8rem; line-height:1.6; padding:1rem 0; font-weight:500; }
+.approval-confirm input { width:20px; height:20px; flex-shrink:0; margin-top:.2rem; }
+.approval-links { margin-block:1rem; }

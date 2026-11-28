@@ -1,11 +1,13 @@
-<section class="auth-layout fade-in">
+<section class="auth-layout fade-in" [class.account-access]="accounts()">
   <!-- Encabezado Editorial de Acceso -->
   <div class="auth-heading">
-    <div class="access-badge"></div>
-
-    <h1 class="font-serif page-title">Ingreso a la plataforma</h1>
-
-    @if (loginMode() === 'mock') {
+    <h1 class="font-serif page-title">{{ accounts() ? 'Tu espacio en TutorIA' : 'Ingreso a la plataforma' }}</h1>
+    @if (accounts()) {
+      <p class="lead-text">Tu cuenta reúne las herramientas que corresponden a tu perfil.</p>
+      <dl class="role-guide">
+        <div><dt>Estudiantes</dt><dd>Consulta tus actividades, practica y revisa tus resultados.</dd></div>
+        <div><dt>Docentes</dt><dd>Organiza materiales, prepara recursos y asigna actividades.</dd></div>
+      </dl>
     } @else if (loginMode() === 'cas') {
       <p class="lead-text">
         Accede con tu cuenta institucional de la Universidad Politécnica Salesiana.
@@ -46,7 +48,28 @@
       <p>Comprobando acceso…</p>
     </div>
   } @else if (loginMode()) {
-    @if (loginMode() === 'mock') {
+    @if (accounts()) {
+      <form class="profile-card credential-form" (submit)="$event.preventDefault(); signIn(email.value, password.value)">
+        <header><h2>Iniciar sesión</h2><p>Utiliza el correo y la contraseña asignados a tu cuenta.</p></header>
+        <div class="credential-field">
+          <label for="access-email">Correo de acceso</label>
+          <input #email id="access-email" type="email" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+        </div>
+        <div class="credential-field">
+          <label for="access-password">Contraseña</label>
+        <div class="password-field">
+          <input #password id="access-password" [type]="visible() ? 'text' : 'password'" autocomplete="current-password" required>
+          <button type="button" (click)="visible.set(!visible())" aria-controls="access-password"
+            [attr.aria-label]="visible() ? 'Ocultar contraseña' : 'Mostrar contraseña'">{{ visible() ? 'Ocultar' : 'Mostrar' }}</button>
+        </div>
+        </div>
+        @if (message()) { <p class="credential-error" role="alert">{{ message() }}</p> }
+        <button class="login-button primary" type="submit" [disabled]="submitting()">{{ submitting() ? "Verificando cuenta…" : "Iniciar sesión" }}</button>
+        <details><summary>Ayuda para ingresar</summary>
+          <p>Usa el correo que recibiste junto con tu contraseña. Si perdiste los datos de acceso, solicítalos a quien te entregó la cuenta.</p>
+        </details>
+      </form>
+    } @else if (loginMode() === 'mock') {
       <!-- Cuadrícula de Perfiles Académicos -->
       <div class="profile-grid">
 

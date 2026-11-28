@@ -142,14 +142,16 @@ def text_search(
 
 
 @router.get("/{identifier}/original")
-def original_document(identifier: UUID, service: Service, user: Owner):
+def original_document(identifier: UUID, service: Service, user: Owner, visualizar: bool = False):
     document = service.get(identifier, user.id)
     path = service.settings.document_storage_path.resolve() / str(document.id)
     if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != document.sha256:
         raise HTTPException(409, "El original no está disponible o su integridad cambió.")
+    inline_pdf = visualizar and document.mime_type == "application/pdf"
     return FileResponse(
         path,
-        media_type="application/octet-stream",
+        content_disposition_type="inline" if inline_pdf else "attachment",
+        media_type="application/pdf" if inline_pdf else "application/octet-stream",
         filename=document.filename,
         headers={"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"},
     )

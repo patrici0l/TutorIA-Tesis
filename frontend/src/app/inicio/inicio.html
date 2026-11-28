@@ -1,3 +1,16 @@
+@if (auth.user(); as profile) {
+  <header class="welcome">
+    <div>
+      <p>{{ profile.rol === 'student' ? 'Espacio del estudiante' : 'Espacio docente' }}</p>
+      <h1>{{ profile.rol === 'student' ? 'Mi aprendizaje' : 'Panel de ' + profile.nombre + ' ' + profile.apellido }}</h1>
+    </div>
+    @if (profile.rol === 'student') {
+      <a routerLink="/actividades">Mis actividades <span aria-hidden="true">→</span></a>
+    } @else {
+      <a routerLink="/perfiles">Ver perfiles por clase <span aria-hidden="true">→</span></a>
+    }
+  </header>
+}
 @if (auth.user()?.rol === 'student') {
   <app-student-home />
 } @else {

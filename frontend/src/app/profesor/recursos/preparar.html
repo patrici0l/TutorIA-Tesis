@@ -14,6 +14,10 @@
     </p>
   </header>
 
+  @if (classScenario && simulationRecipient) {
+    <p>Preparando una actividad para <strong>{{ simulationRecipient }}</strong> · {{ classScenario.group }}</p>
+  }
+
   <!-- Pestañas del Espacio de Trabajo -->
   <div class="resource-tools">
     <nav class="workspace-tabs fade-in" aria-label="Recursos">
@@ -86,7 +90,7 @@
         [disabled]="!generation()?.resource || generating()"
         (click)="showResult(); revealGenerated()"
       >
-        4. Revisar y asignar
+        4. Revisar recurso
       </button>
     </li>
   </ol>
@@ -139,6 +143,9 @@
           @if (coursesError()) {
             <p role="alert">{{ coursesError() }}</p>
             <button type="button" class="secondary" (click)="loadCourses()">Reintentar</button>
+          } @else if (classScenario && !coursesLoading() && !selectedCourse()) {
+            <p>Para preparar esta actividad, incorpora un material de Cálculo Diferencial y habilítalo como fuente.</p>
+            <a class="action-link" routerLink="/documentos" [queryParams]="{ course: course }">Abrir materiales de la asignatura →</a>
           } @else if (!coursesLoading() && !courses().length) {
             <p>Aún no tienes asignaturas con documentos.</p>
             <a class="action-link" routerLink="/documentos">Subir mi primer documento →</a>
@@ -188,55 +195,8 @@
           {{ selectedCourse()?.label || course }} ·
           <button type="button" class="secondary" (click)="showCourse()">Cambiar asignatura</button>
         </p>
-        <form (ngSubmit)="prepare()" #form="ngForm">
+        <form (input)="comparison.set([])" (change)="comparison.set([])" (ngSubmit)="prepare()" #form="ngForm">
           <fieldset [disabled]="loading() || generating() || loadingProfiles()">
-            <section class="profile-options" aria-labelledby="profile-options-title">
-              <h3 id="profile-options-title">Personalización por perfil · opcional</h3>
-              <p>Elige una observación ficticia para ajustar el apoyo. Sin perfil, puedes elegir la dificultad.</p>
-              <button type="button" class="secondary" (click)="openProfilePicker()" [disabled]="loadingProfiles()">
-                {{ selectedProfile() ? 'Cambiar perfil' : 'Elegir perfil de aprendizaje' }}
-              </button>
-              <a class="action-link" routerLink="/perfiles">Gestionar perfiles</a>
-              @if (profilePickerOpen()) {
-                <div id="profile-picker" tabindex="-1" class="profile-picker">
-                  <label for="resource-profile">Perfil de aprendizaje</label>
-                  <select id="resource-profile" name="profileId" [ngModel]="selectedProfile()?.id ?? ''" (ngModelChange)="selectProfile($event)" [disabled]="loadingProfiles()">
-                    <option value="">Sin perfil · elegir dificultad manualmente</option>
-                    @if (selectedProfile(); as selected) {
-                      @if (!selectedProfileOnPage()) {
-                        <option [value]="selected.id">{{ selected.student_id }} · {{ selected.topic }} · seleccionado</option>
-                      }
-                    }
-                    @for (profile of profilePage()?.items ?? []; track profile.id) {
-                      <option [value]="profile.id">{{ profile.student_id }} · {{ profile.topic }} · dominio {{ masteryLabel(profile.mastery_level) }}</option>
-                    }
-                  </select>
-                  @if (profilePage(); as page) {
-                    @if (!page.total) { <p>Aún no tienes perfiles guardados. Puedes preparar sin perfil o registrar una observación.</p> }
-                    @if (page.total) {
-                      <nav class="profile-pagination" aria-label="Páginas de perfiles disponibles">
-                        <button type="button" class="secondary" (click)="loadProfiles(page.offset - page.limit)" [disabled]="loadingProfiles() || page.offset === 0">Perfiles anteriores</button>
-                        <span>{{ page.offset + 1 }}–{{ page.offset + page.items.length }} de {{ page.total }}</span>
-                        <button type="button" class="secondary" (click)="loadProfiles(page.offset + page.limit)" [disabled]="loadingProfiles() || page.offset + page.limit >= page.total">Más perfiles</button>
-                      </nav>
-                    }
-                  }
-                </div>
-              }
-              @if (loadingProfiles()) { <p role="status">Consultando perfiles…</p> }
-              @if (profilesError()) {
-                <p id="profile-picker-error" tabindex="-1" role="alert">{{ profilesError() }}</p>
-                <button type="button" class="secondary" (click)="retryProfiles()">Reintentar perfiles</button>
-                <button type="button" class="secondary" (click)="chooseProfile(null)">Preparar sin perfil</button>
-              }
-              <p id="profile-feedback" tabindex="-1" role="status">
-                {{ profileMessage() }}
-                @if (selectedProfile(); as profile) {
-                  Dominio {{ masteryLabel(profile.mastery_level) }}. Dificultad aplicada: {{ difficultyLabel(effectiveDifficulty()) }}.
-                }
-              </p>
-              @if (selectedProfile()) { <button type="button" class="secondary" (click)="chooseProfile(null)">Quitar perfil</button> }
-            </section>
             <label for="topic">Tema</label>
             <input
               id="topic"
@@ -335,6 +295,26 @@
               En el siguiente paso revisarás las fuentes encontradas. El recurso se generará solo
               cuando lo confirmes.
             </p>
+            @if (classScenario && course.toLowerCase() === 'cálculo diferencial') {
+              <p>Escenario simulado · P69 · {{ classScenario.group }} · {{ classScenario.scenario }}</p>
+            }
+            <details><summary>Opciones de fuentes y comparación</summary>
+            <label for="source-scope">Fuentes habilitadas para la preparación</label>
+            <select id="source-scope" name="sourceScope" [(ngModel)]="scope">
+              <option value="teacher">Solo material docente</option>
+              <option value="teacher_wikipedia">Material docente y Wikipedia</option>
+            </select>
+            <button type="button" class="secondary" [disabled]="loading() || form.invalid" (click)="prepare(true)">Comparar tres condiciones</button>
+            @if (comparison().length) {
+              <section aria-live="polite"><h3>Contexto preparado para el mismo recurso</h3>
+                @for (row of comparison(); track row.scope) {
+                  <p><strong>{{ scopeLabels[row.scope] }}</strong> · {{ row.status === 'no_sources' ? 'Sin fuentes disponibles' : row.sources.length + ' fragmentos' }}</p>
+                  @for (source of row.sources; track $index) { <div>{{ source.title }} · {{ source.provider === 'wikipedia_es' ? 'Wikipedia' : 'Docente' }}</div> }
+                }
+                <p>La comparación muestra el contexto disponible antes de generar respuestas.</p>
+              </section>
+            }
+            </details>
             <button
               type="submit"
               [disabled]="
@@ -345,7 +325,7 @@
                 (resourceType === 'FEEDBACK' && !studentAnswer.trim())
               "
             >
-              {{ loading() ? 'Buscando y preparando…' : 'Continuar: buscar fuentes' }}
+              {{ loading() ? 'Buscando y preparando…' : 'Revisar fuentes' }}
               <span aria-hidden="true">↗</span>
             </button>
           </fieldset>
@@ -381,14 +361,6 @@
           <p>{{ prepared.learning_objective }}</p>
         </details>
         <div class="result-actions document-actions">
-          @if (generation()?.resource) {
-            <a
-              class="action-link"
-              routerLink="/actividades"
-              [queryParams]="{ resource: prepared.id }"
-              >Asignar este recurso →</a
-            >
-          }
 
           <button
             type="button"
@@ -466,8 +438,8 @@
               @if (source.processing_version === 'text-v1') {
                 <p role="status">Esta cita procede de una extracción anterior que puede cortar palabras. Revisa el original; puedes regenerar los fragmentos desde Documentos y crear un recurso nuevo.</p>
               }
-              <a [href]="'/api/v1/documents/' + source.document_id + '/original'" target="_blank" rel="noopener">Consultar original ↗</a>
-              <blockquote>{{ source.text }}</blockquote>
+              <a [href]="'/api/v1/documents/' + source.document_id + '/original' + (source.source_kind === 'page' ? '?visualizar=true#page=' + source.source_index : '')" target="_blank" rel="noopener">Consultar original ↗</a>
+              <blockquote style="white-space: pre-wrap; overflow-wrap: anywhere">{{ source.text }}</blockquote>
               <details>
                 <summary>Referencia verificable</summary>
                 <dl>

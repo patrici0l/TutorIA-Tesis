@@ -1,12 +1,18 @@
 # Expone preparación, envío explícito, historial privado y cupo de generación.
+import json
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.base_datos.session import get_session
 from app.configuracion.settings import Settings, get_settings
+from pydantic import Field
+from app.modulos.contenidos.schemas import ContentRequest
+from app.modulos.contenidos.errors import ContentError
+from app.modulos.contenidos.servicios.prepare_direct_content_service import PrepareDirectContentService
+from app.modulos.contenidos.servicios.preparation_service import ERRORS
 from app.modulos.contenidos.adaptation_schemas import PreparationRequest
 from app.modulos.contenidos.history_schemas import HistoryDetail, HistoryPage
 from app.modulos.contenidos.preparation_schemas import PreparationResponse
@@ -36,6 +42,37 @@ from app.nucleo.dependencias.auth import require_client_header
 from app.nucleo.dependencias.autorizacion import Owner
 
 router = APIRouter(prefix="/content", tags=["content"])
+
+
+class ComparisonRequest(ContentRequest):
+    course: str = Field(min_length=1, max_length=160)
+
+
+@router.post("/compare", dependencies=[Depends(require_client_header)])
+def compare_contexts(request: ComparisonRequest, user: Owner,
+                     search: Annotated[SearchService, Depends(get_search_service)],
+                     settings: Annotated[Settings, Depends(get_settings)]):
+    preparer = PrepareContentService(search, EducationalPromptBuilder())
+    cases = []
+    for scope in ("direct", "teacher", "teacher_wikipedia"):
+        try:
+            case = request.model_copy(update={"source_scope": None if scope == "direct" else scope})
+            if scope == "direct":
+                prepared = PrepareDirectContentService().prepare(case, settings.llm_max_input_chars)
+                sources = []
+            else:
+                prepared = preparer.prepare(case, user.id, settings.llm_max_input_chars)
+                sources = json.loads(prepared.sources_json)
+            cases.append(dict(scope=scope, status="prepared", sources=[
+                dict(title=item["document_title"], sha256=item["text_sha256"],
+                     provider=(item.get("external_source") or {}).get("provider"))
+                for item in sources
+            ], prompt_sha256=prepared.prompt_sha256))
+        except ContentError as error:
+            if error.code != "content_no_sources":
+                raise HTTPException(*ERRORS.get(error.code, (422, "Revisa el caso."))) from None
+            cases.append(dict(scope=scope, status="no_sources", sources=[]))
+    return cases
 
 
 @router.get("/quota", response_model=GenerationQuota)

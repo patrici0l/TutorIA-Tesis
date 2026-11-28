@@ -75,6 +75,7 @@ services:
   backend:
     <<: *backend
     volumes:
+      - ./documentacion-local/simulacion/servidor:/run/tutoria:ro
       - document_data:/app/uploads/documents
       - embedding_data:/app/models/e5-small:ro
     ports:

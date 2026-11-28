@@ -24,7 +24,11 @@ class DocumentChunkList(BaseModel):
     offset: int
 
 
+from app.modulos.contenidos.schemas import SourceScope
+
+
 class SearchRequest(BaseModel):
+    source_scope: SourceScope | None = None
     model_config = ConfigDict(extra="forbid")
     course: str = Field(min_length=1, max_length=160)
     query: str = Field(min_length=1, max_length=1000)
@@ -65,6 +69,7 @@ class SearchHit(DocumentChunkResponse):
 
 
 class SearchResponse(BaseModel):
+    source_scope: SourceScope | None = None
     course: str | None = None
     query: str
     embedding_query: str

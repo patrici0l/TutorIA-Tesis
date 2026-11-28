@@ -4,6 +4,19 @@
 Este avance no declara cerrada la v0.3. Jefferson continuará sus cambios en otras
 ramas; antes de unirlos corresponde revisar posibles cruces.
 
+## Actualización local del 25 de noviembre
+
+El docente puede abrir la preparación desde un escenario de G3 o G24. El tema, objetivo,
+tipo de recurso y dificultad llegan como propuesta editable. La preparación conserva el
+paralelo, escenario y selección de fuentes en el snapshot JSON existente.
+
+El selector permite recuperar materiales propios habilitados de la materia o incluir
+también artículos importados de Wikipedia. La comparación prepara el mismo caso sin
+documentos, con material docente y con material docente más Wikipedia. Muestra los
+fragmentos recuperados por condición. La medición de calidad, costo y tiempo de
+respuestas reales continúa pendiente. CORE y la habilitación por correo descritos
+en las entradas históricas ya no forman parte del flujo docente de simulación.
+
 ## Implementado
 
 - Ejemplo resuelto independiente (`EXAMPLE`): enunciado, pasos y resultado.
@@ -104,12 +117,43 @@ verificado mediante restauración temporal; también se respaldó la base nativa
 de migrarla. Las claves y la habilitación del proveedor se conservaron. No se publicaron
 servicios en Internet ni se concedieron accesos de estudiantes automáticamente.
 
+## CORE y aprobación de materiales y accesos — 23 de noviembre
+
+- [x] Consulta real a CORE: cinco resultados, ficha, autores, año, idioma y resumen.
+- [x] Incorporación del original PDF/DOCX/TXT por el profesor, permiso explícito,
+  copia de la ficha con hash y procedencia conservada. No se importa el resumen como
+  artículo ni se descargan enlaces arbitrarios. El material queda privado e inhabilitado.
+- [x] Revisión antes de habilitar: texto, búsqueda y permiso visibles; confirmación
+  docente de los fragmentos, fórmulas y adecuación a la materia.
+- [x] Gestión de acceso por correo y materia con búsqueda, filtros y confirmación
+  de retirada dentro de cada registro. Se aclara el alcance sobre materiales futuros.
+- [x] Estudiante: procedencia de fuentes visible, estado de consulta del cupo y
+  copia de correo con confirmación solo cuando funciona.
+- [x] Word y guía actualizados. Login, despliegue público y rama del tutor sin cambios.
+- [ ] Descarga automática de texto completo de CORE. La API pública probada responde
+  que no está disponible; esta integración requiere adjuntar el original autorizado.
+- [ ] Aceptación pedagógica de las publicaciones para las dos materias y el piloto.
+
+Verificación: 603 pruebas unitarias backend aprobadas (1 omitida), 82 de integración
+PostgreSQL (2 omitidas), 181 frontend; Ruff y compilación correctos. Dos E2E aprobados
+sobre base temporal: CORE real con original sintético y revisión/publicación explícita;
+acceso y solicitud del estudiante con recuperación E5 real y retirada. La muestra
+sintética prueba el circuito técnico, no representa ni valida una publicación académica.
+Se revisaron capturas de escritorio y móvil. No se hicieron llamadas generativas.
+
 ## Pendiente
 
 Login institucional y despliegue se revisarán con el tutor. Continúan pendientes los
 acuerdos ADAPTIA, vinculación del perfil del estudiante y matrícula institucional, ejecuciones
 comparables de tres modelos, selección y aceptación del corpus externo y piloto de ambas
 asignaturas. Falta el selector experimental entre fuentes docentes y docentes más externas;
-por ahora RAG usa todas las fuentes propias habilitadas de la materia. CORE, OpenAlex y
-Wolfram Alpha no están integrados.
+por ahora RAG usa todas las fuentes propias habilitadas de la materia. OpenAlex y
+Wolfram Alpha no están integrados. CORE permite buscar fichas e incorporar el original
+adjuntado por el docente; la descarga automática de texto completo no está implementada.
 La aceptación docente de v0.2 sigue separada del cierre técnico marcado en Git.
+
+Instalación local del 23 de noviembre: imágenes Docker reconstruidas; interfaz,
+API, PostgreSQL y pgvector saludables en localhost:4200. Respaldo previo completo
+verificado mediante restauración temporal. No se requirieron migraciones nuevas.
+La ejecución nativa de Angular que ocupaba 4200 se detuvo para dejar una sola
+interfaz local. Los comandos nativos del README siguen disponibles.

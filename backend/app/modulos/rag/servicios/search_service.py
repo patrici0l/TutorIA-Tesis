@@ -28,7 +28,8 @@ class SearchService:
 
     def search(self, request: SearchRequest, owner: UUID):
         started = perf_counter()
-        available = self.repository.count_available(owner, request.course)
+        options = {"scope": request.source_scope} if request.source_scope else {}
+        available = self.repository.count_available(owner, request.course, **options)
         expanded = embedding_query(request.query)
         results = []
         if available:
@@ -45,7 +46,7 @@ class SearchService:
                     503, "El modelo no produjo un vector válido para la consulta."
                 ) from None
             results = self.repository.search(
-                owner, vector, request.top_k, request.min_similarity, request.course
+                owner, vector, request.top_k, request.min_similarity, request.course, **options
             )
         return SearchResponse(
             **request.model_dump(),

@@ -1,0 +1,37 @@
+<header class="page-heading"><span class="eyebrow">ACOMPAÑAMIENTO DOCENTE</span><h1>Acceso de estudiantes</h1><p>Decide quién puede solicitar contenido con los materiales habilitados de tus asignaturas.</p></header>
+@if (!canManage()) { <p>Solo el profesor puede gestionar estos accesos.</p> } @else {
+  @if (error()) { <p role="alert" class="notice error">{{ error() }}</p> }
+  @if (message()) { <p role="status" class="success-notice">{{ message() }}</p> }
+  @if (loading()) { <p role="status">Cargando asignaturas y accesos…</p> }
+  <div class="access-layout">
+    <section class="panel"><span class="eyebrow">1 · ELIGE A QUIÉN AYUDAR</span><h2>Habilitar una asignatura</h2>
+      <p>El estudiante debe iniciar sesión una vez y compartirte el correo que aparece en Solicitar contenido.</p>
+      <form (ngSubmit)="grant()"><fieldset [disabled]="busy() || loading() || !loaded()">
+        <legend class="sr-only">Dar acceso</legend>
+        <label for="access-email">Correo del estudiante</label><input id="access-email" name="email" type="email" [(ngModel)]="email" required maxlength="254" placeholder="Correo de su cuenta en TutorIA" />
+        <label for="access-course">Asignatura</label><select id="access-course" name="course" [(ngModel)]="course" required><option value="">Selecciona una asignatura</option>@for (c of courses(); track c.value) { <option [value]="c.value">{{ c.label }} · {{ c.enabled }} habilitados</option> }</select>
+        @if (selectedCourse(); as c) {
+          <div class="access-summary"><strong>{{ c.label }}</strong><p>{{ c.enabled }} de {{ c.documents }} materiales habilitados.</p>
+            @if (!c.enabled) { <p class="help">Puedes dar acceso ahora, pero el estudiante no podrá preparar contenido hasta que habilites al menos un material.</p> }
+          </div>
+        }
+        <p class="help">El permiso incluye los materiales que habilites después para esta materia. No da acceso a otras asignaturas ni publica documentos.</p>
+        <button type="submit" class="primary" [disabled]="!email.trim() || !course">{{ busy() ? 'Guardando…' : 'Dar acceso' }}</button>
+      </fieldset></form>
+      @if (loaded() && !courses().length) { <p>Primero incorpora documentos a una asignatura desde Mis documentos.</p> }
+    </section>
+    <aside class="panel guidance"><span class="eyebrow">QUÉ PODRÁ HACER</span><h2>Ayuda con tus fuentes</h2><ol><li>Elegir tu asignatura.</li><li>Pedir explicación, ejemplo, ejercicio, cuestionario, pista o revisión de su respuesta.</li><li>Revisar las fuentes y confirmar la generación.</li></ol><p class="help">Cada cuenta conserva su historial. En modo demo, las personas que entran con el mismo rol comparten cuenta.</p></aside>
+  </div>
+  <section class="panel"><div class="access-list-heading"><div><span class="eyebrow">2 · REVISA Y ADMINISTRA</span><h2>Accesos concedidos <small>{{ activeCount() }} activos</small></h2></div><button (click)="load()" [disabled]="busy() || loading()">Actualizar</button></div>
+    <p>Retirar un acceso bloquea nuevas solicitudes y el envío de preparaciones pendientes. El estudiante conserva lo que ya guardó.</p>
+    <div class="access-filters"><div><label for="access-search">Buscar estudiante o materia</label><input id="access-search" [ngModel]="search()" (ngModelChange)="search.set($event)" placeholder="Correo o asignatura" /></div><div><label for="access-state">Mostrar</label><select id="access-state" [ngModel]="filter()" (ngModelChange)="filter.set($event)"><option value="active">Activos</option><option value="revoked">Retirados</option><option value="all">Todos</option></select></div></div>
+    @if (loaded() && !loading() && !visible().length) { <p>No hay accesos que coincidan con este filtro.</p> }
+    <ul class="history-list">@for (a of visible(); track a.id) {
+      <li class="access-row"><div class="access-row-main"><div><strong>{{ a.course }}</strong><p>{{ a.student_email }}</p><span class="access-state" [class.revoked]="!a.active">{{ a.active ? 'Activo' : 'Retirado' }}</span></div>
+        @if (a.active) { <button (click)="pending.set(a)" [disabled]="busy()" [attr.aria-expanded]="pending()?.id === a.id">Retirar acceso<span class="sr-only"> de {{ a.student_email }} a {{ a.course }}</span></button> }
+      </div>
+      @if (pending()?.id === a.id) { <div class="revoke-confirm" role="group" aria-label="Confirmar retirada"><p>¿Retirar el acceso de <strong>{{ a.student_email }}</strong> a {{ a.course }}?</p><div class="actions"><button (click)="revoke(a)" [disabled]="busy()">Sí, retirar</button><button (click)="pending.set(null)" [disabled]="busy()">Cancelar</button></div></div> }
+      </li>
+    }</ul>
+  </section>
+}

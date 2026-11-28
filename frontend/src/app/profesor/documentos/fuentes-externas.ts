@@ -14,7 +14,7 @@ import { CourseDocument } from './documentos.model';
   selector: 'app-external-sources',
   imports: [FormsModule, RouterLink, DatePipe],
   templateUrl: './fuentes-externas.html',
-  styleUrl: './fuentes-externas.scss',
+  styleUrls: ['./fuentes-externas.scss', './fuentes-core.scss'],
 })
 export class ExternalSourcesComponent {
   private readonly http = inject(HttpClient);

@@ -57,6 +57,7 @@ export class DocumentsComponent implements OnInit {
   readonly panelMode = signal<'upload' | 'detail'>('detail');
   readonly detailSection = signal<'content' | 'origin' | 'technical'>('content');
   readonly reviewingFragments = signal(false);
+  readonly publicationReviewed = signal(false);
   readonly selectedChunk = signal<DocumentChunk | null>(null);
   private panelTrigger: HTMLElement | null = null;
   private previousOverflow = '';
@@ -560,6 +561,7 @@ export class DocumentsComponent implements OnInit {
     this.selectedChunk.set(chunk);
     this.reviewingFragments.set(!!chunk);
     this.detailRequest?.unsubscribe();
+    this.publicationReviewed.set(false);
     this.selected.set(null);
     this.detailLoading.set(true);
     this.error.set('');
@@ -583,6 +585,7 @@ export class DocumentsComponent implements OnInit {
   closeDetails() {
     this.detailRequest?.unsubscribe();
     this.detailLoading.set(false);
+    this.publicationReviewed.set(false);
     this.selected.set(null);
   }
 
@@ -740,6 +743,7 @@ export class DocumentsComponent implements OnInit {
 
   // Etapa 3: Publicación / habilitación como fuente
   publication(publish: boolean) {
+    if (publish && !this.publicationReviewed()) return;
     const document = this.selected();
     if (!document || this.locked()) return;
     this.busy.set(true);
@@ -858,6 +862,7 @@ export class DocumentsComponent implements OnInit {
 
   // Actualización en memoria y borrado
   private updateDocument(document: CourseDocument) {
+    this.publicationReviewed.set(false);
     this.documents.update((items) =>
       items.map((item) => (item.id === document.id ? document : item)),
     );

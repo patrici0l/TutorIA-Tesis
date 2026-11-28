@@ -1,10 +1,8 @@
 # Generación de contenidos educativos
 
 Avance local de [v0.3: ejemplos, pistas y fuentes externas](versionesDM/Version-0.3.md).
-Para simular el consumo: [guía y JSON de la API](docs/api/README.md).
 La conexión con Wikipedia se abre desde **Documentos → Buscar fuentes externas**;
 requiere la migración `0018_external_sources` y reconstruir la aplicación local.
-
 El estudiante ya puede **Solicitar contenido**. Requiere la migración
 `0019_student_content`. El profesor habilita primero la asignatura en
 **Explorar → Acceso de estudiantes**, indicando el correo de una cuenta que ya haya

@@ -24,10 +24,21 @@ class ContentModel(BaseModel):
         return value
 
 
+SourceScope = Literal["teacher", "teacher_wikipedia"]
+
+
+class ClassScenario(ContentModel):
+    period: Literal["P69"]
+    group: Literal["G3", "G24"]
+    scenario: Literal["refuerzo", "practica", "reto", "pendiente"]
+
+
 class ContentRequest(ContentModel):
     """Contrato interno inicial; proveedor/propietario/perfil no vienen del cliente."""
 
     topic: str = Field(min_length=1, max_length=160)
+    class_scenario: ClassScenario | None = None
+    source_scope: SourceScope | None = None
     course: str | None = Field(default=None, min_length=1, max_length=160)
 
     @field_validator("course")

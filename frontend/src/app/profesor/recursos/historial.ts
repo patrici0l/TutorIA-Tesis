@@ -1,7 +1,6 @@
 import { ViewAttention } from '../../compartido/atencion-vista.service';
 // Reabre recursos persistidos por identificador sin consumir otra inferencia.
 import { Component, DestroyRef, inject, input, output, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PreparationService } from './recursos.service';
@@ -9,7 +8,7 @@ import { GenerationStatus, HistoryDetail, HistoryPage } from './historial.model'
 
 @Component({
   selector: 'app-resource-history',
-  imports: [DatePipe, RouterLink],
+  imports: [DatePipe],
   templateUrl: './historial.html',
   styleUrl: './historial.scss',
 })
@@ -86,3 +85,4 @@ export class ResourceHistoryComponent {
       });
   }
 }
+

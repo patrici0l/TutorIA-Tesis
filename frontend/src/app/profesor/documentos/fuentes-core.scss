@@ -1,0 +1,14 @@
+.provider-tabs { display:flex; flex-wrap:wrap; gap:.7rem; margin-bottom:1.5rem; }
+.provider-tabs a { padding:.75rem 1rem; border:1px solid var(--border); border-radius:8px; color:var(--navy); text-decoration:none; background:white; }
+.provider-tabs [aria-current] { background:var(--blue-soft); border-color:var(--blue); font-weight:700; }
+fieldset { border:0; padding:0; display:grid; gap:.8rem; min-width:0; }
+legend { font-weight:700; margin-bottom:1rem; }
+input, textarea { width:100%; box-sizing:border-box; min-width:0; }
+textarea { padding:.8rem; font:inherit; border:1px solid var(--border-dark); border-radius:8px; resize:vertical; }
+.confirmation { display:flex; align-items:flex-start; gap:.7rem; line-height:1.5; }
+.confirmation input { width:20px; height:20px; flex-shrink:0; margin-top:.2rem; }
+.result-meta { min-width:0; overflow-wrap:anywhere; }
+.result-meta span { font-size:.85rem; color:var(--muted); }
+.abstract { white-space:pre-wrap; max-height:24rem; overflow:auto; overflow-wrap:anywhere; }
+details { margin-block:1rem; }
+summary { cursor:pointer; font-weight:600; }

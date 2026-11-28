@@ -24,8 +24,7 @@
 
           <div class="account-details">
             <span class="account-name">
-              {{ user.nombre || user.institutional_email }}
-              {{ auth.mode() === 'mock' ? '' : user.apellido }}
+              {{ user.rol === 'student' ? user.institutional_email : ((user.nombre + ' ' + user.apellido).trim() || user.institutional_email) }}
             </span>
             <span class="account-role">
               {{ user.rol === 'student' ? 'Espacio de estudiante' : 'Espacio docente' }}

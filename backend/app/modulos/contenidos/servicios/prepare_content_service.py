@@ -26,6 +26,7 @@ class PrepareContentService:
                 course=request.course,
                 query=f"{request.topic}. {request.learning_objective}",
                 top_k=3,
+                source_scope=request.source_scope,
             ),
             owner,
         )

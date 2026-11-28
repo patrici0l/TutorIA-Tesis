@@ -367,3 +367,6 @@
     width: 100%;
   }
 }
+
+.source-origin { display:flex; flex-wrap:wrap; gap:.7rem; justify-content:space-between; border-top:1px solid var(--border); padding-top:.8rem; font-size:.8rem; }
+.source-origin a { color:var(--blue-dark); }

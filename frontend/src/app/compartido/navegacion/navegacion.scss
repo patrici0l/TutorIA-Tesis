@@ -4,7 +4,8 @@
   background: var(--surface-card);
 }
 .navigation-bar {
-  max-width: 1200px;
+  max-width: var(--workspace-max-width);
+  box-sizing: border-box;
   margin: auto;
   padding: 8px 28px;
 }

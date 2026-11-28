@@ -676,20 +676,33 @@
         }
 
         <!-- Etapa 3: Habilitación como fuente para recursos -->
-        <div id="document-publication" tabindex="-1" class="stage">
+        <div id="document-publication" tabindex="-1" class="stage approval-panel">
           <h3>
             {{ document.published_at ? 'Habilitado para recursos' : '3. Revisar y habilitar' }}
           </h3>
-          <p>Revisa los fragmentos y el permiso de esta versión antes de usarla como fuente.</p>
+          <p>Al habilitarlo, este material podrá apoyar tus recursos y las solicitudes de los estudiantes con acceso a <strong>{{ document.course }}</strong>.</p>
+          <ul class="approval-checklist" aria-label="Estado de revisión">
+            <li>{{ document.processing_status === 'processed' ? '✓ Texto extraído' : 'Pendiente: extraer el texto' }}</li>
+            <li>{{ document.index_status === 'indexed' ? '✓ Búsqueda preparada' : 'Pendiente: preparar la búsqueda' }}</li>
+            <li>{{ document.permission_recorded_at ? '✓ Permiso registrado' : 'Pendiente: registrar el permiso' }}</li>
+          </ul>
+          <div class="approval-links">
+            <button type="button" class="secondary" (click)="detailSection.set('origin')">Consultar procedencia y permiso</button>
+          </div>
+          @if (!document.published_at && document.index_status === 'indexed' && document.permission_recorded_at) {
+            <label class="approval-confirm"><input type="checkbox" [checked]="publicationReviewed()" (change)="publicationReviewed.set($any($event.target).checked)" [disabled]="locked()" />
+              <span>Revisé los fragmentos, las fórmulas y el permiso de uso. Confirmo que esta versión es adecuada para la asignatura.</span></label>
+          }
           @if (document.published_at) {
             <button class="secondary" (click)="publication(false)" [disabled]="locked()">
               Retirar de recursos
             </button>
           } @else {
             <button
+              id="publish-source"
               (click)="publication(true)"
               [disabled]="
-                locked() || document.index_status !== 'indexed' || !document.permission_recorded_at
+                locked() || document.index_status !== 'indexed' || !document.permission_recorded_at || !publicationReviewed()
               "
             >
               Habilitar como fuente
@@ -725,19 +738,19 @@
           @if (document.external_source; as source) {
             <div class="external-origin-card">
               <div class="external-origin-header">
-                <span class="badge badge-external">Fuente externa · Wikipedia en español</span>
+                <span class="badge badge-external">Fuente externa · {{ source.provider === 'core' ? 'CORE' : 'Wikipedia en español' }}</span>
                 <span class="badge">{{ source.license_name }}</span>
               </div>
               <p class="external-attribution">{{ source.attribution }}</p>
               <p class="external-revision">
-                Versión <strong>{{ source.revision_id }}</strong> · Consultada el {{ source.retrieved_at | date:'dd/MM/yyyy HH:mm' }}
+                @if (source.provider === 'wikipedia_es') { Versión <strong>{{ source.revision_id }}</strong> } @else { Registro CORE <strong>{{ source.work_id }}</strong> · Original aportado por el profesor } · Consultada el {{ source.retrieved_at | date:'dd/MM/yyyy HH:mm' }}
               </p>
               <div class="external-origin-actions">
                 <a class="action-link secondary" [href]="source.url" target="_blank" rel="noopener noreferrer">
                   <span>Ver versión consultada</span>
                   <span aria-hidden="true">↗</span>
                 </a>
-                <a class="action-link secondary" [href]="'/api/v1/documents/external/wikipedia/snapshot/' + document.id">
+                <a class="action-link secondary" [href]="'/api/v1/documents/external/' + (source.provider === 'core' ? 'core' : 'wikipedia') + '/snapshot/' + document.id">
                   <span>Descargar captura original de la fuente</span>
                 </a>
               </div>

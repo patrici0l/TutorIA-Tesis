@@ -1,3 +1,4 @@
+@if (copyError()) { <p role="status" class="notice">No se pudo copiar el correo. Puedes seleccionarlo y copiarlo manualmente.</p> }
 <header class="page-heading student-heading fade-in">
   <div>
     <span class="eyebrow">APRENDE CON TUS MATERIALES</span>
@@ -35,7 +36,7 @@
         <span class="quota-dot dot-off" aria-hidden="true"></span>
         <div class="quota-copy">
           <span class="quota-label">Cupo compartido</span>
-          <strong class="quota-value">Disponibilidad sin confirmar</strong>
+          <strong class="quota-value">{{ quotaLoading() ? 'Consultando disponibilidad…' : 'Disponibilidad sin confirmar' }}</strong>
         </div>
       }
       <button
@@ -236,6 +237,8 @@
                       }
                     </div>
                     <blockquote class="source-excerpt">{{ s.text }}</blockquote>
+                    <p class="source-origin"><strong>{{ s.external_source?.provider === 'core' ? 'CORE · original revisado por el profesor' : s.external_source?.provider === 'wikipedia_es' ? 'Wikipedia · versión revisada por el profesor' : 'Material del profesor' }}</strong>
+                    @if (s.external_source; as origin) { <a [href]="origin.url" target="_blank" rel="noopener noreferrer">Consultar procedencia ↗</a> }</p>
                     @if (s.source_reference) {
                       <p class="source-ref">{{ s.source_reference }}</p>
                     }
@@ -312,6 +315,8 @@
                       }
                     </summary>
                     <blockquote class="source-excerpt">{{ s.text }}</blockquote>
+                    <p class="source-origin"><strong>{{ s.external_source?.provider === 'core' ? 'CORE · original revisado por el profesor' : s.external_source?.provider === 'wikipedia_es' ? 'Wikipedia · versión revisada por el profesor' : 'Material del profesor' }}</strong>
+                    @if (s.external_source; as origin) { <a [href]="origin.url" target="_blank" rel="noopener noreferrer">Consultar procedencia ↗</a> }</p>
                     @if (s.source_reference) {
                       <p class="source-ref">{{ s.source_reference }}</p>
                     }

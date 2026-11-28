@@ -14,8 +14,15 @@ class SearchRepository:
         self.db = db
 
     @staticmethod
-    def eligibility(owner: UUID, course: str):
+    def eligibility(owner: UUID, course: str, scope=None):
+        filters = ()
+        if scope == "teacher":
+            filters = (Document.external_source.is_(None),)
+        elif scope == "teacher_wikipedia":
+            filters = ((Document.external_source.is_(None) |
+                        (Document.external_source["provider"].as_string() == "wikipedia_es")),)
         return (
+            *filters,
             Document.owner_id == owner,
             Document.course == course,
             Document.published_at.is_not(None),
@@ -32,18 +39,18 @@ class SearchRepository:
             DocumentChunk.embedding.is_not(None),
         )
 
-    def count_available(self, owner: UUID, course: str):
+    def count_available(self, owner: UUID, course: str, scope=None):
         count = self.db.scalar(
             select(func.count())
             .select_from(DocumentChunk)
             .join(Document)
-            .where(*self.eligibility(owner, course))
+            .where(*self.eligibility(owner, course, scope))
         )
         self.db.commit()  # Do not hold a read transaction during model inference.
         return count
 
     def statement(
-        self, owner: UUID, vector: list[float], top_k: int, course: str, exact: bool = True
+        self, owner: UUID, vector: list[float], top_k: int, course: str, exact: bool = True, scope=None
     ):
         columns = (
             DocumentChunk.id,
@@ -66,7 +73,7 @@ class SearchRepository:
             Document.published_at,
             Document.external_source,
         )
-        eligible = select(*columns).join(Document).where(*self.eligibility(owner, course))
+        eligible = select(*columns).join(Document).where(*self.eligibility(owner, course, scope))
         if exact:
             # Filter before ranking; materialization prevents an approximate HNSW scan.
             corpus = eligible.cte("eligible_corpus").prefix_with("MATERIALIZED")
@@ -81,9 +88,9 @@ class SearchRepository:
         return eligible.add_columns(distance.label("distance")).order_by(distance).limit(top_k)
 
     def search(
-        self, owner: UUID, vector: list[float], top_k: int, min_similarity: float, course: str
+        self, owner: UUID, vector: list[float], top_k: int, min_similarity: float, course: str, scope=None
     ):
-        rows = self.db.execute(self.statement(owner, vector, top_k, course)).mappings().all()
+        rows = self.db.execute(self.statement(owner, vector, top_k, course, scope=scope)).mappings().all()
         results = []
         for row in rows:
             item = dict(row)

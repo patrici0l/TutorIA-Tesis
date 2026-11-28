@@ -406,6 +406,9 @@ describe('Documentos propios', () => {
     const component = fixture.componentInstance;
     component.selected.set({ ...sampleDocument, index_status: 'indexed' });
     component.publication(true);
+    http.expectNone('/api/v1/documents/doc-1/publish');
+    component.publicationReviewed.set(true);
+    component.publication(true);
     component.publication(true);
     const published = {
       ...sampleDocument,
@@ -432,7 +435,7 @@ describe('Documentos propios', () => {
     const element: HTMLElement = fixture.nativeElement;
     expect(element.querySelector<HTMLDetailsElement>('.vector-tools')!.open).toBe(false);
     expect(element.querySelector<HTMLDetailsElement>('.fragment-review')!.open).toBe(false);
-    expect(element.querySelector('#document-publication button')!.hasAttribute('disabled')).toBe(
+    expect(element.querySelector('#publish-source')!.hasAttribute('disabled')).toBe(
       true,
     );
     expect(element.querySelector('#document-publication a')).toBeNull();

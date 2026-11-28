@@ -18,6 +18,24 @@ export class LoginComponent implements OnInit {
   readonly loading = signal(true);
   readonly failed = signal(false);
 
+  readonly visible = signal(false);
+  readonly accounts = signal(false);
+  readonly message = signal('');
+  readonly submitting = signal(false);
+
+  signIn(email: string, password: string) {
+    if (this.submitting()) return;
+    this.submitting.set(true);
+    this.message.set('');
+    this.auth.login(email, password).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => window.location.assign('/inicio'),
+      error: (error) => {
+        this.submitting.set(false);
+        this.message.set(error.status === 401 ? 'Correo o contraseña incorrectos.' : 'No se pudo iniciar sesión.');
+      },
+    });
+  }
+
   ngOnInit() {
     this.load();
   }
@@ -41,6 +59,7 @@ export class LoginComponent implements OnInit {
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe({
               next: (configuration) => {
+                this.accounts.set(!!configuration.accounts);
                 this.loginMode.set(configuration.auth_mode);
                 this.loading.set(false);
               },

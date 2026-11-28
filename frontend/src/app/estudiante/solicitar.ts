@@ -55,6 +55,8 @@ export class StudentContentComponent {
   readonly resource = signal<EducationalResource | null>(null);
   readonly sent = signal(false);
   readonly quota = signal<GenerationQuota | null>(null);
+  readonly quotaLoading = signal(false);
+  readonly copyError = signal(false);
   readonly history = signal<HistoryPage | null>(null);
   readonly historyError = signal(false);
   readonly historyLoading = signal(false);
@@ -157,10 +159,12 @@ export class StudentContentComponent {
   }
 
   loadQuota() {
+    if (this.quotaLoading()) return;
+    this.quotaLoading.set(true);
     this.quota.set(null);
     this.http
       .get<GenerationQuota>('/api/v1/learning/quota')
-      .pipe(takeUntilDestroyed(this.destroy))
+      .pipe(takeUntilDestroyed(this.destroy), finalize(() => this.quotaLoading.set(false)))
       .subscribe({
         next: (q) => this.quota.set(q),
         error: () => this.quota.set(null),
@@ -255,16 +259,17 @@ export class StudentContentComponent {
     this.attention.reveal('student-form-title');
   }
 
-  copyEmail() {
+  async copyEmail() {
     const email = this.auth.user()?.institutional_email;
     if (!email) return;
-    void navigator.clipboard?.writeText(email)?.catch(() => {});
-    this.copiedEmail.set(true);
-    if (this.copyTimer) clearTimeout(this.copyTimer);
-    this.copyTimer = setTimeout(() => {
-      this.copiedEmail.set(false);
-      this.copyTimer = null;
-    }, 2500);
+    this.copyError.set(false); this.copiedEmail.set(false);
+    try {
+      if (!navigator.clipboard) throw new Error('Clipboard unavailable');
+      await navigator.clipboard.writeText(email);
+      this.copiedEmail.set(true);
+      if (this.copyTimer) clearTimeout(this.copyTimer);
+      this.copyTimer = setTimeout(() => { this.copiedEmail.set(false); this.copyTimer = null; }, 2500);
+    } catch { this.copyError.set(true); }
   }
 
   prepare() {

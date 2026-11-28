@@ -21,3 +21,19 @@ summary { cursor: pointer; line-height: 1.6; }
 .history-list li button { flex-shrink: 0; white-space: nowrap; }
 .actions { display: flex; gap: 1rem; flex-wrap: wrap; }
 .error { color: #a52626; }
+.access-layout { display:grid; grid-template-columns: minmax(0, 1.6fr) minmax(0,1fr); gap:1.5rem; align-items:start; }
+.access-summary { background:var(--blue-soft); padding:1rem; border-radius:8px; }
+.access-summary p { margin:.3rem 0; }
+.guidance ol { padding-left:1.25rem; line-height:1.8; }
+.access-list-heading, .access-row-main { display:flex; justify-content:space-between; align-items:center; gap:1rem; }
+.access-list-heading small { display:inline-block; font:500 .8rem var(--font-sans); padding:.4rem; background:var(--blue-soft); border-radius:6px; }
+.access-list-heading { flex-wrap:wrap; }
+.access-list-heading > button { flex-shrink:0; white-space:nowrap; }
+.access-filters { display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr); gap:1rem; margin-top:1.5rem; }
+.access-filters label { display:block; margin-bottom:.5rem; }
+.history-list li.access-row { display:block; }
+.access-state { display:inline-block; padding:.3rem .7rem; border-radius:20px; color:#13633c; background:#e5f6ed; font-size:.8rem; }
+.access-state.revoked { background:var(--paper-warm); color:var(--muted); }
+.revoke-confirm { border-left:3px solid #bc5c32; padding:.5rem 1rem; margin-top:1rem; background:#fff6ed; }
+.success-notice { padding:1rem; color:#13633c; background:#e5f6ed; border-radius:8px; }
+@media(max-width:680px) { .access-layout, .access-filters { grid-template-columns:1fr; } .access-layout { gap:0; } .access-row-main { align-items:flex-start; flex-wrap:wrap; } }

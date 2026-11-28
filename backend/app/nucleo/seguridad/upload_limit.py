@@ -22,6 +22,7 @@ class UploadLimitMiddleware:
             and scope["path"]
             not in {
                 "/api/v1/documents/upload",
+                "/api/v1/documents/external/core/import",
                 "/api/v1/rag/search",
                 "/api/v1/content/prepare",
                 "/api/v1/profiles",
@@ -30,7 +31,12 @@ class UploadLimitMiddleware:
             }
         ):
             return await self.app(scope, receive, send)
-        maximum = self.maximum if scope["path"] == "/api/v1/documents/upload" else 16_384
+        maximum = (
+            self.maximum
+            if scope["path"]
+            in {"/api/v1/documents/upload", "/api/v1/documents/external/core/import"}
+            else 16_384
+        )
         headers = dict(scope.get("headers", []))
         try:
             size = int(headers.get(b"content-length", b"0"))

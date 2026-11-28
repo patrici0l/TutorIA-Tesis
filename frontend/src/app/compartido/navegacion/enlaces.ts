@@ -20,7 +20,6 @@ const student: NavigationItem[] = [
   },
 ];
 const teacher: NavigationItem[] = [
-  { path: '/accesos', label: 'Acceso de estudiantes', description: 'Habilita asignaturas para solicitar contenido' },
   {
     path: '/documentos',
     label: 'Mis documentos',
@@ -32,19 +31,14 @@ const teacher: NavigationItem[] = [
     description: 'Crea recursos o retoma los que guardaste',
   },
   {
-    path: '/actividades',
-    label: 'Actividades asignadas',
-    description: 'Asigna contenido y consulta resultados',
-  },
-  {
     path: '/busqueda',
     label: 'Buscar fuentes',
     description: 'Consulta tus documentos preparados',
   },
   {
     path: '/perfiles',
-    label: 'Perfiles de aprendizaje',
-    description: 'Apoyo opcional para adaptar un recurso',
+    label: 'Simulación por clase',
+    description: 'Explora perfiles hipotéticos de G3 y G24',
   },
   {
     path: '/metricas',

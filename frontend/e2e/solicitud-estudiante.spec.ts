@@ -39,6 +39,10 @@ test('docente habilita acceso, estudiante prepara con fuentes reales y se respet
     const grant = await granted; expect(grant.status(), await grant.text()).toBe(201); accessId = (await grant.json()).id;
     await page.evaluate(() => { (document.activeElement as HTMLElement)?.blur(); window.scrollTo(0, 0); });
     await page.screenshot({ path: info.outputPath('accesos-desktop.png'), fullPage: true });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.screenshot({ path: info.outputPath('accesos-mobile.png'), fullPage: true });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.setViewportSize({ width: 1280, height: 900 });
     await student.getByRole('button', { name: 'Actualizar asignaturas' }).click();
     await student.getByLabel('Asignatura y profesor').selectOption(accessId!);
     await student.getByLabel('Quiero pedir').selectOption('HINT');

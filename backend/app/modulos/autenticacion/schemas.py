@@ -32,6 +32,7 @@ class SessionResponse(BaseModel):
 
 
 class AuthConfiguration(BaseModel):
+    accounts: bool = False
     auth_mode: Literal["mock", "cas"]
 
 

@@ -8,7 +8,7 @@
   <p class="help">Extractos de páginas o párrafos; pueden continuar en otro fragmento. Comprueba el original si faltan letras, fórmulas o contexto.</p>
 
   <!-- Error de Carga -->
-  @if (error()) {
+  @if (error()) { 
     <div class="error fade-in" role="alert">
       <p>{{ error() }}</p>
       <button class="interactive-button" (click)="load(offset(), true)" [disabled]="loading()">
@@ -44,6 +44,12 @@
               {{ chunk.source_kind === 'page' ? 'Página' : 'Párrafo' }} {{ chunk.source_index }}
             </span>
           </div>
+          @if (chunk.source_kind === 'page') {
+            <a class="original-page" target="_blank" rel="noopener"
+              [href]="'/api/v1/documents/' + documentId() + '/original?visualizar=true#page=' + chunk.source_index">
+              Ver página {{ chunk.source_index }} del PDF con su formato original ↗
+            </a>
+          }
           <p class="text">{{ chunk.text }}</p>
         </li>
       }

@@ -6,8 +6,7 @@ import { practiceExitGuard } from './compartido/practica/salida-practica.service
 export const routes: Routes = [
   { path: 'solicitar', title: 'Solicitar contenido', canActivate: [authGuard],
     loadComponent: () => import('./estudiante/solicitar').then(m => m.StudentContentComponent) },
-  { path: 'accesos', title: 'Acceso de estudiantes', canActivate: [authGuard],
-    loadComponent: () => import('./profesor/accesos').then(m => m.LearningAccessComponent) },
+  { path: 'accesos', redirectTo: 'perfiles', pathMatch: 'full' },
   { path: 'fuentes-externas', title: 'Fuentes externas', canActivate: [authGuard],
     loadComponent: () => import('./profesor/documentos/fuentes-externas').then(m => m.ExternalSourcesComponent) },
   {
@@ -40,9 +39,9 @@ export const routes: Routes = [
   },
   {
     path: 'perfiles',
-    title: 'Perfiles de aprendizaje',
+    title: 'Simulación por clase',
     canActivate: [authGuard],
-    loadComponent: () => import('./profesor/perfiles/perfiles').then((m) => m.ProfilesComponent),
+    loadComponent: () => import('./profesor/perfiles/simulacion').then((m) => m.ClassSimulationComponent),
   },
   {
     path: 'recursos',

@@ -24,6 +24,7 @@ import { GenerationAvailability, GenerationQuotaComponent } from './cuota';
 import { HistoryDetail } from './historial.model';
 import { AuthService } from '../../inicio/sesion.service';
 import {
+  ClassScenario, ComparisonCase, SourceScope,
   Difficulty,
   GenerationResponse,
   PreparationRequest,
@@ -58,11 +59,26 @@ export class PreparationComponent implements OnInit {
   readonly coursesLoading = signal(false);
   readonly coursesError = signal('');
   readonly inputStep = signal<'course' | 'details'>('course');
+  scope: SourceScope = 'teacher_wikipedia';
+  readonly simulationRecipient = history.state?.simulationRecipient;
+  classScenario?: ClassScenario;
+  private openScenarioOnLoad = false;
+  readonly comparison = signal<ComparisonCase[]>([]);
+  readonly scopeLabels = { direct: 'Sin documentos', teacher: 'Solo material docente', teacher_wikipedia: 'Material docente y Wikipedia' };
   ngOnInit() {
+    const params = this.route.snapshot.queryParamMap;
+    const group = params.get('group'), scenario = params.get('scenario');
+    if ((group === 'G3' || group === 'G24') &&
+        (scenario === 'refuerzo' || scenario === 'practica' || scenario === 'reto' || scenario === 'pendiente')) {
+      this.openScenarioOnLoad = true;
+      this.classScenario = { period: 'P69', group, scenario };
+      this.topic = params.get('topic') ?? '';
+      this.objective = params.get('objective') ?? '';
+      this.resourceType = scenario === 'refuerzo' ? 'EXAMPLE' : scenario === 'practica' ? 'HINT' : 'EXERCISE';
+      this.difficulty = scenario === 'reto' ? 'advanced' : scenario === 'practica' ? 'intermediate' : 'basic';
+    }
     if (this.canPrepare()) {
       this.loadCourses();
-      const profileId = this.route.snapshot.queryParamMap.get('profile_id');
-      if (profileId) this.loadLinkedProfile(profileId);
     }
   }
   loadCourses() {
@@ -79,8 +95,12 @@ export class PreparationComponent implements OnInit {
             (item) =>
               item.value.toLocaleLowerCase('es') === this.course.trim().toLocaleLowerCase('es'),
           );
-          this.course = chosen?.value ?? '';
+          this.course = chosen?.value ?? (this.classScenario ? this.course : '');
           this.coursesLoading.set(false);
+          if (this.openScenarioOnLoad && chosen?.enabled) {
+            this.openScenarioOnLoad = false;
+            this.showEditor();
+          }
         },
         error: () => {
           this.coursesLoading.set(false);
@@ -94,6 +114,8 @@ export class PreparationComponent implements OnInit {
     );
   }
   chooseCourse() {
+    this.openScenarioOnLoad = false;
+    this.comparison.set([]);
     this.clearResult();
     this.inputStep.set('course');
   }
@@ -377,7 +399,8 @@ export class PreparationComponent implements OnInit {
         },
       });
   }
-  prepare() {
+  prepare(compare = false) {
+    this.comparison.set([]);
     if (!this.canPrepare() || this.loading() || this.generating()) return;
     this.sourceOffset.set(0);
     this.result.set(null);
@@ -406,14 +429,22 @@ export class PreparationComponent implements OnInit {
       course: this.course.trim(),
       topic,
       learning_objective: objective,
+      source_scope: this.scope,
+      class_scenario: this.course.trim().toLowerCase() === 'cálculo diferencial' ? this.classScenario : undefined,
       resource_type: this.resourceType,
       difficulty: this.difficulty,
     };
     if (this.resourceType === 'QUIZ') request.question_count = this.questionCount;
     if (this.resourceType === 'FEEDBACK') request.student_answer = this.studentAnswer.trim();
-    if (this.selectedProfile()) request.profile_id = this.selectedProfile()!.id;
     this.error.set('');
     this.loading.set(true);
+    if (compare) {
+      this.service.compare(request).pipe(takeUntilDestroyed(this.destroy)).subscribe({
+        next: rows => { this.comparison.set(rows); this.loading.set(false); },
+        error: err => { this.error.set(err.error?.detail ?? 'No se pudo preparar la comparación.'); this.loading.set(false); }
+      });
+      return;
+    }
     this.service
       .prepare(request)
       .pipe(takeUntilDestroyed(this.destroy))

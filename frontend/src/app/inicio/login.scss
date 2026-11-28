@@ -325,3 +325,67 @@
     margin-top: 8px;
   }
 }
+
+.credential-form { display: grid; gap: 1rem; max-width: 33rem; margin: auto; }
+.credential-form label { display: grid; gap: .35rem; }
+.credential-form input { padding: .7rem; font: inherit; }
+
+.account-access {
+  display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); align-items: stretch;
+  max-width: 66rem; margin-block: clamp(1rem, 4vh, 3rem);
+  background: white; overflow: hidden; border: 1px solid var(--border);
+  border-radius: 1rem; box-shadow: var(--shadow-resting);
+}
+.account-access .auth-heading {
+  background: var(--navy); color: white; text-align: left; align-items: flex-start;
+  justify-content: center; margin: 0; padding: clamp(2rem, 4vw, 4rem);
+}
+.account-access .page-title { color: white; }
+.account-access .lead-text { color: #e3edf5; }
+.course-label { font-weight: 600; margin: 0 0 1.25rem; }
+.account-access .credential-form {
+  width: 100%; box-sizing: border-box; border: 0; box-shadow: none;
+  padding: clamp(1.5rem, 4.5vw, 3.75rem); gap: 1.35rem;
+}
+.credential-form h2 { margin: 0; }
+.credential-form input { border: 1px solid #8495a6; border-radius: .4rem; width: 100%; box-sizing: border-box; }
+.account-access .alert-box { grid-column: 1 / -1; }
+@media (max-width: 680px) { .account-access { grid-template-columns: 1fr; } }
+
+
+.account-access .auth-heading {
+  background: radial-gradient(ellipse at top right, #215b67 0, transparent 65%), #102f48;
+}
+.role-guide { display: grid; gap: 1rem; margin: 2rem 0 0; }
+.role-guide div { border-inline-start: 2px solid #77bcb7; padding-inline-start: 1rem; }
+.role-guide dt { font-weight: 650; }
+.role-guide dd { margin: .2rem 0 0; line-height: 1.5; color: #e1eef1; }
+.credential-field { display: grid; gap: .45rem; }
+.credential-form header p { margin: .6rem 0 0; }
+.credential-form input { min-height: 3rem; }
+@media (max-width: 680px) {
+  .account-access .credential-form { grid-row: 1; }
+  .account-access .auth-heading { padding: 1.75rem; }
+  .role-guide { margin-top: 1rem; }
+}
+.credential-form header p, .credential-form details p { line-height: 1.55; color: var(--muted); }
+.credential-form label { margin: 0; font-weight: 600; }
+.password-field { position: relative; }
+.password-field input { padding-right: 5rem; }
+.password-field button { position: absolute; right: .35rem; top: 50%; transform: translateY(-50%); border: 0; background: white; padding: .45rem; color: var(--navy); font-weight: 650; cursor: pointer; }
+.credential-form :focus-visible { outline: 3px solid #21838a; outline-offset: 2px; }
+.credential-form details { margin-top: 0; border-top: 1px solid var(--border); padding-top: 1rem; }
+.credential-form summary { cursor: pointer; color: var(--navy); }
+.credential-form .login-button { width: 100%; min-height: 3rem; margin: 0; }
+.credential-error { color: #932a24; margin: .35rem 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .account-access .credential-form, .role-guide { animation: access-enter .42s ease-out both; }
+  .role-guide { animation-delay: .1s; }
+  .credential-form input { transition: border-color .18s, box-shadow .18s; }
+  .credential-form input:focus { box-shadow: 0 0 0 3px #21838a20; }
+}
+@keyframes access-enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) {
+  .auth-layout, .auth-layout * { animation: none !important; transition: none !important; }
+}
+

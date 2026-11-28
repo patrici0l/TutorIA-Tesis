@@ -3,7 +3,20 @@ import { ProfileResponse } from '../../profesor/perfiles/perfiles.model';
 
 export type ResourceType = 'EXPLANATION' | 'EXAMPLE' | 'HINT' | 'EXERCISE' | 'QUIZ' | 'FEEDBACK';
 export type Difficulty = 'basic' | 'intermediate' | 'advanced';
+export type SourceScope = 'teacher' | 'teacher_wikipedia';
+export interface ClassScenario {
+  period: 'P69';
+  group: 'G3' | 'G24';
+  scenario: 'refuerzo' | 'practica' | 'reto' | 'pendiente';
+}
+export interface ComparisonCase {
+  scope: SourceScope | 'direct';
+  status: 'prepared' | 'no_sources';
+  sources: { title: string; sha256: string; provider: string | null }[];
+}
 export interface PreparationRequest {
+  source_scope?: SourceScope;
+  class_scenario?: ClassScenario;
   course: string;
   topic: string;
   learning_objective: string;
